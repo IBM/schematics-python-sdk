@@ -21,15 +21,23 @@ Changes might occur which impact applications that use this SDK.
 
 <!-- toc -->
 
-- [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Using the SDK](#using-the-sdk)
-- [Questions](#questions)
-- [Issues](#issues)
-- [Open source @ IBM](#open-source--ibm)
-- [Contributing](#contributing)
-- [License](#license)
+- [IBM Cloud Schematics Python SDK](#ibm-cloud-schematics-python-sdk)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Authentication](#authentication)
+    - [Authenticate with environment variables](#authenticate-with-environment-variables)
+    - [Authenticate with external configuration](#authenticate-with-external-configuration)
+    - [Authenticate programmatically](#authenticate-programmatically)
+  - [Getting Started](#getting-started)
+  - [Error handling](#error-handling)
+  - [Using the SDK](#using-the-sdk)
+  - [Questions](#questions)
+  - [Issues](#issues)
+  - [Open source @ IBM](#open-source--ibm)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 <!-- tocstop -->
 
@@ -63,6 +71,55 @@ or
 ```bash
 easy_install --upgrade "ibm-schematics>=0.0.1"
 ```
+
+## Authentication
+
+The library requires Identity and Access Management (IAM) to authenticate requests. There are several ways to set the properties for authentication
+
+1. [As environment variables](#authenticate-with-environment-variables)
+2. [The programmatic approach](#authenticate-programmatically)
+3. [With an external credentials file](#authenticate-with-external-configuration)
+
+### Authenticate with environment variables
+
+For Schematics IAM authentication set the following environmental variables by replacing <apikey> with your proper service credentials.
+
+```
+SCHEMATICS_URL = https://schematics.cloud.ibm.com
+SCHEMATICS_APIKEY = <apikey>
+```
+
+### Authenticate with external configuration
+
+To use an external configuration file, see the related documentation in the [Python SDK Core document about authentication](https://github.com/IBM/ibm-cloud-sdk-common/blob/master/README.md).
+
+### Authenticate programmatically
+
+To learn more about how to use programmatic authentication, see the related documentation in the [Python SDK Core document about authentication](https://github.com/IBM/ibm-cloud-sdk-common/blob/master/README.md).
+
+## Getting Started
+
+A quick example to get you up and running with Schematics Python SDK service
+
+```
+
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibm_schematics.schematics_v1 import SchematicsV1
+
+authenticator = IAMAuthenticator('<apiKey>')
+schematics_service = SchematicsV1(authenticator = authenticator)
+schematics_service.set_service_url('https://schematics.cloud.ibm.com')
+
+get_schematics_version_response = schematics_service.get_schematics_version()
+version_response = get_schematics_version_response.get_result()
+print(version_response)
+
+
+```
+
+## Error handling
+
+For sample code on handling errors, please see [Schematics API docs](https://cloud.ibm.com/apidocs/schematics#error-handling).
 
 ## Using the SDK
 For general SDK usage information, please see [this link](https://github.com/IBM/ibm-cloud-sdk-common/blob/master/README.md)
