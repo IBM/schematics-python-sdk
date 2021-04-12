@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# (C) Copyright IBM Corp. 2020.
+# (C) Copyright IBM Corp. 2021.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# IBM OpenAPI SDK Code Generator Version: 3.17.0-8d569e8f-20201030-142059
+# IBM OpenAPI SDK Code Generator Version: 3.30.0-bd714324-20210406-200538
  
 """
 Schematics Service is to provide the capability to manage resources  of (cloud) provider
@@ -874,6 +874,73 @@ class SchematicsV1(BaseService):
         return response
 
 
+    def run_workspace_commands(self,
+        w_id: str,
+        refresh_token: str,
+        *,
+        commands: List['TerraformCommand'] = None,
+        operation_name: str = None,
+        description: str = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Run terraform Commands.
+
+        Run terraform Commands on workspaces.
+
+        :param str w_id: The workspace ID for the workspace that you want to query.
+                You can run the GET /workspaces call if you need to look up the  workspace
+               IDs in your IBM Cloud account.
+        :param str refresh_token: The IAM refresh token associated with the IBM
+               Cloud account.
+        :param List[TerraformCommand] commands: (optional) List of commands.
+        :param str operation_name: (optional) Command name.
+        :param str description: (optional) Command description.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivityCommandResult` object
+        """
+
+        if w_id is None:
+            raise ValueError('w_id must be provided')
+        if refresh_token is None:
+            raise ValueError('refresh_token must be provided')
+        if commands is not None:
+            commands = [convert_model(x) for x in commands]
+        headers = {
+            'refresh_token': refresh_token
+        }
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='run_workspace_commands')
+        headers.update(sdk_headers)
+
+        data = {
+            'commands': commands,
+            'operation_name': operation_name,
+            'description': description
+        }
+        data = {k: v for (k, v) in data.items() if v is not None}
+        data = json.dumps(data)
+        headers['content-type'] = 'application/json'
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['w_id']
+        path_param_values = self.encode_path_vars(w_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v1/workspaces/{w_id}/commands'.format(**path_param_dict)
+        request = self.prepare_request(method='PUT',
+                                       url=url,
+                                       headers=headers,
+                                       data=data)
+
+        response = self.send(request)
+        return response
+
+
     def apply_workspace_command(self,
         w_id: str,
         refresh_token: str,
@@ -891,8 +958,8 @@ class SchematicsV1(BaseService):
                IDs in your IBM Cloud account.
         :param str refresh_token: The IAM refresh token associated with the IBM
                Cloud account.
-        :param WorkspaceActivityOptionsTemplate action_options: (optional) Action
-               Options Template ...
+        :param WorkspaceActivityOptionsTemplate action_options: (optional)
+               Workspace Activity Options Template.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivityApplyResult` object
@@ -954,8 +1021,8 @@ class SchematicsV1(BaseService):
                IDs in your IBM Cloud account.
         :param str refresh_token: The IAM refresh token associated with the IBM
                Cloud account.
-        :param WorkspaceActivityOptionsTemplate action_options: (optional) Action
-               Options Template ...
+        :param WorkspaceActivityOptionsTemplate action_options: (optional)
+               Workspace Activity Options Template.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivityDestroyResult` object
@@ -1844,12 +1911,13 @@ class SchematicsV1(BaseService):
         source: 'ExternalSource' = None,
         source_type: str = None,
         command_parameter: str = None,
-        bastion: 'TargetResourceset' = None,
-        targets: List['TargetResourceset'] = None,
+        bastion: 'BastionResourceDefinition' = None,
+        inventory: str = None,
+        bastion_credential: 'VariableData' = None,
+        credentials: List['VariableData'] = None,
         inputs: List['VariableData'] = None,
         outputs: List['VariableData'] = None,
         settings: List['VariableData'] = None,
-        trigger_record_id: str = None,
         state: 'ActionState' = None,
         sys_lock: 'SystemLock' = None,
         x_github_token: str = None,
@@ -1876,17 +1944,20 @@ class SchematicsV1(BaseService):
                controls.
         :param str source_type: (optional) Type of source for the Template.
         :param str command_parameter: (optional) Schematics job command parameter
-               (playbook-name, capsule-name or flow-name).
-        :param TargetResourceset bastion: (optional) Complete Target details with
-               user inputs and system generated data.
-        :param List[TargetResourceset] targets: (optional) Action targets.
+               (playbook-name).
+        :param BastionResourceDefinition bastion: (optional) Describes a bastion
+               resource.
+        :param str inventory: (optional) Inventory ID.
+        :param VariableData bastion_credential: (optional) User editable variable
+               data & system generated reference to value.
+        :param List[VariableData] credentials: (optional) credentials of the
+               Action.
         :param List[VariableData] inputs: (optional) Input variables for the
                Action.
         :param List[VariableData] outputs: (optional) Output variables for the
                Action.
         :param List[VariableData] settings: (optional) Environment variables for
                the Action.
-        :param str trigger_record_id: (optional) Id to the Trigger.
         :param ActionState state: (optional) Computed state of the Action.
         :param SystemLock sys_lock: (optional) System lock status.
         :param str x_github_token: (optional) The github token associated with the
@@ -1902,8 +1973,10 @@ class SchematicsV1(BaseService):
             source = convert_model(source)
         if bastion is not None:
             bastion = convert_model(bastion)
-        if targets is not None:
-            targets = [convert_model(x) for x in targets]
+        if bastion_credential is not None:
+            bastion_credential = convert_model(bastion_credential)
+        if credentials is not None:
+            credentials = [convert_model(x) for x in credentials]
         if inputs is not None:
             inputs = [convert_model(x) for x in inputs]
         if outputs is not None:
@@ -1934,11 +2007,12 @@ class SchematicsV1(BaseService):
             'source_type': source_type,
             'command_parameter': command_parameter,
             'bastion': bastion,
-            'targets': targets,
+            'inventory': inventory,
+            'bastion_credential': bastion_credential,
+            'credentials': credentials,
             'inputs': inputs,
             'outputs': outputs,
             'settings': settings,
-            'trigger_record_id': trigger_record_id,
             'state': state,
             'sys_lock': sys_lock
         }
@@ -2123,12 +2197,13 @@ class SchematicsV1(BaseService):
         source: 'ExternalSource' = None,
         source_type: str = None,
         command_parameter: str = None,
-        bastion: 'TargetResourceset' = None,
-        targets: List['TargetResourceset'] = None,
+        bastion: 'BastionResourceDefinition' = None,
+        inventory: str = None,
+        bastion_credential: 'VariableData' = None,
+        credentials: List['VariableData'] = None,
         inputs: List['VariableData'] = None,
         outputs: List['VariableData'] = None,
         settings: List['VariableData'] = None,
-        trigger_record_id: str = None,
         state: 'ActionState' = None,
         sys_lock: 'SystemLock' = None,
         x_github_token: str = None,
@@ -2157,17 +2232,20 @@ class SchematicsV1(BaseService):
                controls.
         :param str source_type: (optional) Type of source for the Template.
         :param str command_parameter: (optional) Schematics job command parameter
-               (playbook-name, capsule-name or flow-name).
-        :param TargetResourceset bastion: (optional) Complete Target details with
-               user inputs and system generated data.
-        :param List[TargetResourceset] targets: (optional) Action targets.
+               (playbook-name).
+        :param BastionResourceDefinition bastion: (optional) Describes a bastion
+               resource.
+        :param str inventory: (optional) Inventory ID.
+        :param VariableData bastion_credential: (optional) User editable variable
+               data & system generated reference to value.
+        :param List[VariableData] credentials: (optional) credentials of the
+               Action.
         :param List[VariableData] inputs: (optional) Input variables for the
                Action.
         :param List[VariableData] outputs: (optional) Output variables for the
                Action.
         :param List[VariableData] settings: (optional) Environment variables for
                the Action.
-        :param str trigger_record_id: (optional) Id to the Trigger.
         :param ActionState state: (optional) Computed state of the Action.
         :param SystemLock sys_lock: (optional) System lock status.
         :param str x_github_token: (optional) The github token associated with the
@@ -2185,8 +2263,10 @@ class SchematicsV1(BaseService):
             source = convert_model(source)
         if bastion is not None:
             bastion = convert_model(bastion)
-        if targets is not None:
-            targets = [convert_model(x) for x in targets]
+        if bastion_credential is not None:
+            bastion_credential = convert_model(bastion_credential)
+        if credentials is not None:
+            credentials = [convert_model(x) for x in credentials]
         if inputs is not None:
             inputs = [convert_model(x) for x in inputs]
         if outputs is not None:
@@ -2217,11 +2297,12 @@ class SchematicsV1(BaseService):
             'source_type': source_type,
             'command_parameter': command_parameter,
             'bastion': bastion,
-            'targets': targets,
+            'inventory': inventory,
+            'bastion_credential': bastion_credential,
+            'credentials': credentials,
             'inputs': inputs,
             'outputs': outputs,
             'settings': settings,
-            'trigger_record_id': trigger_record_id,
             'state': state,
             'sys_lock': sys_lock
         }
@@ -2245,6 +2326,56 @@ class SchematicsV1(BaseService):
         response = self.send(request)
         return response
 
+
+    def upload_template_tar_action(self,
+        action_id: str,
+        *,
+        file: BinaryIO = None,
+        file_content_type: str = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Upload template tar file for the action.
+
+        Upload template tar file for the action.
+
+        :param str action_id: Action Id.  Use GET /actions API to look up the
+               Action Ids in your IBM Cloud account.
+        :param BinaryIO file: (optional) Template tar file.
+        :param str file_content_type: (optional) The content type of file.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `TemplateRepoTarUploadResponse` object
+        """
+
+        if action_id is None:
+            raise ValueError('action_id must be provided')
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='upload_template_tar_action')
+        headers.update(sdk_headers)
+
+        form_data = []
+        if file:
+            form_data.append(('file', (None, file, file_content_type or 'application/octet-stream')))
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['action_id']
+        path_param_values = self.encode_path_vars(action_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v2/actions/{action_id}/template_repo_upload'.format(**path_param_dict)
+        request = self.prepare_request(method='PUT',
+                                       url=url,
+                                       headers=headers,
+                                       files=form_data)
+
+        response = self.send(request)
+        return response
+
     #########################
     # jobs
     #########################
@@ -2264,7 +2395,7 @@ class SchematicsV1(BaseService):
         location: str = None,
         status: 'JobStatus' = None,
         data: 'JobData' = None,
-        bastion: 'TargetResourceset' = None,
+        bastion: 'BastionResourceDefinition' = None,
         log_summary: 'JobLogSummary' = None,
         **kwargs
     ) -> DetailedResponse:
@@ -2278,7 +2409,7 @@ class SchematicsV1(BaseService):
         :param str command_object: (optional) Name of the Schematics automation
                resource.
         :param str command_object_id: (optional) Job command object id
-               (workspace-id, action-id or control-id).
+               (workspace-id, action-id).
         :param str command_name: (optional) Schematics job command name.
         :param str command_parameter: (optional) Schematics job command parameter
                (playbook-name, capsule-name or flow-name).
@@ -2293,8 +2424,8 @@ class SchematicsV1(BaseService):
                the resources provisioned using Schematics.
         :param JobStatus status: (optional) Job Status.
         :param JobData data: (optional) Job data.
-        :param TargetResourceset bastion: (optional) Complete Target details with
-               user inputs and system generated data.
+        :param BastionResourceDefinition bastion: (optional) Describes a bastion
+               resource.
         :param JobLogSummary log_summary: (optional) Job log summary record.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
@@ -2434,7 +2565,7 @@ class SchematicsV1(BaseService):
         location: str = None,
         status: 'JobStatus' = None,
         data: 'JobData' = None,
-        bastion: 'TargetResourceset' = None,
+        bastion: 'BastionResourceDefinition' = None,
         log_summary: 'JobLogSummary' = None,
         **kwargs
     ) -> DetailedResponse:
@@ -2450,7 +2581,7 @@ class SchematicsV1(BaseService):
         :param str command_object: (optional) Name of the Schematics automation
                resource.
         :param str command_object_id: (optional) Job command object id
-               (workspace-id, action-id or control-id).
+               (workspace-id, action-id).
         :param str command_name: (optional) Schematics job command name.
         :param str command_parameter: (optional) Schematics job command parameter
                (playbook-name, capsule-name or flow-name).
@@ -2465,8 +2596,8 @@ class SchematicsV1(BaseService):
                the resources provisioned using Schematics.
         :param JobStatus status: (optional) Job Status.
         :param JobData data: (optional) Job data.
-        :param TargetResourceset bastion: (optional) Complete Target details with
-               user inputs and system generated data.
+        :param BastionResourceDefinition bastion: (optional) Describes a bastion
+               resource.
         :param JobLogSummary log_summary: (optional) Job log summary record.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
@@ -2668,46 +2799,6 @@ class SchematicsV1(BaseService):
         path_param_values = self.encode_path_vars(job_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/jobs/{job_id}/logs'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
-
-        response = self.send(request)
-        return response
-
-
-    def list_job_states(self,
-        job_id: str,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Get state-data from the Job record.
-
-        Get state-data from the Job record.
-
-        :param str job_id: Job Id. Use GET /jobs API to look up the Job Ids in your
-               IBM Cloud account.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `JobStateData` object
-        """
-
-        if job_id is None:
-            raise ValueError('job_id must be provided')
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='list_job_states')
-        headers.update(sdk_headers)
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        path_param_keys = ['job_id']
-        path_param_values = self.encode_path_vars(job_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v2/jobs/{job_id}/states'.format(**path_param_dict)
         request = self.prepare_request(method='GET',
                                        url=url,
                                        headers=headers)
@@ -3154,6 +3245,746 @@ class SchematicsV1(BaseService):
         response = self.send(request)
         return response
 
+    #########################
+    # settingsInventory
+    #########################
+
+
+    def create_inventory(self,
+        *,
+        name: str = None,
+        description: str = None,
+        location: str = None,
+        resource_group: str = None,
+        inventories_ini: str = None,
+        resource_queries: List[str] = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Create a resource inventory definition, used to target Actions or Controls.
+
+        Create a resource inventory definition.
+
+        :param str name: (optional) Inventory name.
+        :param str description: (optional) Inventory description.
+        :param str location: (optional) List of workspace locations supported by
+               IBM Cloud Schematics service.  Note, this does not limit the location of
+               the resources provisioned using Schematics.
+        :param str resource_group: (optional) Resource-group name for the Inventory
+               definition.  By default, Action will be created in Default Resource Group.
+        :param str inventories_ini: (optional) Input inventory of host and host
+               group for the playbook,  in the .ini file format.
+        :param List[str] resource_queries: (optional) Input resource queries that
+               is used to dynamically generate  the inventory of host and host group for
+               the playbook.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `InventoryResourceRecord` object
+        """
+
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='create_inventory')
+        headers.update(sdk_headers)
+
+        data = {
+            'name': name,
+            'description': description,
+            'location': location,
+            'resource_group': resource_group,
+            'inventories_ini': inventories_ini,
+            'resource_queries': resource_queries
+        }
+        data = {k: v for (k, v) in data.items() if v is not None}
+        data = json.dumps(data)
+        headers['content-type'] = 'application/json'
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        url = '/v2/inventories'
+        request = self.prepare_request(method='POST',
+                                       url=url,
+                                       headers=headers,
+                                       data=data)
+
+        response = self.send(request)
+        return response
+
+
+    def list_inventories(self,
+        *,
+        offset: int = None,
+        limit: int = None,
+        sort: str = None,
+        profile: str = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Get all resource inventory definitions.
+
+        Get all resource inventory definition.
+
+        :param int offset: (optional) The number of items to skip before starting
+               to collect the result set.
+        :param int limit: (optional) The numbers of items to return.
+        :param str sort: (optional) Name of the field to sort-by;  Use the '.'
+               character to delineate sub-resources and sub-fields (eg. owner.last_name).
+               Prepend the field with '+' or '-', indicating 'ascending' or 'descending'
+               (default is ascending)   Ignore unrecognized or unsupported sort field.
+        :param str profile: (optional) Level of details returned by the get method.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `InventoryResourceRecordList` object
+        """
+
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='list_inventories')
+        headers.update(sdk_headers)
+
+        params = {
+            'offset': offset,
+            'limit': limit,
+            'sort': sort,
+            'profile': profile
+        }
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        url = '/v2/inventories'
+        request = self.prepare_request(method='GET',
+                                       url=url,
+                                       headers=headers,
+                                       params=params)
+
+        response = self.send(request)
+        return response
+
+
+    def replace_inventory(self,
+        inventory_id: str,
+        *,
+        name: str = None,
+        description: str = None,
+        location: str = None,
+        resource_group: str = None,
+        inventories_ini: str = None,
+        resource_queries: List[str] = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Replace the resource inventory definition, used to target Actions or Controls.
+
+        Replace the resource inventory definition.
+
+        :param str inventory_id: Resource Inventory Id.  Use GET /inventories API
+               to look up the Resource Inventory definition Ids  in your IBM Cloud
+               account.
+        :param str name: (optional) Inventory name.
+        :param str description: (optional) Inventory description.
+        :param str location: (optional) List of workspace locations supported by
+               IBM Cloud Schematics service.  Note, this does not limit the location of
+               the resources provisioned using Schematics.
+        :param str resource_group: (optional) Resource-group name for the Inventory
+               definition.  By default, Action will be created in Default Resource Group.
+        :param str inventories_ini: (optional) Input inventory of host and host
+               group for the playbook,  in the .ini file format.
+        :param List[str] resource_queries: (optional) Input resource queries that
+               is used to dynamically generate  the inventory of host and host group for
+               the playbook.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `InventoryResourceRecord` object
+        """
+
+        if inventory_id is None:
+            raise ValueError('inventory_id must be provided')
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='replace_inventory')
+        headers.update(sdk_headers)
+
+        data = {
+            'name': name,
+            'description': description,
+            'location': location,
+            'resource_group': resource_group,
+            'inventories_ini': inventories_ini,
+            'resource_queries': resource_queries
+        }
+        data = {k: v for (k, v) in data.items() if v is not None}
+        data = json.dumps(data)
+        headers['content-type'] = 'application/json'
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['inventory_id']
+        path_param_values = self.encode_path_vars(inventory_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v2/inventories/{inventory_id}'.format(**path_param_dict)
+        request = self.prepare_request(method='PUT',
+                                       url=url,
+                                       headers=headers,
+                                       data=data)
+
+        response = self.send(request)
+        return response
+
+
+    def update_inventory(self,
+        inventory_id: str,
+        *,
+        name: str = None,
+        description: str = None,
+        location: str = None,
+        resource_group: str = None,
+        inventories_ini: str = None,
+        resource_queries: List[str] = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Update the resource inventory definition, used to target Actions or Controls.
+
+        Update the resource inventory definition.
+
+        :param str inventory_id: Resource Inventory Id.  Use GET /inventories API
+               to look up the Resource Inventory definition Ids  in your IBM Cloud
+               account.
+        :param str name: (optional) Inventory name.
+        :param str description: (optional) Inventory description.
+        :param str location: (optional) List of workspace locations supported by
+               IBM Cloud Schematics service.  Note, this does not limit the location of
+               the resources provisioned using Schematics.
+        :param str resource_group: (optional) Resource-group name for the Inventory
+               definition.  By default, Action will be created in Default Resource Group.
+        :param str inventories_ini: (optional) Input inventory of host and host
+               group for the playbook,  in the .ini file format.
+        :param List[str] resource_queries: (optional) Input resource queries that
+               is used to dynamically generate  the inventory of host and host group for
+               the playbook.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `InventoryResourceRecord` object
+        """
+
+        if inventory_id is None:
+            raise ValueError('inventory_id must be provided')
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='update_inventory')
+        headers.update(sdk_headers)
+
+        data = {
+            'name': name,
+            'description': description,
+            'location': location,
+            'resource_group': resource_group,
+            'inventories_ini': inventories_ini,
+            'resource_queries': resource_queries
+        }
+        data = {k: v for (k, v) in data.items() if v is not None}
+        data = json.dumps(data)
+        headers['content-type'] = 'application/json'
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['inventory_id']
+        path_param_values = self.encode_path_vars(inventory_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v2/inventories/{inventory_id}'.format(**path_param_dict)
+        request = self.prepare_request(method='PATCH',
+                                       url=url,
+                                       headers=headers,
+                                       data=data)
+
+        response = self.send(request)
+        return response
+
+
+    def delete_inventory(self,
+        inventory_id: str,
+        *,
+        force: bool = None,
+        propagate: bool = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Delete the resource inventory definition.
+
+        Delete the resource inventory definition.
+
+        :param str inventory_id: Resource Inventory Id.  Use GET /inventories API
+               to look up the Resource Inventory definition Ids  in your IBM Cloud
+               account.
+        :param bool force: (optional) Equivalent to -force options in the command
+               line.
+        :param bool propagate: (optional) Auto propagate the chaange or deletion to
+               the dependent resources.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse
+        """
+
+        if inventory_id is None:
+            raise ValueError('inventory_id must be provided')
+        headers = {
+            'force': force,
+            'propagate': propagate
+        }
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='delete_inventory')
+        headers.update(sdk_headers)
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+
+        path_param_keys = ['inventory_id']
+        path_param_values = self.encode_path_vars(inventory_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v2/inventories/{inventory_id}'.format(**path_param_dict)
+        request = self.prepare_request(method='DELETE',
+                                       url=url,
+                                       headers=headers)
+
+        response = self.send(request)
+        return response
+
+
+    def get_inventory(self,
+        inventory_id: str,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Get the resource inventory definition, used to target Actions or Controls.
+
+        Get the resource inventory definition.
+
+        :param str inventory_id: Resource Inventory Id.  Use GET /inventories API
+               to look up the Resource Inventory definition Ids  in your IBM Cloud
+               account.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `InventoryResourceRecord` object
+        """
+
+        if inventory_id is None:
+            raise ValueError('inventory_id must be provided')
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='get_inventory')
+        headers.update(sdk_headers)
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['inventory_id']
+        path_param_values = self.encode_path_vars(inventory_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v2/inventories/{inventory_id}'.format(**path_param_dict)
+        request = self.prepare_request(method='GET',
+                                       url=url,
+                                       headers=headers)
+
+        response = self.send(request)
+        return response
+
+
+    def list_inventory_values(self,
+        inventory_id: str,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Get all the resource inventory values.
+
+        Get all the resource inventory values.
+
+        :param str inventory_id: Resource Inventory Id.  Use GET /inventories API
+               to look up the Resource Inventory definition Ids  in your IBM Cloud
+               account.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `InventoryResourceRecordList` object
+        """
+
+        if inventory_id is None:
+            raise ValueError('inventory_id must be provided')
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='list_inventory_values')
+        headers.update(sdk_headers)
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['inventory_id']
+        path_param_values = self.encode_path_vars(inventory_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v2/inventories/{inventory_id}/variables'.format(**path_param_dict)
+        request = self.prepare_request(method='GET',
+                                       url=url,
+                                       headers=headers)
+
+        response = self.send(request)
+        return response
+
+
+    def get_inventory_value(self,
+        inventory_id: str,
+        var_name: str,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Get the resource inventory value.
+
+        Get the resource inventory value.
+
+        :param str inventory_id: Resource Inventory Id.  Use GET /inventories API
+               to look up the Resource Inventory definition Ids  in your IBM Cloud
+               account.
+        :param str var_name: Name of the variable.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `InventoryResourceRecord` object
+        """
+
+        if inventory_id is None:
+            raise ValueError('inventory_id must be provided')
+        if var_name is None:
+            raise ValueError('var_name must be provided')
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='get_inventory_value')
+        headers.update(sdk_headers)
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['inventory_id', 'var_name']
+        path_param_values = self.encode_path_vars(inventory_id, var_name)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v2/inventories/{inventory_id}/variables/{var_name}'.format(**path_param_dict)
+        request = self.prepare_request(method='GET',
+                                       url=url,
+                                       headers=headers)
+
+        response = self.send(request)
+        return response
+
+    #########################
+    # settingsResources
+    #########################
+
+
+    def create_resource_query(self,
+        *,
+        type: str = None,
+        name: str = None,
+        queries: List['ResourceQuery'] = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Create a resource query definition.
+
+        Create a resource query definition.
+
+        :param str type: (optional) Resource type (cluster, vsi, icd, vpc).
+        :param str name: (optional) Resource query name.
+        :param List[ResourceQuery] queries: (optional)
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `ResourceQueryRecord` object
+        """
+
+        if queries is not None:
+            queries = [convert_model(x) for x in queries]
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='create_resource_query')
+        headers.update(sdk_headers)
+
+        data = {
+            'type': type,
+            'name': name,
+            'queries': queries
+        }
+        data = {k: v for (k, v) in data.items() if v is not None}
+        data = json.dumps(data)
+        headers['content-type'] = 'application/json'
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        url = '/v2/resources_query'
+        request = self.prepare_request(method='POST',
+                                       url=url,
+                                       headers=headers,
+                                       data=data)
+
+        response = self.send(request)
+        return response
+
+
+    def list_resource_query(self,
+        *,
+        offset: int = None,
+        limit: int = None,
+        sort: str = None,
+        profile: str = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Get all resource query definitions.
+
+        Get all resource query definition.
+
+        :param int offset: (optional) The number of items to skip before starting
+               to collect the result set.
+        :param int limit: (optional) The numbers of items to return.
+        :param str sort: (optional) Name of the field to sort-by;  Use the '.'
+               character to delineate sub-resources and sub-fields (eg. owner.last_name).
+               Prepend the field with '+' or '-', indicating 'ascending' or 'descending'
+               (default is ascending)   Ignore unrecognized or unsupported sort field.
+        :param str profile: (optional) Level of details returned by the get method.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `ResourceQueryRecordList` object
+        """
+
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='list_resource_query')
+        headers.update(sdk_headers)
+
+        params = {
+            'offset': offset,
+            'limit': limit,
+            'sort': sort,
+            'profile': profile
+        }
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        url = '/v2/resources_query'
+        request = self.prepare_request(method='GET',
+                                       url=url,
+                                       headers=headers,
+                                       params=params)
+
+        response = self.send(request)
+        return response
+
+
+    def execute_resource_query(self,
+        query_id: str,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Run the resource query.
+
+        Execute a resource query definition.
+
+        :param str query_id: Resource query Id.  Use GET /resource_query API to
+               look up the Resource query definition Ids  in your IBM Cloud account.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `ResourceQueryResponseRecord` object
+        """
+
+        if query_id is None:
+            raise ValueError('query_id must be provided')
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='execute_resource_query')
+        headers.update(sdk_headers)
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['query_id']
+        path_param_values = self.encode_path_vars(query_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v2/resources_query/{query_id}'.format(**path_param_dict)
+        request = self.prepare_request(method='POST',
+                                       url=url,
+                                       headers=headers)
+
+        response = self.send(request)
+        return response
+
+
+    def replace_resources_query(self,
+        query_id: str,
+        *,
+        type: str = None,
+        name: str = None,
+        queries: List['ResourceQuery'] = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Replace the resources query definition.
+
+        Replace the resources query definition.
+
+        :param str query_id: Resource query Id.  Use GET /resource_query API to
+               look up the Resource query definition Ids  in your IBM Cloud account.
+        :param str type: (optional) Resource type (cluster, vsi, icd, vpc).
+        :param str name: (optional) Resource query name.
+        :param List[ResourceQuery] queries: (optional)
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `ResourceQueryRecord` object
+        """
+
+        if query_id is None:
+            raise ValueError('query_id must be provided')
+        if queries is not None:
+            queries = [convert_model(x) for x in queries]
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='replace_resources_query')
+        headers.update(sdk_headers)
+
+        data = {
+            'type': type,
+            'name': name,
+            'queries': queries
+        }
+        data = {k: v for (k, v) in data.items() if v is not None}
+        data = json.dumps(data)
+        headers['content-type'] = 'application/json'
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['query_id']
+        path_param_values = self.encode_path_vars(query_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v2/resources_query/{query_id}'.format(**path_param_dict)
+        request = self.prepare_request(method='PUT',
+                                       url=url,
+                                       headers=headers,
+                                       data=data)
+
+        response = self.send(request)
+        return response
+
+
+    def delete_resources_query(self,
+        query_id: str,
+        *,
+        force: bool = None,
+        propagate: bool = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Delete the resources query definition.
+
+        Delete the resources query definition.
+
+        :param str query_id: Resource query Id.  Use GET /resource_query API to
+               look up the Resource query definition Ids  in your IBM Cloud account.
+        :param bool force: (optional) Equivalent to -force options in the command
+               line.
+        :param bool propagate: (optional) Auto propagate the chaange or deletion to
+               the dependent resources.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse
+        """
+
+        if query_id is None:
+            raise ValueError('query_id must be provided')
+        headers = {
+            'force': force,
+            'propagate': propagate
+        }
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='delete_resources_query')
+        headers.update(sdk_headers)
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+
+        path_param_keys = ['query_id']
+        path_param_values = self.encode_path_vars(query_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v2/resources_query/{query_id}'.format(**path_param_dict)
+        request = self.prepare_request(method='DELETE',
+                                       url=url,
+                                       headers=headers)
+
+        response = self.send(request)
+        return response
+
+
+    def get_resources_query(self,
+        query_id: str,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Get the resources query definition.
+
+        Get the resources query definition.
+
+        :param str query_id: Resource query Id.  Use GET /resource_query API to
+               look up the Resource query definition Ids  in your IBM Cloud account.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `ResourceQueryRecord` object
+        """
+
+        if query_id is None:
+            raise ValueError('query_id must be provided')
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='get_resources_query')
+        headers.update(sdk_headers)
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['query_id']
+        path_param_values = self.encode_path_vars(query_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v2/resources_query/{query_id}'.format(**path_param_dict)
+        request = self.prepare_request(method='GET',
+                                       url=url,
+                                       headers=headers)
+
+        response = self.send(request)
+        return response
+
 
 class GetWorkspaceReadmeEnums:
     """
@@ -3210,9 +4041,8 @@ class ListJobsEnums:
         """
         Name of the resource (workspace, actions or controls).
         """
-        WORKSPACES = 'workspaces'
-        ACTIONS = 'actions'
-        CONTROLS = 'controls'
+        WORKSPACE = 'workspace'
+        ACTION = 'action'
     class List(str, Enum):
         """
         list jobs.
@@ -3231,6 +4061,32 @@ class GetJobEnums:
         """
         SUMMARY = 'summary'
         DETAILED = 'detailed'
+
+
+class ListInventoriesEnums:
+    """
+    Enums for list_inventories parameters.
+    """
+
+    class Profile(str, Enum):
+        """
+        Level of details returned by the get method.
+        """
+        IDS = 'ids'
+        SUMMARY = 'summary'
+
+
+class ListResourceQueryEnums:
+    """
+    Enums for list_resource_query parameters.
+    """
+
+    class Profile(str, Enum):
+        """
+        Level of details returned by the get method.
+        """
+        IDS = 'ids'
+        SUMMARY = 'summary'
 
 
 ##############################################################################
@@ -3257,15 +4113,17 @@ class Action():
           controls.
     :attr str source_type: (optional) Type of source for the Template.
     :attr str command_parameter: (optional) Schematics job command parameter
-          (playbook-name, capsule-name or flow-name).
-    :attr TargetResourceset bastion: (optional) Complete Target details with user
-          inputs and system generated data.
-    :attr List[TargetResourceset] targets: (optional) Action targets.
+          (playbook-name).
+    :attr BastionResourceDefinition bastion: (optional) Describes a bastion
+          resource.
+    :attr str inventory: (optional) Inventory ID.
+    :attr VariableData bastion_credential: (optional) User editable variable data &
+          system generated reference to value.
+    :attr List[VariableData] credentials: (optional) credentials of the Action.
     :attr List[VariableData] inputs: (optional) Input variables for the Action.
     :attr List[VariableData] outputs: (optional) Output variables for the Action.
     :attr List[VariableData] settings: (optional) Environment variables for the
           Action.
-    :attr str trigger_record_id: (optional) Id to the Trigger.
     :attr str id: (optional) Action Id.
     :attr str crn: (optional) Action Cloud Resource Name.
     :attr str account: (optional) Action account id.
@@ -3280,7 +4138,6 @@ class Action():
     :attr str created_by: (optional) Email address of user who created the action.
     :attr datetime updated_at: (optional) Action updation time.
     :attr str updated_by: (optional) Email address of user who updated the action.
-    :attr str namespace: (optional) name of the namespace.
     :attr ActionState state: (optional) Computed state of the Action.
     :attr List[str] playbook_names: (optional) Playbook names retrieved from repo.
     :attr SystemLock sys_lock: (optional) System lock status.
@@ -3298,12 +4155,13 @@ class Action():
                  source: 'ExternalSource' = None,
                  source_type: str = None,
                  command_parameter: str = None,
-                 bastion: 'TargetResourceset' = None,
-                 targets: List['TargetResourceset'] = None,
+                 bastion: 'BastionResourceDefinition' = None,
+                 inventory: str = None,
+                 bastion_credential: 'VariableData' = None,
+                 credentials: List['VariableData'] = None,
                  inputs: List['VariableData'] = None,
                  outputs: List['VariableData'] = None,
                  settings: List['VariableData'] = None,
-                 trigger_record_id: str = None,
                  id: str = None,
                  crn: str = None,
                  account: str = None,
@@ -3315,7 +4173,6 @@ class Action():
                  created_by: str = None,
                  updated_at: datetime = None,
                  updated_by: str = None,
-                 namespace: str = None,
                  state: 'ActionState' = None,
                  playbook_names: List[str] = None,
                  sys_lock: 'SystemLock' = None) -> None:
@@ -3338,17 +4195,20 @@ class Action():
                controls.
         :param str source_type: (optional) Type of source for the Template.
         :param str command_parameter: (optional) Schematics job command parameter
-               (playbook-name, capsule-name or flow-name).
-        :param TargetResourceset bastion: (optional) Complete Target details with
-               user inputs and system generated data.
-        :param List[TargetResourceset] targets: (optional) Action targets.
+               (playbook-name).
+        :param BastionResourceDefinition bastion: (optional) Describes a bastion
+               resource.
+        :param str inventory: (optional) Inventory ID.
+        :param VariableData bastion_credential: (optional) User editable variable
+               data & system generated reference to value.
+        :param List[VariableData] credentials: (optional) credentials of the
+               Action.
         :param List[VariableData] inputs: (optional) Input variables for the
                Action.
         :param List[VariableData] outputs: (optional) Output variables for the
                Action.
         :param List[VariableData] settings: (optional) Environment variables for
                the Action.
-        :param str trigger_record_id: (optional) Id to the Trigger.
         :param ActionState state: (optional) Computed state of the Action.
         :param SystemLock sys_lock: (optional) System lock status.
         """
@@ -3363,11 +4223,12 @@ class Action():
         self.source_type = source_type
         self.command_parameter = command_parameter
         self.bastion = bastion
-        self.targets = targets
+        self.inventory = inventory
+        self.bastion_credential = bastion_credential
+        self.credentials = credentials
         self.inputs = inputs
         self.outputs = outputs
         self.settings = settings
-        self.trigger_record_id = trigger_record_id
         self.id = id
         self.crn = crn
         self.account = account
@@ -3379,7 +4240,6 @@ class Action():
         self.created_by = created_by
         self.updated_at = updated_at
         self.updated_by = updated_by
-        self.namespace = namespace
         self.state = state
         self.playbook_names = playbook_names
         self.sys_lock = sys_lock
@@ -3409,17 +4269,19 @@ class Action():
         if 'command_parameter' in _dict:
             args['command_parameter'] = _dict.get('command_parameter')
         if 'bastion' in _dict:
-            args['bastion'] = TargetResourceset.from_dict(_dict.get('bastion'))
-        if 'targets' in _dict:
-            args['targets'] = [TargetResourceset.from_dict(x) for x in _dict.get('targets')]
+            args['bastion'] = BastionResourceDefinition.from_dict(_dict.get('bastion'))
+        if 'inventory' in _dict:
+            args['inventory'] = _dict.get('inventory')
+        if 'bastion_credential' in _dict:
+            args['bastion_credential'] = VariableData.from_dict(_dict.get('bastion_credential'))
+        if 'credentials' in _dict:
+            args['credentials'] = [VariableData.from_dict(x) for x in _dict.get('credentials')]
         if 'inputs' in _dict:
             args['inputs'] = [VariableData.from_dict(x) for x in _dict.get('inputs')]
         if 'outputs' in _dict:
             args['outputs'] = [VariableData.from_dict(x) for x in _dict.get('outputs')]
         if 'settings' in _dict:
             args['settings'] = [VariableData.from_dict(x) for x in _dict.get('settings')]
-        if 'trigger_record_id' in _dict:
-            args['trigger_record_id'] = _dict.get('trigger_record_id')
         if 'id' in _dict:
             args['id'] = _dict.get('id')
         if 'crn' in _dict:
@@ -3442,8 +4304,6 @@ class Action():
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         if 'updated_by' in _dict:
             args['updated_by'] = _dict.get('updated_by')
-        if 'namespace' in _dict:
-            args['namespace'] = _dict.get('namespace')
         if 'state' in _dict:
             args['state'] = ActionState.from_dict(_dict.get('state'))
         if 'playbook_names' in _dict:
@@ -3482,16 +4342,18 @@ class Action():
             _dict['command_parameter'] = self.command_parameter
         if hasattr(self, 'bastion') and self.bastion is not None:
             _dict['bastion'] = self.bastion.to_dict()
-        if hasattr(self, 'targets') and self.targets is not None:
-            _dict['targets'] = [x.to_dict() for x in self.targets]
+        if hasattr(self, 'inventory') and self.inventory is not None:
+            _dict['inventory'] = self.inventory
+        if hasattr(self, 'bastion_credential') and self.bastion_credential is not None:
+            _dict['bastion_credential'] = self.bastion_credential.to_dict()
+        if hasattr(self, 'credentials') and self.credentials is not None:
+            _dict['credentials'] = [x.to_dict() for x in self.credentials]
         if hasattr(self, 'inputs') and self.inputs is not None:
             _dict['inputs'] = [x.to_dict() for x in self.inputs]
         if hasattr(self, 'outputs') and self.outputs is not None:
             _dict['outputs'] = [x.to_dict() for x in self.outputs]
         if hasattr(self, 'settings') and self.settings is not None:
             _dict['settings'] = [x.to_dict() for x in self.settings]
-        if hasattr(self, 'trigger_record_id') and self.trigger_record_id is not None:
-            _dict['trigger_record_id'] = self.trigger_record_id
         if hasattr(self, 'id') and getattr(self, 'id') is not None:
             _dict['id'] = getattr(self, 'id')
         if hasattr(self, 'crn') and getattr(self, 'crn') is not None:
@@ -3514,8 +4376,6 @@ class Action():
             _dict['updated_at'] = datetime_to_string(getattr(self, 'updated_at'))
         if hasattr(self, 'updated_by') and getattr(self, 'updated_by') is not None:
             _dict['updated_by'] = getattr(self, 'updated_by')
-        if hasattr(self, 'namespace') and getattr(self, 'namespace') is not None:
-            _dict['namespace'] = getattr(self, 'namespace')
         if hasattr(self, 'state') and self.state is not None:
             _dict['state'] = self.state.to_dict()
         if hasattr(self, 'playbook_names') and getattr(self, 'playbook_names') is not None:
@@ -3547,10 +4407,10 @@ class Action():
         List of workspace locations supported by IBM Cloud Schematics service.  Note, this
         does not limit the location of the resources provisioned using Schematics.
         """
-        US_SOUTH = 'us_south'
-        US_EAST = 'us_east'
-        EU_GB = 'eu_gb'
-        EU_DE = 'eu_de'
+        US_SOUTH = 'us-south'
+        US_EAST = 'us-east'
+        EU_GB = 'eu-gb'
+        EU_DE = 'eu-de'
 
 
     class SourceTypeEnum(str, Enum):
@@ -3839,10 +4699,10 @@ class ActionLite():
         List of workspace locations supported by IBM Cloud Schematics service.  Note, this
         does not limit the location of the resources provisioned using Schematics.
         """
-        US_SOUTH = 'us_south'
-        US_EAST = 'us_east'
-        EU_GB = 'eu_gb'
-        EU_DE = 'eu_de'
+        US_SOUTH = 'us-south'
+        US_EAST = 'us-east'
+        EU_GB = 'eu-gb'
+        EU_DE = 'eu-de'
 
 
 class ActionLiteState():
@@ -3926,6 +4786,7 @@ class ActionState():
     Computed state of the Action.
 
     :attr str status_code: (optional) Status of automation (workspace or action).
+    :attr str status_job_id: (optional) Job id reference for this status.
     :attr str status_message: (optional) Automation status message - to be displayed
           along with the status_code.
     """
@@ -3933,16 +4794,19 @@ class ActionState():
     def __init__(self,
                  *,
                  status_code: str = None,
+                 status_job_id: str = None,
                  status_message: str = None) -> None:
         """
         Initialize a ActionState object.
 
         :param str status_code: (optional) Status of automation (workspace or
                action).
+        :param str status_job_id: (optional) Job id reference for this status.
         :param str status_message: (optional) Automation status message - to be
                displayed along with the status_code.
         """
         self.status_code = status_code
+        self.status_job_id = status_job_id
         self.status_message = status_message
 
     @classmethod
@@ -3951,6 +4815,8 @@ class ActionState():
         args = {}
         if 'status_code' in _dict:
             args['status_code'] = _dict.get('status_code')
+        if 'status_job_id' in _dict:
+            args['status_job_id'] = _dict.get('status_job_id')
         if 'status_message' in _dict:
             args['status_message'] = _dict.get('status_message')
         return cls(**args)
@@ -3965,6 +4831,8 @@ class ActionState():
         _dict = {}
         if hasattr(self, 'status_code') and self.status_code is not None:
             _dict['status_code'] = self.status_code
+        if hasattr(self, 'status_job_id') and self.status_job_id is not None:
+            _dict['status_job_id'] = self.status_job_id
         if hasattr(self, 'status_message') and self.status_message is not None:
             _dict['status_message'] = self.status_message
         return _dict
@@ -3996,6 +4864,69 @@ class ActionState():
         DISABLED = 'disabled'
         CRITICAL = 'critical'
 
+
+class BastionResourceDefinition():
+    """
+    Describes a bastion resource.
+
+    :attr str name: (optional) Bastion Name(Unique).
+    :attr str host: (optional) Reference to the Inventory resource definition.
+    """
+
+    def __init__(self,
+                 *,
+                 name: str = None,
+                 host: str = None) -> None:
+        """
+        Initialize a BastionResourceDefinition object.
+
+        :param str name: (optional) Bastion Name(Unique).
+        :param str host: (optional) Reference to the Inventory resource definition.
+        """
+        self.name = name
+        self.host = host
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'BastionResourceDefinition':
+        """Initialize a BastionResourceDefinition object from a json dictionary."""
+        args = {}
+        if 'name' in _dict:
+            args['name'] = _dict.get('name')
+        if 'host' in _dict:
+            args['host'] = _dict.get('host')
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a BastionResourceDefinition object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'name') and self.name is not None:
+            _dict['name'] = self.name
+        if hasattr(self, 'host') and self.host is not None:
+            _dict['host'] = self.host
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this BastionResourceDefinition object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'BastionResourceDefinition') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'BastionResourceDefinition') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
 
 class CatalogRef():
     """
@@ -4360,13 +5291,252 @@ class ExternalSourceGit():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
+class InventoryResourceRecord():
+    """
+    Complete inventory resource details with user inputs and system generated data.
+
+    :attr str name: (optional) Inventory name.
+    :attr str id: (optional) Inventory id.
+    :attr str description: (optional) Inventory description.
+    :attr str location: (optional) List of workspace locations supported by IBM
+          Cloud Schematics service.  Note, this does not limit the location of the
+          resources provisioned using Schematics.
+    :attr str resource_group: (optional) Resource-group name for the Inventory
+          definition.  By default, Action will be created in Default Resource Group.
+    :attr datetime created_at: (optional) Inventory creation time.
+    :attr str created_by: (optional) Email address of user who created the
+          Inventory.
+    :attr datetime updated_at: (optional) Inventory updation time.
+    :attr str updated_by: (optional) Email address of user who updated the
+          Inventory.
+    :attr str inventories_ini: (optional) Input inventory of host and host group for
+          the playbook,  in the .ini file format.
+    :attr List[str] resource_queries: (optional) Input resource queries that is used
+          to dynamically generate  the inventory of host and host group for the playbook.
+    """
+
+    def __init__(self,
+                 *,
+                 name: str = None,
+                 id: str = None,
+                 description: str = None,
+                 location: str = None,
+                 resource_group: str = None,
+                 created_at: datetime = None,
+                 created_by: str = None,
+                 updated_at: datetime = None,
+                 updated_by: str = None,
+                 inventories_ini: str = None,
+                 resource_queries: List[str] = None) -> None:
+        """
+        Initialize a InventoryResourceRecord object.
+
+        :param str name: (optional) Inventory name.
+        :param str description: (optional) Inventory description.
+        :param str location: (optional) List of workspace locations supported by
+               IBM Cloud Schematics service.  Note, this does not limit the location of
+               the resources provisioned using Schematics.
+        :param str resource_group: (optional) Resource-group name for the Inventory
+               definition.  By default, Action will be created in Default Resource Group.
+        :param str inventories_ini: (optional) Input inventory of host and host
+               group for the playbook,  in the .ini file format.
+        :param List[str] resource_queries: (optional) Input resource queries that
+               is used to dynamically generate  the inventory of host and host group for
+               the playbook.
+        """
+        self.name = name
+        self.id = id
+        self.description = description
+        self.location = location
+        self.resource_group = resource_group
+        self.created_at = created_at
+        self.created_by = created_by
+        self.updated_at = updated_at
+        self.updated_by = updated_by
+        self.inventories_ini = inventories_ini
+        self.resource_queries = resource_queries
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'InventoryResourceRecord':
+        """Initialize a InventoryResourceRecord object from a json dictionary."""
+        args = {}
+        if 'name' in _dict:
+            args['name'] = _dict.get('name')
+        if 'id' in _dict:
+            args['id'] = _dict.get('id')
+        if 'description' in _dict:
+            args['description'] = _dict.get('description')
+        if 'location' in _dict:
+            args['location'] = _dict.get('location')
+        if 'resource_group' in _dict:
+            args['resource_group'] = _dict.get('resource_group')
+        if 'created_at' in _dict:
+            args['created_at'] = string_to_datetime(_dict.get('created_at'))
+        if 'created_by' in _dict:
+            args['created_by'] = _dict.get('created_by')
+        if 'updated_at' in _dict:
+            args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
+        if 'updated_by' in _dict:
+            args['updated_by'] = _dict.get('updated_by')
+        if 'inventories_ini' in _dict:
+            args['inventories_ini'] = _dict.get('inventories_ini')
+        if 'resource_queries' in _dict:
+            args['resource_queries'] = _dict.get('resource_queries')
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a InventoryResourceRecord object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'name') and self.name is not None:
+            _dict['name'] = self.name
+        if hasattr(self, 'id') and getattr(self, 'id') is not None:
+            _dict['id'] = getattr(self, 'id')
+        if hasattr(self, 'description') and self.description is not None:
+            _dict['description'] = self.description
+        if hasattr(self, 'location') and self.location is not None:
+            _dict['location'] = self.location
+        if hasattr(self, 'resource_group') and self.resource_group is not None:
+            _dict['resource_group'] = self.resource_group
+        if hasattr(self, 'created_at') and getattr(self, 'created_at') is not None:
+            _dict['created_at'] = datetime_to_string(getattr(self, 'created_at'))
+        if hasattr(self, 'created_by') and getattr(self, 'created_by') is not None:
+            _dict['created_by'] = getattr(self, 'created_by')
+        if hasattr(self, 'updated_at') and getattr(self, 'updated_at') is not None:
+            _dict['updated_at'] = datetime_to_string(getattr(self, 'updated_at'))
+        if hasattr(self, 'updated_by') and getattr(self, 'updated_by') is not None:
+            _dict['updated_by'] = getattr(self, 'updated_by')
+        if hasattr(self, 'inventories_ini') and self.inventories_ini is not None:
+            _dict['inventories_ini'] = self.inventories_ini
+        if hasattr(self, 'resource_queries') and self.resource_queries is not None:
+            _dict['resource_queries'] = self.resource_queries
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this InventoryResourceRecord object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'InventoryResourceRecord') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'InventoryResourceRecord') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+    class LocationEnum(str, Enum):
+        """
+        List of workspace locations supported by IBM Cloud Schematics service.  Note, this
+        does not limit the location of the resources provisioned using Schematics.
+        """
+        US_SOUTH = 'us-south'
+        US_EAST = 'us-east'
+        EU_GB = 'eu-gb'
+        EU_DE = 'eu-de'
+
+
+class InventoryResourceRecordList():
+    """
+    List of Inventory resource records.
+
+    :attr int total_count: (optional) Total number of records.
+    :attr int limit: Number of records returned.
+    :attr int offset: Skipped number of records.
+    :attr List[InventoryResourceRecord] inventories: (optional) List of inventory
+          resource records.
+    """
+
+    def __init__(self,
+                 limit: int,
+                 offset: int,
+                 *,
+                 total_count: int = None,
+                 inventories: List['InventoryResourceRecord'] = None) -> None:
+        """
+        Initialize a InventoryResourceRecordList object.
+
+        :param int limit: Number of records returned.
+        :param int offset: Skipped number of records.
+        :param int total_count: (optional) Total number of records.
+        :param List[InventoryResourceRecord] inventories: (optional) List of
+               inventory resource records.
+        """
+        self.total_count = total_count
+        self.limit = limit
+        self.offset = offset
+        self.inventories = inventories
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'InventoryResourceRecordList':
+        """Initialize a InventoryResourceRecordList object from a json dictionary."""
+        args = {}
+        if 'total_count' in _dict:
+            args['total_count'] = _dict.get('total_count')
+        if 'limit' in _dict:
+            args['limit'] = _dict.get('limit')
+        else:
+            raise ValueError('Required property \'limit\' not present in InventoryResourceRecordList JSON')
+        if 'offset' in _dict:
+            args['offset'] = _dict.get('offset')
+        else:
+            raise ValueError('Required property \'offset\' not present in InventoryResourceRecordList JSON')
+        if 'inventories' in _dict:
+            args['inventories'] = [InventoryResourceRecord.from_dict(x) for x in _dict.get('inventories')]
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a InventoryResourceRecordList object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'total_count') and self.total_count is not None:
+            _dict['total_count'] = self.total_count
+        if hasattr(self, 'limit') and self.limit is not None:
+            _dict['limit'] = self.limit
+        if hasattr(self, 'offset') and self.offset is not None:
+            _dict['offset'] = self.offset
+        if hasattr(self, 'inventories') and self.inventories is not None:
+            _dict['inventories'] = [x.to_dict() for x in self.inventories]
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this InventoryResourceRecordList object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'InventoryResourceRecordList') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'InventoryResourceRecordList') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
 class Job():
     """
     Complete Job with user inputs and system generated data.
 
     :attr str command_object: (optional) Name of the Schematics automation resource.
     :attr str command_object_id: (optional) Job command object id (workspace-id,
-          action-id or control-id).
+          action-id).
     :attr str command_name: (optional) Schematics job command name.
     :attr str command_parameter: (optional) Schematics job command parameter
           (playbook-name, capsule-name or flow-name).
@@ -4392,9 +5562,8 @@ class Job():
     :attr str duration: (optional) Duration of job execution; example 40 sec.
     :attr JobStatus status: (optional) Job Status.
     :attr JobData data: (optional) Job data.
-    :attr List[TargetResourceset] targets: (optional) Job targets.
-    :attr TargetResourceset bastion: (optional) Complete Target details with user
-          inputs and system generated data.
+    :attr BastionResourceDefinition bastion: (optional) Describes a bastion
+          resource.
     :attr JobLogSummary log_summary: (optional) Job log summary record.
     :attr str log_store_url: (optional) Job log store URL.
     :attr str state_store_url: (optional) Job state store URL.
@@ -4424,8 +5593,7 @@ class Job():
                  duration: str = None,
                  status: 'JobStatus' = None,
                  data: 'JobData' = None,
-                 targets: List['TargetResourceset'] = None,
-                 bastion: 'TargetResourceset' = None,
+                 bastion: 'BastionResourceDefinition' = None,
                  log_summary: 'JobLogSummary' = None,
                  log_store_url: str = None,
                  state_store_url: str = None,
@@ -4437,7 +5605,7 @@ class Job():
         :param str command_object: (optional) Name of the Schematics automation
                resource.
         :param str command_object_id: (optional) Job command object id
-               (workspace-id, action-id or control-id).
+               (workspace-id, action-id).
         :param str command_name: (optional) Schematics job command name.
         :param str command_parameter: (optional) Schematics job command parameter
                (playbook-name, capsule-name or flow-name).
@@ -4452,8 +5620,8 @@ class Job():
                the resources provisioned using Schematics.
         :param JobStatus status: (optional) Job Status.
         :param JobData data: (optional) Job data.
-        :param TargetResourceset bastion: (optional) Complete Target details with
-               user inputs and system generated data.
+        :param BastionResourceDefinition bastion: (optional) Describes a bastion
+               resource.
         :param JobLogSummary log_summary: (optional) Job log summary record.
         """
         self.command_object = command_object
@@ -4476,7 +5644,6 @@ class Job():
         self.duration = duration
         self.status = status
         self.data = data
-        self.targets = targets
         self.bastion = bastion
         self.log_summary = log_summary
         self.log_store_url = log_store_url
@@ -4528,10 +5695,8 @@ class Job():
             args['status'] = JobStatus.from_dict(_dict.get('status'))
         if 'data' in _dict:
             args['data'] = JobData.from_dict(_dict.get('data'))
-        if 'targets' in _dict:
-            args['targets'] = [TargetResourceset.from_dict(x) for x in _dict.get('targets')]
         if 'bastion' in _dict:
-            args['bastion'] = TargetResourceset.from_dict(_dict.get('bastion'))
+            args['bastion'] = BastionResourceDefinition.from_dict(_dict.get('bastion'))
         if 'log_summary' in _dict:
             args['log_summary'] = JobLogSummary.from_dict(_dict.get('log_summary'))
         if 'log_store_url' in _dict:
@@ -4592,8 +5757,6 @@ class Job():
             _dict['status'] = self.status.to_dict()
         if hasattr(self, 'data') and self.data is not None:
             _dict['data'] = self.data.to_dict()
-        if hasattr(self, 'targets') and getattr(self, 'targets') is not None:
-            _dict['targets'] = [x.to_dict() for x in getattr(self, 'targets')]
         if hasattr(self, 'bastion') and self.bastion is not None:
             _dict['bastion'] = self.bastion.to_dict()
         if hasattr(self, 'log_summary') and self.log_summary is not None:
@@ -4632,32 +5795,20 @@ class Job():
         """
         WORKSPACE = 'workspace'
         ACTION = 'action'
+        SYSTEM = 'system'
 
 
     class CommandNameEnum(str, Enum):
         """
         Schematics job command name.
         """
-        WORKSPACE_INIT_FLOW = 'workspace_init_flow'
-        WORKSPACE_PLAN_FLOW = 'workspace_plan_flow'
-        WORKSPACE_APPLY_FLOW = 'workspace_apply_flow'
-        WORKSPACE_DESTROY_FLOW = 'workspace_destroy_flow'
-        WORKSPACE_REFRESH_FLOW = 'workspace_refresh_flow'
-        WORKSPACE_SHOW_FLOW = 'workspace_show_flow'
-        WORKSPACE_CUSTOM_FLOW = 'workspace_custom_flow'
-        TERRAFORM_INIT = 'terraform_init'
-        TERRFORM_PLAN = 'terrform_plan'
-        TERRFORM_APPLY = 'terrform_apply'
-        TERRFORM_DESTROY = 'terrform_destroy'
-        TERRFORM_REFRESH = 'terrform_refresh'
-        TERRFORM_TAINT = 'terrform_taint'
-        TERRFORM_SHOW = 'terrform_show'
-        HELM_INSTALL = 'helm_install'
-        HELM_LIST = 'helm_list'
-        HELM_SHOW = 'helm_show'
         ANSIBLE_PLAYBOOK_RUN = 'ansible_playbook_run'
         ANSIBLE_PLAYBOOK_CHECK = 'ansible_playbook_check'
-        OPA_EVALUATE = 'opa_evaluate'
+        SYSTEM_KEY_ENABLE = 'system_key_enable'
+        SYTEM_KEY_DELETE = 'sytem_key_delete'
+        SYSTEM_KEY_DISABLE = 'system_key_disable'
+        SYSTEM_KEY_ROTATE = 'system_key_rotate'
+        SYSTEM_KEY_RESTORE = 'system_key_restore'
 
 
     class LocationEnum(str, Enum):
@@ -4665,10 +5816,10 @@ class Job():
         List of workspace locations supported by IBM Cloud Schematics service.  Note, this
         does not limit the location of the resources provisioned using Schematics.
         """
-        US_SOUTH = 'us_south'
-        US_EAST = 'us_east'
-        EU_GB = 'eu_gb'
-        EU_DE = 'eu_de'
+        US_SOUTH = 'us-south'
+        US_EAST = 'us-east'
+        EU_GB = 'eu-gb'
+        EU_DE = 'eu-de'
 
 
 class JobData():
@@ -4677,20 +5828,24 @@ class JobData():
 
     :attr str job_type: Type of Job.
     :attr JobDataAction action_job_data: (optional) Action Job data.
+    :attr JobDataSystem system_job_data: (optional) Controls Job data.
     """
 
     def __init__(self,
                  job_type: str,
                  *,
-                 action_job_data: 'JobDataAction' = None) -> None:
+                 action_job_data: 'JobDataAction' = None,
+                 system_job_data: 'JobDataSystem' = None) -> None:
         """
         Initialize a JobData object.
 
         :param str job_type: Type of Job.
         :param JobDataAction action_job_data: (optional) Action Job data.
+        :param JobDataSystem system_job_data: (optional) Controls Job data.
         """
         self.job_type = job_type
         self.action_job_data = action_job_data
+        self.system_job_data = system_job_data
 
     @classmethod
     def from_dict(cls, _dict: Dict) -> 'JobData':
@@ -4702,6 +5857,8 @@ class JobData():
             raise ValueError('Required property \'job_type\' not present in JobData JSON')
         if 'action_job_data' in _dict:
             args['action_job_data'] = JobDataAction.from_dict(_dict.get('action_job_data'))
+        if 'system_job_data' in _dict:
+            args['system_job_data'] = JobDataSystem.from_dict(_dict.get('system_job_data'))
         return cls(**args)
 
     @classmethod
@@ -4716,6 +5873,8 @@ class JobData():
             _dict['job_type'] = self.job_type
         if hasattr(self, 'action_job_data') and self.action_job_data is not None:
             _dict['action_job_data'] = self.action_job_data.to_dict()
+        if hasattr(self, 'system_job_data') and self.system_job_data is not None:
+            _dict['system_job_data'] = self.system_job_data.to_dict()
         return _dict
 
     def _to_dict(self):
@@ -4742,6 +5901,7 @@ class JobData():
         """
         REPO_DOWNLOAD_JOB = 'repo_download_job'
         ACTION_JOB = 'action_job'
+        SYSTEM_JOB = 'system_job'
 
 
 class JobDataAction():
@@ -4756,6 +5916,10 @@ class JobDataAction():
     :attr List[VariableData] settings: (optional) Environment variables used by all
           the templates in the Action.
     :attr datetime updated_at: (optional) Job status updation timestamp.
+    :attr InventoryResourceRecord inventory_record: (optional) Complete inventory
+          resource details with user inputs and system generated data.
+    :attr str materialized_inventory: (optional) Materialized inventory details used
+          by the Action Job, in .ini format.
     """
 
     def __init__(self,
@@ -4764,7 +5928,9 @@ class JobDataAction():
                  inputs: List['VariableData'] = None,
                  outputs: List['VariableData'] = None,
                  settings: List['VariableData'] = None,
-                 updated_at: datetime = None) -> None:
+                 updated_at: datetime = None,
+                 inventory_record: 'InventoryResourceRecord' = None,
+                 materialized_inventory: str = None) -> None:
         """
         Initialize a JobDataAction object.
 
@@ -4776,12 +5942,18 @@ class JobDataAction():
         :param List[VariableData] settings: (optional) Environment variables used
                by all the templates in the Action.
         :param datetime updated_at: (optional) Job status updation timestamp.
+        :param InventoryResourceRecord inventory_record: (optional) Complete
+               inventory resource details with user inputs and system generated data.
+        :param str materialized_inventory: (optional) Materialized inventory
+               details used by the Action Job, in .ini format.
         """
         self.action_name = action_name
         self.inputs = inputs
         self.outputs = outputs
         self.settings = settings
         self.updated_at = updated_at
+        self.inventory_record = inventory_record
+        self.materialized_inventory = materialized_inventory
 
     @classmethod
     def from_dict(cls, _dict: Dict) -> 'JobDataAction':
@@ -4797,6 +5969,10 @@ class JobDataAction():
             args['settings'] = [VariableData.from_dict(x) for x in _dict.get('settings')]
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
+        if 'inventory_record' in _dict:
+            args['inventory_record'] = InventoryResourceRecord.from_dict(_dict.get('inventory_record'))
+        if 'materialized_inventory' in _dict:
+            args['materialized_inventory'] = _dict.get('materialized_inventory')
         return cls(**args)
 
     @classmethod
@@ -4817,6 +5993,10 @@ class JobDataAction():
             _dict['settings'] = [x.to_dict() for x in self.settings]
         if hasattr(self, 'updated_at') and self.updated_at is not None:
             _dict['updated_at'] = datetime_to_string(self.updated_at)
+        if hasattr(self, 'inventory_record') and self.inventory_record is not None:
+            _dict['inventory_record'] = self.inventory_record.to_dict()
+        if hasattr(self, 'materialized_inventory') and self.materialized_inventory is not None:
+            _dict['materialized_inventory'] = self.materialized_inventory
         return _dict
 
     def _to_dict(self):
@@ -4834,6 +6014,79 @@ class JobDataAction():
         return self.__dict__ == other.__dict__
 
     def __ne__(self, other: 'JobDataAction') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+class JobDataSystem():
+    """
+    Controls Job data.
+
+    :attr str key_id: (optional) Key ID for which key event is generated.
+    :attr List[str] schematics_resource_id: (optional) List of the schematics
+          resource id.
+    :attr datetime updated_at: (optional) Job status updation timestamp.
+    """
+
+    def __init__(self,
+                 *,
+                 key_id: str = None,
+                 schematics_resource_id: List[str] = None,
+                 updated_at: datetime = None) -> None:
+        """
+        Initialize a JobDataSystem object.
+
+        :param str key_id: (optional) Key ID for which key event is generated.
+        :param List[str] schematics_resource_id: (optional) List of the schematics
+               resource id.
+        :param datetime updated_at: (optional) Job status updation timestamp.
+        """
+        self.key_id = key_id
+        self.schematics_resource_id = schematics_resource_id
+        self.updated_at = updated_at
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'JobDataSystem':
+        """Initialize a JobDataSystem object from a json dictionary."""
+        args = {}
+        if 'key_id' in _dict:
+            args['key_id'] = _dict.get('key_id')
+        if 'schematics_resource_id' in _dict:
+            args['schematics_resource_id'] = _dict.get('schematics_resource_id')
+        if 'updated_at' in _dict:
+            args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a JobDataSystem object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'key_id') and self.key_id is not None:
+            _dict['key_id'] = self.key_id
+        if hasattr(self, 'schematics_resource_id') and self.schematics_resource_id is not None:
+            _dict['schematics_resource_id'] = self.schematics_resource_id
+        if hasattr(self, 'updated_at') and self.updated_at is not None:
+            _dict['updated_at'] = datetime_to_string(self.updated_at)
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this JobDataSystem object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'JobDataSystem') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'JobDataSystem') -> bool:
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
@@ -4937,7 +6190,6 @@ class JobLite():
           resources provisioned using Schematics.
     :attr str resource_group: (optional) Resource-group name derived from the
           related Action,.
-    :attr List[TargetResourceset] targets: (optional) Job targets.
     :attr datetime submitted_at: (optional) Job submission time.
     :attr str submitted_by: (optional) Email address of user who submitted the job.
     :attr str duration: (optional) Duration of job execution; example 40 sec.
@@ -4959,7 +6211,6 @@ class JobLite():
                  tags: List[str] = None,
                  location: str = None,
                  resource_group: str = None,
-                 targets: List['TargetResourceset'] = None,
                  submitted_at: datetime = None,
                  submitted_by: str = None,
                  duration: str = None,
@@ -4986,7 +6237,6 @@ class JobLite():
                the resources provisioned using Schematics.
         :param str resource_group: (optional) Resource-group name derived from the
                related Action,.
-        :param List[TargetResourceset] targets: (optional) Job targets.
         :param datetime submitted_at: (optional) Job submission time.
         :param str submitted_by: (optional) Email address of user who submitted the
                job.
@@ -5006,7 +6256,6 @@ class JobLite():
         self.tags = tags
         self.location = location
         self.resource_group = resource_group
-        self.targets = targets
         self.submitted_at = submitted_at
         self.submitted_by = submitted_by
         self.duration = duration
@@ -5038,8 +6287,6 @@ class JobLite():
             args['location'] = _dict.get('location')
         if 'resource_group' in _dict:
             args['resource_group'] = _dict.get('resource_group')
-        if 'targets' in _dict:
-            args['targets'] = [TargetResourceset.from_dict(x) for x in _dict.get('targets')]
         if 'submitted_at' in _dict:
             args['submitted_at'] = string_to_datetime(_dict.get('submitted_at'))
         if 'submitted_by' in _dict:
@@ -5084,8 +6331,6 @@ class JobLite():
             _dict['location'] = self.location
         if hasattr(self, 'resource_group') and self.resource_group is not None:
             _dict['resource_group'] = self.resource_group
-        if hasattr(self, 'targets') and self.targets is not None:
-            _dict['targets'] = [x.to_dict() for x in self.targets]
         if hasattr(self, 'submitted_at') and self.submitted_at is not None:
             _dict['submitted_at'] = datetime_to_string(self.submitted_at)
         if hasattr(self, 'submitted_by') and self.submitted_by is not None:
@@ -5128,32 +6373,20 @@ class JobLite():
         """
         WORKSPACE = 'workspace'
         ACTION = 'action'
+        SYSTEM = 'system'
 
 
     class CommandNameEnum(str, Enum):
         """
         Schematics job command name.
         """
-        WORKSPACE_INIT_FLOW = 'workspace_init_flow'
-        WORKSPACE_PLAN_FLOW = 'workspace_plan_flow'
-        WORKSPACE_APPLY_FLOW = 'workspace_apply_flow'
-        WORKSPACE_DESTROY_FLOW = 'workspace_destroy_flow'
-        WORKSPACE_REFRESH_FLOW = 'workspace_refresh_flow'
-        WORKSPACE_SHOW_FLOW = 'workspace_show_flow'
-        WORKSPACE_CUSTOM_FLOW = 'workspace_custom_flow'
-        TERRAFORM_INIT = 'terraform_init'
-        TERRFORM_PLAN = 'terrform_plan'
-        TERRFORM_APPLY = 'terrform_apply'
-        TERRFORM_DESTROY = 'terrform_destroy'
-        TERRFORM_REFRESH = 'terrform_refresh'
-        TERRFORM_TAINT = 'terrform_taint'
-        TERRFORM_SHOW = 'terrform_show'
-        HELM_INSTALL = 'helm_install'
-        HELM_LIST = 'helm_list'
-        HELM_SHOW = 'helm_show'
         ANSIBLE_PLAYBOOK_RUN = 'ansible_playbook_run'
         ANSIBLE_PLAYBOOK_CHECK = 'ansible_playbook_check'
-        OPA_EVALUATE = 'opa_evaluate'
+        SYSTEM_KEY_ENABLE = 'system_key_enable'
+        SYTEM_KEY_DELETE = 'sytem_key_delete'
+        SYSTEM_KEY_DISABLE = 'system_key_disable'
+        SYSTEM_KEY_ROTATE = 'system_key_rotate'
+        SYSTEM_KEY_RESTORE = 'system_key_restore'
 
 
     class LocationEnum(str, Enum):
@@ -5161,10 +6394,10 @@ class JobLite():
         List of workspace locations supported by IBM Cloud Schematics service.  Note, this
         does not limit the location of the resources provisioned using Schematics.
         """
-        US_SOUTH = 'us_south'
-        US_EAST = 'us_east'
-        EU_GB = 'eu_gb'
-        EU_DE = 'eu_de'
+        US_SOUTH = 'us-south'
+        US_EAST = 'us-east'
+        EU_GB = 'eu-gb'
+        EU_DE = 'eu-de'
 
 
 class JobLog():
@@ -5287,7 +6520,8 @@ class JobLogSummary():
     :attr List[JobLogSummaryLogErrorsItem] log_errors: (optional) Job log errors.
     :attr JobLogSummaryRepoDownloadJob repo_download_job: (optional) Repo download
           Job log summary.
-    :attr JobLogSummaryActionJob action_job: (optional) Flow Job log summary.
+    :attr JobLogSummaryActionJob action_job: (optional) Action Job.
+    :attr JobLogSummarySystemJob system_job: (optional) System Job log summary.
     """
 
     def __init__(self,
@@ -5299,14 +6533,17 @@ class JobLogSummary():
                  elapsed_time: float = None,
                  log_errors: List['JobLogSummaryLogErrorsItem'] = None,
                  repo_download_job: 'JobLogSummaryRepoDownloadJob' = None,
-                 action_job: 'JobLogSummaryActionJob' = None) -> None:
+                 action_job: 'JobLogSummaryActionJob' = None,
+                 system_job: 'JobLogSummarySystemJob' = None) -> None:
         """
         Initialize a JobLogSummary object.
 
         :param str job_type: (optional) Type of Job.
         :param JobLogSummaryRepoDownloadJob repo_download_job: (optional) Repo
                download Job log summary.
-        :param JobLogSummaryActionJob action_job: (optional) Flow Job log summary.
+        :param JobLogSummaryActionJob action_job: (optional) Action Job.
+        :param JobLogSummarySystemJob system_job: (optional) System Job log
+               summary.
         """
         self.job_id = job_id
         self.job_type = job_type
@@ -5316,6 +6553,7 @@ class JobLogSummary():
         self.log_errors = log_errors
         self.repo_download_job = repo_download_job
         self.action_job = action_job
+        self.system_job = system_job
 
     @classmethod
     def from_dict(cls, _dict: Dict) -> 'JobLogSummary':
@@ -5337,6 +6575,8 @@ class JobLogSummary():
             args['repo_download_job'] = JobLogSummaryRepoDownloadJob.from_dict(_dict.get('repo_download_job'))
         if 'action_job' in _dict:
             args['action_job'] = JobLogSummaryActionJob.from_dict(_dict.get('action_job'))
+        if 'system_job' in _dict:
+            args['system_job'] = JobLogSummarySystemJob.from_dict(_dict.get('system_job'))
         return cls(**args)
 
     @classmethod
@@ -5363,6 +6603,8 @@ class JobLogSummary():
             _dict['repo_download_job'] = self.repo_download_job.to_dict()
         if hasattr(self, 'action_job') and self.action_job is not None:
             _dict['action_job'] = self.action_job.to_dict()
+        if hasattr(self, 'system_job') and self.system_job is not None:
+            _dict['system_job'] = self.system_job.to_dict()
         return _dict
 
     def _to_dict(self):
@@ -5390,15 +6632,14 @@ class JobLogSummary():
         REPO_DOWNLOAD_JOB = 'repo_download_job'
         WORKSPACE_JOB = 'workspace_job'
         ACTION_JOB = 'action_job'
-        CONTROLS_JOB = 'controls_job'
-        CAPSULE_JOB = 'capsule_job'
+        SYSTEM_JOB = 'system_job'
 
 
 class JobLogSummaryActionJob():
     """
-    Flow Job log summary.
+    Action Job.
 
-    :attr float target_count: (optional) number of targets or hosts.
+    :attr float host_count: (optional) number of hosts.
     :attr float task_count: (optional) number of tasks in playbook.
     :attr float play_count: (optional) number of plays in playbook.
     :attr JobLogSummaryActionJobRecap recap: (optional) Recap records.
@@ -5406,7 +6647,7 @@ class JobLogSummaryActionJob():
 
     def __init__(self,
                  *,
-                 target_count: float = None,
+                 host_count: float = None,
                  task_count: float = None,
                  play_count: float = None,
                  recap: 'JobLogSummaryActionJobRecap' = None) -> None:
@@ -5415,7 +6656,7 @@ class JobLogSummaryActionJob():
 
         :param JobLogSummaryActionJobRecap recap: (optional) Recap records.
         """
-        self.target_count = target_count
+        self.host_count = host_count
         self.task_count = task_count
         self.play_count = play_count
         self.recap = recap
@@ -5424,8 +6665,8 @@ class JobLogSummaryActionJob():
     def from_dict(cls, _dict: Dict) -> 'JobLogSummaryActionJob':
         """Initialize a JobLogSummaryActionJob object from a json dictionary."""
         args = {}
-        if 'target_count' in _dict:
-            args['target_count'] = _dict.get('target_count')
+        if 'host_count' in _dict:
+            args['host_count'] = _dict.get('host_count')
         if 'task_count' in _dict:
             args['task_count'] = _dict.get('task_count')
         if 'play_count' in _dict:
@@ -5442,8 +6683,8 @@ class JobLogSummaryActionJob():
     def to_dict(self) -> Dict:
         """Return a json dictionary representing this model."""
         _dict = {}
-        if hasattr(self, 'target_count') and getattr(self, 'target_count') is not None:
-            _dict['target_count'] = getattr(self, 'target_count')
+        if hasattr(self, 'host_count') and getattr(self, 'host_count') is not None:
+            _dict['host_count'] = getattr(self, 'host_count')
         if hasattr(self, 'task_count') and getattr(self, 'task_count') is not None:
             _dict['task_count'] = getattr(self, 'task_count')
         if hasattr(self, 'play_count') and getattr(self, 'play_count') is not None:
@@ -5474,7 +6715,7 @@ class JobLogSummaryActionJobRecap():
     """
     Recap records.
 
-    :attr List[str] target: (optional) List of target or host name.
+    :attr List[str] hosts: (optional) List of host name.
     :attr float ok: (optional) Number of OK.
     :attr float changed: (optional) Number of changed.
     :attr float failed: (optional) Number of failed.
@@ -5484,7 +6725,7 @@ class JobLogSummaryActionJobRecap():
 
     def __init__(self,
                  *,
-                 target: List[str] = None,
+                 hosts: List[str] = None,
                  ok: float = None,
                  changed: float = None,
                  failed: float = None,
@@ -5493,14 +6734,14 @@ class JobLogSummaryActionJobRecap():
         """
         Initialize a JobLogSummaryActionJobRecap object.
 
-        :param List[str] target: (optional) List of target or host name.
+        :param List[str] hosts: (optional) List of host name.
         :param float ok: (optional) Number of OK.
         :param float changed: (optional) Number of changed.
         :param float failed: (optional) Number of failed.
         :param float skipped: (optional) Number of skipped.
         :param float unreachable: (optional) Number of unreachable.
         """
-        self.target = target
+        self.hosts = hosts
         self.ok = ok
         self.changed = changed
         self.failed = failed
@@ -5511,8 +6752,8 @@ class JobLogSummaryActionJobRecap():
     def from_dict(cls, _dict: Dict) -> 'JobLogSummaryActionJobRecap':
         """Initialize a JobLogSummaryActionJobRecap object from a json dictionary."""
         args = {}
-        if 'target' in _dict:
-            args['target'] = _dict.get('target')
+        if 'hosts' in _dict:
+            args['hosts'] = _dict.get('hosts')
         if 'ok' in _dict:
             args['ok'] = _dict.get('ok')
         if 'changed' in _dict:
@@ -5533,8 +6774,8 @@ class JobLogSummaryActionJobRecap():
     def to_dict(self) -> Dict:
         """Return a json dictionary representing this model."""
         _dict = {}
-        if hasattr(self, 'target') and self.target is not None:
-            _dict['target'] = self.target
+        if hasattr(self, 'hosts') and self.hosts is not None:
+            _dict['hosts'] = self.hosts
         if hasattr(self, 'ok') and self.ok is not None:
             _dict['ok'] = self.ok
         if hasattr(self, 'changed') and self.changed is not None:
@@ -5718,83 +6959,56 @@ class JobLogSummaryRepoDownloadJob():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobStateData():
+class JobLogSummarySystemJob():
     """
-    Workspace Job state-file.
+    System Job log summary.
 
-    :attr str job_id: (optional) Job Id.
-    :attr str job_name: (optional) Job name, uniquely derived from the related
-          Action.
-    :attr List[JobStateDataSummaryItem] summary: (optional) Job state summary.
-    :attr str format: (optional) Format of the State data (eg. tfstate).
-    :attr bytes details: (optional) State data file.
-    :attr datetime updated_at: (optional) Job status updation timestamp.
+    :attr float target_count: (optional) number of targets or hosts.
+    :attr float success: (optional) Number of passed.
+    :attr float failed: (optional) Number of failed.
     """
 
     def __init__(self,
                  *,
-                 job_id: str = None,
-                 job_name: str = None,
-                 summary: List['JobStateDataSummaryItem'] = None,
-                 format: str = None,
-                 details: bytes = None,
-                 updated_at: datetime = None) -> None:
+                 target_count: float = None,
+                 success: float = None,
+                 failed: float = None) -> None:
         """
-        Initialize a JobStateData object.
+        Initialize a JobLogSummarySystemJob object.
 
-        :param str job_id: (optional) Job Id.
-        :param str job_name: (optional) Job name, uniquely derived from the related
-               Action.
-        :param List[JobStateDataSummaryItem] summary: (optional) Job state summary.
-        :param str format: (optional) Format of the State data (eg. tfstate).
-        :param bytes details: (optional) State data file.
-        :param datetime updated_at: (optional) Job status updation timestamp.
+        :param float success: (optional) Number of passed.
+        :param float failed: (optional) Number of failed.
         """
-        self.job_id = job_id
-        self.job_name = job_name
-        self.summary = summary
-        self.format = format
-        self.details = details
-        self.updated_at = updated_at
+        self.target_count = target_count
+        self.success = success
+        self.failed = failed
 
     @classmethod
-    def from_dict(cls, _dict: Dict) -> 'JobStateData':
-        """Initialize a JobStateData object from a json dictionary."""
+    def from_dict(cls, _dict: Dict) -> 'JobLogSummarySystemJob':
+        """Initialize a JobLogSummarySystemJob object from a json dictionary."""
         args = {}
-        if 'job_id' in _dict:
-            args['job_id'] = _dict.get('job_id')
-        if 'job_name' in _dict:
-            args['job_name'] = _dict.get('job_name')
-        if 'summary' in _dict:
-            args['summary'] = [JobStateDataSummaryItem.from_dict(x) for x in _dict.get('summary')]
-        if 'format' in _dict:
-            args['format'] = _dict.get('format')
-        if 'details' in _dict:
-            args['details'] = base64.b64decode(_dict.get('details'))
-        if 'updated_at' in _dict:
-            args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
+        if 'target_count' in _dict:
+            args['target_count'] = _dict.get('target_count')
+        if 'success' in _dict:
+            args['success'] = _dict.get('success')
+        if 'failed' in _dict:
+            args['failed'] = _dict.get('failed')
         return cls(**args)
 
     @classmethod
     def _from_dict(cls, _dict):
-        """Initialize a JobStateData object from a json dictionary."""
+        """Initialize a JobLogSummarySystemJob object from a json dictionary."""
         return cls.from_dict(_dict)
 
     def to_dict(self) -> Dict:
         """Return a json dictionary representing this model."""
         _dict = {}
-        if hasattr(self, 'job_id') and self.job_id is not None:
-            _dict['job_id'] = self.job_id
-        if hasattr(self, 'job_name') and self.job_name is not None:
-            _dict['job_name'] = self.job_name
-        if hasattr(self, 'summary') and self.summary is not None:
-            _dict['summary'] = [x.to_dict() for x in self.summary]
-        if hasattr(self, 'format') and self.format is not None:
-            _dict['format'] = self.format
-        if hasattr(self, 'details') and self.details is not None:
-            _dict['details'] = str(base64.b64encode(self.details), 'utf-8')
-        if hasattr(self, 'updated_at') and self.updated_at is not None:
-            _dict['updated_at'] = datetime_to_string(self.updated_at)
+        if hasattr(self, 'target_count') and getattr(self, 'target_count') is not None:
+            _dict['target_count'] = getattr(self, 'target_count')
+        if hasattr(self, 'success') and self.success is not None:
+            _dict['success'] = self.success
+        if hasattr(self, 'failed') and self.failed is not None:
+            _dict['failed'] = self.failed
         return _dict
 
     def _to_dict(self):
@@ -5802,114 +7016,39 @@ class JobStateData():
         return self.to_dict()
 
     def __str__(self) -> str:
-        """Return a `str` version of this JobStateData object."""
+        """Return a `str` version of this JobLogSummarySystemJob object."""
         return json.dumps(self.to_dict(), indent=2)
 
-    def __eq__(self, other: 'JobStateData') -> bool:
+    def __eq__(self, other: 'JobLogSummarySystemJob') -> bool:
         """Return `true` when self and other are equal, false otherwise."""
         if not isinstance(other, self.__class__):
             return False
         return self.__dict__ == other.__dict__
 
-    def __ne__(self, other: 'JobStateData') -> bool:
+    def __ne__(self, other: 'JobLogSummarySystemJob') -> bool:
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
-
-class JobStateDataSummaryItem():
-    """
-    JobStateDataSummaryItem.
-
-    :attr str name: (optional) State summary feature name.
-    :attr str type: (optional) State summary feature type.
-    :attr str value: (optional) State summary feature value.
-    """
-
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 type: str = None,
-                 value: str = None) -> None:
-        """
-        Initialize a JobStateDataSummaryItem object.
-
-        :param str name: (optional) State summary feature name.
-        :param str type: (optional) State summary feature type.
-        :param str value: (optional) State summary feature value.
-        """
-        self.name = name
-        self.type = type
-        self.value = value
-
-    @classmethod
-    def from_dict(cls, _dict: Dict) -> 'JobStateDataSummaryItem':
-        """Initialize a JobStateDataSummaryItem object from a json dictionary."""
-        args = {}
-        if 'name' in _dict:
-            args['name'] = _dict.get('name')
-        if 'type' in _dict:
-            args['type'] = _dict.get('type')
-        if 'value' in _dict:
-            args['value'] = _dict.get('value')
-        return cls(**args)
-
-    @classmethod
-    def _from_dict(cls, _dict):
-        """Initialize a JobStateDataSummaryItem object from a json dictionary."""
-        return cls.from_dict(_dict)
-
-    def to_dict(self) -> Dict:
-        """Return a json dictionary representing this model."""
-        _dict = {}
-        if hasattr(self, 'name') and self.name is not None:
-            _dict['name'] = self.name
-        if hasattr(self, 'type') and self.type is not None:
-            _dict['type'] = self.type
-        if hasattr(self, 'value') and self.value is not None:
-            _dict['value'] = self.value
-        return _dict
-
-    def _to_dict(self):
-        """Return a json dictionary representing this model."""
-        return self.to_dict()
-
-    def __str__(self) -> str:
-        """Return a `str` version of this JobStateDataSummaryItem object."""
-        return json.dumps(self.to_dict(), indent=2)
-
-    def __eq__(self, other: 'JobStateDataSummaryItem') -> bool:
-        """Return `true` when self and other are equal, false otherwise."""
-        if not isinstance(other, self.__class__):
-            return False
-        return self.__dict__ == other.__dict__
-
-    def __ne__(self, other: 'JobStateDataSummaryItem') -> bool:
-        """Return `true` when self and other are not equal, false otherwise."""
-        return not self == other
-
-    class TypeEnum(str, Enum):
-        """
-        State summary feature type.
-        """
-        NUMBER = 'number'
-        STRING = 'string'
-
 
 class JobStatus():
     """
     Job Status.
 
     :attr JobStatusAction action_job_status: (optional) Action Job Status.
+    :attr JobStatusSystem system_job_status: (optional) System Job Status.
     """
 
     def __init__(self,
                  *,
-                 action_job_status: 'JobStatusAction' = None) -> None:
+                 action_job_status: 'JobStatusAction' = None,
+                 system_job_status: 'JobStatusSystem' = None) -> None:
         """
         Initialize a JobStatus object.
 
         :param JobStatusAction action_job_status: (optional) Action Job Status.
+        :param JobStatusSystem system_job_status: (optional) System Job Status.
         """
         self.action_job_status = action_job_status
+        self.system_job_status = system_job_status
 
     @classmethod
     def from_dict(cls, _dict: Dict) -> 'JobStatus':
@@ -5917,6 +7056,8 @@ class JobStatus():
         args = {}
         if 'action_job_status' in _dict:
             args['action_job_status'] = JobStatusAction.from_dict(_dict.get('action_job_status'))
+        if 'system_job_status' in _dict:
+            args['system_job_status'] = JobStatusSystem.from_dict(_dict.get('system_job_status'))
         return cls(**args)
 
     @classmethod
@@ -5929,6 +7070,8 @@ class JobStatus():
         _dict = {}
         if hasattr(self, 'action_job_status') and self.action_job_status is not None:
             _dict['action_job_status'] = self.action_job_status.to_dict()
+        if hasattr(self, 'system_job_status') and self.system_job_status is not None:
+            _dict['system_job_status'] = self.system_job_status.to_dict()
         return _dict
 
     def _to_dict(self):
@@ -5960,9 +7103,9 @@ class JobStatusAction():
     :attr str bastion_status_code: (optional) Status of Resources.
     :attr str bastion_status_message: (optional) Bastion status message - to be
           displayed along with the bastion_status_code;.
-    :attr str targets_status_code: (optional) Status of Resources.
-    :attr str targets_status_message: (optional) Aggregated status message for all
-          target resources,  to be displayed along with the targets_status_code;.
+    :attr str inventory_status_code: (optional) Status of Resources.
+    :attr str inventory_status_message: (optional) Aggregated status message for all
+          inventory resources,  to be displayed along with the inventory_status_code;.
     :attr datetime updated_at: (optional) Job status updation timestamp.
     """
 
@@ -5973,8 +7116,8 @@ class JobStatusAction():
                  status_message: str = None,
                  bastion_status_code: str = None,
                  bastion_status_message: str = None,
-                 targets_status_code: str = None,
-                 targets_status_message: str = None,
+                 inventory_status_code: str = None,
+                 inventory_status_message: str = None,
                  updated_at: datetime = None) -> None:
         """
         Initialize a JobStatusAction object.
@@ -5986,9 +7129,10 @@ class JobStatusAction():
         :param str bastion_status_code: (optional) Status of Resources.
         :param str bastion_status_message: (optional) Bastion status message - to
                be displayed along with the bastion_status_code;.
-        :param str targets_status_code: (optional) Status of Resources.
-        :param str targets_status_message: (optional) Aggregated status message for
-               all target resources,  to be displayed along with the targets_status_code;.
+        :param str inventory_status_code: (optional) Status of Resources.
+        :param str inventory_status_message: (optional) Aggregated status message
+               for all inventory resources,  to be displayed along with the
+               inventory_status_code;.
         :param datetime updated_at: (optional) Job status updation timestamp.
         """
         self.action_name = action_name
@@ -5996,8 +7140,8 @@ class JobStatusAction():
         self.status_message = status_message
         self.bastion_status_code = bastion_status_code
         self.bastion_status_message = bastion_status_message
-        self.targets_status_code = targets_status_code
-        self.targets_status_message = targets_status_message
+        self.inventory_status_code = inventory_status_code
+        self.inventory_status_message = inventory_status_message
         self.updated_at = updated_at
 
     @classmethod
@@ -6014,10 +7158,10 @@ class JobStatusAction():
             args['bastion_status_code'] = _dict.get('bastion_status_code')
         if 'bastion_status_message' in _dict:
             args['bastion_status_message'] = _dict.get('bastion_status_message')
-        if 'targets_status_code' in _dict:
-            args['targets_status_code'] = _dict.get('targets_status_code')
-        if 'targets_status_message' in _dict:
-            args['targets_status_message'] = _dict.get('targets_status_message')
+        if 'inventory_status_code' in _dict:
+            args['inventory_status_code'] = _dict.get('inventory_status_code')
+        if 'inventory_status_message' in _dict:
+            args['inventory_status_message'] = _dict.get('inventory_status_message')
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         return cls(**args)
@@ -6040,10 +7184,10 @@ class JobStatusAction():
             _dict['bastion_status_code'] = self.bastion_status_code
         if hasattr(self, 'bastion_status_message') and self.bastion_status_message is not None:
             _dict['bastion_status_message'] = self.bastion_status_message
-        if hasattr(self, 'targets_status_code') and self.targets_status_code is not None:
-            _dict['targets_status_code'] = self.targets_status_code
-        if hasattr(self, 'targets_status_message') and self.targets_status_message is not None:
-            _dict['targets_status_message'] = self.targets_status_message
+        if hasattr(self, 'inventory_status_code') and self.inventory_status_code is not None:
+            _dict['inventory_status_code'] = self.inventory_status_code
+        if hasattr(self, 'inventory_status_message') and self.inventory_status_message is not None:
+            _dict['inventory_status_message'] = self.inventory_status_message
         if hasattr(self, 'updated_at') and self.updated_at is not None:
             _dict['updated_at'] = datetime_to_string(self.updated_at)
         return _dict
@@ -6087,7 +7231,7 @@ class JobStatusAction():
         ERROR = 'error'
 
 
-    class TargetsStatusCodeEnum(str, Enum):
+    class InventoryStatusCodeEnum(str, Enum):
         """
         Status of Resources.
         """
@@ -6095,6 +7239,191 @@ class JobStatusAction():
         READY = 'ready'
         PROCESSING = 'processing'
         ERROR = 'error'
+
+
+class JobStatusSchematicsResources():
+    """
+    schematics Resources Job Status.
+
+    :attr str status_code: (optional) Status of Jobs.
+    :attr str status_message: (optional) system job status message.
+    :attr str schematics_resource_id: (optional) id for each resource which is
+          targeted as a part of system job.
+    :attr datetime updated_at: (optional) Job status updation timestamp.
+    """
+
+    def __init__(self,
+                 *,
+                 status_code: str = None,
+                 status_message: str = None,
+                 schematics_resource_id: str = None,
+                 updated_at: datetime = None) -> None:
+        """
+        Initialize a JobStatusSchematicsResources object.
+
+        :param str status_code: (optional) Status of Jobs.
+        :param str status_message: (optional) system job status message.
+        :param str schematics_resource_id: (optional) id for each resource which is
+               targeted as a part of system job.
+        :param datetime updated_at: (optional) Job status updation timestamp.
+        """
+        self.status_code = status_code
+        self.status_message = status_message
+        self.schematics_resource_id = schematics_resource_id
+        self.updated_at = updated_at
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'JobStatusSchematicsResources':
+        """Initialize a JobStatusSchematicsResources object from a json dictionary."""
+        args = {}
+        if 'status_code' in _dict:
+            args['status_code'] = _dict.get('status_code')
+        if 'status_message' in _dict:
+            args['status_message'] = _dict.get('status_message')
+        if 'schematics_resource_id' in _dict:
+            args['schematics_resource_id'] = _dict.get('schematics_resource_id')
+        if 'updated_at' in _dict:
+            args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a JobStatusSchematicsResources object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'status_code') and self.status_code is not None:
+            _dict['status_code'] = self.status_code
+        if hasattr(self, 'status_message') and self.status_message is not None:
+            _dict['status_message'] = self.status_message
+        if hasattr(self, 'schematics_resource_id') and self.schematics_resource_id is not None:
+            _dict['schematics_resource_id'] = self.schematics_resource_id
+        if hasattr(self, 'updated_at') and self.updated_at is not None:
+            _dict['updated_at'] = datetime_to_string(self.updated_at)
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this JobStatusSchematicsResources object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'JobStatusSchematicsResources') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'JobStatusSchematicsResources') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+    class StatusCodeEnum(str, Enum):
+        """
+        Status of Jobs.
+        """
+        JOB_PENDING = 'job_pending'
+        JOB_IN_PROGRESS = 'job_in_progress'
+        IOB_FINISHED = 'iob_finished'
+        JOB_FAILED = 'job_failed'
+        JOB_CANCELLED = 'job_cancelled'
+
+
+class JobStatusSystem():
+    """
+    System Job Status.
+
+    :attr str system_status_message: (optional) System job message.
+    :attr str system_status_code: (optional) Status of Jobs.
+    :attr List[JobStatusSchematicsResources] schematics_resource_status: (optional)
+          job staus for each schematics resource.
+    :attr datetime updated_at: (optional) Job status updation timestamp urces'.
+    """
+
+    def __init__(self,
+                 *,
+                 system_status_message: str = None,
+                 system_status_code: str = None,
+                 schematics_resource_status: List['JobStatusSchematicsResources'] = None,
+                 updated_at: datetime = None) -> None:
+        """
+        Initialize a JobStatusSystem object.
+
+        :param str system_status_message: (optional) System job message.
+        :param str system_status_code: (optional) Status of Jobs.
+        :param List[JobStatusSchematicsResources] schematics_resource_status:
+               (optional) job staus for each schematics resource.
+        :param datetime updated_at: (optional) Job status updation timestamp
+               urces'.
+        """
+        self.system_status_message = system_status_message
+        self.system_status_code = system_status_code
+        self.schematics_resource_status = schematics_resource_status
+        self.updated_at = updated_at
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'JobStatusSystem':
+        """Initialize a JobStatusSystem object from a json dictionary."""
+        args = {}
+        if 'system_status_message' in _dict:
+            args['system_status_message'] = _dict.get('system_status_message')
+        if 'system_status_code' in _dict:
+            args['system_status_code'] = _dict.get('system_status_code')
+        if 'schematics_resource_status' in _dict:
+            args['schematics_resource_status'] = [JobStatusSchematicsResources.from_dict(x) for x in _dict.get('schematics_resource_status')]
+        if 'updated_at' in _dict:
+            args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a JobStatusSystem object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'system_status_message') and self.system_status_message is not None:
+            _dict['system_status_message'] = self.system_status_message
+        if hasattr(self, 'system_status_code') and self.system_status_code is not None:
+            _dict['system_status_code'] = self.system_status_code
+        if hasattr(self, 'schematics_resource_status') and self.schematics_resource_status is not None:
+            _dict['schematics_resource_status'] = [x.to_dict() for x in self.schematics_resource_status]
+        if hasattr(self, 'updated_at') and self.updated_at is not None:
+            _dict['updated_at'] = datetime_to_string(self.updated_at)
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this JobStatusSystem object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'JobStatusSystem') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'JobStatusSystem') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+    class SystemStatusCodeEnum(str, Enum):
+        """
+        Status of Jobs.
+        """
+        JOB_PENDING = 'job_pending'
+        JOB_IN_PROGRESS = 'job_in_progress'
+        IOB_FINISHED = 'iob_finished'
+        JOB_FAILED = 'job_failed'
+        JOB_CANCELLED = 'job_cancelled'
 
 
 class JobStatusType():
@@ -7111,6 +8440,564 @@ class ResourceGroupResponse():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
+class ResourceQuery():
+    """
+    Describe resource query.
+
+    :attr str query_type: (optional) Type of the query(workspaces).
+    :attr List[ResourceQueryParam] query_condition: (optional)
+    :attr List[str] query_select: (optional) List of query selection parameters.
+    """
+
+    def __init__(self,
+                 *,
+                 query_type: str = None,
+                 query_condition: List['ResourceQueryParam'] = None,
+                 query_select: List[str] = None) -> None:
+        """
+        Initialize a ResourceQuery object.
+
+        :param str query_type: (optional) Type of the query(workspaces).
+        :param List[ResourceQueryParam] query_condition: (optional)
+        :param List[str] query_select: (optional) List of query selection
+               parameters.
+        """
+        self.query_type = query_type
+        self.query_condition = query_condition
+        self.query_select = query_select
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'ResourceQuery':
+        """Initialize a ResourceQuery object from a json dictionary."""
+        args = {}
+        if 'query_type' in _dict:
+            args['query_type'] = _dict.get('query_type')
+        if 'query_condition' in _dict:
+            args['query_condition'] = [ResourceQueryParam.from_dict(x) for x in _dict.get('query_condition')]
+        if 'query_select' in _dict:
+            args['query_select'] = _dict.get('query_select')
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a ResourceQuery object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'query_type') and self.query_type is not None:
+            _dict['query_type'] = self.query_type
+        if hasattr(self, 'query_condition') and self.query_condition is not None:
+            _dict['query_condition'] = [x.to_dict() for x in self.query_condition]
+        if hasattr(self, 'query_select') and self.query_select is not None:
+            _dict['query_select'] = self.query_select
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this ResourceQuery object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'ResourceQuery') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'ResourceQuery') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+    class QueryTypeEnum(str, Enum):
+        """
+        Type of the query(workspaces).
+        """
+        WORKSPACES = 'workspaces'
+
+
+class ResourceQueryParam():
+    """
+    Describe resource query param.
+
+    :attr str name: (optional) Name of the resource query param.
+    :attr str value: (optional) Value of the resource query param.
+    :attr str description: (optional) Description of resource query param variable.
+    """
+
+    def __init__(self,
+                 *,
+                 name: str = None,
+                 value: str = None,
+                 description: str = None) -> None:
+        """
+        Initialize a ResourceQueryParam object.
+
+        :param str name: (optional) Name of the resource query param.
+        :param str value: (optional) Value of the resource query param.
+        :param str description: (optional) Description of resource query param
+               variable.
+        """
+        self.name = name
+        self.value = value
+        self.description = description
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'ResourceQueryParam':
+        """Initialize a ResourceQueryParam object from a json dictionary."""
+        args = {}
+        if 'name' in _dict:
+            args['name'] = _dict.get('name')
+        if 'value' in _dict:
+            args['value'] = _dict.get('value')
+        if 'description' in _dict:
+            args['description'] = _dict.get('description')
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a ResourceQueryParam object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'name') and self.name is not None:
+            _dict['name'] = self.name
+        if hasattr(self, 'value') and self.value is not None:
+            _dict['value'] = self.value
+        if hasattr(self, 'description') and self.description is not None:
+            _dict['description'] = self.description
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this ResourceQueryParam object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'ResourceQueryParam') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'ResourceQueryParam') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+class ResourceQueryRecord():
+    """
+    Describe resource query record.
+
+    :attr str type: (optional) Resource type (cluster, vsi, icd, vpc).
+    :attr str name: (optional) Resource query name.
+    :attr str id: (optional) Resource Query id.
+    :attr datetime created_at: (optional) Resource query creation time.
+    :attr str created_by: (optional) Email address of user who created the Resource
+          query.
+    :attr datetime updated_at: (optional) Resource query updation time.
+    :attr str updated_by: (optional) Email address of user who updated the Resource
+          query.
+    :attr List[ResourceQuery] queries: (optional)
+    """
+
+    def __init__(self,
+                 *,
+                 type: str = None,
+                 name: str = None,
+                 id: str = None,
+                 created_at: datetime = None,
+                 created_by: str = None,
+                 updated_at: datetime = None,
+                 updated_by: str = None,
+                 queries: List['ResourceQuery'] = None) -> None:
+        """
+        Initialize a ResourceQueryRecord object.
+
+        :param str type: (optional) Resource type (cluster, vsi, icd, vpc).
+        :param str name: (optional) Resource query name.
+        :param List[ResourceQuery] queries: (optional)
+        """
+        self.type = type
+        self.name = name
+        self.id = id
+        self.created_at = created_at
+        self.created_by = created_by
+        self.updated_at = updated_at
+        self.updated_by = updated_by
+        self.queries = queries
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'ResourceQueryRecord':
+        """Initialize a ResourceQueryRecord object from a json dictionary."""
+        args = {}
+        if 'type' in _dict:
+            args['type'] = _dict.get('type')
+        if 'name' in _dict:
+            args['name'] = _dict.get('name')
+        if 'id' in _dict:
+            args['id'] = _dict.get('id')
+        if 'created_at' in _dict:
+            args['created_at'] = string_to_datetime(_dict.get('created_at'))
+        if 'created_by' in _dict:
+            args['created_by'] = _dict.get('created_by')
+        if 'updated_at' in _dict:
+            args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
+        if 'updated_by' in _dict:
+            args['updated_by'] = _dict.get('updated_by')
+        if 'queries' in _dict:
+            args['queries'] = [ResourceQuery.from_dict(x) for x in _dict.get('queries')]
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a ResourceQueryRecord object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'type') and self.type is not None:
+            _dict['type'] = self.type
+        if hasattr(self, 'name') and self.name is not None:
+            _dict['name'] = self.name
+        if hasattr(self, 'id') and getattr(self, 'id') is not None:
+            _dict['id'] = getattr(self, 'id')
+        if hasattr(self, 'created_at') and getattr(self, 'created_at') is not None:
+            _dict['created_at'] = datetime_to_string(getattr(self, 'created_at'))
+        if hasattr(self, 'created_by') and getattr(self, 'created_by') is not None:
+            _dict['created_by'] = getattr(self, 'created_by')
+        if hasattr(self, 'updated_at') and getattr(self, 'updated_at') is not None:
+            _dict['updated_at'] = datetime_to_string(getattr(self, 'updated_at'))
+        if hasattr(self, 'updated_by') and getattr(self, 'updated_by') is not None:
+            _dict['updated_by'] = getattr(self, 'updated_by')
+        if hasattr(self, 'queries') and self.queries is not None:
+            _dict['queries'] = [x.to_dict() for x in self.queries]
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this ResourceQueryRecord object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'ResourceQueryRecord') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'ResourceQueryRecord') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+    class TypeEnum(str, Enum):
+        """
+        Resource type (cluster, vsi, icd, vpc).
+        """
+        VSI = 'vsi'
+
+
+class ResourceQueryRecordList():
+    """
+    List of Resource query records.
+
+    :attr int total_count: (optional) Total number of records.
+    :attr int limit: Number of records returned.
+    :attr int offset: Skipped number of records.
+    :attr List[ResourceQueryRecord] resource_queries: (optional) List of resource
+          query records.
+    """
+
+    def __init__(self,
+                 limit: int,
+                 offset: int,
+                 *,
+                 total_count: int = None,
+                 resource_queries: List['ResourceQueryRecord'] = None) -> None:
+        """
+        Initialize a ResourceQueryRecordList object.
+
+        :param int limit: Number of records returned.
+        :param int offset: Skipped number of records.
+        :param int total_count: (optional) Total number of records.
+        :param List[ResourceQueryRecord] resource_queries: (optional) List of
+               resource query records.
+        """
+        self.total_count = total_count
+        self.limit = limit
+        self.offset = offset
+        self.resource_queries = resource_queries
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'ResourceQueryRecordList':
+        """Initialize a ResourceQueryRecordList object from a json dictionary."""
+        args = {}
+        if 'total_count' in _dict:
+            args['total_count'] = _dict.get('total_count')
+        if 'limit' in _dict:
+            args['limit'] = _dict.get('limit')
+        else:
+            raise ValueError('Required property \'limit\' not present in ResourceQueryRecordList JSON')
+        if 'offset' in _dict:
+            args['offset'] = _dict.get('offset')
+        else:
+            raise ValueError('Required property \'offset\' not present in ResourceQueryRecordList JSON')
+        if 'ResourceQueries' in _dict:
+            args['resource_queries'] = [ResourceQueryRecord.from_dict(x) for x in _dict.get('ResourceQueries')]
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a ResourceQueryRecordList object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'total_count') and self.total_count is not None:
+            _dict['total_count'] = self.total_count
+        if hasattr(self, 'limit') and self.limit is not None:
+            _dict['limit'] = self.limit
+        if hasattr(self, 'offset') and self.offset is not None:
+            _dict['offset'] = self.offset
+        if hasattr(self, 'resource_queries') and self.resource_queries is not None:
+            _dict['ResourceQueries'] = [x.to_dict() for x in self.resource_queries]
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this ResourceQueryRecordList object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'ResourceQueryRecordList') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'ResourceQueryRecordList') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+class ResourceQueryResponseRecord():
+    """
+    Describe resource query.
+
+    :attr List[ResourceQueryResponseRecordResponseItem] response: (optional)
+    """
+
+    def __init__(self,
+                 *,
+                 response: List['ResourceQueryResponseRecordResponseItem'] = None) -> None:
+        """
+        Initialize a ResourceQueryResponseRecord object.
+
+        :param List[ResourceQueryResponseRecordResponseItem] response: (optional)
+        """
+        self.response = response
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'ResourceQueryResponseRecord':
+        """Initialize a ResourceQueryResponseRecord object from a json dictionary."""
+        args = {}
+        if 'response' in _dict:
+            args['response'] = [ResourceQueryResponseRecordResponseItem.from_dict(x) for x in _dict.get('response')]
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a ResourceQueryResponseRecord object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'response') and self.response is not None:
+            _dict['response'] = [x.to_dict() for x in self.response]
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this ResourceQueryResponseRecord object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'ResourceQueryResponseRecord') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'ResourceQueryResponseRecord') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+class ResourceQueryResponseRecordResponseItem():
+    """
+    ResourceQueryResponseRecordResponseItem.
+
+    :attr str query_type: (optional) Type of the query(workspaces).
+    :attr List[ResourceQueryParam] query_condition: (optional)
+    :attr List[str] query_select: (optional) List of query selection parameters.
+    :attr List[ResourceQueryResponseRecordResponseItemQueryOutputItem] query_output:
+          (optional)
+    """
+
+    def __init__(self,
+                 *,
+                 query_type: str = None,
+                 query_condition: List['ResourceQueryParam'] = None,
+                 query_select: List[str] = None,
+                 query_output: List['ResourceQueryResponseRecordResponseItemQueryOutputItem'] = None) -> None:
+        """
+        Initialize a ResourceQueryResponseRecordResponseItem object.
+
+        :param str query_type: (optional) Type of the query(workspaces).
+        :param List[ResourceQueryParam] query_condition: (optional)
+        :param List[str] query_select: (optional) List of query selection
+               parameters.
+        :param List[ResourceQueryResponseRecordResponseItemQueryOutputItem]
+               query_output: (optional)
+        """
+        self.query_type = query_type
+        self.query_condition = query_condition
+        self.query_select = query_select
+        self.query_output = query_output
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'ResourceQueryResponseRecordResponseItem':
+        """Initialize a ResourceQueryResponseRecordResponseItem object from a json dictionary."""
+        args = {}
+        if 'query_type' in _dict:
+            args['query_type'] = _dict.get('query_type')
+        if 'query_condition' in _dict:
+            args['query_condition'] = [ResourceQueryParam.from_dict(x) for x in _dict.get('query_condition')]
+        if 'query_select' in _dict:
+            args['query_select'] = _dict.get('query_select')
+        if 'query_output' in _dict:
+            args['query_output'] = [ResourceQueryResponseRecordResponseItemQueryOutputItem.from_dict(x) for x in _dict.get('query_output')]
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a ResourceQueryResponseRecordResponseItem object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'query_type') and self.query_type is not None:
+            _dict['query_type'] = self.query_type
+        if hasattr(self, 'query_condition') and self.query_condition is not None:
+            _dict['query_condition'] = [x.to_dict() for x in self.query_condition]
+        if hasattr(self, 'query_select') and self.query_select is not None:
+            _dict['query_select'] = self.query_select
+        if hasattr(self, 'query_output') and self.query_output is not None:
+            _dict['query_output'] = [x.to_dict() for x in self.query_output]
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this ResourceQueryResponseRecordResponseItem object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'ResourceQueryResponseRecordResponseItem') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'ResourceQueryResponseRecordResponseItem') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+    class QueryTypeEnum(str, Enum):
+        """
+        Type of the query(workspaces).
+        """
+        WORKSPACES = 'workspaces'
+
+
+class ResourceQueryResponseRecordResponseItemQueryOutputItem():
+    """
+    List of query output values.
+
+    :attr str name: (optional) Name of the output param.
+    :attr str value: (optional) value of the output param.
+    """
+
+    def __init__(self,
+                 *,
+                 name: str = None,
+                 value: str = None) -> None:
+        """
+        Initialize a ResourceQueryResponseRecordResponseItemQueryOutputItem object.
+
+        :param str name: (optional) Name of the output param.
+        :param str value: (optional) value of the output param.
+        """
+        self.name = name
+        self.value = value
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'ResourceQueryResponseRecordResponseItemQueryOutputItem':
+        """Initialize a ResourceQueryResponseRecordResponseItemQueryOutputItem object from a json dictionary."""
+        args = {}
+        if 'name' in _dict:
+            args['name'] = _dict.get('name')
+        if 'value' in _dict:
+            args['value'] = _dict.get('value')
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a ResourceQueryResponseRecordResponseItemQueryOutputItem object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'name') and self.name is not None:
+            _dict['name'] = self.name
+        if hasattr(self, 'value') and self.value is not None:
+            _dict['value'] = self.value
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this ResourceQueryResponseRecordResponseItemQueryOutputItem object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'ResourceQueryResponseRecordResponseItemQueryOutputItem') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'ResourceQueryResponseRecordResponseItemQueryOutputItem') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
 class SchematicsLocations():
     """
     Schematics locations.
@@ -8057,145 +9944,6 @@ class SystemLock():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class TargetResourceset():
-    """
-    Complete Target details with user inputs and system generated data.
-
-    :attr str name: (optional) Target name.
-    :attr str type: (optional) Target type (cluster, vsi, icd, vpc).
-    :attr str description: (optional) Target description.
-    :attr str resource_query: (optional) Resource selection query string.
-    :attr str credential: (optional) Override credential for each resource.
-          Reference to credentials values, used by all resources.
-    :attr str id: (optional) Target id.
-    :attr datetime created_at: (optional) Targets creation time.
-    :attr str created_by: (optional) Email address of user who created the Targets.
-    :attr datetime updated_at: (optional) Targets updation time.
-    :attr str updated_by: (optional) Email address of user who updated the Targets.
-    :attr SystemLock sys_lock: (optional) System lock status.
-    :attr List[str] resource_ids: (optional) Array of resource ids.
-    """
-
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 type: str = None,
-                 description: str = None,
-                 resource_query: str = None,
-                 credential: str = None,
-                 id: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 sys_lock: 'SystemLock' = None,
-                 resource_ids: List[str] = None) -> None:
-        """
-        Initialize a TargetResourceset object.
-
-        :param str name: (optional) Target name.
-        :param str type: (optional) Target type (cluster, vsi, icd, vpc).
-        :param str description: (optional) Target description.
-        :param str resource_query: (optional) Resource selection query string.
-        :param str credential: (optional) Override credential for each resource.
-               Reference to credentials values, used by all resources.
-        :param SystemLock sys_lock: (optional) System lock status.
-        """
-        self.name = name
-        self.type = type
-        self.description = description
-        self.resource_query = resource_query
-        self.credential = credential
-        self.id = id
-        self.created_at = created_at
-        self.created_by = created_by
-        self.updated_at = updated_at
-        self.updated_by = updated_by
-        self.sys_lock = sys_lock
-        self.resource_ids = resource_ids
-
-    @classmethod
-    def from_dict(cls, _dict: Dict) -> 'TargetResourceset':
-        """Initialize a TargetResourceset object from a json dictionary."""
-        args = {}
-        if 'name' in _dict:
-            args['name'] = _dict.get('name')
-        if 'type' in _dict:
-            args['type'] = _dict.get('type')
-        if 'description' in _dict:
-            args['description'] = _dict.get('description')
-        if 'resource_query' in _dict:
-            args['resource_query'] = _dict.get('resource_query')
-        if 'credential' in _dict:
-            args['credential'] = _dict.get('credential')
-        if 'id' in _dict:
-            args['id'] = _dict.get('id')
-        if 'created_at' in _dict:
-            args['created_at'] = string_to_datetime(_dict.get('created_at'))
-        if 'created_by' in _dict:
-            args['created_by'] = _dict.get('created_by')
-        if 'updated_at' in _dict:
-            args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        if 'updated_by' in _dict:
-            args['updated_by'] = _dict.get('updated_by')
-        if 'sys_lock' in _dict:
-            args['sys_lock'] = SystemLock.from_dict(_dict.get('sys_lock'))
-        if 'resource_ids' in _dict:
-            args['resource_ids'] = _dict.get('resource_ids')
-        return cls(**args)
-
-    @classmethod
-    def _from_dict(cls, _dict):
-        """Initialize a TargetResourceset object from a json dictionary."""
-        return cls.from_dict(_dict)
-
-    def to_dict(self) -> Dict:
-        """Return a json dictionary representing this model."""
-        _dict = {}
-        if hasattr(self, 'name') and self.name is not None:
-            _dict['name'] = self.name
-        if hasattr(self, 'type') and self.type is not None:
-            _dict['type'] = self.type
-        if hasattr(self, 'description') and self.description is not None:
-            _dict['description'] = self.description
-        if hasattr(self, 'resource_query') and self.resource_query is not None:
-            _dict['resource_query'] = self.resource_query
-        if hasattr(self, 'credential') and self.credential is not None:
-            _dict['credential'] = self.credential
-        if hasattr(self, 'id') and getattr(self, 'id') is not None:
-            _dict['id'] = getattr(self, 'id')
-        if hasattr(self, 'created_at') and getattr(self, 'created_at') is not None:
-            _dict['created_at'] = datetime_to_string(getattr(self, 'created_at'))
-        if hasattr(self, 'created_by') and getattr(self, 'created_by') is not None:
-            _dict['created_by'] = getattr(self, 'created_by')
-        if hasattr(self, 'updated_at') and getattr(self, 'updated_at') is not None:
-            _dict['updated_at'] = datetime_to_string(getattr(self, 'updated_at'))
-        if hasattr(self, 'updated_by') and getattr(self, 'updated_by') is not None:
-            _dict['updated_by'] = getattr(self, 'updated_by')
-        if hasattr(self, 'sys_lock') and self.sys_lock is not None:
-            _dict['sys_lock'] = self.sys_lock.to_dict()
-        if hasattr(self, 'resource_ids') and getattr(self, 'resource_ids') is not None:
-            _dict['resource_ids'] = getattr(self, 'resource_ids')
-        return _dict
-
-    def _to_dict(self):
-        """Return a json dictionary representing this model."""
-        return self.to_dict()
-
-    def __str__(self) -> str:
-        """Return a `str` version of this TargetResourceset object."""
-        return json.dumps(self.to_dict(), indent=2)
-
-    def __eq__(self, other: 'TargetResourceset') -> bool:
-        """Return `true` when self and other are equal, false otherwise."""
-        if not isinstance(other, self.__class__):
-            return False
-        return self.__dict__ == other.__dict__
-
-    def __ne__(self, other: 'TargetResourceset') -> bool:
-        """Return `true` when self and other are not equal, false otherwise."""
-        return not self == other
-
 class TemplateReadme():
     """
     TemplateReadme -.
@@ -8936,7 +10684,7 @@ class TemplateSourceDataResponse():
     :attr str folder: (optional) Folder name.
     :attr bool has_githubtoken: (optional) Has github token.
     :attr str id: (optional) Template id.
-    :attr str template_type: (optional) Template tyoe.
+    :attr str type: (optional) Template tyoe.
     :attr str uninstall_script_name: (optional) Uninstall script name.
     :attr str values: (optional) Values.
     :attr List[object] values_metadata: (optional) List of values metadata.
@@ -8951,7 +10699,7 @@ class TemplateSourceDataResponse():
                  folder: str = None,
                  has_githubtoken: bool = None,
                  id: str = None,
-                 template_type: str = None,
+                 type: str = None,
                  uninstall_script_name: str = None,
                  values: str = None,
                  values_metadata: List[object] = None,
@@ -8965,7 +10713,7 @@ class TemplateSourceDataResponse():
         :param str folder: (optional) Folder name.
         :param bool has_githubtoken: (optional) Has github token.
         :param str id: (optional) Template id.
-        :param str template_type: (optional) Template tyoe.
+        :param str type: (optional) Template tyoe.
         :param str uninstall_script_name: (optional) Uninstall script name.
         :param str values: (optional) Values.
         :param List[object] values_metadata: (optional) List of values metadata.
@@ -8977,7 +10725,7 @@ class TemplateSourceDataResponse():
         self.folder = folder
         self.has_githubtoken = has_githubtoken
         self.id = id
-        self.template_type = template_type
+        self.type = type
         self.uninstall_script_name = uninstall_script_name
         self.values = values
         self.values_metadata = values_metadata
@@ -8996,8 +10744,8 @@ class TemplateSourceDataResponse():
             args['has_githubtoken'] = _dict.get('has_githubtoken')
         if 'id' in _dict:
             args['id'] = _dict.get('id')
-        if 'template_type' in _dict:
-            args['template_type'] = _dict.get('template_type')
+        if 'type' in _dict:
+            args['type'] = _dict.get('type')
         if 'uninstall_script_name' in _dict:
             args['uninstall_script_name'] = _dict.get('uninstall_script_name')
         if 'values' in _dict:
@@ -9026,8 +10774,8 @@ class TemplateSourceDataResponse():
             _dict['has_githubtoken'] = self.has_githubtoken
         if hasattr(self, 'id') and self.id is not None:
             _dict['id'] = self.id
-        if hasattr(self, 'template_type') and self.template_type is not None:
-            _dict['template_type'] = self.template_type
+        if hasattr(self, 'type') and self.type is not None:
+            _dict['type'] = self.type
         if hasattr(self, 'uninstall_script_name') and self.uninstall_script_name is not None:
             _dict['uninstall_script_name'] = self.uninstall_script_name
         if hasattr(self, 'values') and self.values is not None:
@@ -9197,6 +10945,111 @@ class TemplateValues():
         return self.__dict__ == other.__dict__
 
     def __ne__(self, other: 'TemplateValues') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+class TerraformCommand():
+    """
+    TerraformCommand -.
+
+    :attr str command: (optional) Command to execute.
+    :attr str command_params: (optional) Command Parameters.
+    :attr str command_name: (optional) Command name.
+    :attr str command_desc: (optional) Command description.
+    :attr str command_on_error: (optional) Instruction to continue or break in case
+          of error.
+    :attr str command_depends_on: (optional) Dependency on previous commands.
+    :attr str command_status: (optional) Command status.
+    """
+
+    def __init__(self,
+                 *,
+                 command: str = None,
+                 command_params: str = None,
+                 command_name: str = None,
+                 command_desc: str = None,
+                 command_on_error: str = None,
+                 command_depends_on: str = None,
+                 command_status: str = None) -> None:
+        """
+        Initialize a TerraformCommand object.
+
+        :param str command: (optional) Command to execute.
+        :param str command_params: (optional) Command Parameters.
+        :param str command_name: (optional) Command name.
+        :param str command_desc: (optional) Command description.
+        :param str command_on_error: (optional) Instruction to continue or break in
+               case of error.
+        :param str command_depends_on: (optional) Dependency on previous commands.
+        :param str command_status: (optional) Command status.
+        """
+        self.command = command
+        self.command_params = command_params
+        self.command_name = command_name
+        self.command_desc = command_desc
+        self.command_on_error = command_on_error
+        self.command_depends_on = command_depends_on
+        self.command_status = command_status
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'TerraformCommand':
+        """Initialize a TerraformCommand object from a json dictionary."""
+        args = {}
+        if 'command' in _dict:
+            args['command'] = _dict.get('command')
+        if 'command_params' in _dict:
+            args['command_params'] = _dict.get('command_params')
+        if 'command_name' in _dict:
+            args['command_name'] = _dict.get('command_name')
+        if 'command_desc' in _dict:
+            args['command_desc'] = _dict.get('command_desc')
+        if 'command_onError' in _dict:
+            args['command_on_error'] = _dict.get('command_onError')
+        if 'command_dependsOn' in _dict:
+            args['command_depends_on'] = _dict.get('command_dependsOn')
+        if 'command_status' in _dict:
+            args['command_status'] = _dict.get('command_status')
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a TerraformCommand object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'command') and self.command is not None:
+            _dict['command'] = self.command
+        if hasattr(self, 'command_params') and self.command_params is not None:
+            _dict['command_params'] = self.command_params
+        if hasattr(self, 'command_name') and self.command_name is not None:
+            _dict['command_name'] = self.command_name
+        if hasattr(self, 'command_desc') and self.command_desc is not None:
+            _dict['command_desc'] = self.command_desc
+        if hasattr(self, 'command_on_error') and self.command_on_error is not None:
+            _dict['command_onError'] = self.command_on_error
+        if hasattr(self, 'command_depends_on') and self.command_depends_on is not None:
+            _dict['command_dependsOn'] = self.command_depends_on
+        if hasattr(self, 'command_status') and self.command_status is not None:
+            _dict['command_status'] = self.command_status
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this TerraformCommand object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'TerraformCommand') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'TerraformCommand') -> bool:
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
@@ -9673,8 +11526,7 @@ class VersionResponse():
     :attr str helm_provider_version: (optional) Version number of 'Helm provider for
           Terraform'.
     :attr str helm_version: (optional) Helm Version.
-    :attr List[object] supported_template_types: (optional) Supported template
-          types.
+    :attr object supported_template_types: (optional) Supported template types.
     :attr str terraform_provider_version: (optional) Terraform provider versions.
     :attr str terraform_version: (optional) Terraform versions.
     """
@@ -9686,7 +11538,7 @@ class VersionResponse():
                  commitsha: str = None,
                  helm_provider_version: str = None,
                  helm_version: str = None,
-                 supported_template_types: List[object] = None,
+                 supported_template_types: object = None,
                  terraform_provider_version: str = None,
                  terraform_version: str = None) -> None:
         """
@@ -9698,7 +11550,7 @@ class VersionResponse():
         :param str helm_provider_version: (optional) Version number of 'Helm
                provider for Terraform'.
         :param str helm_version: (optional) Helm Version.
-        :param List[object] supported_template_types: (optional) Supported template
+        :param object supported_template_types: (optional) Supported template
                types.
         :param str terraform_provider_version: (optional) Terraform provider
                versions.
@@ -10011,6 +11863,61 @@ class WorkspaceActivityApplyResult():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
+class WorkspaceActivityCommandResult():
+    """
+    WorkspaceActivityCommandResult -.
+
+    :attr str activityid: (optional) Activity id.
+    """
+
+    def __init__(self,
+                 *,
+                 activityid: str = None) -> None:
+        """
+        Initialize a WorkspaceActivityCommandResult object.
+
+        :param str activityid: (optional) Activity id.
+        """
+        self.activityid = activityid
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'WorkspaceActivityCommandResult':
+        """Initialize a WorkspaceActivityCommandResult object from a json dictionary."""
+        args = {}
+        if 'activityid' in _dict:
+            args['activityid'] = _dict.get('activityid')
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a WorkspaceActivityCommandResult object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'activityid') and self.activityid is not None:
+            _dict['activityid'] = self.activityid
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this WorkspaceActivityCommandResult object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'WorkspaceActivityCommandResult') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'WorkspaceActivityCommandResult') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
 class WorkspaceActivityDestroyResult():
     """
     WorkspaceActivityDestroyResult -.
@@ -10141,10 +12048,10 @@ class WorkspaceActivityLogs():
 
 class WorkspaceActivityOptionsTemplate():
     """
-    Action Options Template ...
+    Workspace Activity Options Template.
 
-    :attr List[str] target: (optional) Action targets.
-    :attr List[str] tf_vars: (optional) Action tfvars.
+    :attr List[str] target: (optional) Workspace Activity targets.
+    :attr List[str] tf_vars: (optional) Workspace Activity tfvars.
     """
 
     def __init__(self,
@@ -10154,8 +12061,8 @@ class WorkspaceActivityOptionsTemplate():
         """
         Initialize a WorkspaceActivityOptionsTemplate object.
 
-        :param List[str] target: (optional) Action targets.
-        :param List[str] tf_vars: (optional) Action tfvars.
+        :param List[str] target: (optional) Workspace Activity targets.
+        :param List[str] tf_vars: (optional) Workspace Activity tfvars.
         """
         self.target = target
         self.tf_vars = tf_vars

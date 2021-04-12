@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# (C) Copyright IBM Corp. 2020.
+# (C) Copyright IBM Corp. 2021.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,8 +19,10 @@ Integration Tests for SchematicsV1
 
 import os
 import pytest
+import time
 from ibm_cloud_sdk_core import *
 from ibm_schematics.schematics_v1 import *
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
 # Config file name
 config_file = 'schematics_v1.env'
@@ -43,12 +45,280 @@ class TestSchematicsV1():
                 SchematicsV1.DEFAULT_SERVICE_NAME)
             assert cls.config is not None
 
+            auth = IAMAuthenticator(
+                apikey=cls.config.get('APIKEY'),
+                url=cls.config.get('AUTH_URL'),
+                client_id=cls.config.get('CLIENT_ID'),
+                client_secret=cls.config.get('CLIENT_SECRET'),
+                disable_ssl_verification=False
+            )
+
+            cls.refresh_token = auth.token_manager.request_token()['refresh_token']
+
         print('Setup complete.')
 
     needscredentials = pytest.mark.skipif(
         not os.path.exists(config_file), reason="External configuration not available, skipping..."
     )
 
+    def createWorkspace(self):
+
+        # Construct a dict representation of a TemplateSourceDataRequest model
+        template_source_data_request_model = {
+        'env_values': [
+            { 
+                'KEY1': 'VALUE1'
+            }, 
+            {
+                'KEY2': 'VALUE2' 
+            }
+        ],
+        'folder': '.',
+        'type': 'terraform_v0.12.20',
+        'variablestore': [
+            { 
+                'name': 'variable_name1',
+                'value': 'variable_valuename1'
+            },
+            { 
+                'name': 'variable_name2',
+                'value': 'variable_valuename2'
+            }          
+            ]
+        }
+
+        # Construct a dict representation of a TemplateRepoRequest model
+        template_repo_request_model = {
+        'url': 'https://github.ibm.com/gshamann/tf_cloudless_sleepy'
+        }
+
+        response = self.schematics_service.create_workspace(
+        description='description',
+        name='workspace_name',
+        tags=['testString'],
+        template_data=[template_source_data_request_model],
+        template_repo=template_repo_request_model,
+        type=['terraform_v0.12.20'],
+        )
+
+        workspace_response = response.get_result()
+        print(json.dumps(workspace_response, indent=2))
+        return workspace_response
+
+    def createWorkspaceWithEmptyRepoURL(self):
+        # Construct a dict representation of a TemplateSourceDataRequest model
+        template_source_data_request_model = {
+        'env_values': [
+            { 
+                'KEY1': 'VALUE1'
+            }, 
+            {
+                'KEY2': 'VALUE2' 
+            }
+        ],
+        'folder': '.',
+        'type': 'terraform_v0.11.14',
+        'variablestore': [
+            { 
+                'name': 'variable_name1',
+                'value': 'variable_valuename1'
+            },
+            { 
+                'name': 'variable_name2',
+                'value': 'variable_valuename2'
+            }          
+            ]
+        }
+
+        response = self.schematics_service.create_workspace(
+        description='description',
+        name='workspace_name',
+        tags=['testString'],
+        template_data=[template_source_data_request_model],
+        type=['terraform_v0.11.14'],
+        )
+
+        workspace_response = response.get_result()
+        print(json.dumps(workspace_response, indent=2))
+        return workspace_response
+
+    def getWorkspaceById(self, wid):
+        response = self.schematics_service.get_workspace(
+            w_id=wid
+        )
+        workspace_response = response.get_result()
+        print(json.dumps(workspace_response, indent=2)) 
+        return workspace_response
+
+    def getWorkspaceActivityById(self, wid, activityid):
+        response = self.schematics_service.get_workspace_activity(
+            w_id=wid,
+            activity_id=activityid,
+        )
+        workspace_response = response.get_result()
+        print(json.dumps(workspace_response, indent=2)) 
+        return workspace_response
+
+    def waitForWorkspaceStatus(self, wid, status):
+        workspaceStatus = ""
+
+        while workspaceStatus != status:
+            workspaceStatus = self.getWorkspaceById(wid)['status']
+            print(workspaceStatus)
+            time.sleep(2)
+
+    def waitForWorkspaceActivityStatus(self, wid, activityid, status):
+        workspaceActivityStatus = ""
+
+        while workspaceActivityStatus != status:
+            workspaceActivityStatus = self.getWorkspaceActivityById(wid, activityid)['status']
+            print(workspaceActivityStatus)
+            time.sleep(2)
+
+    def deleteWorkspaceById(self, wid):
+
+        success = False
+
+        while not success:
+
+            try:
+
+                response = self.schematics_service.delete_workspace(
+                    w_id=wid,
+                    refresh_token=self.refresh_token
+                )
+
+                workspace_response = response.get_result()
+                print(json.dumps(workspace_response, indent=2)) 
+
+                success = True
+
+            except:
+                time.sleep(2)
+
+        return workspace_response
+
+    def uploadTarFile(self):
+        ws = self.createWorkspaceWithEmptyRepoURL()
+        self.waitForWorkspaceStatus(ws['id'], "DRAFT")
+
+        fileDir = os.getcwd()
+        fileName = "tf_cloudless_sleepy_git_archive.tar"
+        filePath = os.path.join(fileDir, "tarfiles", fileName)
+        fileReader = open(filePath, "rb")
+
+        response = self.schematics_service.upload_template_tar(
+            w_id=ws['id'],
+            t_id=ws['template_data'][0]['id'],
+            file_content_type="multipart/form-data",
+            file=fileReader
+        )
+
+        workspace_response = response.get_result()
+        print(json.dumps(workspace_response, indent=2)) 
+        return ws
+
+    def planWorkspaceAction(self):
+
+        ws = self.uploadTarFile()
+        self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
+
+        response = self.schematics_service.plan_workspace_command(
+            w_id=ws['id'],
+                refresh_token = self.refresh_token
+        )
+
+        activity = response.get_result()
+
+        self.waitForWorkspaceActivityStatus(ws['id'], activity['activityid'], "COMPLETED")
+
+        return ws['id'], activity['activityid']
+
+    def applyWorkspaceAction(self):
+
+        ws = self.uploadTarFile()
+        self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
+
+        response = self.schematics_service.apply_workspace_command(
+            w_id=ws['id'],
+            refresh_token=self.refresh_token
+        )
+
+        activity = response.get_result()
+
+        self.waitForWorkspaceActivityStatus(ws['id'], activity['activityid'], "COMPLETED")
+
+        return ws, activity['activityid']
+
+    def applyWorkspaceActionByIdWithoutWait(self,id):
+
+        response = self.schematics_service.apply_workspace_command(
+            w_id=id,
+            refresh_token=self.refresh_token
+        )
+
+        activity = response.get_result()
+
+        return id, activity['activityid']
+
+    def destroyWorkspaceAction(self):
+
+        ws = self.uploadTarFile()
+        self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
+
+        response = self.schematics_service.destroy_workspace_command(
+            w_id=ws['id'],
+            refresh_token=self.refresh_token
+        )
+
+        activity = response.get_result()
+
+        self.waitForWorkspaceActivityStatus(ws['id'], activity['activityid'], "COMPLETED")
+
+        return ws['id'], activity['activityid']
+
+    def destroyWorkspaceActionById(self,id):
+
+        response = self.schematics_service.destroy_workspace_command(
+            w_id=id,
+            refresh_token=self.refresh_token
+        )
+
+        activity = response.get_result()
+
+        self.waitForWorkspaceActivityStatus(id, activity['activityid'], "COMPLETED")
+
+        return id, activity['activityid']
+
+    def refreshWorkspaceAction(self):
+
+        ws = self.uploadTarFile()
+        self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
+
+        response = self.schematics_service.refresh_workspace_command(
+            w_id=ws['id'],
+            refresh_token=self.refresh_token
+        )
+
+        activity = response.get_result()
+
+        self.waitForWorkspaceActivityStatus(ws['id'], activity['activityid'], "COMPLETED")
+
+        return ws['id'], activity['activityid']
+
+    def refreshWorkspaceActionById(self,id):
+
+        response = self.schematics_service.refresh_workspace_command(
+            w_id=id,
+            refresh_token=self.refresh_token
+        )
+
+        activity = response.get_result()
+
+        self.waitForWorkspaceActivityStatus(id, activity['activityid'], "COMPLETED")
+
+        return id, activity['activityid']
+    
     @needscredentials
     def test_list_schematics_location(self):
 
@@ -79,10 +349,7 @@ class TestSchematicsV1():
     @needscredentials
     def test_list_workspaces(self):
 
-        list_workspaces_response = self.schematics_service.list_workspaces(
-            offset=0,
-            limit=1
-        )
+        list_workspaces_response = self.schematics_service.list_workspaces()
 
         assert list_workspaces_response.get_status_code() == 200
         workspace_response_list = list_workspaces_response.get_result()
@@ -91,413 +358,295 @@ class TestSchematicsV1():
     @needscredentials
     def test_create_workspace(self):
 
-        # Construct a dict representation of a CatalogRef model
-        catalog_ref_model = {
-            'dry_run': True,
-            'item_icon_url': 'testString',
-            'item_id': 'testString',
-            'item_name': 'testString',
-            'item_readme_url': 'testString',
-            'item_url': 'testString',
-            'launch_url': 'testString',
-            'offering_version': 'testString'
-        }
-
-        # Construct a dict representation of a SharedTargetData model
-        shared_target_data_model = {
-            'cluster_created_on': 'testString',
-            'cluster_id': 'testString',
-            'cluster_name': 'testString',
-            'cluster_type': 'testString',
-            'entitlement_keys': [{ 'foo': 'bar' }],
-            'namespace': 'testString',
-            'region': 'testString',
-            'resource_group_id': 'testString',
-            'worker_count': 26,
-            'worker_machine_type': 'testString'
-        }
-
-        # Construct a dict representation of a WorkspaceVariableRequest model
-        workspace_variable_request_model = {
-            'description': 'testString',
-            'name': 'testString',
-            'secure': True,
-            'type': 'testString',
-            'use_default': True,
-            'value': 'testString'
-        }
-
         # Construct a dict representation of a TemplateSourceDataRequest model
         template_source_data_request_model = {
-            'env_values': [{ 'foo': 'bar' }],
-            'folder': 'testString',
-            'init_state_file': 'testString',
-            'type': 'testString',
-            'uninstall_script_name': 'testString',
-            'values': 'testString',
-            'values_metadata': [{ 'foo': 'bar' }],
-            'variablestore': [workspace_variable_request_model]
+        'env_values': [
+            {
+                'KEY1': 'VALUE1'
+            },
+            {
+                'KEY2': 'VALUE2'
+            }
+        ],
+        'folder': '.',
+        'type': 'terraform_v0.12.20',
+        'variablestore': [
+            {
+                'name': 'variable_name1',
+                'value': 'variable_valuename1'
+            },
+            {
+                'name': 'variable_name2',
+                'value': 'variable_valuename2'
+            }
+            ]
         }
 
         # Construct a dict representation of a TemplateRepoRequest model
         template_repo_request_model = {
-            'branch': 'testString',
-            'release': 'testString',
-            'repo_sha_value': 'testString',
-            'repo_url': 'testString',
-            'url': 'testString'
-        }
-
-        # Construct a dict representation of a WorkspaceStatusRequest model
-        workspace_status_request_model = {
-            'frozen': True,
-            'frozen_at': '2020-01-28T18:40:40.123456Z',
-            'frozen_by': 'testString',
-            'locked': True,
-            'locked_by': 'testString',
-            'locked_time': '2020-01-28T18:40:40.123456Z'
+        'url': 'https://github.ibm.com/gshamann/tf_cloudless_sleepy'
         }
 
         create_workspace_response = self.schematics_service.create_workspace(
-            applied_shareddata_ids=['testString'],
-            catalog_ref=catalog_ref_model,
-            description='testString',
-            location='testString',
-            name='testString',
-            resource_group='testString',
-            shared_data=shared_target_data_model,
+            description='description',
+            name='workspace_name',
             tags=['testString'],
             template_data=[template_source_data_request_model],
-            template_ref='testString',
             template_repo=template_repo_request_model,
-            type=['testString'],
-            workspace_status=workspace_status_request_model,
-            x_github_token='testString'
+            type=['terraform_v0.12.20'],
         )
 
         assert create_workspace_response.get_status_code() == 201
         workspace_response = create_workspace_response.get_result()
         assert workspace_response is not None
 
+        self.deleteWorkspaceById(workspace_response['id'])
+
     @needscredentials
     def test_get_workspace(self):
 
+        ws = self.createWorkspace()
+
         get_workspace_response = self.schematics_service.get_workspace(
-            w_id='testString'
+           w_id=ws['id'],
         )
 
         assert get_workspace_response.get_status_code() == 200
         workspace_response = get_workspace_response.get_result()
         assert workspace_response is not None
 
+        self.deleteWorkspaceById(workspace_response['id'])
+
     @needscredentials
     def test_replace_workspace(self):
 
-        # Construct a dict representation of a CatalogRef model
-        catalog_ref_model = {
-            'dry_run': True,
-            'item_icon_url': 'testString',
-            'item_id': 'testString',
-            'item_name': 'testString',
-            'item_readme_url': 'testString',
-            'item_url': 'testString',
-            'launch_url': 'testString',
-            'offering_version': 'testString'
-        }
-
-        # Construct a dict representation of a SharedTargetData model
-        shared_target_data_model = {
-            'cluster_created_on': 'testString',
-            'cluster_id': 'testString',
-            'cluster_name': 'testString',
-            'cluster_type': 'testString',
-            'entitlement_keys': [{ 'foo': 'bar' }],
-            'namespace': 'testString',
-            'region': 'testString',
-            'resource_group_id': 'testString',
-            'worker_count': 26,
-            'worker_machine_type': 'testString'
-        }
-
-        # Construct a dict representation of a WorkspaceVariableRequest model
-        workspace_variable_request_model = {
-            'description': 'testString',
-            'name': 'testString',
-            'secure': True,
-            'type': 'testString',
-            'use_default': True,
-            'value': 'testString'
-        }
-
-        # Construct a dict representation of a TemplateSourceDataRequest model
-        template_source_data_request_model = {
-            'env_values': [{ 'foo': 'bar' }],
-            'folder': 'testString',
-            'init_state_file': 'testString',
-            'type': 'testString',
-            'uninstall_script_name': 'testString',
-            'values': 'testString',
-            'values_metadata': [{ 'foo': 'bar' }],
-            'variablestore': [workspace_variable_request_model]
-        }
-
-        # Construct a dict representation of a TemplateRepoUpdateRequest model
-        template_repo_update_request_model = {
-            'branch': 'testString',
-            'release': 'testString',
-            'repo_sha_value': 'testString',
-            'repo_url': 'testString',
-            'url': 'testString'
-        }
-
-        # Construct a dict representation of a WorkspaceStatusUpdateRequest model
-        workspace_status_update_request_model = {
-            'frozen': True,
-            'frozen_at': '2020-01-28T18:40:40.123456Z',
-            'frozen_by': 'testString',
-            'locked': True,
-            'locked_by': 'testString',
-            'locked_time': '2020-01-28T18:40:40.123456Z'
-        }
-
-        # Construct a dict representation of a WorkspaceStatusMessage model
-        workspace_status_message_model = {
-            'status_code': 'testString',
-            'status_msg': 'testString'
-        }
+        ws = self.createWorkspace()
+        self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
 
         replace_workspace_response = self.schematics_service.replace_workspace(
-            w_id='testString',
-            catalog_ref=catalog_ref_model,
-            description='testString',
-            name='testString',
-            shared_data=shared_target_data_model,
-            tags=['testString'],
-            template_data=[template_source_data_request_model],
-            template_repo=template_repo_update_request_model,
-            type=['testString'],
-            workspace_status=workspace_status_update_request_model,
-            workspace_status_msg=workspace_status_message_model
+            w_id=ws['id'],
+            description="",
+            name="myworkspace",
+            type=["terraform_v0.12.20"],
         )
 
         assert replace_workspace_response.get_status_code() == 200
         workspace_response = replace_workspace_response.get_result()
         assert workspace_response is not None
 
+        self.deleteWorkspaceById(workspace_response['id'])
+
     @needscredentials
     def test_update_workspace(self):
 
-        # Construct a dict representation of a CatalogRef model
-        catalog_ref_model = {
-            'dry_run': True,
-            'item_icon_url': 'testString',
-            'item_id': 'testString',
-            'item_name': 'testString',
-            'item_readme_url': 'testString',
-            'item_url': 'testString',
-            'launch_url': 'testString',
-            'offering_version': 'testString'
-        }
-
-        # Construct a dict representation of a SharedTargetData model
-        shared_target_data_model = {
-            'cluster_created_on': 'testString',
-            'cluster_id': 'testString',
-            'cluster_name': 'testString',
-            'cluster_type': 'testString',
-            'entitlement_keys': [{ 'foo': 'bar' }],
-            'namespace': 'testString',
-            'region': 'testString',
-            'resource_group_id': 'testString',
-            'worker_count': 26,
-            'worker_machine_type': 'testString'
-        }
-
-        # Construct a dict representation of a WorkspaceVariableRequest model
-        workspace_variable_request_model = {
-            'description': 'testString',
-            'name': 'testString',
-            'secure': True,
-            'type': 'testString',
-            'use_default': True,
-            'value': 'testString'
-        }
-
-        # Construct a dict representation of a TemplateSourceDataRequest model
-        template_source_data_request_model = {
-            'env_values': [{ 'foo': 'bar' }],
-            'folder': 'testString',
-            'init_state_file': 'testString',
-            'type': 'testString',
-            'uninstall_script_name': 'testString',
-            'values': 'testString',
-            'values_metadata': [{ 'foo': 'bar' }],
-            'variablestore': [workspace_variable_request_model]
-        }
-
-        # Construct a dict representation of a TemplateRepoUpdateRequest model
-        template_repo_update_request_model = {
-            'branch': 'testString',
-            'release': 'testString',
-            'repo_sha_value': 'testString',
-            'repo_url': 'testString',
-            'url': 'testString'
-        }
-
-        # Construct a dict representation of a WorkspaceStatusUpdateRequest model
-        workspace_status_update_request_model = {
-            'frozen': True,
-            'frozen_at': '2020-01-28T18:40:40.123456Z',
-            'frozen_by': 'testString',
-            'locked': True,
-            'locked_by': 'testString',
-            'locked_time': '2020-01-28T18:40:40.123456Z'
-        }
-
-        # Construct a dict representation of a WorkspaceStatusMessage model
-        workspace_status_message_model = {
-            'status_code': 'testString',
-            'status_msg': 'testString'
-        }
+        ws = self.createWorkspace()
+        self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
 
         update_workspace_response = self.schematics_service.update_workspace(
-            w_id='testString',
-            catalog_ref=catalog_ref_model,
-            description='testString',
-            name='testString',
-            shared_data=shared_target_data_model,
-            tags=['testString'],
-            template_data=[template_source_data_request_model],
-            template_repo=template_repo_update_request_model,
-            type=['testString'],
-            workspace_status=workspace_status_update_request_model,
-            workspace_status_msg=workspace_status_message_model
+            w_id=ws['id'],
+            description="",
+            name="myworkspace",
+            type=["terraform_v0.12.20"],
         )
 
         assert update_workspace_response.get_status_code() == 200
         workspace_response = update_workspace_response.get_result()
         assert workspace_response is not None
 
+        self.deleteWorkspaceById(workspace_response['id'])
+
     @needscredentials
     def test_upload_template_tar(self):
 
+        ws = self.createWorkspaceWithEmptyRepoURL()
+        self.waitForWorkspaceStatus(ws['id'], "DRAFT")
+
+        fileDir = os.getcwd()
+        fileName = "tf_cloudless_sleepy_git_archive.tar"
+        filePath = os.path.join(fileDir, "tarfiles", fileName)
+        fileReader = open(filePath, "rb")
+
         upload_template_tar_response = self.schematics_service.upload_template_tar(
-            w_id='testString',
-            t_id='testString',
-            file=io.BytesIO(b'This is a mock file.').getvalue(),
-            file_content_type='testString'
+            w_id=ws['id'],
+            t_id=ws['template_data'][0]['id'],
+            file_content_type="multipart/form-data",
+            file=fileReader
         )
 
         assert upload_template_tar_response.get_status_code() == 200
         template_repo_tar_upload_response = upload_template_tar_response.get_result()
         assert template_repo_tar_upload_response is not None
 
+        self.deleteWorkspaceById(ws['id'])
+
     @needscredentials
     def test_get_workspace_readme(self):
 
+        (ws, activityid) = self.applyWorkspaceAction()
+
         get_workspace_readme_response = self.schematics_service.get_workspace_readme(
-            w_id='testString',
-            ref='testString',
-            formatted='markdown'
+            w_id=ws['id']
         )
 
         assert get_workspace_readme_response.get_status_code() == 200
         template_readme = get_workspace_readme_response.get_result()
         assert template_readme is not None
 
+        self.deleteWorkspaceById(ws['id'])
+
     @needscredentials
     def test_list_workspace_activities(self):
 
+        ws = self.uploadTarFile()
+        self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
+
+        self.refreshWorkspaceActionById(ws['id'])
+        self.destroyWorkspaceActionById(ws['id'])
+
         list_workspace_activities_response = self.schematics_service.list_workspace_activities(
-            w_id='testString',
-            offset=0,
-            limit=1
+            w_id=ws['id']
         )
 
         assert list_workspace_activities_response.get_status_code() == 200
         workspace_activities = list_workspace_activities_response.get_result()
         assert workspace_activities is not None
 
+        self.deleteWorkspaceById(ws['id'])
+
     @needscredentials
     def test_get_workspace_activity(self):
 
+        ws = self.uploadTarFile()
+        self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
+
+        activity = self.refreshWorkspaceActionById(ws['id'])
+
         get_workspace_activity_response = self.schematics_service.get_workspace_activity(
-            w_id='testString',
-            activity_id='testString'
+            w_id=ws['id'],
+            activity_id=activity[1]
         )
 
         assert get_workspace_activity_response.get_status_code() == 200
         workspace_activity = get_workspace_activity_response.get_result()
         assert workspace_activity is not None
 
+        self.deleteWorkspaceById(ws['id'])
+
+    @needscredentials
+    def test_run_workspace_commands(self):
+
+        (ws, activityid) = self.applyWorkspaceAction()
+
+        # Construct a dict representation of a TerraformCommand model
+        terraform_command_model = {
+            'command': 'state show',
+            'command_params': 'data.template_file.test',
+            'command_name': 'Test Command',
+            'command_desc': 'Check command execution',
+            'command_onError': 'continue',
+            'command_dependsOn': ''
+        }
+
+        run_workspace_commands_response = self.schematics_service.run_workspace_commands(
+            w_id=ws['id'],
+            refresh_token=self.refresh_token,
+            commands=[terraform_command_model],
+            operation_name='testString',
+            description='testString'
+        )
+
+        self.waitForWorkspaceActivityStatus(ws['id'], activityid, "COMPLETED")
+
+        assert run_workspace_commands_response.get_status_code() == 202
+        workspace_activity_command_result = run_workspace_commands_response.get_result()
+        assert workspace_activity_command_result is not None
+
+        self.deleteWorkspaceById(ws['id'])
+
     @needscredentials
     def test_apply_workspace_command(self):
 
-        # Construct a dict representation of a WorkspaceActivityOptionsTemplate model
-        workspace_activity_options_template_model = {
-            'target': ['testString'],
-            'tf_vars': ['testString']
-        }
+        ws = self.uploadTarFile()
+        self.waitForWorkspaceStatus(ws['id'], "INACTIVE")       
 
         apply_workspace_command_response = self.schematics_service.apply_workspace_command(
-            w_id='testString',
-            refresh_token='testString',
-            action_options=workspace_activity_options_template_model
+            w_id=ws['id'],
+            refresh_token=self.refresh_token
         )
 
         assert apply_workspace_command_response.get_status_code() == 202
         workspace_activity_apply_result = apply_workspace_command_response.get_result()
         assert workspace_activity_apply_result is not None
 
+        self.waitForWorkspaceActivityStatus(ws['id'], workspace_activity_apply_result['activityid'], "COMPLETED")
+
+        self.deleteWorkspaceById(ws['id'])
+
     @needscredentials
     def test_destroy_workspace_command(self):
 
-        # Construct a dict representation of a WorkspaceActivityOptionsTemplate model
-        workspace_activity_options_template_model = {
-            'target': ['testString'],
-            'tf_vars': ['testString']
-        }
+        ws = self.uploadTarFile()
+        self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
 
         destroy_workspace_command_response = self.schematics_service.destroy_workspace_command(
-            w_id='testString',
-            refresh_token='testString',
-            action_options=workspace_activity_options_template_model
+            w_id=ws['id'],
+            refresh_token=self.refresh_token,
         )
 
         assert destroy_workspace_command_response.get_status_code() == 202
         workspace_activity_destroy_result = destroy_workspace_command_response.get_result()
         assert workspace_activity_destroy_result is not None
 
+        self.waitForWorkspaceActivityStatus(ws['id'], workspace_activity_destroy_result['activityid'], "COMPLETED")
+
+        self.deleteWorkspaceById(ws['id'])
+
     @needscredentials
     def test_plan_workspace_command(self):
 
+        ws = self.uploadTarFile()
+        self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
+
         plan_workspace_command_response = self.schematics_service.plan_workspace_command(
-            w_id='testString',
-            refresh_token='testString'
+	        w_id=ws['id'],
+            refresh_token = self.refresh_token
         )
 
         assert plan_workspace_command_response.get_status_code() == 202
         workspace_activity_plan_result = plan_workspace_command_response.get_result()
         assert workspace_activity_plan_result is not None
 
+        self.waitForWorkspaceActivityStatus(ws['id'], workspace_activity_plan_result['activityid'], "COMPLETED")
+
+        self.deleteWorkspaceById(ws['id'])
+
     @needscredentials
     def test_refresh_workspace_command(self):
 
+        ws = self.uploadTarFile()
+        self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
+
         refresh_workspace_command_response = self.schematics_service.refresh_workspace_command(
-            w_id='testString',
-            refresh_token='testString'
+            w_id=ws['id'],
+            refresh_token=self.refresh_token
         )
 
         assert refresh_workspace_command_response.get_status_code() == 202
         workspace_activity_refresh_result = refresh_workspace_command_response.get_result()
         assert workspace_activity_refresh_result is not None
 
+        self.waitForWorkspaceActivityStatus(ws['id'], workspace_activity_refresh_result['activityid'], "COMPLETED")
+
+        self.deleteWorkspaceById(ws['id'])
+
     @needscredentials
     def test_get_workspace_inputs(self):
 
+        (ws, activityid) = self.applyWorkspaceAction()
+
         get_workspace_inputs_response = self.schematics_service.get_workspace_inputs(
-            w_id='testString',
-            t_id='testString'
+            w_id=ws['id'],
+            t_id=ws['template_data'][0]['id']
         )
 
         assert get_workspace_inputs_response.get_status_code() == 200
@@ -507,22 +656,15 @@ class TestSchematicsV1():
     @needscredentials
     def test_replace_workspace_inputs(self):
 
-        # Construct a dict representation of a WorkspaceVariableRequest model
-        workspace_variable_request_model = {
-            'description': 'testString',
-            'name': 'testString',
-            'secure': True,
-            'type': 'testString',
-            'use_default': True,
-            'value': 'testString'
-        }
+        (ws, activityid) = self.applyWorkspaceAction()
 
         replace_workspace_inputs_response = self.schematics_service.replace_workspace_inputs(
-            w_id='testString',
-            t_id='testString',
-            env_values=[{ 'foo': 'bar' }],
-            values='testString',
-            variablestore=[workspace_variable_request_model]
+            w_id=ws['id'],
+            t_id=ws['template_data'][0]['id'],
+            variablestore=[{
+                'name': 'updated_var',
+                'value': 'test'
+            }]
         )
 
         assert replace_workspace_inputs_response.get_status_code() == 200
@@ -532,8 +674,10 @@ class TestSchematicsV1():
     @needscredentials
     def test_get_all_workspace_inputs(self):
 
+        (ws, activityid) = self.applyWorkspaceAction()
+
         get_all_workspace_inputs_response = self.schematics_service.get_all_workspace_inputs(
-            w_id='testString'
+            w_id=ws['id']
         )
 
         assert get_all_workspace_inputs_response.get_status_code() == 200
@@ -543,9 +687,11 @@ class TestSchematicsV1():
     @needscredentials
     def test_get_workspace_input_metadata(self):
 
+        (ws, activityid) = self.applyWorkspaceAction()
+
         get_workspace_input_metadata_response = self.schematics_service.get_workspace_input_metadata(
-            w_id='testString',
-            t_id='testString'
+            w_id=ws['id'],
+            t_id=ws['template_data'][0]['id']
         )
 
         assert get_workspace_input_metadata_response.get_status_code() == 200
@@ -555,8 +701,10 @@ class TestSchematicsV1():
     @needscredentials
     def test_get_workspace_outputs(self):
 
+        (ws, activityid) = self.applyWorkspaceAction()
+
         get_workspace_outputs_response = self.schematics_service.get_workspace_outputs(
-            w_id='testString'
+            w_id=ws['id']
         )
 
         assert get_workspace_outputs_response.get_status_code() == 200
@@ -566,8 +714,10 @@ class TestSchematicsV1():
     @needscredentials
     def test_get_workspace_resources(self):
 
+        (ws, activityid) = self.applyWorkspaceAction()
+
         get_workspace_resources_response = self.schematics_service.get_workspace_resources(
-            w_id='testString'
+            w_id=ws['id']
         )
 
         assert get_workspace_resources_response.get_status_code() == 200
@@ -577,8 +727,10 @@ class TestSchematicsV1():
     @needscredentials
     def test_get_workspace_state(self):
 
+        (ws, activityid) = self.applyWorkspaceAction()
+
         get_workspace_state_response = self.schematics_service.get_workspace_state(
-            w_id='testString'
+            w_id=ws['id'],
         )
 
         assert get_workspace_state_response.get_status_code() == 200
@@ -588,9 +740,11 @@ class TestSchematicsV1():
     @needscredentials
     def test_get_workspace_template_state(self):
 
+        (ws, activityid) = self.applyWorkspaceAction()
+
         get_workspace_template_state_response = self.schematics_service.get_workspace_template_state(
-            w_id='testString',
-            t_id='testString'
+            w_id=ws['id'],
+            t_id=ws['template_data'][0]['id']
         )
 
         assert get_workspace_template_state_response.get_status_code() == 200
@@ -600,9 +754,11 @@ class TestSchematicsV1():
     @needscredentials
     def test_get_workspace_activity_logs(self):
 
+        (ws, activityid) = self.applyWorkspaceAction()
+
         get_workspace_activity_logs_response = self.schematics_service.get_workspace_activity_logs(
-            w_id='testString',
-            activity_id='testString'
+            w_id=ws['id'],
+            activity_id=activityid
         )
 
         assert get_workspace_activity_logs_response.get_status_code() == 200
@@ -612,8 +768,10 @@ class TestSchematicsV1():
     @needscredentials
     def test_get_workspace_log_urls(self):
 
+        (ws, activityid) = self.applyWorkspaceAction()
+
         get_workspace_log_urls_response = self.schematics_service.get_workspace_log_urls(
-            w_id='testString'
+            w_id=ws['id'],
         )
 
         assert get_workspace_log_urls_response.get_status_code() == 200
@@ -623,9 +781,11 @@ class TestSchematicsV1():
     @needscredentials
     def test_get_template_logs(self):
 
+        (ws, activityid) = self.applyWorkspaceAction()
+
         get_template_logs_response = self.schematics_service.get_template_logs(
-            w_id='testString',
-            t_id='testString',
+            w_id=ws['id'],
+            t_id=ws['template_data'][0]['id'],
             log_tf_cmd=True,
             log_tf_prefix=True,
             log_tf_null_resource=True,
@@ -639,10 +799,12 @@ class TestSchematicsV1():
     @needscredentials
     def test_get_template_activity_log(self):
 
+        (ws, activityid) = self.applyWorkspaceAction()
+
         get_template_activity_log_response = self.schematics_service.get_template_activity_log(
-            w_id='testString',
-            t_id='testString',
-            activity_id='testString',
+            w_id=ws['id'],
+            t_id=ws['template_data'][0]['id'],
+            activity_id=activityid,
             log_tf_cmd=True,
             log_tf_prefix=True,
             log_tf_null_resource=True,
@@ -653,779 +815,4 @@ class TestSchematicsV1():
         result = get_template_activity_log_response.get_result()
         assert result is not None
 
-    @needscredentials
-    def test_create_workspace_deletion_job(self):
-
-        create_workspace_deletion_job_response = self.schematics_service.create_workspace_deletion_job(
-            refresh_token='testString',
-            new_delete_workspaces=True,
-            new_destroy_resources=True,
-            new_job='testString',
-            new_version='testString',
-            new_workspaces=['testString'],
-            destroy_resources='testString'
-        )
-
-        assert create_workspace_deletion_job_response.get_status_code() == 200
-        workspace_bulk_delete_response = create_workspace_deletion_job_response.get_result()
-        assert workspace_bulk_delete_response is not None
-
-    @needscredentials
-    def test_get_workspace_deletion_job_status(self):
-
-        get_workspace_deletion_job_status_response = self.schematics_service.get_workspace_deletion_job_status(
-            wj_id='testString'
-        )
-
-        assert get_workspace_deletion_job_status_response.get_status_code() == 200
-        workspace_job_response = get_workspace_deletion_job_status_response.get_result()
-        assert workspace_job_response is not None
-
-    @needscredentials
-    def test_create_action(self):
-
-        # Construct a dict representation of a UserState model
-        user_state_model = {
-            'state': 'draft',
-            'set_by': 'testString',
-            'set_at': '2020-01-28T18:40:40.123456Z'
-        }
-
-        # Construct a dict representation of a ExternalSourceGit model
-        external_source_git_model = {
-            'git_repo_url': 'testString',
-            'git_token': 'testString',
-            'git_repo_folder': 'testString',
-            'git_release': 'testString',
-            'git_branch': 'testString'
-        }
-
-        # Construct a dict representation of a ExternalSource model
-        external_source_model = {
-            'source_type': 'local',
-            'git': external_source_git_model
-        }
-
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {
-            'sys_locked': True,
-            'sys_locked_by': 'testString',
-            'sys_locked_at': '2020-01-28T18:40:40.123456Z'
-        }
-
-        # Construct a dict representation of a TargetResourceset model
-        target_resourceset_model = {
-            'name': 'testString',
-            'type': 'testString',
-            'description': 'testString',
-            'resource_query': 'testString',
-            'credential': 'testString',
-            'sys_lock': system_lock_model
-        }
-
-        # Construct a dict representation of a VariableMetadata model
-        variable_metadata_model = {
-            'type': 'boolean',
-            'aliases': ['testString'],
-            'description': 'testString',
-            'default_value': 'testString',
-            'secure': True,
-            'immutable': True,
-            'hidden': True,
-            'options': ['testString'],
-            'min_value': 38,
-            'max_value': 38,
-            'min_length': 38,
-            'max_length': 38,
-            'matches': 'testString',
-            'position': 38,
-            'group_by': 'testString',
-            'source': 'testString'
-        }
-
-        # Construct a dict representation of a VariableData model
-        variable_data_model = {
-            'name': 'testString',
-            'value': 'testString',
-            'metadata': variable_metadata_model
-        }
-
-        # Construct a dict representation of a ActionState model
-        action_state_model = {
-            'status_code': 'normal',
-            'status_message': 'testString'
-        }
-
-        create_action_response = self.schematics_service.create_action(
-            name='Stop Action',
-            description='This Action can be used to Stop the targets',
-            location='us_south',
-            resource_group='testString',
-            tags=['testString'],
-            user_state=user_state_model,
-            source_readme_url='testString',
-            source=external_source_model,
-            source_type='local',
-            command_parameter='testString',
-            bastion=target_resourceset_model,
-            targets=[target_resourceset_model],
-            inputs=[variable_data_model],
-            outputs=[variable_data_model],
-            settings=[variable_data_model],
-            trigger_record_id='testString',
-            state=action_state_model,
-            sys_lock=system_lock_model,
-            x_github_token='testString'
-        )
-
-        assert create_action_response.get_status_code() == 201
-        action = create_action_response.get_result()
-        assert action is not None
-
-    @needscredentials
-    def test_list_actions(self):
-
-        list_actions_response = self.schematics_service.list_actions(
-            offset=0,
-            limit=1,
-            sort='testString',
-            profile='ids'
-        )
-
-        assert list_actions_response.get_status_code() == 200
-        action_list = list_actions_response.get_result()
-        assert action_list is not None
-
-    @needscredentials
-    def test_get_action(self):
-
-        get_action_response = self.schematics_service.get_action(
-            action_id='testString',
-            profile='summary'
-        )
-
-        assert get_action_response.get_status_code() == 200
-        action = get_action_response.get_result()
-        assert action is not None
-
-    @needscredentials
-    def test_update_action(self):
-
-        # Construct a dict representation of a UserState model
-        user_state_model = {
-            'state': 'draft',
-            'set_by': 'testString',
-            'set_at': '2020-01-28T18:40:40.123456Z'
-        }
-
-        # Construct a dict representation of a ExternalSourceGit model
-        external_source_git_model = {
-            'git_repo_url': 'testString',
-            'git_token': 'testString',
-            'git_repo_folder': 'testString',
-            'git_release': 'testString',
-            'git_branch': 'testString'
-        }
-
-        # Construct a dict representation of a ExternalSource model
-        external_source_model = {
-            'source_type': 'local',
-            'git': external_source_git_model
-        }
-
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {
-            'sys_locked': True,
-            'sys_locked_by': 'testString',
-            'sys_locked_at': '2020-01-28T18:40:40.123456Z'
-        }
-
-        # Construct a dict representation of a TargetResourceset model
-        target_resourceset_model = {
-            'name': 'testString',
-            'type': 'testString',
-            'description': 'testString',
-            'resource_query': 'testString',
-            'credential': 'testString',
-            'sys_lock': system_lock_model
-        }
-
-        # Construct a dict representation of a VariableMetadata model
-        variable_metadata_model = {
-            'type': 'boolean',
-            'aliases': ['testString'],
-            'description': 'testString',
-            'default_value': 'testString',
-            'secure': True,
-            'immutable': True,
-            'hidden': True,
-            'options': ['testString'],
-            'min_value': 38,
-            'max_value': 38,
-            'min_length': 38,
-            'max_length': 38,
-            'matches': 'testString',
-            'position': 38,
-            'group_by': 'testString',
-            'source': 'testString'
-        }
-
-        # Construct a dict representation of a VariableData model
-        variable_data_model = {
-            'name': 'testString',
-            'value': 'testString',
-            'metadata': variable_metadata_model
-        }
-
-        # Construct a dict representation of a ActionState model
-        action_state_model = {
-            'status_code': 'normal',
-            'status_message': 'testString'
-        }
-
-        update_action_response = self.schematics_service.update_action(
-            action_id='testString',
-            name='Stop Action',
-            description='This Action can be used to Stop the targets',
-            location='us_south',
-            resource_group='testString',
-            tags=['testString'],
-            user_state=user_state_model,
-            source_readme_url='testString',
-            source=external_source_model,
-            source_type='local',
-            command_parameter='testString',
-            bastion=target_resourceset_model,
-            targets=[target_resourceset_model],
-            inputs=[variable_data_model],
-            outputs=[variable_data_model],
-            settings=[variable_data_model],
-            trigger_record_id='testString',
-            state=action_state_model,
-            sys_lock=system_lock_model,
-            x_github_token='testString'
-        )
-
-        assert update_action_response.get_status_code() == 200
-        action = update_action_response.get_result()
-        assert action is not None
-
-    @needscredentials
-    def test_create_job(self):
-
-        # Construct a dict representation of a VariableMetadata model
-        variable_metadata_model = {
-            'type': 'boolean',
-            'aliases': ['testString'],
-            'description': 'testString',
-            'default_value': 'testString',
-            'secure': True,
-            'immutable': True,
-            'hidden': True,
-            'options': ['testString'],
-            'min_value': 38,
-            'max_value': 38,
-            'min_length': 38,
-            'max_length': 38,
-            'matches': 'testString',
-            'position': 38,
-            'group_by': 'testString',
-            'source': 'testString'
-        }
-
-        # Construct a dict representation of a VariableData model
-        variable_data_model = {
-            'name': 'testString',
-            'value': 'testString',
-            'metadata': variable_metadata_model
-        }
-
-        # Construct a dict representation of a JobStatusAction model
-        job_status_action_model = {
-            'action_name': 'testString',
-            'status_code': 'job_pending',
-            'status_message': 'testString',
-            'bastion_status_code': 'none',
-            'bastion_status_message': 'testString',
-            'targets_status_code': 'none',
-            'targets_status_message': 'testString',
-            'updated_at': '2020-01-28T18:40:40.123456Z'
-        }
-
-        # Construct a dict representation of a JobStatus model
-        job_status_model = {
-            'action_job_status': job_status_action_model
-        }
-
-        # Construct a dict representation of a JobDataAction model
-        job_data_action_model = {
-            'action_name': 'testString',
-            'inputs': [variable_data_model],
-            'outputs': [variable_data_model],
-            'settings': [variable_data_model],
-            'updated_at': '2020-01-28T18:40:40.123456Z'
-        }
-
-        # Construct a dict representation of a JobData model
-        job_data_model = {
-            'job_type': 'repo_download_job',
-            'action_job_data': job_data_action_model
-        }
-
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {
-            'sys_locked': True,
-            'sys_locked_by': 'testString',
-            'sys_locked_at': '2020-01-28T18:40:40.123456Z'
-        }
-
-        # Construct a dict representation of a TargetResourceset model
-        target_resourceset_model = {
-            'name': 'testString',
-            'type': 'testString',
-            'description': 'testString',
-            'resource_query': 'testString',
-            'credential': 'testString',
-            'sys_lock': system_lock_model
-        }
-
-        # Construct a dict representation of a JobLogSummaryRepoDownloadJob model
-        job_log_summary_repo_download_job_model = {
-        }
-
-        # Construct a dict representation of a JobLogSummaryActionJobRecap model
-        job_log_summary_action_job_recap_model = {
-            'target': ['testString'],
-            'ok': 72.5,
-            'changed': 72.5,
-            'failed': 72.5,
-            'skipped': 72.5,
-            'unreachable': 72.5
-        }
-
-        # Construct a dict representation of a JobLogSummaryActionJob model
-        job_log_summary_action_job_model = {
-            'recap': job_log_summary_action_job_recap_model
-        }
-
-        # Construct a dict representation of a JobLogSummary model
-        job_log_summary_model = {
-            'job_type': 'repo_download_job',
-            'repo_download_job': job_log_summary_repo_download_job_model,
-            'action_job': job_log_summary_action_job_model
-        }
-
-        create_job_response = self.schematics_service.create_job(
-            refresh_token='testString',
-            command_object='workspace',
-            command_object_id='testString',
-            command_name='workspace_init_flow',
-            command_parameter='testString',
-            command_options=['testString'],
-            inputs=[variable_data_model],
-            settings=[variable_data_model],
-            tags=['testString'],
-            location='us_south',
-            status=job_status_model,
-            data=job_data_model,
-            bastion=target_resourceset_model,
-            log_summary=job_log_summary_model
-        )
-
-        assert create_job_response.get_status_code() == 202
-        job = create_job_response.get_result()
-        assert job is not None
-
-    @needscredentials
-    def test_list_jobs(self):
-
-        list_jobs_response = self.schematics_service.list_jobs(
-            offset=0,
-            limit=1,
-            sort='testString',
-            profile='ids',
-            resource='workspaces',
-            action_id='testString',
-            list='all'
-        )
-
-        assert list_jobs_response.get_status_code() == 200
-        job_list = list_jobs_response.get_result()
-        assert job_list is not None
-
-    @needscredentials
-    def test_replace_job(self):
-
-        # Construct a dict representation of a VariableMetadata model
-        variable_metadata_model = {
-            'type': 'boolean',
-            'aliases': ['testString'],
-            'description': 'testString',
-            'default_value': 'testString',
-            'secure': True,
-            'immutable': True,
-            'hidden': True,
-            'options': ['testString'],
-            'min_value': 38,
-            'max_value': 38,
-            'min_length': 38,
-            'max_length': 38,
-            'matches': 'testString',
-            'position': 38,
-            'group_by': 'testString',
-            'source': 'testString'
-        }
-
-        # Construct a dict representation of a VariableData model
-        variable_data_model = {
-            'name': 'testString',
-            'value': 'testString',
-            'metadata': variable_metadata_model
-        }
-
-        # Construct a dict representation of a JobStatusAction model
-        job_status_action_model = {
-            'action_name': 'testString',
-            'status_code': 'job_pending',
-            'status_message': 'testString',
-            'bastion_status_code': 'none',
-            'bastion_status_message': 'testString',
-            'targets_status_code': 'none',
-            'targets_status_message': 'testString',
-            'updated_at': '2020-01-28T18:40:40.123456Z'
-        }
-
-        # Construct a dict representation of a JobStatus model
-        job_status_model = {
-            'action_job_status': job_status_action_model
-        }
-
-        # Construct a dict representation of a JobDataAction model
-        job_data_action_model = {
-            'action_name': 'testString',
-            'inputs': [variable_data_model],
-            'outputs': [variable_data_model],
-            'settings': [variable_data_model],
-            'updated_at': '2020-01-28T18:40:40.123456Z'
-        }
-
-        # Construct a dict representation of a JobData model
-        job_data_model = {
-            'job_type': 'repo_download_job',
-            'action_job_data': job_data_action_model
-        }
-
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {
-            'sys_locked': True,
-            'sys_locked_by': 'testString',
-            'sys_locked_at': '2020-01-28T18:40:40.123456Z'
-        }
-
-        # Construct a dict representation of a TargetResourceset model
-        target_resourceset_model = {
-            'name': 'testString',
-            'type': 'testString',
-            'description': 'testString',
-            'resource_query': 'testString',
-            'credential': 'testString',
-            'sys_lock': system_lock_model
-        }
-
-        # Construct a dict representation of a JobLogSummaryRepoDownloadJob model
-        job_log_summary_repo_download_job_model = {
-        }
-
-        # Construct a dict representation of a JobLogSummaryActionJobRecap model
-        job_log_summary_action_job_recap_model = {
-            'target': ['testString'],
-            'ok': 72.5,
-            'changed': 72.5,
-            'failed': 72.5,
-            'skipped': 72.5,
-            'unreachable': 72.5
-        }
-
-        # Construct a dict representation of a JobLogSummaryActionJob model
-        job_log_summary_action_job_model = {
-            'recap': job_log_summary_action_job_recap_model
-        }
-
-        # Construct a dict representation of a JobLogSummary model
-        job_log_summary_model = {
-            'job_type': 'repo_download_job',
-            'repo_download_job': job_log_summary_repo_download_job_model,
-            'action_job': job_log_summary_action_job_model
-        }
-
-        replace_job_response = self.schematics_service.replace_job(
-            job_id='testString',
-            refresh_token='testString',
-            command_object='workspace',
-            command_object_id='testString',
-            command_name='workspace_init_flow',
-            command_parameter='testString',
-            command_options=['testString'],
-            inputs=[variable_data_model],
-            settings=[variable_data_model],
-            tags=['testString'],
-            location='us_south',
-            status=job_status_model,
-            data=job_data_model,
-            bastion=target_resourceset_model,
-            log_summary=job_log_summary_model
-        )
-
-        assert replace_job_response.get_status_code() == 202
-        job = replace_job_response.get_result()
-        assert job is not None
-
-    @needscredentials
-    def test_get_job(self):
-
-        get_job_response = self.schematics_service.get_job(
-            job_id='testString',
-            profile='summary'
-        )
-
-        assert get_job_response.get_status_code() == 200
-        job = get_job_response.get_result()
-        assert job is not None
-
-    @needscredentials
-    def test_list_job_logs(self):
-
-        list_job_logs_response = self.schematics_service.list_job_logs(
-            job_id='testString'
-        )
-
-        assert list_job_logs_response.get_status_code() == 202
-        job_log = list_job_logs_response.get_result()
-        assert job_log is not None
-
-    @needscredentials
-    def test_list_job_states(self):
-
-        list_job_states_response = self.schematics_service.list_job_states(
-            job_id='testString'
-        )
-
-        assert list_job_states_response.get_status_code() == 202
-        job_state_data = list_job_states_response.get_result()
-        assert job_state_data is not None
-
-    @needscredentials
-    def test_list_shared_datasets(self):
-
-        list_shared_datasets_response = self.schematics_service.list_shared_datasets()
-
-        assert list_shared_datasets_response.get_status_code() == 200
-        shared_dataset_response_list = list_shared_datasets_response.get_result()
-        assert shared_dataset_response_list is not None
-
-    @needscredentials
-    def test_create_shared_dataset(self):
-
-        # Construct a dict representation of a SharedDatasetData model
-        shared_dataset_data_model = {
-            'default_value': 'testString',
-            'description': 'testString',
-            'hidden': True,
-            'immutable': True,
-            'matches': 'testString',
-            'max_value': 'testString',
-            'max_value_len': 'testString',
-            'min_value': 'testString',
-            'min_value_len': 'testString',
-            'options': ['testString'],
-            'override_value': 'testString',
-            'secure': True,
-            'var_aliases': ['testString'],
-            'var_name': 'testString',
-            'var_ref': 'testString',
-            'var_type': 'testString'
-        }
-
-        create_shared_dataset_response = self.schematics_service.create_shared_dataset(
-            auto_propagate_change=True,
-            description='testString',
-            effected_workspace_ids=['testString'],
-            resource_group='testString',
-            shared_dataset_data=[shared_dataset_data_model],
-            shared_dataset_name='testString',
-            shared_dataset_source_name='testString',
-            shared_dataset_type=['testString'],
-            tags=['testString'],
-            version='testString'
-        )
-
-        assert create_shared_dataset_response.get_status_code() == 201
-        shared_dataset_response = create_shared_dataset_response.get_result()
-        assert shared_dataset_response is not None
-
-    @needscredentials
-    def test_get_shared_dataset(self):
-
-        get_shared_dataset_response = self.schematics_service.get_shared_dataset(
-            sd_id='testString'
-        )
-
-        assert get_shared_dataset_response.get_status_code() == 200
-        shared_dataset_response = get_shared_dataset_response.get_result()
-        assert shared_dataset_response is not None
-
-    @needscredentials
-    def test_replace_shared_dataset(self):
-
-        # Construct a dict representation of a SharedDatasetData model
-        shared_dataset_data_model = {
-            'default_value': 'testString',
-            'description': 'testString',
-            'hidden': True,
-            'immutable': True,
-            'matches': 'testString',
-            'max_value': 'testString',
-            'max_value_len': 'testString',
-            'min_value': 'testString',
-            'min_value_len': 'testString',
-            'options': ['testString'],
-            'override_value': 'testString',
-            'secure': True,
-            'var_aliases': ['testString'],
-            'var_name': 'testString',
-            'var_ref': 'testString',
-            'var_type': 'testString'
-        }
-
-        replace_shared_dataset_response = self.schematics_service.replace_shared_dataset(
-            sd_id='testString',
-            auto_propagate_change=True,
-            description='testString',
-            effected_workspace_ids=['testString'],
-            resource_group='testString',
-            shared_dataset_data=[shared_dataset_data_model],
-            shared_dataset_name='testString',
-            shared_dataset_source_name='testString',
-            shared_dataset_type=['testString'],
-            tags=['testString'],
-            version='testString'
-        )
-
-        assert replace_shared_dataset_response.get_status_code() == 200
-        shared_dataset_response = replace_shared_dataset_response.get_result()
-        assert shared_dataset_response is not None
-
-    @needscredentials
-    def test_get_kms_settings(self):
-
-        get_kms_settings_response = self.schematics_service.get_kms_settings(
-            location='testString'
-        )
-
-        assert get_kms_settings_response.get_status_code() == 200
-        kms_settings = get_kms_settings_response.get_result()
-        assert kms_settings is not None
-
-    @needscredentials
-    def test_replace_kms_settings(self):
-
-        # Construct a dict representation of a KMSSettingsPrimaryCrk model
-        kms_settings_primary_crk_model = {
-            'kms_name': 'testString',
-            'kms_private_endpoint': 'testString',
-            'key_crn': 'testString'
-        }
-
-        # Construct a dict representation of a KMSSettingsSecondaryCrk model
-        kms_settings_secondary_crk_model = {
-            'kms_name': 'testString',
-            'kms_private_endpoint': 'testString',
-            'key_crn': 'testString'
-        }
-
-        replace_kms_settings_response = self.schematics_service.replace_kms_settings(
-            location='testString',
-            encryption_scheme='testString',
-            resource_group='testString',
-            primary_crk=kms_settings_primary_crk_model,
-            secondary_crk=kms_settings_secondary_crk_model
-        )
-
-        assert replace_kms_settings_response.get_status_code() == 200
-        kms_settings = replace_kms_settings_response.get_result()
-        assert kms_settings is not None
-
-    @needscredentials
-    def test_get_discovered_kms_instances(self):
-
-        get_discovered_kms_instances_response = self.schematics_service.get_discovered_kms_instances(
-            encryption_scheme='testString',
-            location='testString',
-            resource_group='testString',
-            limit=1,
-            sort='testString'
-        )
-
-        assert get_discovered_kms_instances_response.get_status_code() == 200
-        kms_discovery = get_discovered_kms_instances_response.get_result()
-        assert kms_discovery is not None
-
-    @needscredentials
-    def test_delete_workspace_activity(self):
-
-        delete_workspace_activity_response = self.schematics_service.delete_workspace_activity(
-            w_id='testString',
-            activity_id='testString'
-        )
-
-        assert delete_workspace_activity_response.get_status_code() == 202
-        workspace_activity_apply_result = delete_workspace_activity_response.get_result()
-        assert workspace_activity_apply_result is not None
-
-    @needscredentials
-    def test_delete_workspace(self):
-
-        delete_workspace_response = self.schematics_service.delete_workspace(
-            w_id='testString',
-            refresh_token='testString',
-            destroy_resources='testString'
-        )
-
-        assert delete_workspace_response.get_status_code() == 200
-        result = delete_workspace_response.get_result()
-        assert result is not None
-
-    @needscredentials
-    def test_delete_shared_dataset(self):
-
-        delete_shared_dataset_response = self.schematics_service.delete_shared_dataset(
-            sd_id='testString'
-        )
-
-        assert delete_shared_dataset_response.get_status_code() == 200
-        shared_dataset_response = delete_shared_dataset_response.get_result()
-        assert shared_dataset_response is not None
-
-    @needscredentials
-    def test_delete_job(self):
-
-        delete_job_response = self.schematics_service.delete_job(
-            job_id='testString',
-            refresh_token='testString',
-            force=True,
-            propagate=True
-        )
-
-        assert delete_job_response.get_status_code() == 204
-
-    @needscredentials
-    def test_delete_action(self):
-
-        delete_action_response = self.schematics_service.delete_action(
-            action_id='testString',
-            force=True,
-            propagate=True
-        )
-
-        assert delete_action_response.get_status_code() == 204
 

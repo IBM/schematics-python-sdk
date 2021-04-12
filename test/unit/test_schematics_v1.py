@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# (C) Copyright IBM Corp. 2020.
+# (C) Copyright IBM Corp. 2021.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ Unit Tests for SchematicsV1
 
 from datetime import datetime, timezone
 from ibm_cloud_sdk_core.authenticators.no_auth_authenticator import NoAuthAuthenticator
+from ibm_cloud_sdk_core.utils import datetime_to_string, string_to_datetime
 import base64
 import inspect
 import io
@@ -139,7 +140,7 @@ class TestGetSchematicsVersion():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/version')
-        mock_response = '{"builddate": "builddate", "buildno": "buildno", "commitsha": "commitsha", "helm_provider_version": "helm_provider_version", "helm_version": "helm_version", "supported_template_types": [{"anyKey": "anyValue"}], "terraform_provider_version": "terraform_provider_version", "terraform_version": "terraform_version"}'
+        mock_response = '{"builddate": "builddate", "buildno": "buildno", "commitsha": "commitsha", "helm_provider_version": "helm_provider_version", "helm_version": "helm_version", "supported_template_types": {"anyKey": "anyValue"}, "terraform_provider_version": "terraform_provider_version", "terraform_version": "terraform_version"}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -186,7 +187,7 @@ class TestListWorkspaces():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspaces')
-        mock_response = '{"count": 5, "limit": 5, "offset": 6, "workspaces": [{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "template_type": "template_type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}]}'
+        mock_response = '{"count": 5, "limit": 5, "offset": 6, "workspaces": [{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -221,7 +222,7 @@ class TestListWorkspaces():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspaces')
-        mock_response = '{"count": 5, "limit": 5, "offset": 6, "workspaces": [{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "template_type": "template_type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}]}'
+        mock_response = '{"count": 5, "limit": 5, "offset": 6, "workspaces": [{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -258,7 +259,7 @@ class TestCreateWorkspace():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspaces')
-        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "template_type": "template_type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
+        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
         responses.add(responses.POST,
                       url,
                       body=mock_response,
@@ -320,11 +321,11 @@ class TestCreateWorkspace():
         # Construct a dict representation of a WorkspaceStatusRequest model
         workspace_status_request_model = {}
         workspace_status_request_model['frozen'] = True
-        workspace_status_request_model['frozen_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_request_model['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_status_request_model['frozen_by'] = 'testString'
         workspace_status_request_model['locked'] = True
         workspace_status_request_model['locked_by'] = 'testString'
-        workspace_status_request_model['locked_time'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_request_model['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Set up parameter values
         applied_shareddata_ids = ['testString']
@@ -388,7 +389,7 @@ class TestCreateWorkspace():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspaces')
-        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "template_type": "template_type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
+        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
         responses.add(responses.POST,
                       url,
                       body=mock_response,
@@ -450,11 +451,11 @@ class TestCreateWorkspace():
         # Construct a dict representation of a WorkspaceStatusRequest model
         workspace_status_request_model = {}
         workspace_status_request_model['frozen'] = True
-        workspace_status_request_model['frozen_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_request_model['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_status_request_model['frozen_by'] = 'testString'
         workspace_status_request_model['locked'] = True
         workspace_status_request_model['locked_by'] = 'testString'
-        workspace_status_request_model['locked_time'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_request_model['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Set up parameter values
         applied_shareddata_ids = ['testString']
@@ -530,7 +531,7 @@ class TestGetWorkspace():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspaces/testString')
-        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "template_type": "template_type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
+        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -558,7 +559,7 @@ class TestGetWorkspace():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspaces/testString')
-        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "template_type": "template_type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
+        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -600,7 +601,7 @@ class TestReplaceWorkspace():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspaces/testString')
-        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "template_type": "template_type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
+        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
         responses.add(responses.PUT,
                       url,
                       body=mock_response,
@@ -662,11 +663,11 @@ class TestReplaceWorkspace():
         # Construct a dict representation of a WorkspaceStatusUpdateRequest model
         workspace_status_update_request_model = {}
         workspace_status_update_request_model['frozen'] = True
-        workspace_status_update_request_model['frozen_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_update_request_model['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_status_update_request_model['frozen_by'] = 'testString'
         workspace_status_update_request_model['locked'] = True
         workspace_status_update_request_model['locked_by'] = 'testString'
-        workspace_status_update_request_model['locked_time'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_update_request_model['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Construct a dict representation of a WorkspaceStatusMessage model
         workspace_status_message_model = {}
@@ -726,7 +727,7 @@ class TestReplaceWorkspace():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspaces/testString')
-        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "template_type": "template_type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
+        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
         responses.add(responses.PUT,
                       url,
                       body=mock_response,
@@ -788,11 +789,11 @@ class TestReplaceWorkspace():
         # Construct a dict representation of a WorkspaceStatusUpdateRequest model
         workspace_status_update_request_model = {}
         workspace_status_update_request_model['frozen'] = True
-        workspace_status_update_request_model['frozen_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_update_request_model['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_status_update_request_model['frozen_by'] = 'testString'
         workspace_status_update_request_model['locked'] = True
         workspace_status_update_request_model['locked_by'] = 'testString'
-        workspace_status_update_request_model['locked_time'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_update_request_model['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Construct a dict representation of a WorkspaceStatusMessage model
         workspace_status_message_model = {}
@@ -954,7 +955,7 @@ class TestUpdateWorkspace():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspaces/testString')
-        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "template_type": "template_type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
+        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
         responses.add(responses.PATCH,
                       url,
                       body=mock_response,
@@ -1016,11 +1017,11 @@ class TestUpdateWorkspace():
         # Construct a dict representation of a WorkspaceStatusUpdateRequest model
         workspace_status_update_request_model = {}
         workspace_status_update_request_model['frozen'] = True
-        workspace_status_update_request_model['frozen_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_update_request_model['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_status_update_request_model['frozen_by'] = 'testString'
         workspace_status_update_request_model['locked'] = True
         workspace_status_update_request_model['locked_by'] = 'testString'
-        workspace_status_update_request_model['locked_time'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_update_request_model['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Construct a dict representation of a WorkspaceStatusMessage model
         workspace_status_message_model = {}
@@ -1080,7 +1081,7 @@ class TestUpdateWorkspace():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspaces/testString')
-        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "template_type": "template_type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
+        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
         responses.add(responses.PATCH,
                       url,
                       body=mock_response,
@@ -1142,11 +1143,11 @@ class TestUpdateWorkspace():
         # Construct a dict representation of a WorkspaceStatusUpdateRequest model
         workspace_status_update_request_model = {}
         workspace_status_update_request_model['frozen'] = True
-        workspace_status_update_request_model['frozen_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_update_request_model['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_status_update_request_model['frozen_by'] = 'testString'
         workspace_status_update_request_model['locked'] = True
         workspace_status_update_request_model['locked_by'] = 'testString'
-        workspace_status_update_request_model['locked_time'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_update_request_model['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Construct a dict representation of a WorkspaceStatusMessage model
         workspace_status_message_model = {}
@@ -1423,7 +1424,7 @@ class TestListWorkspaceActivities():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspaces/testString/actions')
-        mock_response = '{"actions": [{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}], "workspace_id": "workspace_id", "workspace_name": "workspace_name"}'
+        mock_response = '{"actions": [{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00.000Z", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00.000Z", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00.000Z", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}], "workspace_id": "workspace_id", "workspace_name": "workspace_name"}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -1460,7 +1461,7 @@ class TestListWorkspaceActivities():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspaces/testString/actions')
-        mock_response = '{"actions": [{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}], "workspace_id": "workspace_id", "workspace_name": "workspace_name"}'
+        mock_response = '{"actions": [{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00.000Z", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00.000Z", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00.000Z", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}], "workspace_id": "workspace_id", "workspace_name": "workspace_name"}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -1488,7 +1489,7 @@ class TestListWorkspaceActivities():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspaces/testString/actions')
-        mock_response = '{"actions": [{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}], "workspace_id": "workspace_id", "workspace_name": "workspace_name"}'
+        mock_response = '{"actions": [{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00.000Z", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00.000Z", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00.000Z", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}], "workspace_id": "workspace_id", "workspace_name": "workspace_name"}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -1530,7 +1531,7 @@ class TestGetWorkspaceActivity():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspaces/testString/actions/testString')
-        mock_response = '{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}'
+        mock_response = '{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00.000Z", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00.000Z", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00.000Z", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -1560,7 +1561,7 @@ class TestGetWorkspaceActivity():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspaces/testString/actions/testString')
-        mock_response = '{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}'
+        mock_response = '{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00.000Z", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00.000Z", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00.000Z", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -1654,6 +1655,114 @@ class TestDeleteWorkspaceActivity():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
                 service.delete_workspace_activity(**req_copy)
+
+
+
+class TestRunWorkspaceCommands():
+    """
+    Test Class for run_workspace_commands
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_run_workspace_commands_all_params(self):
+        """
+        run_workspace_commands()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v1/workspaces/testString/commands')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=202)
+
+        # Construct a dict representation of a TerraformCommand model
+        terraform_command_model = {}
+        terraform_command_model['command'] = 'testString'
+        terraform_command_model['command_params'] = 'testString'
+        terraform_command_model['command_name'] = 'testString'
+        terraform_command_model['command_desc'] = 'testString'
+        terraform_command_model['command_onError'] = 'testString'
+        terraform_command_model['command_dependsOn'] = 'testString'
+        terraform_command_model['command_status'] = 'testString'
+
+        # Set up parameter values
+        w_id = 'testString'
+        refresh_token = 'testString'
+        commands = [terraform_command_model]
+        operation_name = 'testString'
+        description = 'testString'
+
+        # Invoke method
+        response = service.run_workspace_commands(
+            w_id,
+            refresh_token,
+            commands=commands,
+            operation_name=operation_name,
+            description=description,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 202
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['commands'] == [terraform_command_model]
+        assert req_body['operation_name'] == 'testString'
+        assert req_body['description'] == 'testString'
+
+
+    @responses.activate
+    def test_run_workspace_commands_value_error(self):
+        """
+        test_run_workspace_commands_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v1/workspaces/testString/commands')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=202)
+
+        # Construct a dict representation of a TerraformCommand model
+        terraform_command_model = {}
+        terraform_command_model['command'] = 'testString'
+        terraform_command_model['command_params'] = 'testString'
+        terraform_command_model['command_name'] = 'testString'
+        terraform_command_model['command_desc'] = 'testString'
+        terraform_command_model['command_onError'] = 'testString'
+        terraform_command_model['command_dependsOn'] = 'testString'
+        terraform_command_model['command_status'] = 'testString'
+
+        # Set up parameter values
+        w_id = 'testString'
+        refresh_token = 'testString'
+        commands = [terraform_command_model]
+        operation_name = 'testString'
+        description = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "w_id": w_id,
+            "refresh_token": refresh_token,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                service.run_workspace_commands(**req_copy)
 
 
 
@@ -2196,7 +2305,7 @@ class TestGetAllWorkspaceInputs():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspaces/testString/templates/values')
-        mock_response = '{"runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_created_on": "cluster_created_on", "cluster_id": "cluster_id", "cluster_name": "cluster_name", "cluster_type": "cluster_type", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id", "worker_count": 12, "worker_machine_type": "worker_machine_type"}, "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "template_type": "template_type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}]}'
+        mock_response = '{"runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_created_on": "cluster_created_on", "cluster_id": "cluster_id", "cluster_name": "cluster_name", "cluster_type": "cluster_type", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id", "worker_count": 12, "worker_machine_type": "worker_machine_type"}, "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -2224,7 +2333,7 @@ class TestGetAllWorkspaceInputs():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspaces/testString/templates/values')
-        mock_response = '{"runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_created_on": "cluster_created_on", "cluster_id": "cluster_id", "cluster_name": "cluster_name", "cluster_type": "cluster_type", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id", "worker_count": 12, "worker_machine_type": "worker_machine_type"}, "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "template_type": "template_type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}]}'
+        mock_response = '{"runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_created_on": "cluster_created_on", "cluster_id": "cluster_id", "cluster_name": "cluster_name", "cluster_type": "cluster_type", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id", "worker_count": 12, "worker_machine_type": "worker_machine_type"}, "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -3185,7 +3294,7 @@ class TestGetWorkspaceDeletionJobStatus():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspace_jobs/testString/status')
-        mock_response = '{"job_status": {"failed": ["failed"], "in_progress": ["in_progress"], "success": ["success"], "last_updated_on": "2019-01-01T12:00:00"}}'
+        mock_response = '{"job_status": {"failed": ["failed"], "in_progress": ["in_progress"], "success": ["success"], "last_updated_on": "2019-01-01T12:00:00.000Z"}}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -3213,7 +3322,7 @@ class TestGetWorkspaceDeletionJobStatus():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v1/workspace_jobs/testString/status')
-        mock_response = '{"job_status": {"failed": ["failed"], "in_progress": ["in_progress"], "success": ["success"], "last_updated_on": "2019-01-01T12:00:00"}}'
+        mock_response = '{"job_status": {"failed": ["failed"], "in_progress": ["in_progress"], "success": ["success"], "last_updated_on": "2019-01-01T12:00:00.000Z"}}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -3265,7 +3374,7 @@ class TestCreateAction():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/actions')
-        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the targets", "location": "us_south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}, "targets": [{"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "trigger_record_id": "trigger_record_id", "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-01-01T12:00:00", "source_created_by": "source_created_by", "source_updated_at": "2019-01-01T12:00:00", "source_updated_by": "source_updated_by", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "namespace": "namespace", "state": {"status_code": "normal", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}}'
+        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "host": "host"}, "inventory": "inventory", "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-11-06T16:19:32.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-11-06T16:19:32.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
         responses.add(responses.POST,
                       url,
                       body=mock_response,
@@ -3276,7 +3385,7 @@ class TestCreateAction():
         user_state_model = {}
         user_state_model['state'] = 'draft'
         user_state_model['set_by'] = 'testString'
-        user_state_model['set_at'] = '2020-01-28T18:40:40.123456Z'
+        user_state_model['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a dict representation of a ExternalSourceGit model
         external_source_git_model = {}
@@ -3291,20 +3400,10 @@ class TestCreateAction():
         external_source_model['source_type'] = 'local'
         external_source_model['git'] = external_source_git_model
 
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {}
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = '2020-01-28T18:40:40.123456Z'
-
-        # Construct a dict representation of a TargetResourceset model
-        target_resourceset_model = {}
-        target_resourceset_model['name'] = 'testString'
-        target_resourceset_model['type'] = 'testString'
-        target_resourceset_model['description'] = 'testString'
-        target_resourceset_model['resource_query'] = 'testString'
-        target_resourceset_model['credential'] = 'testString'
-        target_resourceset_model['sys_lock'] = system_lock_model
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
 
         # Construct a dict representation of a VariableMetadata model
         variable_metadata_model = {}
@@ -3334,12 +3433,19 @@ class TestCreateAction():
         # Construct a dict representation of a ActionState model
         action_state_model = {}
         action_state_model['status_code'] = 'normal'
+        action_state_model['status_job_id'] = 'testString'
         action_state_model['status_message'] = 'testString'
+
+        # Construct a dict representation of a SystemLock model
+        system_lock_model = {}
+        system_lock_model['sys_locked'] = True
+        system_lock_model['sys_locked_by'] = 'testString'
+        system_lock_model['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Set up parameter values
         name = 'Stop Action'
-        description = 'This Action can be used to Stop the targets'
-        location = 'us_south'
+        description = 'This Action can be used to Stop the VSIs'
+        location = 'us-south'
         resource_group = 'testString'
         tags = ['testString']
         user_state = user_state_model
@@ -3347,12 +3453,13 @@ class TestCreateAction():
         source = external_source_model
         source_type = 'local'
         command_parameter = 'testString'
-        bastion = target_resourceset_model
-        targets = [target_resourceset_model]
+        bastion = bastion_resource_definition_model
+        inventory = 'testString'
+        bastion_credential = variable_data_model
+        credentials = [variable_data_model]
         inputs = [variable_data_model]
         outputs = [variable_data_model]
         settings = [variable_data_model]
-        trigger_record_id = 'testString'
         state = action_state_model
         sys_lock = system_lock_model
         x_github_token = 'testString'
@@ -3370,11 +3477,12 @@ class TestCreateAction():
             source_type=source_type,
             command_parameter=command_parameter,
             bastion=bastion,
-            targets=targets,
+            inventory=inventory,
+            bastion_credential=bastion_credential,
+            credentials=credentials,
             inputs=inputs,
             outputs=outputs,
             settings=settings,
-            trigger_record_id=trigger_record_id,
             state=state,
             sys_lock=sys_lock,
             x_github_token=x_github_token,
@@ -3387,8 +3495,8 @@ class TestCreateAction():
         # Validate body params
         req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
         assert req_body['name'] == 'Stop Action'
-        assert req_body['description'] == 'This Action can be used to Stop the targets'
-        assert req_body['location'] == 'us_south'
+        assert req_body['description'] == 'This Action can be used to Stop the VSIs'
+        assert req_body['location'] == 'us-south'
         assert req_body['resource_group'] == 'testString'
         assert req_body['tags'] == ['testString']
         assert req_body['user_state'] == user_state_model
@@ -3396,12 +3504,13 @@ class TestCreateAction():
         assert req_body['source'] == external_source_model
         assert req_body['source_type'] == 'local'
         assert req_body['command_parameter'] == 'testString'
-        assert req_body['bastion'] == target_resourceset_model
-        assert req_body['targets'] == [target_resourceset_model]
+        assert req_body['bastion'] == bastion_resource_definition_model
+        assert req_body['inventory'] == 'testString'
+        assert req_body['bastion_credential'] == variable_data_model
+        assert req_body['credentials'] == [variable_data_model]
         assert req_body['inputs'] == [variable_data_model]
         assert req_body['outputs'] == [variable_data_model]
         assert req_body['settings'] == [variable_data_model]
-        assert req_body['trigger_record_id'] == 'testString'
         assert req_body['state'] == action_state_model
         assert req_body['sys_lock'] == system_lock_model
 
@@ -3413,7 +3522,7 @@ class TestCreateAction():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/actions')
-        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the targets", "location": "us_south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}, "targets": [{"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "trigger_record_id": "trigger_record_id", "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-01-01T12:00:00", "source_created_by": "source_created_by", "source_updated_at": "2019-01-01T12:00:00", "source_updated_by": "source_updated_by", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "namespace": "namespace", "state": {"status_code": "normal", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}}'
+        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "host": "host"}, "inventory": "inventory", "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-11-06T16:19:32.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-11-06T16:19:32.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
         responses.add(responses.POST,
                       url,
                       body=mock_response,
@@ -3424,7 +3533,7 @@ class TestCreateAction():
         user_state_model = {}
         user_state_model['state'] = 'draft'
         user_state_model['set_by'] = 'testString'
-        user_state_model['set_at'] = '2020-01-28T18:40:40.123456Z'
+        user_state_model['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a dict representation of a ExternalSourceGit model
         external_source_git_model = {}
@@ -3439,20 +3548,10 @@ class TestCreateAction():
         external_source_model['source_type'] = 'local'
         external_source_model['git'] = external_source_git_model
 
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {}
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = '2020-01-28T18:40:40.123456Z'
-
-        # Construct a dict representation of a TargetResourceset model
-        target_resourceset_model = {}
-        target_resourceset_model['name'] = 'testString'
-        target_resourceset_model['type'] = 'testString'
-        target_resourceset_model['description'] = 'testString'
-        target_resourceset_model['resource_query'] = 'testString'
-        target_resourceset_model['credential'] = 'testString'
-        target_resourceset_model['sys_lock'] = system_lock_model
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
 
         # Construct a dict representation of a VariableMetadata model
         variable_metadata_model = {}
@@ -3482,12 +3581,19 @@ class TestCreateAction():
         # Construct a dict representation of a ActionState model
         action_state_model = {}
         action_state_model['status_code'] = 'normal'
+        action_state_model['status_job_id'] = 'testString'
         action_state_model['status_message'] = 'testString'
+
+        # Construct a dict representation of a SystemLock model
+        system_lock_model = {}
+        system_lock_model['sys_locked'] = True
+        system_lock_model['sys_locked_by'] = 'testString'
+        system_lock_model['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Set up parameter values
         name = 'Stop Action'
-        description = 'This Action can be used to Stop the targets'
-        location = 'us_south'
+        description = 'This Action can be used to Stop the VSIs'
+        location = 'us-south'
         resource_group = 'testString'
         tags = ['testString']
         user_state = user_state_model
@@ -3495,12 +3601,13 @@ class TestCreateAction():
         source = external_source_model
         source_type = 'local'
         command_parameter = 'testString'
-        bastion = target_resourceset_model
-        targets = [target_resourceset_model]
+        bastion = bastion_resource_definition_model
+        inventory = 'testString'
+        bastion_credential = variable_data_model
+        credentials = [variable_data_model]
         inputs = [variable_data_model]
         outputs = [variable_data_model]
         settings = [variable_data_model]
-        trigger_record_id = 'testString'
         state = action_state_model
         sys_lock = system_lock_model
 
@@ -3517,11 +3624,12 @@ class TestCreateAction():
             source_type=source_type,
             command_parameter=command_parameter,
             bastion=bastion,
-            targets=targets,
+            inventory=inventory,
+            bastion_credential=bastion_credential,
+            credentials=credentials,
             inputs=inputs,
             outputs=outputs,
             settings=settings,
-            trigger_record_id=trigger_record_id,
             state=state,
             sys_lock=sys_lock,
             headers={}
@@ -3533,8 +3641,8 @@ class TestCreateAction():
         # Validate body params
         req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
         assert req_body['name'] == 'Stop Action'
-        assert req_body['description'] == 'This Action can be used to Stop the targets'
-        assert req_body['location'] == 'us_south'
+        assert req_body['description'] == 'This Action can be used to Stop the VSIs'
+        assert req_body['location'] == 'us-south'
         assert req_body['resource_group'] == 'testString'
         assert req_body['tags'] == ['testString']
         assert req_body['user_state'] == user_state_model
@@ -3542,12 +3650,13 @@ class TestCreateAction():
         assert req_body['source'] == external_source_model
         assert req_body['source_type'] == 'local'
         assert req_body['command_parameter'] == 'testString'
-        assert req_body['bastion'] == target_resourceset_model
-        assert req_body['targets'] == [target_resourceset_model]
+        assert req_body['bastion'] == bastion_resource_definition_model
+        assert req_body['inventory'] == 'testString'
+        assert req_body['bastion_credential'] == variable_data_model
+        assert req_body['credentials'] == [variable_data_model]
         assert req_body['inputs'] == [variable_data_model]
         assert req_body['outputs'] == [variable_data_model]
         assert req_body['settings'] == [variable_data_model]
-        assert req_body['trigger_record_id'] == 'testString'
         assert req_body['state'] == action_state_model
         assert req_body['sys_lock'] == system_lock_model
 
@@ -3573,7 +3682,7 @@ class TestListActions():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/actions')
-        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "actions": [{"name": "Stop Action", "description": "This Action can be used to Stop the targets", "id": "id", "crn": "crn", "location": "us_south", "resource_group": "resource_group", "namespace": "namespace", "tags": ["tags"], "playbook_name": "playbook_name", "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00"}, "state": {"status_code": "normal", "status_message": "status_message"}, "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by"}]}'
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "actions": [{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "id": "id", "crn": "crn", "location": "us-south", "resource_group": "resource_group", "namespace": "namespace", "tags": ["tags"], "playbook_name": "playbook_name", "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "state": {"status_code": "normal", "status_message": "status_message"}, "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}, "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by"}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -3614,7 +3723,7 @@ class TestListActions():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/actions')
-        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "actions": [{"name": "Stop Action", "description": "This Action can be used to Stop the targets", "id": "id", "crn": "crn", "location": "us_south", "resource_group": "resource_group", "namespace": "namespace", "tags": ["tags"], "playbook_name": "playbook_name", "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00"}, "state": {"status_code": "normal", "status_message": "status_message"}, "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by"}]}'
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "actions": [{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "id": "id", "crn": "crn", "location": "us-south", "resource_group": "resource_group", "namespace": "namespace", "tags": ["tags"], "playbook_name": "playbook_name", "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "state": {"status_code": "normal", "status_message": "status_message"}, "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}, "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by"}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -3651,7 +3760,7 @@ class TestGetAction():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/actions/testString')
-        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the targets", "location": "us_south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}, "targets": [{"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "trigger_record_id": "trigger_record_id", "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-01-01T12:00:00", "source_created_by": "source_created_by", "source_updated_at": "2019-01-01T12:00:00", "source_updated_by": "source_updated_by", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "namespace": "namespace", "state": {"status_code": "normal", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}}'
+        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "host": "host"}, "inventory": "inventory", "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-11-06T16:19:32.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-11-06T16:19:32.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -3685,7 +3794,7 @@ class TestGetAction():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/actions/testString')
-        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the targets", "location": "us_south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}, "targets": [{"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "trigger_record_id": "trigger_record_id", "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-01-01T12:00:00", "source_created_by": "source_created_by", "source_updated_at": "2019-01-01T12:00:00", "source_updated_by": "source_updated_by", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "namespace": "namespace", "state": {"status_code": "normal", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}}'
+        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "host": "host"}, "inventory": "inventory", "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-11-06T16:19:32.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-11-06T16:19:32.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -3713,7 +3822,7 @@ class TestGetAction():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/actions/testString')
-        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the targets", "location": "us_south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}, "targets": [{"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "trigger_record_id": "trigger_record_id", "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-01-01T12:00:00", "source_created_by": "source_created_by", "source_updated_at": "2019-01-01T12:00:00", "source_updated_by": "source_updated_by", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "namespace": "namespace", "state": {"status_code": "normal", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}}'
+        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "host": "host"}, "inventory": "inventory", "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-11-06T16:19:32.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-11-06T16:19:32.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -3848,7 +3957,7 @@ class TestUpdateAction():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/actions/testString')
-        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the targets", "location": "us_south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}, "targets": [{"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "trigger_record_id": "trigger_record_id", "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-01-01T12:00:00", "source_created_by": "source_created_by", "source_updated_at": "2019-01-01T12:00:00", "source_updated_by": "source_updated_by", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "namespace": "namespace", "state": {"status_code": "normal", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}}'
+        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "host": "host"}, "inventory": "inventory", "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-11-06T16:19:32.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-11-06T16:19:32.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
         responses.add(responses.PATCH,
                       url,
                       body=mock_response,
@@ -3859,7 +3968,7 @@ class TestUpdateAction():
         user_state_model = {}
         user_state_model['state'] = 'draft'
         user_state_model['set_by'] = 'testString'
-        user_state_model['set_at'] = '2020-01-28T18:40:40.123456Z'
+        user_state_model['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a dict representation of a ExternalSourceGit model
         external_source_git_model = {}
@@ -3874,20 +3983,10 @@ class TestUpdateAction():
         external_source_model['source_type'] = 'local'
         external_source_model['git'] = external_source_git_model
 
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {}
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = '2020-01-28T18:40:40.123456Z'
-
-        # Construct a dict representation of a TargetResourceset model
-        target_resourceset_model = {}
-        target_resourceset_model['name'] = 'testString'
-        target_resourceset_model['type'] = 'testString'
-        target_resourceset_model['description'] = 'testString'
-        target_resourceset_model['resource_query'] = 'testString'
-        target_resourceset_model['credential'] = 'testString'
-        target_resourceset_model['sys_lock'] = system_lock_model
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
 
         # Construct a dict representation of a VariableMetadata model
         variable_metadata_model = {}
@@ -3917,13 +4016,20 @@ class TestUpdateAction():
         # Construct a dict representation of a ActionState model
         action_state_model = {}
         action_state_model['status_code'] = 'normal'
+        action_state_model['status_job_id'] = 'testString'
         action_state_model['status_message'] = 'testString'
+
+        # Construct a dict representation of a SystemLock model
+        system_lock_model = {}
+        system_lock_model['sys_locked'] = True
+        system_lock_model['sys_locked_by'] = 'testString'
+        system_lock_model['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Set up parameter values
         action_id = 'testString'
         name = 'Stop Action'
-        description = 'This Action can be used to Stop the targets'
-        location = 'us_south'
+        description = 'This Action can be used to Stop the VSIs'
+        location = 'us-south'
         resource_group = 'testString'
         tags = ['testString']
         user_state = user_state_model
@@ -3931,12 +4037,13 @@ class TestUpdateAction():
         source = external_source_model
         source_type = 'local'
         command_parameter = 'testString'
-        bastion = target_resourceset_model
-        targets = [target_resourceset_model]
+        bastion = bastion_resource_definition_model
+        inventory = 'testString'
+        bastion_credential = variable_data_model
+        credentials = [variable_data_model]
         inputs = [variable_data_model]
         outputs = [variable_data_model]
         settings = [variable_data_model]
-        trigger_record_id = 'testString'
         state = action_state_model
         sys_lock = system_lock_model
         x_github_token = 'testString'
@@ -3955,11 +4062,12 @@ class TestUpdateAction():
             source_type=source_type,
             command_parameter=command_parameter,
             bastion=bastion,
-            targets=targets,
+            inventory=inventory,
+            bastion_credential=bastion_credential,
+            credentials=credentials,
             inputs=inputs,
             outputs=outputs,
             settings=settings,
-            trigger_record_id=trigger_record_id,
             state=state,
             sys_lock=sys_lock,
             x_github_token=x_github_token,
@@ -3972,8 +4080,8 @@ class TestUpdateAction():
         # Validate body params
         req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
         assert req_body['name'] == 'Stop Action'
-        assert req_body['description'] == 'This Action can be used to Stop the targets'
-        assert req_body['location'] == 'us_south'
+        assert req_body['description'] == 'This Action can be used to Stop the VSIs'
+        assert req_body['location'] == 'us-south'
         assert req_body['resource_group'] == 'testString'
         assert req_body['tags'] == ['testString']
         assert req_body['user_state'] == user_state_model
@@ -3981,12 +4089,13 @@ class TestUpdateAction():
         assert req_body['source'] == external_source_model
         assert req_body['source_type'] == 'local'
         assert req_body['command_parameter'] == 'testString'
-        assert req_body['bastion'] == target_resourceset_model
-        assert req_body['targets'] == [target_resourceset_model]
+        assert req_body['bastion'] == bastion_resource_definition_model
+        assert req_body['inventory'] == 'testString'
+        assert req_body['bastion_credential'] == variable_data_model
+        assert req_body['credentials'] == [variable_data_model]
         assert req_body['inputs'] == [variable_data_model]
         assert req_body['outputs'] == [variable_data_model]
         assert req_body['settings'] == [variable_data_model]
-        assert req_body['trigger_record_id'] == 'testString'
         assert req_body['state'] == action_state_model
         assert req_body['sys_lock'] == system_lock_model
 
@@ -3998,7 +4107,7 @@ class TestUpdateAction():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/actions/testString')
-        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the targets", "location": "us_south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}, "targets": [{"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "trigger_record_id": "trigger_record_id", "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-01-01T12:00:00", "source_created_by": "source_created_by", "source_updated_at": "2019-01-01T12:00:00", "source_updated_by": "source_updated_by", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "namespace": "namespace", "state": {"status_code": "normal", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}}'
+        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "host": "host"}, "inventory": "inventory", "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-11-06T16:19:32.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-11-06T16:19:32.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
         responses.add(responses.PATCH,
                       url,
                       body=mock_response,
@@ -4009,7 +4118,7 @@ class TestUpdateAction():
         user_state_model = {}
         user_state_model['state'] = 'draft'
         user_state_model['set_by'] = 'testString'
-        user_state_model['set_at'] = '2020-01-28T18:40:40.123456Z'
+        user_state_model['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a dict representation of a ExternalSourceGit model
         external_source_git_model = {}
@@ -4024,20 +4133,10 @@ class TestUpdateAction():
         external_source_model['source_type'] = 'local'
         external_source_model['git'] = external_source_git_model
 
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {}
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = '2020-01-28T18:40:40.123456Z'
-
-        # Construct a dict representation of a TargetResourceset model
-        target_resourceset_model = {}
-        target_resourceset_model['name'] = 'testString'
-        target_resourceset_model['type'] = 'testString'
-        target_resourceset_model['description'] = 'testString'
-        target_resourceset_model['resource_query'] = 'testString'
-        target_resourceset_model['credential'] = 'testString'
-        target_resourceset_model['sys_lock'] = system_lock_model
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
 
         # Construct a dict representation of a VariableMetadata model
         variable_metadata_model = {}
@@ -4067,13 +4166,20 @@ class TestUpdateAction():
         # Construct a dict representation of a ActionState model
         action_state_model = {}
         action_state_model['status_code'] = 'normal'
+        action_state_model['status_job_id'] = 'testString'
         action_state_model['status_message'] = 'testString'
+
+        # Construct a dict representation of a SystemLock model
+        system_lock_model = {}
+        system_lock_model['sys_locked'] = True
+        system_lock_model['sys_locked_by'] = 'testString'
+        system_lock_model['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Set up parameter values
         action_id = 'testString'
         name = 'Stop Action'
-        description = 'This Action can be used to Stop the targets'
-        location = 'us_south'
+        description = 'This Action can be used to Stop the VSIs'
+        location = 'us-south'
         resource_group = 'testString'
         tags = ['testString']
         user_state = user_state_model
@@ -4081,12 +4187,13 @@ class TestUpdateAction():
         source = external_source_model
         source_type = 'local'
         command_parameter = 'testString'
-        bastion = target_resourceset_model
-        targets = [target_resourceset_model]
+        bastion = bastion_resource_definition_model
+        inventory = 'testString'
+        bastion_credential = variable_data_model
+        credentials = [variable_data_model]
         inputs = [variable_data_model]
         outputs = [variable_data_model]
         settings = [variable_data_model]
-        trigger_record_id = 'testString'
         state = action_state_model
         sys_lock = system_lock_model
 
@@ -4104,11 +4211,12 @@ class TestUpdateAction():
             source_type=source_type,
             command_parameter=command_parameter,
             bastion=bastion,
-            targets=targets,
+            inventory=inventory,
+            bastion_credential=bastion_credential,
+            credentials=credentials,
             inputs=inputs,
             outputs=outputs,
             settings=settings,
-            trigger_record_id=trigger_record_id,
             state=state,
             sys_lock=sys_lock,
             headers={}
@@ -4120,8 +4228,8 @@ class TestUpdateAction():
         # Validate body params
         req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
         assert req_body['name'] == 'Stop Action'
-        assert req_body['description'] == 'This Action can be used to Stop the targets'
-        assert req_body['location'] == 'us_south'
+        assert req_body['description'] == 'This Action can be used to Stop the VSIs'
+        assert req_body['location'] == 'us-south'
         assert req_body['resource_group'] == 'testString'
         assert req_body['tags'] == ['testString']
         assert req_body['user_state'] == user_state_model
@@ -4129,12 +4237,13 @@ class TestUpdateAction():
         assert req_body['source'] == external_source_model
         assert req_body['source_type'] == 'local'
         assert req_body['command_parameter'] == 'testString'
-        assert req_body['bastion'] == target_resourceset_model
-        assert req_body['targets'] == [target_resourceset_model]
+        assert req_body['bastion'] == bastion_resource_definition_model
+        assert req_body['inventory'] == 'testString'
+        assert req_body['bastion_credential'] == variable_data_model
+        assert req_body['credentials'] == [variable_data_model]
         assert req_body['inputs'] == [variable_data_model]
         assert req_body['outputs'] == [variable_data_model]
         assert req_body['settings'] == [variable_data_model]
-        assert req_body['trigger_record_id'] == 'testString'
         assert req_body['state'] == action_state_model
         assert req_body['sys_lock'] == system_lock_model
 
@@ -4146,7 +4255,7 @@ class TestUpdateAction():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/actions/testString')
-        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the targets", "location": "us_south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}, "targets": [{"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "trigger_record_id": "trigger_record_id", "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-01-01T12:00:00", "source_created_by": "source_created_by", "source_updated_at": "2019-01-01T12:00:00", "source_updated_by": "source_updated_by", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "namespace": "namespace", "state": {"status_code": "normal", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}}'
+        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "host": "host"}, "inventory": "inventory", "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-11-06T16:19:32.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-11-06T16:19:32.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
         responses.add(responses.PATCH,
                       url,
                       body=mock_response,
@@ -4157,7 +4266,7 @@ class TestUpdateAction():
         user_state_model = {}
         user_state_model['state'] = 'draft'
         user_state_model['set_by'] = 'testString'
-        user_state_model['set_at'] = '2020-01-28T18:40:40.123456Z'
+        user_state_model['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a dict representation of a ExternalSourceGit model
         external_source_git_model = {}
@@ -4172,20 +4281,10 @@ class TestUpdateAction():
         external_source_model['source_type'] = 'local'
         external_source_model['git'] = external_source_git_model
 
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {}
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = '2020-01-28T18:40:40.123456Z'
-
-        # Construct a dict representation of a TargetResourceset model
-        target_resourceset_model = {}
-        target_resourceset_model['name'] = 'testString'
-        target_resourceset_model['type'] = 'testString'
-        target_resourceset_model['description'] = 'testString'
-        target_resourceset_model['resource_query'] = 'testString'
-        target_resourceset_model['credential'] = 'testString'
-        target_resourceset_model['sys_lock'] = system_lock_model
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
 
         # Construct a dict representation of a VariableMetadata model
         variable_metadata_model = {}
@@ -4215,13 +4314,20 @@ class TestUpdateAction():
         # Construct a dict representation of a ActionState model
         action_state_model = {}
         action_state_model['status_code'] = 'normal'
+        action_state_model['status_job_id'] = 'testString'
         action_state_model['status_message'] = 'testString'
+
+        # Construct a dict representation of a SystemLock model
+        system_lock_model = {}
+        system_lock_model['sys_locked'] = True
+        system_lock_model['sys_locked_by'] = 'testString'
+        system_lock_model['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Set up parameter values
         action_id = 'testString'
         name = 'Stop Action'
-        description = 'This Action can be used to Stop the targets'
-        location = 'us_south'
+        description = 'This Action can be used to Stop the VSIs'
+        location = 'us-south'
         resource_group = 'testString'
         tags = ['testString']
         user_state = user_state_model
@@ -4229,12 +4335,13 @@ class TestUpdateAction():
         source = external_source_model
         source_type = 'local'
         command_parameter = 'testString'
-        bastion = target_resourceset_model
-        targets = [target_resourceset_model]
+        bastion = bastion_resource_definition_model
+        inventory = 'testString'
+        bastion_credential = variable_data_model
+        credentials = [variable_data_model]
         inputs = [variable_data_model]
         outputs = [variable_data_model]
         settings = [variable_data_model]
-        trigger_record_id = 'testString'
         state = action_state_model
         sys_lock = system_lock_model
 
@@ -4246,6 +4353,108 @@ class TestUpdateAction():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
                 service.update_action(**req_copy)
+
+
+
+class TestUploadTemplateTarAction():
+    """
+    Test Class for upload_template_tar_action
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_upload_template_tar_action_all_params(self):
+        """
+        upload_template_tar_action()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/actions/testString/template_repo_upload')
+        mock_response = '{"file_value": "file_value", "has_received_file": false, "id": "id"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        action_id = 'testString'
+        file = io.BytesIO(b'This is a mock file.').getvalue()
+        file_content_type = 'testString'
+
+        # Invoke method
+        response = service.upload_template_tar_action(
+            action_id,
+            file=file,
+            file_content_type=file_content_type,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+    @responses.activate
+    def test_upload_template_tar_action_required_params(self):
+        """
+        test_upload_template_tar_action_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/actions/testString/template_repo_upload')
+        mock_response = '{"file_value": "file_value", "has_received_file": false, "id": "id"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        action_id = 'testString'
+
+        # Invoke method
+        response = service.upload_template_tar_action(
+            action_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+    @responses.activate
+    def test_upload_template_tar_action_value_error(self):
+        """
+        test_upload_template_tar_action_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/actions/testString/template_repo_upload')
+        mock_response = '{"file_value": "file_value", "has_received_file": false, "id": "id"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        action_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "action_id": action_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                service.upload_template_tar_action(**req_copy)
 
 
 
@@ -4280,7 +4489,7 @@ class TestCreateJob():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/jobs')
-        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_init_flow", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us_south", "resource_group": "resource_group", "submitted_at": "2019-01-01T12:00:00", "submitted_by": "submitted_by", "start_at": "2019-01-01T12:00:00", "end_at": "2019-01-01T12:00:00", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00"}}, "targets": [{"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}], "bastion": {"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00", "log_analyzed_till": "2019-01-01T12:00:00", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-01-01T12:00:00"}'
+        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-11-06T16:19:32.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-11-06T16:19:32.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-11-06T16:19:32.000Z"}'
         responses.add(responses.POST,
                       url,
                       body=mock_response,
@@ -4319,13 +4528,37 @@ class TestCreateJob():
         job_status_action_model['status_message'] = 'testString'
         job_status_action_model['bastion_status_code'] = 'none'
         job_status_action_model['bastion_status_message'] = 'testString'
-        job_status_action_model['targets_status_code'] = 'none'
-        job_status_action_model['targets_status_message'] = 'testString'
-        job_status_action_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_status_action_model['inventory_status_code'] = 'none'
+        job_status_action_model['inventory_status_message'] = 'testString'
+        job_status_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        # Construct a dict representation of a JobStatusSchematicsResources model
+        job_status_schematics_resources_model = {}
+        job_status_schematics_resources_model['status_code'] = 'job_pending'
+        job_status_schematics_resources_model['status_message'] = 'testString'
+        job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
+        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        # Construct a dict representation of a JobStatusSystem model
+        job_status_system_model = {}
+        job_status_system_model['system_status_message'] = 'testString'
+        job_status_system_model['system_status_code'] = 'job_pending'
+        job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
+        job_status_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a dict representation of a JobStatus model
         job_status_model = {}
         job_status_model['action_job_status'] = job_status_action_model
+        job_status_model['system_job_status'] = job_status_system_model
+
+        # Construct a dict representation of a InventoryResourceRecord model
+        inventory_resource_record_model = {}
+        inventory_resource_record_model['name'] = 'testString'
+        inventory_resource_record_model['description'] = 'testString'
+        inventory_resource_record_model['location'] = 'us-south'
+        inventory_resource_record_model['resource_group'] = 'testString'
+        inventory_resource_record_model['inventories_ini'] = 'testString'
+        inventory_resource_record_model['resource_queries'] = ['testString']
 
         # Construct a dict representation of a JobDataAction model
         job_data_action_model = {}
@@ -4333,34 +4566,33 @@ class TestCreateJob():
         job_data_action_model['inputs'] = [variable_data_model]
         job_data_action_model['outputs'] = [variable_data_model]
         job_data_action_model['settings'] = [variable_data_model]
-        job_data_action_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_data_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_data_action_model['inventory_record'] = inventory_resource_record_model
+        job_data_action_model['materialized_inventory'] = 'testString'
+
+        # Construct a dict representation of a JobDataSystem model
+        job_data_system_model = {}
+        job_data_system_model['key_id'] = 'testString'
+        job_data_system_model['schematics_resource_id'] = ['testString']
+        job_data_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a dict representation of a JobData model
         job_data_model = {}
         job_data_model['job_type'] = 'repo_download_job'
         job_data_model['action_job_data'] = job_data_action_model
+        job_data_model['system_job_data'] = job_data_system_model
 
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {}
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = '2020-01-28T18:40:40.123456Z'
-
-        # Construct a dict representation of a TargetResourceset model
-        target_resourceset_model = {}
-        target_resourceset_model['name'] = 'testString'
-        target_resourceset_model['type'] = 'testString'
-        target_resourceset_model['description'] = 'testString'
-        target_resourceset_model['resource_query'] = 'testString'
-        target_resourceset_model['credential'] = 'testString'
-        target_resourceset_model['sys_lock'] = system_lock_model
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
 
         # Construct a dict representation of a JobLogSummaryRepoDownloadJob model
         job_log_summary_repo_download_job_model = {}
 
         # Construct a dict representation of a JobLogSummaryActionJobRecap model
         job_log_summary_action_job_recap_model = {}
-        job_log_summary_action_job_recap_model['target'] = ['testString']
+        job_log_summary_action_job_recap_model['hosts'] = ['testString']
         job_log_summary_action_job_recap_model['ok'] = 72.5
         job_log_summary_action_job_recap_model['changed'] = 72.5
         job_log_summary_action_job_recap_model['failed'] = 72.5
@@ -4371,26 +4603,32 @@ class TestCreateJob():
         job_log_summary_action_job_model = {}
         job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
 
+        # Construct a dict representation of a JobLogSummarySystemJob model
+        job_log_summary_system_job_model = {}
+        job_log_summary_system_job_model['success'] = 72.5
+        job_log_summary_system_job_model['failed'] = 72.5
+
         # Construct a dict representation of a JobLogSummary model
         job_log_summary_model = {}
         job_log_summary_model['job_type'] = 'repo_download_job'
         job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
         job_log_summary_model['action_job'] = job_log_summary_action_job_model
+        job_log_summary_model['system_job'] = job_log_summary_system_job_model
 
         # Set up parameter values
         refresh_token = 'testString'
         command_object = 'workspace'
         command_object_id = 'testString'
-        command_name = 'workspace_init_flow'
+        command_name = 'ansible_playbook_run'
         command_parameter = 'testString'
         command_options = ['testString']
         inputs = [variable_data_model]
         settings = [variable_data_model]
         tags = ['testString']
-        location = 'us_south'
+        location = 'us-south'
         status = job_status_model
         data = job_data_model
-        bastion = target_resourceset_model
+        bastion = bastion_resource_definition_model
         log_summary = job_log_summary_model
 
         # Invoke method
@@ -4419,16 +4657,16 @@ class TestCreateJob():
         req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
         assert req_body['command_object'] == 'workspace'
         assert req_body['command_object_id'] == 'testString'
-        assert req_body['command_name'] == 'workspace_init_flow'
+        assert req_body['command_name'] == 'ansible_playbook_run'
         assert req_body['command_parameter'] == 'testString'
         assert req_body['command_options'] == ['testString']
         assert req_body['inputs'] == [variable_data_model]
         assert req_body['settings'] == [variable_data_model]
         assert req_body['tags'] == ['testString']
-        assert req_body['location'] == 'us_south'
+        assert req_body['location'] == 'us-south'
         assert req_body['status'] == job_status_model
         assert req_body['data'] == job_data_model
-        assert req_body['bastion'] == target_resourceset_model
+        assert req_body['bastion'] == bastion_resource_definition_model
         assert req_body['log_summary'] == job_log_summary_model
 
 
@@ -4439,7 +4677,7 @@ class TestCreateJob():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/jobs')
-        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_init_flow", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us_south", "resource_group": "resource_group", "submitted_at": "2019-01-01T12:00:00", "submitted_by": "submitted_by", "start_at": "2019-01-01T12:00:00", "end_at": "2019-01-01T12:00:00", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00"}}, "targets": [{"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}], "bastion": {"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00", "log_analyzed_till": "2019-01-01T12:00:00", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-01-01T12:00:00"}'
+        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-11-06T16:19:32.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-11-06T16:19:32.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-11-06T16:19:32.000Z"}'
         responses.add(responses.POST,
                       url,
                       body=mock_response,
@@ -4478,13 +4716,37 @@ class TestCreateJob():
         job_status_action_model['status_message'] = 'testString'
         job_status_action_model['bastion_status_code'] = 'none'
         job_status_action_model['bastion_status_message'] = 'testString'
-        job_status_action_model['targets_status_code'] = 'none'
-        job_status_action_model['targets_status_message'] = 'testString'
-        job_status_action_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_status_action_model['inventory_status_code'] = 'none'
+        job_status_action_model['inventory_status_message'] = 'testString'
+        job_status_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        # Construct a dict representation of a JobStatusSchematicsResources model
+        job_status_schematics_resources_model = {}
+        job_status_schematics_resources_model['status_code'] = 'job_pending'
+        job_status_schematics_resources_model['status_message'] = 'testString'
+        job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
+        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        # Construct a dict representation of a JobStatusSystem model
+        job_status_system_model = {}
+        job_status_system_model['system_status_message'] = 'testString'
+        job_status_system_model['system_status_code'] = 'job_pending'
+        job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
+        job_status_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a dict representation of a JobStatus model
         job_status_model = {}
         job_status_model['action_job_status'] = job_status_action_model
+        job_status_model['system_job_status'] = job_status_system_model
+
+        # Construct a dict representation of a InventoryResourceRecord model
+        inventory_resource_record_model = {}
+        inventory_resource_record_model['name'] = 'testString'
+        inventory_resource_record_model['description'] = 'testString'
+        inventory_resource_record_model['location'] = 'us-south'
+        inventory_resource_record_model['resource_group'] = 'testString'
+        inventory_resource_record_model['inventories_ini'] = 'testString'
+        inventory_resource_record_model['resource_queries'] = ['testString']
 
         # Construct a dict representation of a JobDataAction model
         job_data_action_model = {}
@@ -4492,34 +4754,33 @@ class TestCreateJob():
         job_data_action_model['inputs'] = [variable_data_model]
         job_data_action_model['outputs'] = [variable_data_model]
         job_data_action_model['settings'] = [variable_data_model]
-        job_data_action_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_data_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_data_action_model['inventory_record'] = inventory_resource_record_model
+        job_data_action_model['materialized_inventory'] = 'testString'
+
+        # Construct a dict representation of a JobDataSystem model
+        job_data_system_model = {}
+        job_data_system_model['key_id'] = 'testString'
+        job_data_system_model['schematics_resource_id'] = ['testString']
+        job_data_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a dict representation of a JobData model
         job_data_model = {}
         job_data_model['job_type'] = 'repo_download_job'
         job_data_model['action_job_data'] = job_data_action_model
+        job_data_model['system_job_data'] = job_data_system_model
 
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {}
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = '2020-01-28T18:40:40.123456Z'
-
-        # Construct a dict representation of a TargetResourceset model
-        target_resourceset_model = {}
-        target_resourceset_model['name'] = 'testString'
-        target_resourceset_model['type'] = 'testString'
-        target_resourceset_model['description'] = 'testString'
-        target_resourceset_model['resource_query'] = 'testString'
-        target_resourceset_model['credential'] = 'testString'
-        target_resourceset_model['sys_lock'] = system_lock_model
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
 
         # Construct a dict representation of a JobLogSummaryRepoDownloadJob model
         job_log_summary_repo_download_job_model = {}
 
         # Construct a dict representation of a JobLogSummaryActionJobRecap model
         job_log_summary_action_job_recap_model = {}
-        job_log_summary_action_job_recap_model['target'] = ['testString']
+        job_log_summary_action_job_recap_model['hosts'] = ['testString']
         job_log_summary_action_job_recap_model['ok'] = 72.5
         job_log_summary_action_job_recap_model['changed'] = 72.5
         job_log_summary_action_job_recap_model['failed'] = 72.5
@@ -4530,26 +4791,32 @@ class TestCreateJob():
         job_log_summary_action_job_model = {}
         job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
 
+        # Construct a dict representation of a JobLogSummarySystemJob model
+        job_log_summary_system_job_model = {}
+        job_log_summary_system_job_model['success'] = 72.5
+        job_log_summary_system_job_model['failed'] = 72.5
+
         # Construct a dict representation of a JobLogSummary model
         job_log_summary_model = {}
         job_log_summary_model['job_type'] = 'repo_download_job'
         job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
         job_log_summary_model['action_job'] = job_log_summary_action_job_model
+        job_log_summary_model['system_job'] = job_log_summary_system_job_model
 
         # Set up parameter values
         refresh_token = 'testString'
         command_object = 'workspace'
         command_object_id = 'testString'
-        command_name = 'workspace_init_flow'
+        command_name = 'ansible_playbook_run'
         command_parameter = 'testString'
         command_options = ['testString']
         inputs = [variable_data_model]
         settings = [variable_data_model]
         tags = ['testString']
-        location = 'us_south'
+        location = 'us-south'
         status = job_status_model
         data = job_data_model
-        bastion = target_resourceset_model
+        bastion = bastion_resource_definition_model
         log_summary = job_log_summary_model
 
         # Pass in all but one required param and check for a ValueError
@@ -4584,7 +4851,7 @@ class TestListJobs():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/jobs')
-        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "jobs": [{"id": "id", "name": "name", "description": "description", "command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_init_flow", "tags": ["tags"], "location": "us_south", "resource_group": "resource_group", "targets": [{"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}], "submitted_at": "2019-01-01T12:00:00", "submitted_by": "submitted_by", "duration": "duration", "start_at": "2019-01-01T12:00:00", "end_at": "2019-01-01T12:00:00", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00"}}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00", "log_analyzed_till": "2019-01-01T12:00:00", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}}, "updated_at": "2019-01-01T12:00:00"}]}'
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "jobs": [{"id": "id", "name": "name", "description": "description", "command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "tags": ["tags"], "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "duration": "duration", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "updated_at": "2019-11-06T16:19:32.000Z"}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -4596,7 +4863,7 @@ class TestListJobs():
         limit = 1
         sort = 'testString'
         profile = 'ids'
-        resource = 'workspaces'
+        resource = 'workspace'
         action_id = 'testString'
         list = 'all'
 
@@ -4634,7 +4901,7 @@ class TestListJobs():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/jobs')
-        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "jobs": [{"id": "id", "name": "name", "description": "description", "command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_init_flow", "tags": ["tags"], "location": "us_south", "resource_group": "resource_group", "targets": [{"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}], "submitted_at": "2019-01-01T12:00:00", "submitted_by": "submitted_by", "duration": "duration", "start_at": "2019-01-01T12:00:00", "end_at": "2019-01-01T12:00:00", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00"}}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00", "log_analyzed_till": "2019-01-01T12:00:00", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}}, "updated_at": "2019-01-01T12:00:00"}]}'
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "jobs": [{"id": "id", "name": "name", "description": "description", "command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "tags": ["tags"], "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "duration": "duration", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "updated_at": "2019-11-06T16:19:32.000Z"}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -4671,7 +4938,7 @@ class TestReplaceJob():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/jobs/testString')
-        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_init_flow", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us_south", "resource_group": "resource_group", "submitted_at": "2019-01-01T12:00:00", "submitted_by": "submitted_by", "start_at": "2019-01-01T12:00:00", "end_at": "2019-01-01T12:00:00", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00"}}, "targets": [{"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}], "bastion": {"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00", "log_analyzed_till": "2019-01-01T12:00:00", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-01-01T12:00:00"}'
+        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-11-06T16:19:32.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-11-06T16:19:32.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-11-06T16:19:32.000Z"}'
         responses.add(responses.PUT,
                       url,
                       body=mock_response,
@@ -4710,13 +4977,37 @@ class TestReplaceJob():
         job_status_action_model['status_message'] = 'testString'
         job_status_action_model['bastion_status_code'] = 'none'
         job_status_action_model['bastion_status_message'] = 'testString'
-        job_status_action_model['targets_status_code'] = 'none'
-        job_status_action_model['targets_status_message'] = 'testString'
-        job_status_action_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_status_action_model['inventory_status_code'] = 'none'
+        job_status_action_model['inventory_status_message'] = 'testString'
+        job_status_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        # Construct a dict representation of a JobStatusSchematicsResources model
+        job_status_schematics_resources_model = {}
+        job_status_schematics_resources_model['status_code'] = 'job_pending'
+        job_status_schematics_resources_model['status_message'] = 'testString'
+        job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
+        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        # Construct a dict representation of a JobStatusSystem model
+        job_status_system_model = {}
+        job_status_system_model['system_status_message'] = 'testString'
+        job_status_system_model['system_status_code'] = 'job_pending'
+        job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
+        job_status_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a dict representation of a JobStatus model
         job_status_model = {}
         job_status_model['action_job_status'] = job_status_action_model
+        job_status_model['system_job_status'] = job_status_system_model
+
+        # Construct a dict representation of a InventoryResourceRecord model
+        inventory_resource_record_model = {}
+        inventory_resource_record_model['name'] = 'testString'
+        inventory_resource_record_model['description'] = 'testString'
+        inventory_resource_record_model['location'] = 'us-south'
+        inventory_resource_record_model['resource_group'] = 'testString'
+        inventory_resource_record_model['inventories_ini'] = 'testString'
+        inventory_resource_record_model['resource_queries'] = ['testString']
 
         # Construct a dict representation of a JobDataAction model
         job_data_action_model = {}
@@ -4724,34 +5015,33 @@ class TestReplaceJob():
         job_data_action_model['inputs'] = [variable_data_model]
         job_data_action_model['outputs'] = [variable_data_model]
         job_data_action_model['settings'] = [variable_data_model]
-        job_data_action_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_data_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_data_action_model['inventory_record'] = inventory_resource_record_model
+        job_data_action_model['materialized_inventory'] = 'testString'
+
+        # Construct a dict representation of a JobDataSystem model
+        job_data_system_model = {}
+        job_data_system_model['key_id'] = 'testString'
+        job_data_system_model['schematics_resource_id'] = ['testString']
+        job_data_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a dict representation of a JobData model
         job_data_model = {}
         job_data_model['job_type'] = 'repo_download_job'
         job_data_model['action_job_data'] = job_data_action_model
+        job_data_model['system_job_data'] = job_data_system_model
 
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {}
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = '2020-01-28T18:40:40.123456Z'
-
-        # Construct a dict representation of a TargetResourceset model
-        target_resourceset_model = {}
-        target_resourceset_model['name'] = 'testString'
-        target_resourceset_model['type'] = 'testString'
-        target_resourceset_model['description'] = 'testString'
-        target_resourceset_model['resource_query'] = 'testString'
-        target_resourceset_model['credential'] = 'testString'
-        target_resourceset_model['sys_lock'] = system_lock_model
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
 
         # Construct a dict representation of a JobLogSummaryRepoDownloadJob model
         job_log_summary_repo_download_job_model = {}
 
         # Construct a dict representation of a JobLogSummaryActionJobRecap model
         job_log_summary_action_job_recap_model = {}
-        job_log_summary_action_job_recap_model['target'] = ['testString']
+        job_log_summary_action_job_recap_model['hosts'] = ['testString']
         job_log_summary_action_job_recap_model['ok'] = 72.5
         job_log_summary_action_job_recap_model['changed'] = 72.5
         job_log_summary_action_job_recap_model['failed'] = 72.5
@@ -4762,27 +5052,33 @@ class TestReplaceJob():
         job_log_summary_action_job_model = {}
         job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
 
+        # Construct a dict representation of a JobLogSummarySystemJob model
+        job_log_summary_system_job_model = {}
+        job_log_summary_system_job_model['success'] = 72.5
+        job_log_summary_system_job_model['failed'] = 72.5
+
         # Construct a dict representation of a JobLogSummary model
         job_log_summary_model = {}
         job_log_summary_model['job_type'] = 'repo_download_job'
         job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
         job_log_summary_model['action_job'] = job_log_summary_action_job_model
+        job_log_summary_model['system_job'] = job_log_summary_system_job_model
 
         # Set up parameter values
         job_id = 'testString'
         refresh_token = 'testString'
         command_object = 'workspace'
         command_object_id = 'testString'
-        command_name = 'workspace_init_flow'
+        command_name = 'ansible_playbook_run'
         command_parameter = 'testString'
         command_options = ['testString']
         inputs = [variable_data_model]
         settings = [variable_data_model]
         tags = ['testString']
-        location = 'us_south'
+        location = 'us-south'
         status = job_status_model
         data = job_data_model
-        bastion = target_resourceset_model
+        bastion = bastion_resource_definition_model
         log_summary = job_log_summary_model
 
         # Invoke method
@@ -4812,16 +5108,16 @@ class TestReplaceJob():
         req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
         assert req_body['command_object'] == 'workspace'
         assert req_body['command_object_id'] == 'testString'
-        assert req_body['command_name'] == 'workspace_init_flow'
+        assert req_body['command_name'] == 'ansible_playbook_run'
         assert req_body['command_parameter'] == 'testString'
         assert req_body['command_options'] == ['testString']
         assert req_body['inputs'] == [variable_data_model]
         assert req_body['settings'] == [variable_data_model]
         assert req_body['tags'] == ['testString']
-        assert req_body['location'] == 'us_south'
+        assert req_body['location'] == 'us-south'
         assert req_body['status'] == job_status_model
         assert req_body['data'] == job_data_model
-        assert req_body['bastion'] == target_resourceset_model
+        assert req_body['bastion'] == bastion_resource_definition_model
         assert req_body['log_summary'] == job_log_summary_model
 
 
@@ -4832,7 +5128,7 @@ class TestReplaceJob():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/jobs/testString')
-        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_init_flow", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us_south", "resource_group": "resource_group", "submitted_at": "2019-01-01T12:00:00", "submitted_by": "submitted_by", "start_at": "2019-01-01T12:00:00", "end_at": "2019-01-01T12:00:00", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00"}}, "targets": [{"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}], "bastion": {"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00", "log_analyzed_till": "2019-01-01T12:00:00", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-01-01T12:00:00"}'
+        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-11-06T16:19:32.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-11-06T16:19:32.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-11-06T16:19:32.000Z"}'
         responses.add(responses.PUT,
                       url,
                       body=mock_response,
@@ -4871,13 +5167,37 @@ class TestReplaceJob():
         job_status_action_model['status_message'] = 'testString'
         job_status_action_model['bastion_status_code'] = 'none'
         job_status_action_model['bastion_status_message'] = 'testString'
-        job_status_action_model['targets_status_code'] = 'none'
-        job_status_action_model['targets_status_message'] = 'testString'
-        job_status_action_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_status_action_model['inventory_status_code'] = 'none'
+        job_status_action_model['inventory_status_message'] = 'testString'
+        job_status_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        # Construct a dict representation of a JobStatusSchematicsResources model
+        job_status_schematics_resources_model = {}
+        job_status_schematics_resources_model['status_code'] = 'job_pending'
+        job_status_schematics_resources_model['status_message'] = 'testString'
+        job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
+        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        # Construct a dict representation of a JobStatusSystem model
+        job_status_system_model = {}
+        job_status_system_model['system_status_message'] = 'testString'
+        job_status_system_model['system_status_code'] = 'job_pending'
+        job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
+        job_status_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a dict representation of a JobStatus model
         job_status_model = {}
         job_status_model['action_job_status'] = job_status_action_model
+        job_status_model['system_job_status'] = job_status_system_model
+
+        # Construct a dict representation of a InventoryResourceRecord model
+        inventory_resource_record_model = {}
+        inventory_resource_record_model['name'] = 'testString'
+        inventory_resource_record_model['description'] = 'testString'
+        inventory_resource_record_model['location'] = 'us-south'
+        inventory_resource_record_model['resource_group'] = 'testString'
+        inventory_resource_record_model['inventories_ini'] = 'testString'
+        inventory_resource_record_model['resource_queries'] = ['testString']
 
         # Construct a dict representation of a JobDataAction model
         job_data_action_model = {}
@@ -4885,34 +5205,33 @@ class TestReplaceJob():
         job_data_action_model['inputs'] = [variable_data_model]
         job_data_action_model['outputs'] = [variable_data_model]
         job_data_action_model['settings'] = [variable_data_model]
-        job_data_action_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_data_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_data_action_model['inventory_record'] = inventory_resource_record_model
+        job_data_action_model['materialized_inventory'] = 'testString'
+
+        # Construct a dict representation of a JobDataSystem model
+        job_data_system_model = {}
+        job_data_system_model['key_id'] = 'testString'
+        job_data_system_model['schematics_resource_id'] = ['testString']
+        job_data_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a dict representation of a JobData model
         job_data_model = {}
         job_data_model['job_type'] = 'repo_download_job'
         job_data_model['action_job_data'] = job_data_action_model
+        job_data_model['system_job_data'] = job_data_system_model
 
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {}
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = '2020-01-28T18:40:40.123456Z'
-
-        # Construct a dict representation of a TargetResourceset model
-        target_resourceset_model = {}
-        target_resourceset_model['name'] = 'testString'
-        target_resourceset_model['type'] = 'testString'
-        target_resourceset_model['description'] = 'testString'
-        target_resourceset_model['resource_query'] = 'testString'
-        target_resourceset_model['credential'] = 'testString'
-        target_resourceset_model['sys_lock'] = system_lock_model
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
 
         # Construct a dict representation of a JobLogSummaryRepoDownloadJob model
         job_log_summary_repo_download_job_model = {}
 
         # Construct a dict representation of a JobLogSummaryActionJobRecap model
         job_log_summary_action_job_recap_model = {}
-        job_log_summary_action_job_recap_model['target'] = ['testString']
+        job_log_summary_action_job_recap_model['hosts'] = ['testString']
         job_log_summary_action_job_recap_model['ok'] = 72.5
         job_log_summary_action_job_recap_model['changed'] = 72.5
         job_log_summary_action_job_recap_model['failed'] = 72.5
@@ -4923,27 +5242,33 @@ class TestReplaceJob():
         job_log_summary_action_job_model = {}
         job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
 
+        # Construct a dict representation of a JobLogSummarySystemJob model
+        job_log_summary_system_job_model = {}
+        job_log_summary_system_job_model['success'] = 72.5
+        job_log_summary_system_job_model['failed'] = 72.5
+
         # Construct a dict representation of a JobLogSummary model
         job_log_summary_model = {}
         job_log_summary_model['job_type'] = 'repo_download_job'
         job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
         job_log_summary_model['action_job'] = job_log_summary_action_job_model
+        job_log_summary_model['system_job'] = job_log_summary_system_job_model
 
         # Set up parameter values
         job_id = 'testString'
         refresh_token = 'testString'
         command_object = 'workspace'
         command_object_id = 'testString'
-        command_name = 'workspace_init_flow'
+        command_name = 'ansible_playbook_run'
         command_parameter = 'testString'
         command_options = ['testString']
         inputs = [variable_data_model]
         settings = [variable_data_model]
         tags = ['testString']
-        location = 'us_south'
+        location = 'us-south'
         status = job_status_model
         data = job_data_model
-        bastion = target_resourceset_model
+        bastion = bastion_resource_definition_model
         log_summary = job_log_summary_model
 
         # Pass in all but one required param and check for a ValueError
@@ -5078,7 +5403,7 @@ class TestGetJob():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/jobs/testString')
-        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_init_flow", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us_south", "resource_group": "resource_group", "submitted_at": "2019-01-01T12:00:00", "submitted_by": "submitted_by", "start_at": "2019-01-01T12:00:00", "end_at": "2019-01-01T12:00:00", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00"}}, "targets": [{"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}], "bastion": {"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00", "log_analyzed_till": "2019-01-01T12:00:00", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-01-01T12:00:00"}'
+        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-11-06T16:19:32.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-11-06T16:19:32.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-11-06T16:19:32.000Z"}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -5112,7 +5437,7 @@ class TestGetJob():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/jobs/testString')
-        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_init_flow", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us_south", "resource_group": "resource_group", "submitted_at": "2019-01-01T12:00:00", "submitted_by": "submitted_by", "start_at": "2019-01-01T12:00:00", "end_at": "2019-01-01T12:00:00", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00"}}, "targets": [{"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}], "bastion": {"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00", "log_analyzed_till": "2019-01-01T12:00:00", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-01-01T12:00:00"}'
+        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-11-06T16:19:32.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-11-06T16:19:32.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-11-06T16:19:32.000Z"}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -5140,7 +5465,7 @@ class TestGetJob():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/jobs/testString')
-        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_init_flow", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us_south", "resource_group": "resource_group", "submitted_at": "2019-01-01T12:00:00", "submitted_by": "submitted_by", "start_at": "2019-01-01T12:00:00", "end_at": "2019-01-01T12:00:00", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00"}}, "targets": [{"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}], "bastion": {"name": "name", "type": "type", "description": "description", "resource_query": "resource_query", "credential": "credential", "id": "id", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00"}, "resource_ids": ["resource_ids"]}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00", "log_analyzed_till": "2019-01-01T12:00:00", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-01-01T12:00:00"}'
+        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-11-06T16:19:32.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-11-06T16:19:32.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-11-06T16:19:32.000Z"}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -5182,7 +5507,7 @@ class TestListJobLogs():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/jobs/testString/logs')
-        mock_response = '{"job_id": "job_id", "job_name": "job_name", "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00", "log_analyzed_till": "2019-01-01T12:00:00", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}}, "format": "json", "details": "VGhpcyBpcyBhbiBlbmNvZGVkIGJ5dGUgYXJyYXku", "updated_at": "2019-01-01T12:00:00"}'
+        mock_response = '{"job_id": "job_id", "job_name": "job_name", "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "format": "json", "details": "VGhpcyBpcyBhbiBlbmNvZGVkIGJ5dGUgYXJyYXku", "updated_at": "2019-11-06T16:19:32.000Z"}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -5210,7 +5535,7 @@ class TestListJobLogs():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/jobs/testString/logs')
-        mock_response = '{"job_id": "job_id", "job_name": "job_name", "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00", "log_analyzed_till": "2019-01-01T12:00:00", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}}, "format": "json", "details": "VGhpcyBpcyBhbiBlbmNvZGVkIGJ5dGUgYXJyYXku", "updated_at": "2019-01-01T12:00:00"}'
+        mock_response = '{"job_id": "job_id", "job_name": "job_name", "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "format": "json", "details": "VGhpcyBpcyBhbiBlbmNvZGVkIGJ5dGUgYXJyYXku", "updated_at": "2019-11-06T16:19:32.000Z"}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -5228,76 +5553,6 @@ class TestListJobLogs():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
                 service.list_job_logs(**req_copy)
-
-
-
-class TestListJobStates():
-    """
-    Test Class for list_job_states
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_list_job_states_all_params(self):
-        """
-        list_job_states()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/jobs/testString/states')
-        mock_response = '{"job_id": "job_id", "job_name": "job_name", "summary": [{"name": "name", "type": "number", "value": "value"}], "format": "format", "details": "VGhpcyBpcyBhbiBlbmNvZGVkIGJ5dGUgYXJyYXku", "updated_at": "2019-01-01T12:00:00"}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Set up parameter values
-        job_id = 'testString'
-
-        # Invoke method
-        response = service.list_job_states(
-            job_id,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 202
-
-
-    @responses.activate
-    def test_list_job_states_value_error(self):
-        """
-        test_list_job_states_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/jobs/testString/states')
-        mock_response = '{"job_id": "job_id", "job_name": "job_name", "summary": [{"name": "name", "type": "number", "value": "value"}], "format": "format", "details": "VGhpcyBpcyBhbiBlbmNvZGVkIGJ5dGUgYXJyYXku", "updated_at": "2019-01-01T12:00:00"}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Set up parameter values
-        job_id = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "job_id": job_id,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.list_job_states(**req_copy)
 
 
 
@@ -5332,7 +5587,7 @@ class TestListSharedDatasets():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/shared_datasets')
-        mock_response = '{"count": 5, "shared_datasets": [{"account": "account", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "version": "version"}]}'
+        mock_response = '{"count": 5, "shared_datasets": [{"account": "account", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "version": "version"}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -5369,7 +5624,7 @@ class TestCreateSharedDataset():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/shared_datasets')
-        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "version": "version"}'
+        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "version": "version"}'
         responses.add(responses.POST,
                       url,
                       body=mock_response,
@@ -5460,7 +5715,7 @@ class TestGetSharedDataset():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/shared_datasets/testString')
-        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "version": "version"}'
+        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "version": "version"}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -5488,7 +5743,7 @@ class TestGetSharedDataset():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/shared_datasets/testString')
-        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "version": "version"}'
+        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "version": "version"}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -5530,7 +5785,7 @@ class TestReplaceSharedDataset():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/shared_datasets/testString')
-        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "version": "version"}'
+        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "version": "version"}'
         responses.add(responses.PUT,
                       url,
                       body=mock_response,
@@ -5609,7 +5864,7 @@ class TestReplaceSharedDataset():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/shared_datasets/testString')
-        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "version": "version"}'
+        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "version": "version"}'
         responses.add(responses.PUT,
                       url,
                       body=mock_response,
@@ -5680,7 +5935,7 @@ class TestDeleteSharedDataset():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/shared_datasets/testString')
-        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "version": "version"}'
+        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "version": "version"}'
         responses.add(responses.DELETE,
                       url,
                       body=mock_response,
@@ -5708,7 +5963,7 @@ class TestDeleteSharedDataset():
         """
         # Set up mock
         url = self.preprocess_url(base_url + '/v2/shared_datasets/testString')
-        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00", "updated_by": "updated_by", "version": "version"}'
+        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "version": "version"}'
         responses.add(responses.DELETE,
                       url,
                       body=mock_response,
@@ -6010,6 +6265,1145 @@ class TestGetDiscoveredKmsInstances():
 # End of Service: SettingsKms
 ##############################################################################
 
+##############################################################################
+# Start of Service: SettingsInventory
+##############################################################################
+# region
+
+class TestCreateInventory():
+    """
+    Test Class for create_inventory
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_create_inventory_all_params(self):
+        """
+        create_inventory()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/inventories')
+        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
+        responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        name = 'testString'
+        description = 'testString'
+        location = 'us-south'
+        resource_group = 'testString'
+        inventories_ini = 'testString'
+        resource_queries = ['testString']
+
+        # Invoke method
+        response = service.create_inventory(
+            name=name,
+            description=description,
+            location=location,
+            resource_group=resource_group,
+            inventories_ini=inventories_ini,
+            resource_queries=resource_queries,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['name'] == 'testString'
+        assert req_body['description'] == 'testString'
+        assert req_body['location'] == 'us-south'
+        assert req_body['resource_group'] == 'testString'
+        assert req_body['inventories_ini'] == 'testString'
+        assert req_body['resource_queries'] == ['testString']
+
+
+class TestListInventories():
+    """
+    Test Class for list_inventories
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_list_inventories_all_params(self):
+        """
+        list_inventories()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/inventories')
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "inventories": [{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        offset = 0
+        limit = 1
+        sort = 'testString'
+        profile = 'ids'
+
+        # Invoke method
+        response = service.list_inventories(
+            offset=offset,
+            limit=limit,
+            sort=sort,
+            profile=profile,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate query params
+        query_string = responses.calls[0].request.url.split('?',1)[1]
+        query_string = urllib.parse.unquote_plus(query_string)
+        assert 'offset={}'.format(offset) in query_string
+        assert 'limit={}'.format(limit) in query_string
+        assert 'sort={}'.format(sort) in query_string
+        assert 'profile={}'.format(profile) in query_string
+
+
+    @responses.activate
+    def test_list_inventories_required_params(self):
+        """
+        test_list_inventories_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/inventories')
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "inventories": [{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Invoke method
+        response = service.list_inventories()
+
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+class TestReplaceInventory():
+    """
+    Test Class for replace_inventory
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_replace_inventory_all_params(self):
+        """
+        replace_inventory()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/inventories/testString')
+        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+        name = 'testString'
+        description = 'testString'
+        location = 'us-south'
+        resource_group = 'testString'
+        inventories_ini = 'testString'
+        resource_queries = ['testString']
+
+        # Invoke method
+        response = service.replace_inventory(
+            inventory_id,
+            name=name,
+            description=description,
+            location=location,
+            resource_group=resource_group,
+            inventories_ini=inventories_ini,
+            resource_queries=resource_queries,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['name'] == 'testString'
+        assert req_body['description'] == 'testString'
+        assert req_body['location'] == 'us-south'
+        assert req_body['resource_group'] == 'testString'
+        assert req_body['inventories_ini'] == 'testString'
+        assert req_body['resource_queries'] == ['testString']
+
+
+    @responses.activate
+    def test_replace_inventory_value_error(self):
+        """
+        test_replace_inventory_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/inventories/testString')
+        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+        name = 'testString'
+        description = 'testString'
+        location = 'us-south'
+        resource_group = 'testString'
+        inventories_ini = 'testString'
+        resource_queries = ['testString']
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "inventory_id": inventory_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                service.replace_inventory(**req_copy)
+
+
+
+class TestUpdateInventory():
+    """
+    Test Class for update_inventory
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_update_inventory_all_params(self):
+        """
+        update_inventory()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/inventories/testString')
+        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
+        responses.add(responses.PATCH,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+        name = 'testString'
+        description = 'testString'
+        location = 'us-south'
+        resource_group = 'testString'
+        inventories_ini = 'testString'
+        resource_queries = ['testString']
+
+        # Invoke method
+        response = service.update_inventory(
+            inventory_id,
+            name=name,
+            description=description,
+            location=location,
+            resource_group=resource_group,
+            inventories_ini=inventories_ini,
+            resource_queries=resource_queries,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['name'] == 'testString'
+        assert req_body['description'] == 'testString'
+        assert req_body['location'] == 'us-south'
+        assert req_body['resource_group'] == 'testString'
+        assert req_body['inventories_ini'] == 'testString'
+        assert req_body['resource_queries'] == ['testString']
+
+
+    @responses.activate
+    def test_update_inventory_value_error(self):
+        """
+        test_update_inventory_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/inventories/testString')
+        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
+        responses.add(responses.PATCH,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+        name = 'testString'
+        description = 'testString'
+        location = 'us-south'
+        resource_group = 'testString'
+        inventories_ini = 'testString'
+        resource_queries = ['testString']
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "inventory_id": inventory_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                service.update_inventory(**req_copy)
+
+
+
+class TestDeleteInventory():
+    """
+    Test Class for delete_inventory
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_delete_inventory_all_params(self):
+        """
+        delete_inventory()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/inventories/testString')
+        responses.add(responses.DELETE,
+                      url,
+                      status=204)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+        force = True
+        propagate = True
+
+        # Invoke method
+        response = service.delete_inventory(
+            inventory_id,
+            force=force,
+            propagate=propagate,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 204
+
+
+    @responses.activate
+    def test_delete_inventory_required_params(self):
+        """
+        test_delete_inventory_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/inventories/testString')
+        responses.add(responses.DELETE,
+                      url,
+                      status=204)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+
+        # Invoke method
+        response = service.delete_inventory(
+            inventory_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 204
+
+
+    @responses.activate
+    def test_delete_inventory_value_error(self):
+        """
+        test_delete_inventory_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/inventories/testString')
+        responses.add(responses.DELETE,
+                      url,
+                      status=204)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "inventory_id": inventory_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                service.delete_inventory(**req_copy)
+
+
+
+class TestGetInventory():
+    """
+    Test Class for get_inventory
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_get_inventory_all_params(self):
+        """
+        get_inventory()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/inventories/testString')
+        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+
+        # Invoke method
+        response = service.get_inventory(
+            inventory_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+    @responses.activate
+    def test_get_inventory_value_error(self):
+        """
+        test_get_inventory_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/inventories/testString')
+        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "inventory_id": inventory_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                service.get_inventory(**req_copy)
+
+
+
+class TestListInventoryValues():
+    """
+    Test Class for list_inventory_values
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_list_inventory_values_all_params(self):
+        """
+        list_inventory_values()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/inventories/testString/variables')
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "inventories": [{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+
+        # Invoke method
+        response = service.list_inventory_values(
+            inventory_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+    @responses.activate
+    def test_list_inventory_values_value_error(self):
+        """
+        test_list_inventory_values_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/inventories/testString/variables')
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "inventories": [{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "inventory_id": inventory_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                service.list_inventory_values(**req_copy)
+
+
+
+class TestGetInventoryValue():
+    """
+    Test Class for get_inventory_value
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_get_inventory_value_all_params(self):
+        """
+        get_inventory_value()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/inventories/testString/variables/testString')
+        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+        var_name = 'testString'
+
+        # Invoke method
+        response = service.get_inventory_value(
+            inventory_id,
+            var_name,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+    @responses.activate
+    def test_get_inventory_value_value_error(self):
+        """
+        test_get_inventory_value_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/inventories/testString/variables/testString')
+        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+        var_name = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "inventory_id": inventory_id,
+            "var_name": var_name,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                service.get_inventory_value(**req_copy)
+
+
+
+# endregion
+##############################################################################
+# End of Service: SettingsInventory
+##############################################################################
+
+##############################################################################
+# Start of Service: SettingsResources
+##############################################################################
+# region
+
+class TestCreateResourceQuery():
+    """
+    Test Class for create_resource_query
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_create_resource_query_all_params(self):
+        """
+        create_resource_query()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/resources_query')
+        mock_response = '{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}'
+        responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Construct a dict representation of a ResourceQueryParam model
+        resource_query_param_model = {}
+        resource_query_param_model['name'] = 'testString'
+        resource_query_param_model['value'] = 'testString'
+        resource_query_param_model['description'] = 'testString'
+
+        # Construct a dict representation of a ResourceQuery model
+        resource_query_model = {}
+        resource_query_model['query_type'] = 'workspaces'
+        resource_query_model['query_condition'] = [resource_query_param_model]
+        resource_query_model['query_select'] = ['testString']
+
+        # Set up parameter values
+        type = 'vsi'
+        name = 'testString'
+        queries = [resource_query_model]
+
+        # Invoke method
+        response = service.create_resource_query(
+            type=type,
+            name=name,
+            queries=queries,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['type'] == 'vsi'
+        assert req_body['name'] == 'testString'
+        assert req_body['queries'] == [resource_query_model]
+
+
+class TestListResourceQuery():
+    """
+    Test Class for list_resource_query
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_list_resource_query_all_params(self):
+        """
+        list_resource_query()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/resources_query')
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "ResourceQueries": [{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        offset = 0
+        limit = 1
+        sort = 'testString'
+        profile = 'ids'
+
+        # Invoke method
+        response = service.list_resource_query(
+            offset=offset,
+            limit=limit,
+            sort=sort,
+            profile=profile,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate query params
+        query_string = responses.calls[0].request.url.split('?',1)[1]
+        query_string = urllib.parse.unquote_plus(query_string)
+        assert 'offset={}'.format(offset) in query_string
+        assert 'limit={}'.format(limit) in query_string
+        assert 'sort={}'.format(sort) in query_string
+        assert 'profile={}'.format(profile) in query_string
+
+
+    @responses.activate
+    def test_list_resource_query_required_params(self):
+        """
+        test_list_resource_query_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/resources_query')
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "ResourceQueries": [{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Invoke method
+        response = service.list_resource_query()
+
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+class TestExecuteResourceQuery():
+    """
+    Test Class for execute_resource_query
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_execute_resource_query_all_params(self):
+        """
+        execute_resource_query()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
+        mock_response = '{"response": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"], "query_output": [{"name": "name", "value": "value"}]}]}'
+        responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        query_id = 'testString'
+
+        # Invoke method
+        response = service.execute_resource_query(
+            query_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+    @responses.activate
+    def test_execute_resource_query_value_error(self):
+        """
+        test_execute_resource_query_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
+        mock_response = '{"response": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"], "query_output": [{"name": "name", "value": "value"}]}]}'
+        responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        query_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "query_id": query_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                service.execute_resource_query(**req_copy)
+
+
+
+class TestReplaceResourcesQuery():
+    """
+    Test Class for replace_resources_query
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_replace_resources_query_all_params(self):
+        """
+        replace_resources_query()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
+        mock_response = '{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Construct a dict representation of a ResourceQueryParam model
+        resource_query_param_model = {}
+        resource_query_param_model['name'] = 'testString'
+        resource_query_param_model['value'] = 'testString'
+        resource_query_param_model['description'] = 'testString'
+
+        # Construct a dict representation of a ResourceQuery model
+        resource_query_model = {}
+        resource_query_model['query_type'] = 'workspaces'
+        resource_query_model['query_condition'] = [resource_query_param_model]
+        resource_query_model['query_select'] = ['testString']
+
+        # Set up parameter values
+        query_id = 'testString'
+        type = 'vsi'
+        name = 'testString'
+        queries = [resource_query_model]
+
+        # Invoke method
+        response = service.replace_resources_query(
+            query_id,
+            type=type,
+            name=name,
+            queries=queries,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['type'] == 'vsi'
+        assert req_body['name'] == 'testString'
+        assert req_body['queries'] == [resource_query_model]
+
+
+    @responses.activate
+    def test_replace_resources_query_value_error(self):
+        """
+        test_replace_resources_query_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
+        mock_response = '{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Construct a dict representation of a ResourceQueryParam model
+        resource_query_param_model = {}
+        resource_query_param_model['name'] = 'testString'
+        resource_query_param_model['value'] = 'testString'
+        resource_query_param_model['description'] = 'testString'
+
+        # Construct a dict representation of a ResourceQuery model
+        resource_query_model = {}
+        resource_query_model['query_type'] = 'workspaces'
+        resource_query_model['query_condition'] = [resource_query_param_model]
+        resource_query_model['query_select'] = ['testString']
+
+        # Set up parameter values
+        query_id = 'testString'
+        type = 'vsi'
+        name = 'testString'
+        queries = [resource_query_model]
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "query_id": query_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                service.replace_resources_query(**req_copy)
+
+
+
+class TestDeleteResourcesQuery():
+    """
+    Test Class for delete_resources_query
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_delete_resources_query_all_params(self):
+        """
+        delete_resources_query()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
+        responses.add(responses.DELETE,
+                      url,
+                      status=204)
+
+        # Set up parameter values
+        query_id = 'testString'
+        force = True
+        propagate = True
+
+        # Invoke method
+        response = service.delete_resources_query(
+            query_id,
+            force=force,
+            propagate=propagate,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 204
+
+
+    @responses.activate
+    def test_delete_resources_query_required_params(self):
+        """
+        test_delete_resources_query_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
+        responses.add(responses.DELETE,
+                      url,
+                      status=204)
+
+        # Set up parameter values
+        query_id = 'testString'
+
+        # Invoke method
+        response = service.delete_resources_query(
+            query_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 204
+
+
+    @responses.activate
+    def test_delete_resources_query_value_error(self):
+        """
+        test_delete_resources_query_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
+        responses.add(responses.DELETE,
+                      url,
+                      status=204)
+
+        # Set up parameter values
+        query_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "query_id": query_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                service.delete_resources_query(**req_copy)
+
+
+
+class TestGetResourcesQuery():
+    """
+    Test Class for get_resources_query
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_get_resources_query_all_params(self):
+        """
+        get_resources_query()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
+        mock_response = '{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        query_id = 'testString'
+
+        # Invoke method
+        response = service.get_resources_query(
+            query_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+    @responses.activate
+    def test_get_resources_query_value_error(self):
+        """
+        test_get_resources_query_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
+        mock_response = '{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        query_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "query_id": query_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                service.get_resources_query(**req_copy)
+
+
+
+# endregion
+##############################################################################
+# End of Service: SettingsResources
+##############################################################################
+
 
 ##############################################################################
 # Start of Model Tests
@@ -6030,7 +7424,7 @@ class TestAction():
         user_state_model = {} # UserState
         user_state_model['state'] = 'draft'
         user_state_model['set_by'] = 'testString'
-        user_state_model['set_at'] = '2020-01-28T18:40:40.123456Z'
+        user_state_model['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         external_source_git_model = {} # ExternalSourceGit
         external_source_git_model['git_repo_url'] = 'testString'
@@ -6043,24 +7437,9 @@ class TestAction():
         external_source_model['source_type'] = 'local'
         external_source_model['git'] = external_source_git_model
 
-        system_lock_model = {} # SystemLock
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = '2020-01-28T18:40:40.123456Z'
-
-        target_resourceset_model = {} # TargetResourceset
-        target_resourceset_model['name'] = 'testString'
-        target_resourceset_model['type'] = 'testString'
-        target_resourceset_model['description'] = 'testString'
-        target_resourceset_model['resource_query'] = 'testString'
-        target_resourceset_model['credential'] = 'testString'
-        target_resourceset_model['id'] = 'testString'
-        target_resourceset_model['created_at'] = '2020-01-28T18:40:40.123456Z'
-        target_resourceset_model['created_by'] = 'testString'
-        target_resourceset_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
-        target_resourceset_model['updated_by'] = 'testString'
-        target_resourceset_model['sys_lock'] = system_lock_model
-        target_resourceset_model['resource_ids'] = ['testString']
+        bastion_resource_definition_model = {} # BastionResourceDefinition
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
 
         variable_metadata_model = {} # VariableMetadata
         variable_metadata_model['type'] = 'boolean'
@@ -6088,13 +7467,19 @@ class TestAction():
 
         action_state_model = {} # ActionState
         action_state_model['status_code'] = 'normal'
+        action_state_model['status_job_id'] = 'testString'
         action_state_model['status_message'] = 'testString'
+
+        system_lock_model = {} # SystemLock
+        system_lock_model['sys_locked'] = True
+        system_lock_model['sys_locked_by'] = 'testString'
+        system_lock_model['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Construct a json representation of a Action model
         action_model_json = {}
         action_model_json['name'] = 'Stop Action'
-        action_model_json['description'] = 'This Action can be used to Stop the targets'
-        action_model_json['location'] = 'us_south'
+        action_model_json['description'] = 'This Action can be used to Stop the VSIs'
+        action_model_json['location'] = 'us-south'
         action_model_json['resource_group'] = 'testString'
         action_model_json['tags'] = ['testString']
         action_model_json['user_state'] = user_state_model
@@ -6102,24 +7487,24 @@ class TestAction():
         action_model_json['source'] = external_source_model
         action_model_json['source_type'] = 'local'
         action_model_json['command_parameter'] = 'testString'
-        action_model_json['bastion'] = target_resourceset_model
-        action_model_json['targets'] = [target_resourceset_model]
+        action_model_json['bastion'] = bastion_resource_definition_model
+        action_model_json['inventory'] = 'testString'
+        action_model_json['bastion_credential'] = variable_data_model
+        action_model_json['credentials'] = [variable_data_model]
         action_model_json['inputs'] = [variable_data_model]
         action_model_json['outputs'] = [variable_data_model]
         action_model_json['settings'] = [variable_data_model]
-        action_model_json['trigger_record_id'] = 'testString'
         action_model_json['id'] = 'testString'
         action_model_json['crn'] = 'testString'
         action_model_json['account'] = 'testString'
-        action_model_json['source_created_at'] = '2020-01-28T18:40:40.123456Z'
+        action_model_json['source_created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         action_model_json['source_created_by'] = 'testString'
-        action_model_json['source_updated_at'] = '2020-01-28T18:40:40.123456Z'
+        action_model_json['source_updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         action_model_json['source_updated_by'] = 'testString'
-        action_model_json['created_at'] = '2020-01-28T18:40:40.123456Z'
+        action_model_json['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         action_model_json['created_by'] = 'testString'
-        action_model_json['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        action_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         action_model_json['updated_by'] = 'testString'
-        action_model_json['namespace'] = 'testString'
         action_model_json['state'] = action_state_model
         action_model_json['playbook_names'] = ['testString']
         action_model_json['sys_lock'] = system_lock_model
@@ -6154,7 +7539,7 @@ class TestActionList():
         user_state_model = {} # UserState
         user_state_model['state'] = 'draft'
         user_state_model['set_by'] = 'testString'
-        user_state_model['set_at'] = '2020-01-28T18:40:40.123456Z'
+        user_state_model['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         action_lite_state_model = {} # ActionLiteState
         action_lite_state_model['status_code'] = 'normal'
@@ -6163,14 +7548,14 @@ class TestActionList():
         system_lock_model = {} # SystemLock
         system_lock_model['sys_locked'] = True
         system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = '2020-01-28T18:40:40.123456Z'
+        system_lock_model['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         action_lite_model = {} # ActionLite
         action_lite_model['name'] = 'Stop Action'
-        action_lite_model['description'] = 'This Action can be used to Stop the targets'
+        action_lite_model['description'] = 'This Action can be used to Stop the VSIs'
         action_lite_model['id'] = 'testString'
         action_lite_model['crn'] = 'testString'
-        action_lite_model['location'] = 'us_south'
+        action_lite_model['location'] = 'us-south'
         action_lite_model['resource_group'] = 'testString'
         action_lite_model['namespace'] = 'testString'
         action_lite_model['tags'] = ['testString']
@@ -6178,9 +7563,9 @@ class TestActionList():
         action_lite_model['user_state'] = user_state_model
         action_lite_model['state'] = action_lite_state_model
         action_lite_model['sys_lock'] = system_lock_model
-        action_lite_model['created_at'] = '2020-01-28T18:40:40.123456Z'
+        action_lite_model['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         action_lite_model['created_by'] = 'testString'
-        action_lite_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        action_lite_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         action_lite_model['updated_by'] = 'testString'
 
         # Construct a json representation of a ActionList model
@@ -6220,7 +7605,7 @@ class TestActionLite():
         user_state_model = {} # UserState
         user_state_model['state'] = 'draft'
         user_state_model['set_by'] = 'testString'
-        user_state_model['set_at'] = '2020-01-28T18:40:40.123456Z'
+        user_state_model['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         action_lite_state_model = {} # ActionLiteState
         action_lite_state_model['status_code'] = 'normal'
@@ -6229,15 +7614,15 @@ class TestActionLite():
         system_lock_model = {} # SystemLock
         system_lock_model['sys_locked'] = True
         system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = '2020-01-28T18:40:40.123456Z'
+        system_lock_model['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Construct a json representation of a ActionLite model
         action_lite_model_json = {}
         action_lite_model_json['name'] = 'Stop Action'
-        action_lite_model_json['description'] = 'This Action can be used to Stop the targets'
+        action_lite_model_json['description'] = 'This Action can be used to Stop the VSIs'
         action_lite_model_json['id'] = 'testString'
         action_lite_model_json['crn'] = 'testString'
-        action_lite_model_json['location'] = 'us_south'
+        action_lite_model_json['location'] = 'us-south'
         action_lite_model_json['resource_group'] = 'testString'
         action_lite_model_json['namespace'] = 'testString'
         action_lite_model_json['tags'] = ['testString']
@@ -6245,9 +7630,9 @@ class TestActionLite():
         action_lite_model_json['user_state'] = user_state_model
         action_lite_model_json['state'] = action_lite_state_model
         action_lite_model_json['sys_lock'] = system_lock_model
-        action_lite_model_json['created_at'] = '2020-01-28T18:40:40.123456Z'
+        action_lite_model_json['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         action_lite_model_json['created_by'] = 'testString'
-        action_lite_model_json['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        action_lite_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         action_lite_model_json['updated_by'] = 'testString'
 
         # Construct a model instance of ActionLite by calling from_dict on the json representation
@@ -6308,6 +7693,7 @@ class TestActionState():
         # Construct a json representation of a ActionState model
         action_state_model_json = {}
         action_state_model_json['status_code'] = 'normal'
+        action_state_model_json['status_job_id'] = 'testString'
         action_state_model_json['status_message'] = 'testString'
 
         # Construct a model instance of ActionState by calling from_dict on the json representation
@@ -6324,6 +7710,36 @@ class TestActionState():
         # Convert model instance back to dict and verify no loss of data
         action_state_model_json2 = action_state_model.to_dict()
         assert action_state_model_json2 == action_state_model_json
+
+class TestBastionResourceDefinition():
+    """
+    Test Class for BastionResourceDefinition
+    """
+
+    def test_bastion_resource_definition_serialization(self):
+        """
+        Test serialization/deserialization for BastionResourceDefinition
+        """
+
+        # Construct a json representation of a BastionResourceDefinition model
+        bastion_resource_definition_model_json = {}
+        bastion_resource_definition_model_json['name'] = 'testString'
+        bastion_resource_definition_model_json['host'] = 'testString'
+
+        # Construct a model instance of BastionResourceDefinition by calling from_dict on the json representation
+        bastion_resource_definition_model = BastionResourceDefinition.from_dict(bastion_resource_definition_model_json)
+        assert bastion_resource_definition_model != False
+
+        # Construct a model instance of BastionResourceDefinition by calling from_dict on the json representation
+        bastion_resource_definition_model_dict = BastionResourceDefinition.from_dict(bastion_resource_definition_model_json).__dict__
+        bastion_resource_definition_model2 = BastionResourceDefinition(**bastion_resource_definition_model_dict)
+
+        # Verify the model instances are equivalent
+        assert bastion_resource_definition_model == bastion_resource_definition_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        bastion_resource_definition_model_json2 = bastion_resource_definition_model.to_dict()
+        assert bastion_resource_definition_model_json2 == bastion_resource_definition_model_json
 
 class TestCatalogRef():
     """
@@ -6465,6 +7881,92 @@ class TestExternalSourceGit():
         external_source_git_model_json2 = external_source_git_model.to_dict()
         assert external_source_git_model_json2 == external_source_git_model_json
 
+class TestInventoryResourceRecord():
+    """
+    Test Class for InventoryResourceRecord
+    """
+
+    def test_inventory_resource_record_serialization(self):
+        """
+        Test serialization/deserialization for InventoryResourceRecord
+        """
+
+        # Construct a json representation of a InventoryResourceRecord model
+        inventory_resource_record_model_json = {}
+        inventory_resource_record_model_json['name'] = 'testString'
+        inventory_resource_record_model_json['id'] = 'testString'
+        inventory_resource_record_model_json['description'] = 'testString'
+        inventory_resource_record_model_json['location'] = 'us-south'
+        inventory_resource_record_model_json['resource_group'] = 'testString'
+        inventory_resource_record_model_json['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model_json['created_by'] = 'testString'
+        inventory_resource_record_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model_json['updated_by'] = 'testString'
+        inventory_resource_record_model_json['inventories_ini'] = 'testString'
+        inventory_resource_record_model_json['resource_queries'] = ['testString']
+
+        # Construct a model instance of InventoryResourceRecord by calling from_dict on the json representation
+        inventory_resource_record_model = InventoryResourceRecord.from_dict(inventory_resource_record_model_json)
+        assert inventory_resource_record_model != False
+
+        # Construct a model instance of InventoryResourceRecord by calling from_dict on the json representation
+        inventory_resource_record_model_dict = InventoryResourceRecord.from_dict(inventory_resource_record_model_json).__dict__
+        inventory_resource_record_model2 = InventoryResourceRecord(**inventory_resource_record_model_dict)
+
+        # Verify the model instances are equivalent
+        assert inventory_resource_record_model == inventory_resource_record_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        inventory_resource_record_model_json2 = inventory_resource_record_model.to_dict()
+        assert inventory_resource_record_model_json2 == inventory_resource_record_model_json
+
+class TestInventoryResourceRecordList():
+    """
+    Test Class for InventoryResourceRecordList
+    """
+
+    def test_inventory_resource_record_list_serialization(self):
+        """
+        Test serialization/deserialization for InventoryResourceRecordList
+        """
+
+        # Construct dict forms of any model objects needed in order to build this model.
+
+        inventory_resource_record_model = {} # InventoryResourceRecord
+        inventory_resource_record_model['name'] = 'testString'
+        inventory_resource_record_model['id'] = 'testString'
+        inventory_resource_record_model['description'] = 'testString'
+        inventory_resource_record_model['location'] = 'us-south'
+        inventory_resource_record_model['resource_group'] = 'testString'
+        inventory_resource_record_model['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model['created_by'] = 'testString'
+        inventory_resource_record_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model['updated_by'] = 'testString'
+        inventory_resource_record_model['inventories_ini'] = 'testString'
+        inventory_resource_record_model['resource_queries'] = ['testString']
+
+        # Construct a json representation of a InventoryResourceRecordList model
+        inventory_resource_record_list_model_json = {}
+        inventory_resource_record_list_model_json['total_count'] = 26
+        inventory_resource_record_list_model_json['limit'] = 26
+        inventory_resource_record_list_model_json['offset'] = 26
+        inventory_resource_record_list_model_json['inventories'] = [inventory_resource_record_model]
+
+        # Construct a model instance of InventoryResourceRecordList by calling from_dict on the json representation
+        inventory_resource_record_list_model = InventoryResourceRecordList.from_dict(inventory_resource_record_list_model_json)
+        assert inventory_resource_record_list_model != False
+
+        # Construct a model instance of InventoryResourceRecordList by calling from_dict on the json representation
+        inventory_resource_record_list_model_dict = InventoryResourceRecordList.from_dict(inventory_resource_record_list_model_json).__dict__
+        inventory_resource_record_list_model2 = InventoryResourceRecordList(**inventory_resource_record_list_model_dict)
+
+        # Verify the model instances are equivalent
+        assert inventory_resource_record_list_model == inventory_resource_record_list_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        inventory_resource_record_list_model_json2 = inventory_resource_record_list_model.to_dict()
+        assert inventory_resource_record_list_model_json2 == inventory_resource_record_list_model_json
+
 class TestJob():
     """
     Test Class for Job
@@ -6507,42 +8009,61 @@ class TestJob():
         job_status_action_model['status_message'] = 'testString'
         job_status_action_model['bastion_status_code'] = 'none'
         job_status_action_model['bastion_status_message'] = 'testString'
-        job_status_action_model['targets_status_code'] = 'none'
-        job_status_action_model['targets_status_message'] = 'testString'
-        job_status_action_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_status_action_model['inventory_status_code'] = 'none'
+        job_status_action_model['inventory_status_message'] = 'testString'
+        job_status_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        job_status_schematics_resources_model = {} # JobStatusSchematicsResources
+        job_status_schematics_resources_model['status_code'] = 'job_pending'
+        job_status_schematics_resources_model['status_message'] = 'testString'
+        job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
+        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        job_status_system_model = {} # JobStatusSystem
+        job_status_system_model['system_status_message'] = 'testString'
+        job_status_system_model['system_status_code'] = 'job_pending'
+        job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
+        job_status_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         job_status_model = {} # JobStatus
         job_status_model['action_job_status'] = job_status_action_model
+        job_status_model['system_job_status'] = job_status_system_model
+
+        inventory_resource_record_model = {} # InventoryResourceRecord
+        inventory_resource_record_model['name'] = 'testString'
+        inventory_resource_record_model['id'] = 'testString'
+        inventory_resource_record_model['description'] = 'testString'
+        inventory_resource_record_model['location'] = 'us-south'
+        inventory_resource_record_model['resource_group'] = 'testString'
+        inventory_resource_record_model['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model['created_by'] = 'testString'
+        inventory_resource_record_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model['updated_by'] = 'testString'
+        inventory_resource_record_model['inventories_ini'] = 'testString'
+        inventory_resource_record_model['resource_queries'] = ['testString']
 
         job_data_action_model = {} # JobDataAction
         job_data_action_model['action_name'] = 'testString'
         job_data_action_model['inputs'] = [variable_data_model]
         job_data_action_model['outputs'] = [variable_data_model]
         job_data_action_model['settings'] = [variable_data_model]
-        job_data_action_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_data_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_data_action_model['inventory_record'] = inventory_resource_record_model
+        job_data_action_model['materialized_inventory'] = 'testString'
+
+        job_data_system_model = {} # JobDataSystem
+        job_data_system_model['key_id'] = 'testString'
+        job_data_system_model['schematics_resource_id'] = ['testString']
+        job_data_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         job_data_model = {} # JobData
         job_data_model['job_type'] = 'repo_download_job'
         job_data_model['action_job_data'] = job_data_action_model
+        job_data_model['system_job_data'] = job_data_system_model
 
-        system_lock_model = {} # SystemLock
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = '2020-01-28T18:40:40.123456Z'
-
-        target_resourceset_model = {} # TargetResourceset
-        target_resourceset_model['name'] = 'testString'
-        target_resourceset_model['type'] = 'testString'
-        target_resourceset_model['description'] = 'testString'
-        target_resourceset_model['resource_query'] = 'testString'
-        target_resourceset_model['credential'] = 'testString'
-        target_resourceset_model['id'] = 'testString'
-        target_resourceset_model['created_at'] = '2020-01-28T18:40:40.123456Z'
-        target_resourceset_model['created_by'] = 'testString'
-        target_resourceset_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
-        target_resourceset_model['updated_by'] = 'testString'
-        target_resourceset_model['sys_lock'] = system_lock_model
-        target_resourceset_model['resource_ids'] = ['testString']
+        bastion_resource_definition_model = {} # BastionResourceDefinition
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
 
         job_log_summary_log_errors_item_model = {} # JobLogSummaryLogErrorsItem
         job_log_summary_log_errors_item_model['error_code'] = 'testString'
@@ -6557,7 +8078,7 @@ class TestJob():
         job_log_summary_repo_download_job_model['outputs_count'] = 'testString'
 
         job_log_summary_action_job_recap_model = {} # JobLogSummaryActionJobRecap
-        job_log_summary_action_job_recap_model['target'] = ['testString']
+        job_log_summary_action_job_recap_model['hosts'] = ['testString']
         job_log_summary_action_job_recap_model['ok'] = 72.5
         job_log_summary_action_job_recap_model['changed'] = 72.5
         job_log_summary_action_job_recap_model['failed'] = 72.5
@@ -6565,26 +8086,32 @@ class TestJob():
         job_log_summary_action_job_recap_model['unreachable'] = 72.5
 
         job_log_summary_action_job_model = {} # JobLogSummaryActionJob
-        job_log_summary_action_job_model['target_count'] = 72.5
+        job_log_summary_action_job_model['host_count'] = 72.5
         job_log_summary_action_job_model['task_count'] = 72.5
         job_log_summary_action_job_model['play_count'] = 72.5
         job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
 
+        job_log_summary_system_job_model = {} # JobLogSummarySystemJob
+        job_log_summary_system_job_model['target_count'] = 72.5
+        job_log_summary_system_job_model['success'] = 72.5
+        job_log_summary_system_job_model['failed'] = 72.5
+
         job_log_summary_model = {} # JobLogSummary
         job_log_summary_model['job_id'] = 'testString'
         job_log_summary_model['job_type'] = 'repo_download_job'
-        job_log_summary_model['log_start_at'] = '2020-01-28T18:40:40.123456Z'
-        job_log_summary_model['log_analyzed_till'] = '2020-01-28T18:40:40.123456Z'
+        job_log_summary_model['log_start_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_log_summary_model['log_analyzed_till'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         job_log_summary_model['elapsed_time'] = 72.5
         job_log_summary_model['log_errors'] = [job_log_summary_log_errors_item_model]
         job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
         job_log_summary_model['action_job'] = job_log_summary_action_job_model
+        job_log_summary_model['system_job'] = job_log_summary_system_job_model
 
         # Construct a json representation of a Job model
         job_model_json = {}
         job_model_json['command_object'] = 'workspace'
         job_model_json['command_object_id'] = 'testString'
-        job_model_json['command_name'] = 'workspace_init_flow'
+        job_model_json['command_name'] = 'ansible_playbook_run'
         job_model_json['command_parameter'] = 'testString'
         job_model_json['command_options'] = ['testString']
         job_model_json['inputs'] = [variable_data_model]
@@ -6593,22 +8120,21 @@ class TestJob():
         job_model_json['id'] = 'testString'
         job_model_json['name'] = 'testString'
         job_model_json['description'] = 'testString'
-        job_model_json['location'] = 'us_south'
+        job_model_json['location'] = 'us-south'
         job_model_json['resource_group'] = 'testString'
-        job_model_json['submitted_at'] = '2020-01-28T18:40:40.123456Z'
+        job_model_json['submitted_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         job_model_json['submitted_by'] = 'testString'
-        job_model_json['start_at'] = '2020-01-28T18:40:40.123456Z'
-        job_model_json['end_at'] = '2020-01-28T18:40:40.123456Z'
+        job_model_json['start_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_model_json['end_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         job_model_json['duration'] = 'testString'
         job_model_json['status'] = job_status_model
         job_model_json['data'] = job_data_model
-        job_model_json['targets'] = [target_resourceset_model]
-        job_model_json['bastion'] = target_resourceset_model
+        job_model_json['bastion'] = bastion_resource_definition_model
         job_model_json['log_summary'] = job_log_summary_model
         job_model_json['log_store_url'] = 'testString'
         job_model_json['state_store_url'] = 'testString'
         job_model_json['results_url'] = 'testString'
-        job_model_json['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a model instance of Job by calling from_dict on the json representation
         job_model = Job.from_dict(job_model_json)
@@ -6661,17 +8187,38 @@ class TestJobData():
         variable_data_model['metadata'] = variable_metadata_model
         variable_data_model['link'] = 'testString'
 
+        inventory_resource_record_model = {} # InventoryResourceRecord
+        inventory_resource_record_model['name'] = 'testString'
+        inventory_resource_record_model['id'] = 'testString'
+        inventory_resource_record_model['description'] = 'testString'
+        inventory_resource_record_model['location'] = 'us-south'
+        inventory_resource_record_model['resource_group'] = 'testString'
+        inventory_resource_record_model['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model['created_by'] = 'testString'
+        inventory_resource_record_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model['updated_by'] = 'testString'
+        inventory_resource_record_model['inventories_ini'] = 'testString'
+        inventory_resource_record_model['resource_queries'] = ['testString']
+
         job_data_action_model = {} # JobDataAction
         job_data_action_model['action_name'] = 'testString'
         job_data_action_model['inputs'] = [variable_data_model]
         job_data_action_model['outputs'] = [variable_data_model]
         job_data_action_model['settings'] = [variable_data_model]
-        job_data_action_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_data_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_data_action_model['inventory_record'] = inventory_resource_record_model
+        job_data_action_model['materialized_inventory'] = 'testString'
+
+        job_data_system_model = {} # JobDataSystem
+        job_data_system_model['key_id'] = 'testString'
+        job_data_system_model['schematics_resource_id'] = ['testString']
+        job_data_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a json representation of a JobData model
         job_data_model_json = {}
         job_data_model_json['job_type'] = 'repo_download_job'
         job_data_model_json['action_job_data'] = job_data_action_model
+        job_data_model_json['system_job_data'] = job_data_system_model
 
         # Construct a model instance of JobData by calling from_dict on the json representation
         job_data_model = JobData.from_dict(job_data_model_json)
@@ -6724,13 +8271,28 @@ class TestJobDataAction():
         variable_data_model['metadata'] = variable_metadata_model
         variable_data_model['link'] = 'testString'
 
+        inventory_resource_record_model = {} # InventoryResourceRecord
+        inventory_resource_record_model['name'] = 'testString'
+        inventory_resource_record_model['id'] = 'testString'
+        inventory_resource_record_model['description'] = 'testString'
+        inventory_resource_record_model['location'] = 'us-south'
+        inventory_resource_record_model['resource_group'] = 'testString'
+        inventory_resource_record_model['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model['created_by'] = 'testString'
+        inventory_resource_record_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model['updated_by'] = 'testString'
+        inventory_resource_record_model['inventories_ini'] = 'testString'
+        inventory_resource_record_model['resource_queries'] = ['testString']
+
         # Construct a json representation of a JobDataAction model
         job_data_action_model_json = {}
         job_data_action_model_json['action_name'] = 'testString'
         job_data_action_model_json['inputs'] = [variable_data_model]
         job_data_action_model_json['outputs'] = [variable_data_model]
         job_data_action_model_json['settings'] = [variable_data_model]
-        job_data_action_model_json['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_data_action_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_data_action_model_json['inventory_record'] = inventory_resource_record_model
+        job_data_action_model_json['materialized_inventory'] = 'testString'
 
         # Construct a model instance of JobDataAction by calling from_dict on the json representation
         job_data_action_model = JobDataAction.from_dict(job_data_action_model_json)
@@ -6747,6 +8309,37 @@ class TestJobDataAction():
         job_data_action_model_json2 = job_data_action_model.to_dict()
         assert job_data_action_model_json2 == job_data_action_model_json
 
+class TestJobDataSystem():
+    """
+    Test Class for JobDataSystem
+    """
+
+    def test_job_data_system_serialization(self):
+        """
+        Test serialization/deserialization for JobDataSystem
+        """
+
+        # Construct a json representation of a JobDataSystem model
+        job_data_system_model_json = {}
+        job_data_system_model_json['key_id'] = 'testString'
+        job_data_system_model_json['schematics_resource_id'] = ['testString']
+        job_data_system_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        # Construct a model instance of JobDataSystem by calling from_dict on the json representation
+        job_data_system_model = JobDataSystem.from_dict(job_data_system_model_json)
+        assert job_data_system_model != False
+
+        # Construct a model instance of JobDataSystem by calling from_dict on the json representation
+        job_data_system_model_dict = JobDataSystem.from_dict(job_data_system_model_json).__dict__
+        job_data_system_model2 = JobDataSystem(**job_data_system_model_dict)
+
+        # Verify the model instances are equivalent
+        assert job_data_system_model == job_data_system_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        job_data_system_model_json2 = job_data_system_model.to_dict()
+        assert job_data_system_model_json2 == job_data_system_model_json
+
 class TestJobList():
     """
     Test Class for JobList
@@ -6759,37 +8352,31 @@ class TestJobList():
 
         # Construct dict forms of any model objects needed in order to build this model.
 
-        system_lock_model = {} # SystemLock
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = '2020-01-28T18:40:40.123456Z'
-
-        target_resourceset_model = {} # TargetResourceset
-        target_resourceset_model['name'] = 'testString'
-        target_resourceset_model['type'] = 'testString'
-        target_resourceset_model['description'] = 'testString'
-        target_resourceset_model['resource_query'] = 'testString'
-        target_resourceset_model['credential'] = 'testString'
-        target_resourceset_model['id'] = 'testString'
-        target_resourceset_model['created_at'] = '2020-01-28T18:40:40.123456Z'
-        target_resourceset_model['created_by'] = 'testString'
-        target_resourceset_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
-        target_resourceset_model['updated_by'] = 'testString'
-        target_resourceset_model['sys_lock'] = system_lock_model
-        target_resourceset_model['resource_ids'] = ['testString']
-
         job_status_action_model = {} # JobStatusAction
         job_status_action_model['action_name'] = 'testString'
         job_status_action_model['status_code'] = 'job_pending'
         job_status_action_model['status_message'] = 'testString'
         job_status_action_model['bastion_status_code'] = 'none'
         job_status_action_model['bastion_status_message'] = 'testString'
-        job_status_action_model['targets_status_code'] = 'none'
-        job_status_action_model['targets_status_message'] = 'testString'
-        job_status_action_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_status_action_model['inventory_status_code'] = 'none'
+        job_status_action_model['inventory_status_message'] = 'testString'
+        job_status_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        job_status_schematics_resources_model = {} # JobStatusSchematicsResources
+        job_status_schematics_resources_model['status_code'] = 'job_pending'
+        job_status_schematics_resources_model['status_message'] = 'testString'
+        job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
+        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        job_status_system_model = {} # JobStatusSystem
+        job_status_system_model['system_status_message'] = 'testString'
+        job_status_system_model['system_status_code'] = 'job_pending'
+        job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
+        job_status_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         job_status_model = {} # JobStatus
         job_status_model['action_job_status'] = job_status_action_model
+        job_status_model['system_job_status'] = job_status_system_model
 
         job_log_summary_log_errors_item_model = {} # JobLogSummaryLogErrorsItem
         job_log_summary_log_errors_item_model['error_code'] = 'testString'
@@ -6804,7 +8391,7 @@ class TestJobList():
         job_log_summary_repo_download_job_model['outputs_count'] = 'testString'
 
         job_log_summary_action_job_recap_model = {} # JobLogSummaryActionJobRecap
-        job_log_summary_action_job_recap_model['target'] = ['testString']
+        job_log_summary_action_job_recap_model['hosts'] = ['testString']
         job_log_summary_action_job_recap_model['ok'] = 72.5
         job_log_summary_action_job_recap_model['changed'] = 72.5
         job_log_summary_action_job_recap_model['failed'] = 72.5
@@ -6812,20 +8399,26 @@ class TestJobList():
         job_log_summary_action_job_recap_model['unreachable'] = 72.5
 
         job_log_summary_action_job_model = {} # JobLogSummaryActionJob
-        job_log_summary_action_job_model['target_count'] = 72.5
+        job_log_summary_action_job_model['host_count'] = 72.5
         job_log_summary_action_job_model['task_count'] = 72.5
         job_log_summary_action_job_model['play_count'] = 72.5
         job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
 
+        job_log_summary_system_job_model = {} # JobLogSummarySystemJob
+        job_log_summary_system_job_model['target_count'] = 72.5
+        job_log_summary_system_job_model['success'] = 72.5
+        job_log_summary_system_job_model['failed'] = 72.5
+
         job_log_summary_model = {} # JobLogSummary
         job_log_summary_model['job_id'] = 'testString'
         job_log_summary_model['job_type'] = 'repo_download_job'
-        job_log_summary_model['log_start_at'] = '2020-01-28T18:40:40.123456Z'
-        job_log_summary_model['log_analyzed_till'] = '2020-01-28T18:40:40.123456Z'
+        job_log_summary_model['log_start_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_log_summary_model['log_analyzed_till'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         job_log_summary_model['elapsed_time'] = 72.5
         job_log_summary_model['log_errors'] = [job_log_summary_log_errors_item_model]
         job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
         job_log_summary_model['action_job'] = job_log_summary_action_job_model
+        job_log_summary_model['system_job'] = job_log_summary_system_job_model
 
         job_lite_model = {} # JobLite
         job_lite_model['id'] = 'testString'
@@ -6833,19 +8426,18 @@ class TestJobList():
         job_lite_model['description'] = 'testString'
         job_lite_model['command_object'] = 'workspace'
         job_lite_model['command_object_id'] = 'testString'
-        job_lite_model['command_name'] = 'workspace_init_flow'
+        job_lite_model['command_name'] = 'ansible_playbook_run'
         job_lite_model['tags'] = ['testString']
-        job_lite_model['location'] = 'us_south'
+        job_lite_model['location'] = 'us-south'
         job_lite_model['resource_group'] = 'testString'
-        job_lite_model['targets'] = [target_resourceset_model]
-        job_lite_model['submitted_at'] = '2020-01-28T18:40:40.123456Z'
+        job_lite_model['submitted_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         job_lite_model['submitted_by'] = 'testString'
         job_lite_model['duration'] = 'testString'
-        job_lite_model['start_at'] = '2020-01-28T18:40:40.123456Z'
-        job_lite_model['end_at'] = '2020-01-28T18:40:40.123456Z'
+        job_lite_model['start_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_lite_model['end_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         job_lite_model['status'] = job_status_model
         job_lite_model['log_summary'] = job_log_summary_model
-        job_lite_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_lite_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a json representation of a JobList model
         job_list_model_json = {}
@@ -6881,37 +8473,31 @@ class TestJobLite():
 
         # Construct dict forms of any model objects needed in order to build this model.
 
-        system_lock_model = {} # SystemLock
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = '2020-01-28T18:40:40.123456Z'
-
-        target_resourceset_model = {} # TargetResourceset
-        target_resourceset_model['name'] = 'testString'
-        target_resourceset_model['type'] = 'testString'
-        target_resourceset_model['description'] = 'testString'
-        target_resourceset_model['resource_query'] = 'testString'
-        target_resourceset_model['credential'] = 'testString'
-        target_resourceset_model['id'] = 'testString'
-        target_resourceset_model['created_at'] = '2020-01-28T18:40:40.123456Z'
-        target_resourceset_model['created_by'] = 'testString'
-        target_resourceset_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
-        target_resourceset_model['updated_by'] = 'testString'
-        target_resourceset_model['sys_lock'] = system_lock_model
-        target_resourceset_model['resource_ids'] = ['testString']
-
         job_status_action_model = {} # JobStatusAction
         job_status_action_model['action_name'] = 'testString'
         job_status_action_model['status_code'] = 'job_pending'
         job_status_action_model['status_message'] = 'testString'
         job_status_action_model['bastion_status_code'] = 'none'
         job_status_action_model['bastion_status_message'] = 'testString'
-        job_status_action_model['targets_status_code'] = 'none'
-        job_status_action_model['targets_status_message'] = 'testString'
-        job_status_action_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_status_action_model['inventory_status_code'] = 'none'
+        job_status_action_model['inventory_status_message'] = 'testString'
+        job_status_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        job_status_schematics_resources_model = {} # JobStatusSchematicsResources
+        job_status_schematics_resources_model['status_code'] = 'job_pending'
+        job_status_schematics_resources_model['status_message'] = 'testString'
+        job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
+        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        job_status_system_model = {} # JobStatusSystem
+        job_status_system_model['system_status_message'] = 'testString'
+        job_status_system_model['system_status_code'] = 'job_pending'
+        job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
+        job_status_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         job_status_model = {} # JobStatus
         job_status_model['action_job_status'] = job_status_action_model
+        job_status_model['system_job_status'] = job_status_system_model
 
         job_log_summary_log_errors_item_model = {} # JobLogSummaryLogErrorsItem
         job_log_summary_log_errors_item_model['error_code'] = 'testString'
@@ -6926,7 +8512,7 @@ class TestJobLite():
         job_log_summary_repo_download_job_model['outputs_count'] = 'testString'
 
         job_log_summary_action_job_recap_model = {} # JobLogSummaryActionJobRecap
-        job_log_summary_action_job_recap_model['target'] = ['testString']
+        job_log_summary_action_job_recap_model['hosts'] = ['testString']
         job_log_summary_action_job_recap_model['ok'] = 72.5
         job_log_summary_action_job_recap_model['changed'] = 72.5
         job_log_summary_action_job_recap_model['failed'] = 72.5
@@ -6934,20 +8520,26 @@ class TestJobLite():
         job_log_summary_action_job_recap_model['unreachable'] = 72.5
 
         job_log_summary_action_job_model = {} # JobLogSummaryActionJob
-        job_log_summary_action_job_model['target_count'] = 72.5
+        job_log_summary_action_job_model['host_count'] = 72.5
         job_log_summary_action_job_model['task_count'] = 72.5
         job_log_summary_action_job_model['play_count'] = 72.5
         job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
 
+        job_log_summary_system_job_model = {} # JobLogSummarySystemJob
+        job_log_summary_system_job_model['target_count'] = 72.5
+        job_log_summary_system_job_model['success'] = 72.5
+        job_log_summary_system_job_model['failed'] = 72.5
+
         job_log_summary_model = {} # JobLogSummary
         job_log_summary_model['job_id'] = 'testString'
         job_log_summary_model['job_type'] = 'repo_download_job'
-        job_log_summary_model['log_start_at'] = '2020-01-28T18:40:40.123456Z'
-        job_log_summary_model['log_analyzed_till'] = '2020-01-28T18:40:40.123456Z'
+        job_log_summary_model['log_start_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_log_summary_model['log_analyzed_till'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         job_log_summary_model['elapsed_time'] = 72.5
         job_log_summary_model['log_errors'] = [job_log_summary_log_errors_item_model]
         job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
         job_log_summary_model['action_job'] = job_log_summary_action_job_model
+        job_log_summary_model['system_job'] = job_log_summary_system_job_model
 
         # Construct a json representation of a JobLite model
         job_lite_model_json = {}
@@ -6956,19 +8548,18 @@ class TestJobLite():
         job_lite_model_json['description'] = 'testString'
         job_lite_model_json['command_object'] = 'workspace'
         job_lite_model_json['command_object_id'] = 'testString'
-        job_lite_model_json['command_name'] = 'workspace_init_flow'
+        job_lite_model_json['command_name'] = 'ansible_playbook_run'
         job_lite_model_json['tags'] = ['testString']
-        job_lite_model_json['location'] = 'us_south'
+        job_lite_model_json['location'] = 'us-south'
         job_lite_model_json['resource_group'] = 'testString'
-        job_lite_model_json['targets'] = [target_resourceset_model]
-        job_lite_model_json['submitted_at'] = '2020-01-28T18:40:40.123456Z'
+        job_lite_model_json['submitted_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         job_lite_model_json['submitted_by'] = 'testString'
         job_lite_model_json['duration'] = 'testString'
-        job_lite_model_json['start_at'] = '2020-01-28T18:40:40.123456Z'
-        job_lite_model_json['end_at'] = '2020-01-28T18:40:40.123456Z'
+        job_lite_model_json['start_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_lite_model_json['end_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         job_lite_model_json['status'] = job_status_model
         job_lite_model_json['log_summary'] = job_log_summary_model
-        job_lite_model_json['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_lite_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a model instance of JobLite by calling from_dict on the json representation
         job_lite_model = JobLite.from_dict(job_lite_model_json)
@@ -7010,7 +8601,7 @@ class TestJobLog():
         job_log_summary_repo_download_job_model['outputs_count'] = 'testString'
 
         job_log_summary_action_job_recap_model = {} # JobLogSummaryActionJobRecap
-        job_log_summary_action_job_recap_model['target'] = ['testString']
+        job_log_summary_action_job_recap_model['hosts'] = ['testString']
         job_log_summary_action_job_recap_model['ok'] = 72.5
         job_log_summary_action_job_recap_model['changed'] = 72.5
         job_log_summary_action_job_recap_model['failed'] = 72.5
@@ -7018,20 +8609,26 @@ class TestJobLog():
         job_log_summary_action_job_recap_model['unreachable'] = 72.5
 
         job_log_summary_action_job_model = {} # JobLogSummaryActionJob
-        job_log_summary_action_job_model['target_count'] = 72.5
+        job_log_summary_action_job_model['host_count'] = 72.5
         job_log_summary_action_job_model['task_count'] = 72.5
         job_log_summary_action_job_model['play_count'] = 72.5
         job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
 
+        job_log_summary_system_job_model = {} # JobLogSummarySystemJob
+        job_log_summary_system_job_model['target_count'] = 72.5
+        job_log_summary_system_job_model['success'] = 72.5
+        job_log_summary_system_job_model['failed'] = 72.5
+
         job_log_summary_model = {} # JobLogSummary
         job_log_summary_model['job_id'] = 'testString'
         job_log_summary_model['job_type'] = 'repo_download_job'
-        job_log_summary_model['log_start_at'] = '2020-01-28T18:40:40.123456Z'
-        job_log_summary_model['log_analyzed_till'] = '2020-01-28T18:40:40.123456Z'
+        job_log_summary_model['log_start_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_log_summary_model['log_analyzed_till'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         job_log_summary_model['elapsed_time'] = 72.5
         job_log_summary_model['log_errors'] = [job_log_summary_log_errors_item_model]
         job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
         job_log_summary_model['action_job'] = job_log_summary_action_job_model
+        job_log_summary_model['system_job'] = job_log_summary_system_job_model
 
         # Construct a json representation of a JobLog model
         job_log_model_json = {}
@@ -7040,7 +8637,7 @@ class TestJobLog():
         job_log_model_json['log_summary'] = job_log_summary_model
         job_log_model_json['format'] = 'json'
         job_log_model_json['details'] = 'VGhpcyBpcyBhIG1vY2sgYnl0ZSBhcnJheSB2YWx1ZS4='
-        job_log_model_json['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_log_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a model instance of JobLog by calling from_dict on the json representation
         job_log_model = JobLog.from_dict(job_log_model_json)
@@ -7082,7 +8679,7 @@ class TestJobLogSummary():
         job_log_summary_repo_download_job_model['outputs_count'] = 'testString'
 
         job_log_summary_action_job_recap_model = {} # JobLogSummaryActionJobRecap
-        job_log_summary_action_job_recap_model['target'] = ['testString']
+        job_log_summary_action_job_recap_model['hosts'] = ['testString']
         job_log_summary_action_job_recap_model['ok'] = 72.5
         job_log_summary_action_job_recap_model['changed'] = 72.5
         job_log_summary_action_job_recap_model['failed'] = 72.5
@@ -7090,21 +8687,27 @@ class TestJobLogSummary():
         job_log_summary_action_job_recap_model['unreachable'] = 72.5
 
         job_log_summary_action_job_model = {} # JobLogSummaryActionJob
-        job_log_summary_action_job_model['target_count'] = 72.5
+        job_log_summary_action_job_model['host_count'] = 72.5
         job_log_summary_action_job_model['task_count'] = 72.5
         job_log_summary_action_job_model['play_count'] = 72.5
         job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
+
+        job_log_summary_system_job_model = {} # JobLogSummarySystemJob
+        job_log_summary_system_job_model['target_count'] = 72.5
+        job_log_summary_system_job_model['success'] = 72.5
+        job_log_summary_system_job_model['failed'] = 72.5
 
         # Construct a json representation of a JobLogSummary model
         job_log_summary_model_json = {}
         job_log_summary_model_json['job_id'] = 'testString'
         job_log_summary_model_json['job_type'] = 'repo_download_job'
-        job_log_summary_model_json['log_start_at'] = '2020-01-28T18:40:40.123456Z'
-        job_log_summary_model_json['log_analyzed_till'] = '2020-01-28T18:40:40.123456Z'
+        job_log_summary_model_json['log_start_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_log_summary_model_json['log_analyzed_till'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
         job_log_summary_model_json['elapsed_time'] = 72.5
         job_log_summary_model_json['log_errors'] = [job_log_summary_log_errors_item_model]
         job_log_summary_model_json['repo_download_job'] = job_log_summary_repo_download_job_model
         job_log_summary_model_json['action_job'] = job_log_summary_action_job_model
+        job_log_summary_model_json['system_job'] = job_log_summary_system_job_model
 
         # Construct a model instance of JobLogSummary by calling from_dict on the json representation
         job_log_summary_model = JobLogSummary.from_dict(job_log_summary_model_json)
@@ -7134,7 +8737,7 @@ class TestJobLogSummaryActionJob():
         # Construct dict forms of any model objects needed in order to build this model.
 
         job_log_summary_action_job_recap_model = {} # JobLogSummaryActionJobRecap
-        job_log_summary_action_job_recap_model['target'] = ['testString']
+        job_log_summary_action_job_recap_model['hosts'] = ['testString']
         job_log_summary_action_job_recap_model['ok'] = 72.5
         job_log_summary_action_job_recap_model['changed'] = 72.5
         job_log_summary_action_job_recap_model['failed'] = 72.5
@@ -7143,7 +8746,7 @@ class TestJobLogSummaryActionJob():
 
         # Construct a json representation of a JobLogSummaryActionJob model
         job_log_summary_action_job_model_json = {}
-        job_log_summary_action_job_model_json['target_count'] = 72.5
+        job_log_summary_action_job_model_json['host_count'] = 72.5
         job_log_summary_action_job_model_json['task_count'] = 72.5
         job_log_summary_action_job_model_json['play_count'] = 72.5
         job_log_summary_action_job_model_json['recap'] = job_log_summary_action_job_recap_model
@@ -7175,7 +8778,7 @@ class TestJobLogSummaryActionJobRecap():
 
         # Construct a json representation of a JobLogSummaryActionJobRecap model
         job_log_summary_action_job_recap_model_json = {}
-        job_log_summary_action_job_recap_model_json['target'] = ['testString']
+        job_log_summary_action_job_recap_model_json['hosts'] = ['testString']
         job_log_summary_action_job_recap_model_json['ok'] = 72.5
         job_log_summary_action_job_recap_model_json['changed'] = 72.5
         job_log_summary_action_job_recap_model_json['failed'] = 72.5
@@ -7261,77 +8864,36 @@ class TestJobLogSummaryRepoDownloadJob():
         job_log_summary_repo_download_job_model_json2 = job_log_summary_repo_download_job_model.to_dict()
         assert job_log_summary_repo_download_job_model_json2 == job_log_summary_repo_download_job_model_json
 
-class TestJobStateData():
+class TestJobLogSummarySystemJob():
     """
-    Test Class for JobStateData
+    Test Class for JobLogSummarySystemJob
     """
 
-    def test_job_state_data_serialization(self):
+    def test_job_log_summary_system_job_serialization(self):
         """
-        Test serialization/deserialization for JobStateData
+        Test serialization/deserialization for JobLogSummarySystemJob
         """
 
-        # Construct dict forms of any model objects needed in order to build this model.
+        # Construct a json representation of a JobLogSummarySystemJob model
+        job_log_summary_system_job_model_json = {}
+        job_log_summary_system_job_model_json['target_count'] = 72.5
+        job_log_summary_system_job_model_json['success'] = 72.5
+        job_log_summary_system_job_model_json['failed'] = 72.5
 
-        job_state_data_summary_item_model = {} # JobStateDataSummaryItem
-        job_state_data_summary_item_model['name'] = 'testString'
-        job_state_data_summary_item_model['type'] = 'number'
-        job_state_data_summary_item_model['value'] = 'testString'
+        # Construct a model instance of JobLogSummarySystemJob by calling from_dict on the json representation
+        job_log_summary_system_job_model = JobLogSummarySystemJob.from_dict(job_log_summary_system_job_model_json)
+        assert job_log_summary_system_job_model != False
 
-        # Construct a json representation of a JobStateData model
-        job_state_data_model_json = {}
-        job_state_data_model_json['job_id'] = 'testString'
-        job_state_data_model_json['job_name'] = 'testString'
-        job_state_data_model_json['summary'] = [job_state_data_summary_item_model]
-        job_state_data_model_json['format'] = 'testString'
-        job_state_data_model_json['details'] = 'VGhpcyBpcyBhIG1vY2sgYnl0ZSBhcnJheSB2YWx1ZS4='
-        job_state_data_model_json['updated_at'] = '2020-01-28T18:40:40.123456Z'
-
-        # Construct a model instance of JobStateData by calling from_dict on the json representation
-        job_state_data_model = JobStateData.from_dict(job_state_data_model_json)
-        assert job_state_data_model != False
-
-        # Construct a model instance of JobStateData by calling from_dict on the json representation
-        job_state_data_model_dict = JobStateData.from_dict(job_state_data_model_json).__dict__
-        job_state_data_model2 = JobStateData(**job_state_data_model_dict)
+        # Construct a model instance of JobLogSummarySystemJob by calling from_dict on the json representation
+        job_log_summary_system_job_model_dict = JobLogSummarySystemJob.from_dict(job_log_summary_system_job_model_json).__dict__
+        job_log_summary_system_job_model2 = JobLogSummarySystemJob(**job_log_summary_system_job_model_dict)
 
         # Verify the model instances are equivalent
-        assert job_state_data_model == job_state_data_model2
+        assert job_log_summary_system_job_model == job_log_summary_system_job_model2
 
         # Convert model instance back to dict and verify no loss of data
-        job_state_data_model_json2 = job_state_data_model.to_dict()
-        assert job_state_data_model_json2 == job_state_data_model_json
-
-class TestJobStateDataSummaryItem():
-    """
-    Test Class for JobStateDataSummaryItem
-    """
-
-    def test_job_state_data_summary_item_serialization(self):
-        """
-        Test serialization/deserialization for JobStateDataSummaryItem
-        """
-
-        # Construct a json representation of a JobStateDataSummaryItem model
-        job_state_data_summary_item_model_json = {}
-        job_state_data_summary_item_model_json['name'] = 'testString'
-        job_state_data_summary_item_model_json['type'] = 'number'
-        job_state_data_summary_item_model_json['value'] = 'testString'
-
-        # Construct a model instance of JobStateDataSummaryItem by calling from_dict on the json representation
-        job_state_data_summary_item_model = JobStateDataSummaryItem.from_dict(job_state_data_summary_item_model_json)
-        assert job_state_data_summary_item_model != False
-
-        # Construct a model instance of JobStateDataSummaryItem by calling from_dict on the json representation
-        job_state_data_summary_item_model_dict = JobStateDataSummaryItem.from_dict(job_state_data_summary_item_model_json).__dict__
-        job_state_data_summary_item_model2 = JobStateDataSummaryItem(**job_state_data_summary_item_model_dict)
-
-        # Verify the model instances are equivalent
-        assert job_state_data_summary_item_model == job_state_data_summary_item_model2
-
-        # Convert model instance back to dict and verify no loss of data
-        job_state_data_summary_item_model_json2 = job_state_data_summary_item_model.to_dict()
-        assert job_state_data_summary_item_model_json2 == job_state_data_summary_item_model_json
+        job_log_summary_system_job_model_json2 = job_log_summary_system_job_model.to_dict()
+        assert job_log_summary_system_job_model_json2 == job_log_summary_system_job_model_json
 
 class TestJobStatus():
     """
@@ -7351,13 +8913,26 @@ class TestJobStatus():
         job_status_action_model['status_message'] = 'testString'
         job_status_action_model['bastion_status_code'] = 'none'
         job_status_action_model['bastion_status_message'] = 'testString'
-        job_status_action_model['targets_status_code'] = 'none'
-        job_status_action_model['targets_status_message'] = 'testString'
-        job_status_action_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_status_action_model['inventory_status_code'] = 'none'
+        job_status_action_model['inventory_status_message'] = 'testString'
+        job_status_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        job_status_schematics_resources_model = {} # JobStatusSchematicsResources
+        job_status_schematics_resources_model['status_code'] = 'job_pending'
+        job_status_schematics_resources_model['status_message'] = 'testString'
+        job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
+        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        job_status_system_model = {} # JobStatusSystem
+        job_status_system_model['system_status_message'] = 'testString'
+        job_status_system_model['system_status_code'] = 'job_pending'
+        job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
+        job_status_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a json representation of a JobStatus model
         job_status_model_json = {}
         job_status_model_json['action_job_status'] = job_status_action_model
+        job_status_model_json['system_job_status'] = job_status_system_model
 
         # Construct a model instance of JobStatus by calling from_dict on the json representation
         job_status_model = JobStatus.from_dict(job_status_model_json)
@@ -7391,9 +8966,9 @@ class TestJobStatusAction():
         job_status_action_model_json['status_message'] = 'testString'
         job_status_action_model_json['bastion_status_code'] = 'none'
         job_status_action_model_json['bastion_status_message'] = 'testString'
-        job_status_action_model_json['targets_status_code'] = 'none'
-        job_status_action_model_json['targets_status_message'] = 'testString'
-        job_status_action_model_json['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        job_status_action_model_json['inventory_status_code'] = 'none'
+        job_status_action_model_json['inventory_status_message'] = 'testString'
+        job_status_action_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a model instance of JobStatusAction by calling from_dict on the json representation
         job_status_action_model = JobStatusAction.from_dict(job_status_action_model_json)
@@ -7410,6 +8985,78 @@ class TestJobStatusAction():
         job_status_action_model_json2 = job_status_action_model.to_dict()
         assert job_status_action_model_json2 == job_status_action_model_json
 
+class TestJobStatusSchematicsResources():
+    """
+    Test Class for JobStatusSchematicsResources
+    """
+
+    def test_job_status_schematics_resources_serialization(self):
+        """
+        Test serialization/deserialization for JobStatusSchematicsResources
+        """
+
+        # Construct a json representation of a JobStatusSchematicsResources model
+        job_status_schematics_resources_model_json = {}
+        job_status_schematics_resources_model_json['status_code'] = 'job_pending'
+        job_status_schematics_resources_model_json['status_message'] = 'testString'
+        job_status_schematics_resources_model_json['schematics_resource_id'] = 'testString'
+        job_status_schematics_resources_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        # Construct a model instance of JobStatusSchematicsResources by calling from_dict on the json representation
+        job_status_schematics_resources_model = JobStatusSchematicsResources.from_dict(job_status_schematics_resources_model_json)
+        assert job_status_schematics_resources_model != False
+
+        # Construct a model instance of JobStatusSchematicsResources by calling from_dict on the json representation
+        job_status_schematics_resources_model_dict = JobStatusSchematicsResources.from_dict(job_status_schematics_resources_model_json).__dict__
+        job_status_schematics_resources_model2 = JobStatusSchematicsResources(**job_status_schematics_resources_model_dict)
+
+        # Verify the model instances are equivalent
+        assert job_status_schematics_resources_model == job_status_schematics_resources_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        job_status_schematics_resources_model_json2 = job_status_schematics_resources_model.to_dict()
+        assert job_status_schematics_resources_model_json2 == job_status_schematics_resources_model_json
+
+class TestJobStatusSystem():
+    """
+    Test Class for JobStatusSystem
+    """
+
+    def test_job_status_system_serialization(self):
+        """
+        Test serialization/deserialization for JobStatusSystem
+        """
+
+        # Construct dict forms of any model objects needed in order to build this model.
+
+        job_status_schematics_resources_model = {} # JobStatusSchematicsResources
+        job_status_schematics_resources_model['status_code'] = 'job_pending'
+        job_status_schematics_resources_model['status_message'] = 'testString'
+        job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
+        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        # Construct a json representation of a JobStatusSystem model
+        job_status_system_model_json = {}
+        job_status_system_model_json['system_status_message'] = 'testString'
+        job_status_system_model_json['system_status_code'] = 'job_pending'
+        job_status_system_model_json['schematics_resource_status'] = [job_status_schematics_resources_model]
+        job_status_system_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+
+        # Construct a model instance of JobStatusSystem by calling from_dict on the json representation
+        job_status_system_model = JobStatusSystem.from_dict(job_status_system_model_json)
+        assert job_status_system_model != False
+
+        # Construct a model instance of JobStatusSystem by calling from_dict on the json representation
+        job_status_system_model_dict = JobStatusSystem.from_dict(job_status_system_model_json).__dict__
+        job_status_system_model2 = JobStatusSystem(**job_status_system_model_dict)
+
+        # Verify the model instances are equivalent
+        assert job_status_system_model == job_status_system_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        job_status_system_model_json2 = job_status_system_model.to_dict()
+        assert job_status_system_model_json2 == job_status_system_model_json
+
 class TestJobStatusType():
     """
     Test Class for JobStatusType
@@ -7425,7 +9072,7 @@ class TestJobStatusType():
         job_status_type_model_json['failed'] = ['testString']
         job_status_type_model_json['in_progress'] = ['testString']
         job_status_type_model_json['success'] = ['testString']
-        job_status_type_model_json['last_updated_on'] = '2020-01-28T18:40:40.123456Z'
+        job_status_type_model_json['last_updated_on'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Construct a model instance of JobStatusType by calling from_dict on the json representation
         job_status_type_model = JobStatusType.from_dict(job_status_type_model_json)
@@ -7845,6 +9492,296 @@ class TestResourceGroupResponse():
         resource_group_response_model_json2 = resource_group_response_model.to_dict()
         assert resource_group_response_model_json2 == resource_group_response_model_json
 
+class TestResourceQuery():
+    """
+    Test Class for ResourceQuery
+    """
+
+    def test_resource_query_serialization(self):
+        """
+        Test serialization/deserialization for ResourceQuery
+        """
+
+        # Construct dict forms of any model objects needed in order to build this model.
+
+        resource_query_param_model = {} # ResourceQueryParam
+        resource_query_param_model['name'] = 'testString'
+        resource_query_param_model['value'] = 'testString'
+        resource_query_param_model['description'] = 'testString'
+
+        # Construct a json representation of a ResourceQuery model
+        resource_query_model_json = {}
+        resource_query_model_json['query_type'] = 'workspaces'
+        resource_query_model_json['query_condition'] = [resource_query_param_model]
+        resource_query_model_json['query_select'] = ['testString']
+
+        # Construct a model instance of ResourceQuery by calling from_dict on the json representation
+        resource_query_model = ResourceQuery.from_dict(resource_query_model_json)
+        assert resource_query_model != False
+
+        # Construct a model instance of ResourceQuery by calling from_dict on the json representation
+        resource_query_model_dict = ResourceQuery.from_dict(resource_query_model_json).__dict__
+        resource_query_model2 = ResourceQuery(**resource_query_model_dict)
+
+        # Verify the model instances are equivalent
+        assert resource_query_model == resource_query_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        resource_query_model_json2 = resource_query_model.to_dict()
+        assert resource_query_model_json2 == resource_query_model_json
+
+class TestResourceQueryParam():
+    """
+    Test Class for ResourceQueryParam
+    """
+
+    def test_resource_query_param_serialization(self):
+        """
+        Test serialization/deserialization for ResourceQueryParam
+        """
+
+        # Construct a json representation of a ResourceQueryParam model
+        resource_query_param_model_json = {}
+        resource_query_param_model_json['name'] = 'testString'
+        resource_query_param_model_json['value'] = 'testString'
+        resource_query_param_model_json['description'] = 'testString'
+
+        # Construct a model instance of ResourceQueryParam by calling from_dict on the json representation
+        resource_query_param_model = ResourceQueryParam.from_dict(resource_query_param_model_json)
+        assert resource_query_param_model != False
+
+        # Construct a model instance of ResourceQueryParam by calling from_dict on the json representation
+        resource_query_param_model_dict = ResourceQueryParam.from_dict(resource_query_param_model_json).__dict__
+        resource_query_param_model2 = ResourceQueryParam(**resource_query_param_model_dict)
+
+        # Verify the model instances are equivalent
+        assert resource_query_param_model == resource_query_param_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        resource_query_param_model_json2 = resource_query_param_model.to_dict()
+        assert resource_query_param_model_json2 == resource_query_param_model_json
+
+class TestResourceQueryRecord():
+    """
+    Test Class for ResourceQueryRecord
+    """
+
+    def test_resource_query_record_serialization(self):
+        """
+        Test serialization/deserialization for ResourceQueryRecord
+        """
+
+        # Construct dict forms of any model objects needed in order to build this model.
+
+        resource_query_param_model = {} # ResourceQueryParam
+        resource_query_param_model['name'] = 'testString'
+        resource_query_param_model['value'] = 'testString'
+        resource_query_param_model['description'] = 'testString'
+
+        resource_query_model = {} # ResourceQuery
+        resource_query_model['query_type'] = 'workspaces'
+        resource_query_model['query_condition'] = [resource_query_param_model]
+        resource_query_model['query_select'] = ['testString']
+
+        # Construct a json representation of a ResourceQueryRecord model
+        resource_query_record_model_json = {}
+        resource_query_record_model_json['type'] = 'vsi'
+        resource_query_record_model_json['name'] = 'testString'
+        resource_query_record_model_json['id'] = 'testString'
+        resource_query_record_model_json['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        resource_query_record_model_json['created_by'] = 'testString'
+        resource_query_record_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        resource_query_record_model_json['updated_by'] = 'testString'
+        resource_query_record_model_json['queries'] = [resource_query_model]
+
+        # Construct a model instance of ResourceQueryRecord by calling from_dict on the json representation
+        resource_query_record_model = ResourceQueryRecord.from_dict(resource_query_record_model_json)
+        assert resource_query_record_model != False
+
+        # Construct a model instance of ResourceQueryRecord by calling from_dict on the json representation
+        resource_query_record_model_dict = ResourceQueryRecord.from_dict(resource_query_record_model_json).__dict__
+        resource_query_record_model2 = ResourceQueryRecord(**resource_query_record_model_dict)
+
+        # Verify the model instances are equivalent
+        assert resource_query_record_model == resource_query_record_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        resource_query_record_model_json2 = resource_query_record_model.to_dict()
+        assert resource_query_record_model_json2 == resource_query_record_model_json
+
+class TestResourceQueryRecordList():
+    """
+    Test Class for ResourceQueryRecordList
+    """
+
+    def test_resource_query_record_list_serialization(self):
+        """
+        Test serialization/deserialization for ResourceQueryRecordList
+        """
+
+        # Construct dict forms of any model objects needed in order to build this model.
+
+        resource_query_param_model = {} # ResourceQueryParam
+        resource_query_param_model['name'] = 'testString'
+        resource_query_param_model['value'] = 'testString'
+        resource_query_param_model['description'] = 'testString'
+
+        resource_query_model = {} # ResourceQuery
+        resource_query_model['query_type'] = 'workspaces'
+        resource_query_model['query_condition'] = [resource_query_param_model]
+        resource_query_model['query_select'] = ['testString']
+
+        resource_query_record_model = {} # ResourceQueryRecord
+        resource_query_record_model['type'] = 'vsi'
+        resource_query_record_model['name'] = 'testString'
+        resource_query_record_model['id'] = 'testString'
+        resource_query_record_model['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        resource_query_record_model['created_by'] = 'testString'
+        resource_query_record_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        resource_query_record_model['updated_by'] = 'testString'
+        resource_query_record_model['queries'] = [resource_query_model]
+
+        # Construct a json representation of a ResourceQueryRecordList model
+        resource_query_record_list_model_json = {}
+        resource_query_record_list_model_json['total_count'] = 26
+        resource_query_record_list_model_json['limit'] = 26
+        resource_query_record_list_model_json['offset'] = 26
+        resource_query_record_list_model_json['ResourceQueries'] = [resource_query_record_model]
+
+        # Construct a model instance of ResourceQueryRecordList by calling from_dict on the json representation
+        resource_query_record_list_model = ResourceQueryRecordList.from_dict(resource_query_record_list_model_json)
+        assert resource_query_record_list_model != False
+
+        # Construct a model instance of ResourceQueryRecordList by calling from_dict on the json representation
+        resource_query_record_list_model_dict = ResourceQueryRecordList.from_dict(resource_query_record_list_model_json).__dict__
+        resource_query_record_list_model2 = ResourceQueryRecordList(**resource_query_record_list_model_dict)
+
+        # Verify the model instances are equivalent
+        assert resource_query_record_list_model == resource_query_record_list_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        resource_query_record_list_model_json2 = resource_query_record_list_model.to_dict()
+        assert resource_query_record_list_model_json2 == resource_query_record_list_model_json
+
+class TestResourceQueryResponseRecord():
+    """
+    Test Class for ResourceQueryResponseRecord
+    """
+
+    def test_resource_query_response_record_serialization(self):
+        """
+        Test serialization/deserialization for ResourceQueryResponseRecord
+        """
+
+        # Construct dict forms of any model objects needed in order to build this model.
+
+        resource_query_param_model = {} # ResourceQueryParam
+        resource_query_param_model['name'] = 'testString'
+        resource_query_param_model['value'] = 'testString'
+        resource_query_param_model['description'] = 'testString'
+
+        resource_query_response_record_response_item_query_output_item_model = {} # ResourceQueryResponseRecordResponseItemQueryOutputItem
+        resource_query_response_record_response_item_query_output_item_model['name'] = 'testString'
+        resource_query_response_record_response_item_query_output_item_model['value'] = 'testString'
+
+        resource_query_response_record_response_item_model = {} # ResourceQueryResponseRecordResponseItem
+        resource_query_response_record_response_item_model['query_type'] = 'workspaces'
+        resource_query_response_record_response_item_model['query_condition'] = [resource_query_param_model]
+        resource_query_response_record_response_item_model['query_select'] = ['testString']
+        resource_query_response_record_response_item_model['query_output'] = [resource_query_response_record_response_item_query_output_item_model]
+
+        # Construct a json representation of a ResourceQueryResponseRecord model
+        resource_query_response_record_model_json = {}
+        resource_query_response_record_model_json['response'] = [resource_query_response_record_response_item_model]
+
+        # Construct a model instance of ResourceQueryResponseRecord by calling from_dict on the json representation
+        resource_query_response_record_model = ResourceQueryResponseRecord.from_dict(resource_query_response_record_model_json)
+        assert resource_query_response_record_model != False
+
+        # Construct a model instance of ResourceQueryResponseRecord by calling from_dict on the json representation
+        resource_query_response_record_model_dict = ResourceQueryResponseRecord.from_dict(resource_query_response_record_model_json).__dict__
+        resource_query_response_record_model2 = ResourceQueryResponseRecord(**resource_query_response_record_model_dict)
+
+        # Verify the model instances are equivalent
+        assert resource_query_response_record_model == resource_query_response_record_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        resource_query_response_record_model_json2 = resource_query_response_record_model.to_dict()
+        assert resource_query_response_record_model_json2 == resource_query_response_record_model_json
+
+class TestResourceQueryResponseRecordResponseItem():
+    """
+    Test Class for ResourceQueryResponseRecordResponseItem
+    """
+
+    def test_resource_query_response_record_response_item_serialization(self):
+        """
+        Test serialization/deserialization for ResourceQueryResponseRecordResponseItem
+        """
+
+        # Construct dict forms of any model objects needed in order to build this model.
+
+        resource_query_param_model = {} # ResourceQueryParam
+        resource_query_param_model['name'] = 'testString'
+        resource_query_param_model['value'] = 'testString'
+        resource_query_param_model['description'] = 'testString'
+
+        resource_query_response_record_response_item_query_output_item_model = {} # ResourceQueryResponseRecordResponseItemQueryOutputItem
+        resource_query_response_record_response_item_query_output_item_model['name'] = 'testString'
+        resource_query_response_record_response_item_query_output_item_model['value'] = 'testString'
+
+        # Construct a json representation of a ResourceQueryResponseRecordResponseItem model
+        resource_query_response_record_response_item_model_json = {}
+        resource_query_response_record_response_item_model_json['query_type'] = 'workspaces'
+        resource_query_response_record_response_item_model_json['query_condition'] = [resource_query_param_model]
+        resource_query_response_record_response_item_model_json['query_select'] = ['testString']
+        resource_query_response_record_response_item_model_json['query_output'] = [resource_query_response_record_response_item_query_output_item_model]
+
+        # Construct a model instance of ResourceQueryResponseRecordResponseItem by calling from_dict on the json representation
+        resource_query_response_record_response_item_model = ResourceQueryResponseRecordResponseItem.from_dict(resource_query_response_record_response_item_model_json)
+        assert resource_query_response_record_response_item_model != False
+
+        # Construct a model instance of ResourceQueryResponseRecordResponseItem by calling from_dict on the json representation
+        resource_query_response_record_response_item_model_dict = ResourceQueryResponseRecordResponseItem.from_dict(resource_query_response_record_response_item_model_json).__dict__
+        resource_query_response_record_response_item_model2 = ResourceQueryResponseRecordResponseItem(**resource_query_response_record_response_item_model_dict)
+
+        # Verify the model instances are equivalent
+        assert resource_query_response_record_response_item_model == resource_query_response_record_response_item_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        resource_query_response_record_response_item_model_json2 = resource_query_response_record_response_item_model.to_dict()
+        assert resource_query_response_record_response_item_model_json2 == resource_query_response_record_response_item_model_json
+
+class TestResourceQueryResponseRecordResponseItemQueryOutputItem():
+    """
+    Test Class for ResourceQueryResponseRecordResponseItemQueryOutputItem
+    """
+
+    def test_resource_query_response_record_response_item_query_output_item_serialization(self):
+        """
+        Test serialization/deserialization for ResourceQueryResponseRecordResponseItemQueryOutputItem
+        """
+
+        # Construct a json representation of a ResourceQueryResponseRecordResponseItemQueryOutputItem model
+        resource_query_response_record_response_item_query_output_item_model_json = {}
+        resource_query_response_record_response_item_query_output_item_model_json['name'] = 'testString'
+        resource_query_response_record_response_item_query_output_item_model_json['value'] = 'testString'
+
+        # Construct a model instance of ResourceQueryResponseRecordResponseItemQueryOutputItem by calling from_dict on the json representation
+        resource_query_response_record_response_item_query_output_item_model = ResourceQueryResponseRecordResponseItemQueryOutputItem.from_dict(resource_query_response_record_response_item_query_output_item_model_json)
+        assert resource_query_response_record_response_item_query_output_item_model != False
+
+        # Construct a model instance of ResourceQueryResponseRecordResponseItemQueryOutputItem by calling from_dict on the json representation
+        resource_query_response_record_response_item_query_output_item_model_dict = ResourceQueryResponseRecordResponseItemQueryOutputItem.from_dict(resource_query_response_record_response_item_query_output_item_model_json).__dict__
+        resource_query_response_record_response_item_query_output_item_model2 = ResourceQueryResponseRecordResponseItemQueryOutputItem(**resource_query_response_record_response_item_query_output_item_model_dict)
+
+        # Verify the model instances are equivalent
+        assert resource_query_response_record_response_item_query_output_item_model == resource_query_response_record_response_item_query_output_item_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        resource_query_response_record_response_item_query_output_item_model_json2 = resource_query_response_record_response_item_query_output_item_model.to_dict()
+        assert resource_query_response_record_response_item_query_output_item_model_json2 == resource_query_response_record_response_item_query_output_item_model_json
+
 class TestSchematicsLocations():
     """
     Test Class for SchematicsLocations
@@ -7957,7 +9894,7 @@ class TestSharedDatasetResponse():
         # Construct a json representation of a SharedDatasetResponse model
         shared_dataset_response_model_json = {}
         shared_dataset_response_model_json['account'] = 'testString'
-        shared_dataset_response_model_json['created_at'] = '2020-01-28T18:40:40.123456Z'
+        shared_dataset_response_model_json['created_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         shared_dataset_response_model_json['created_by'] = 'testString'
         shared_dataset_response_model_json['description'] = 'testString'
         shared_dataset_response_model_json['effected_workspace_ids'] = ['testString']
@@ -7968,7 +9905,7 @@ class TestSharedDatasetResponse():
         shared_dataset_response_model_json['shared_dataset_type'] = ['testString']
         shared_dataset_response_model_json['state'] = 'testString'
         shared_dataset_response_model_json['tags'] = ['testString']
-        shared_dataset_response_model_json['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        shared_dataset_response_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         shared_dataset_response_model_json['updated_by'] = 'testString'
         shared_dataset_response_model_json['version'] = 'testString'
 
@@ -8019,7 +9956,7 @@ class TestSharedDatasetResponseList():
 
         shared_dataset_response_model = {} # SharedDatasetResponse
         shared_dataset_response_model['account'] = 'testString'
-        shared_dataset_response_model['created_at'] = '2020-01-28T18:40:40.123456Z'
+        shared_dataset_response_model['created_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         shared_dataset_response_model['created_by'] = 'testString'
         shared_dataset_response_model['description'] = 'testString'
         shared_dataset_response_model['effected_workspace_ids'] = ['testString']
@@ -8030,7 +9967,7 @@ class TestSharedDatasetResponseList():
         shared_dataset_response_model['shared_dataset_type'] = ['testString']
         shared_dataset_response_model['state'] = 'testString'
         shared_dataset_response_model['tags'] = ['testString']
-        shared_dataset_response_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        shared_dataset_response_model['updated_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         shared_dataset_response_model['updated_by'] = 'testString'
         shared_dataset_response_model['version'] = 'testString'
 
@@ -8209,7 +10146,7 @@ class TestSystemLock():
         system_lock_model_json = {}
         system_lock_model_json['sys_locked'] = True
         system_lock_model_json['sys_locked_by'] = 'testString'
-        system_lock_model_json['sys_locked_at'] = '2020-01-28T18:40:40.123456Z'
+        system_lock_model_json['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Construct a model instance of SystemLock by calling from_dict on the json representation
         system_lock_model = SystemLock.from_dict(system_lock_model_json)
@@ -8225,53 +10162,6 @@ class TestSystemLock():
         # Convert model instance back to dict and verify no loss of data
         system_lock_model_json2 = system_lock_model.to_dict()
         assert system_lock_model_json2 == system_lock_model_json
-
-class TestTargetResourceset():
-    """
-    Test Class for TargetResourceset
-    """
-
-    def test_target_resourceset_serialization(self):
-        """
-        Test serialization/deserialization for TargetResourceset
-        """
-
-        # Construct dict forms of any model objects needed in order to build this model.
-
-        system_lock_model = {} # SystemLock
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = '2020-01-28T18:40:40.123456Z'
-
-        # Construct a json representation of a TargetResourceset model
-        target_resourceset_model_json = {}
-        target_resourceset_model_json['name'] = 'testString'
-        target_resourceset_model_json['type'] = 'testString'
-        target_resourceset_model_json['description'] = 'testString'
-        target_resourceset_model_json['resource_query'] = 'testString'
-        target_resourceset_model_json['credential'] = 'testString'
-        target_resourceset_model_json['id'] = 'testString'
-        target_resourceset_model_json['created_at'] = '2020-01-28T18:40:40.123456Z'
-        target_resourceset_model_json['created_by'] = 'testString'
-        target_resourceset_model_json['updated_at'] = '2020-01-28T18:40:40.123456Z'
-        target_resourceset_model_json['updated_by'] = 'testString'
-        target_resourceset_model_json['sys_lock'] = system_lock_model
-        target_resourceset_model_json['resource_ids'] = ['testString']
-
-        # Construct a model instance of TargetResourceset by calling from_dict on the json representation
-        target_resourceset_model = TargetResourceset.from_dict(target_resourceset_model_json)
-        assert target_resourceset_model != False
-
-        # Construct a model instance of TargetResourceset by calling from_dict on the json representation
-        target_resourceset_model_dict = TargetResourceset.from_dict(target_resourceset_model_json).__dict__
-        target_resourceset_model2 = TargetResourceset(**target_resourceset_model_dict)
-
-        # Verify the model instances are equivalent
-        assert target_resourceset_model == target_resourceset_model2
-
-        # Convert model instance back to dict and verify no loss of data
-        target_resourceset_model_json2 = target_resourceset_model.to_dict()
-        assert target_resourceset_model_json2 == target_resourceset_model_json
 
 class TestTemplateReadme():
     """
@@ -8582,7 +10472,7 @@ class TestTemplateSourceDataResponse():
         template_source_data_response_model_json['folder'] = 'testString'
         template_source_data_response_model_json['has_githubtoken'] = True
         template_source_data_response_model_json['id'] = 'testString'
-        template_source_data_response_model_json['template_type'] = 'testString'
+        template_source_data_response_model_json['type'] = 'testString'
         template_source_data_response_model_json['uninstall_script_name'] = 'testString'
         template_source_data_response_model_json['values'] = 'testString'
         template_source_data_response_model_json['values_metadata'] = [{ 'foo': 'bar' }]
@@ -8666,6 +10556,41 @@ class TestTemplateValues():
         template_values_model_json2 = template_values_model.to_dict()
         assert template_values_model_json2 == template_values_model_json
 
+class TestTerraformCommand():
+    """
+    Test Class for TerraformCommand
+    """
+
+    def test_terraform_command_serialization(self):
+        """
+        Test serialization/deserialization for TerraformCommand
+        """
+
+        # Construct a json representation of a TerraformCommand model
+        terraform_command_model_json = {}
+        terraform_command_model_json['command'] = 'testString'
+        terraform_command_model_json['command_params'] = 'testString'
+        terraform_command_model_json['command_name'] = 'testString'
+        terraform_command_model_json['command_desc'] = 'testString'
+        terraform_command_model_json['command_onError'] = 'testString'
+        terraform_command_model_json['command_dependsOn'] = 'testString'
+        terraform_command_model_json['command_status'] = 'testString'
+
+        # Construct a model instance of TerraformCommand by calling from_dict on the json representation
+        terraform_command_model = TerraformCommand.from_dict(terraform_command_model_json)
+        assert terraform_command_model != False
+
+        # Construct a model instance of TerraformCommand by calling from_dict on the json representation
+        terraform_command_model_dict = TerraformCommand.from_dict(terraform_command_model_json).__dict__
+        terraform_command_model2 = TerraformCommand(**terraform_command_model_dict)
+
+        # Verify the model instances are equivalent
+        assert terraform_command_model == terraform_command_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        terraform_command_model_json2 = terraform_command_model.to_dict()
+        assert terraform_command_model_json2 == terraform_command_model_json
+
 class TestUserState():
     """
     Test Class for UserState
@@ -8680,7 +10605,7 @@ class TestUserState():
         user_state_model_json = {}
         user_state_model_json['state'] = 'draft'
         user_state_model_json['set_by'] = 'testString'
-        user_state_model_json['set_at'] = '2020-01-28T18:40:40.123456Z'
+        user_state_model_json['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
 
         # Construct a model instance of UserState by calling from_dict on the json representation
         user_state_model = UserState.from_dict(user_state_model_json)
@@ -8850,7 +10775,7 @@ class TestVersionResponse():
         version_response_model_json['commitsha'] = 'testString'
         version_response_model_json['helm_provider_version'] = 'testString'
         version_response_model_json['helm_version'] = 'testString'
-        version_response_model_json['supported_template_types'] = [{ 'foo': 'bar' }]
+        version_response_model_json['supported_template_types'] = { 'foo': 'bar' }
         version_response_model_json['terraform_provider_version'] = 'testString'
         version_response_model_json['terraform_version'] = 'testString'
 
@@ -8894,11 +10819,11 @@ class TestWorkspaceActivities():
         log_summary_model['time_taken'] = 72.5
 
         workspace_activity_template_model = {} # WorkspaceActivityTemplate
-        workspace_activity_template_model['end_time'] = '2020-01-28T18:40:40.123456Z'
+        workspace_activity_template_model['end_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_activity_template_model['log_summary'] = log_summary_model
         workspace_activity_template_model['log_url'] = 'testString'
         workspace_activity_template_model['message'] = 'testString'
-        workspace_activity_template_model['start_time'] = '2020-01-28T18:40:40.123456Z'
+        workspace_activity_template_model['start_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_activity_template_model['status'] = 'testString'
         workspace_activity_template_model['template_id'] = 'testString'
         workspace_activity_template_model['template_type'] = 'testString'
@@ -8907,7 +10832,7 @@ class TestWorkspaceActivities():
         workspace_activity_model['action_id'] = 'testString'
         workspace_activity_model['message'] = ['testString']
         workspace_activity_model['name'] = 'testString'
-        workspace_activity_model['performed_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_activity_model['performed_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_activity_model['performed_by'] = 'testString'
         workspace_activity_model['status'] = 'testString'
         workspace_activity_model['templates'] = [workspace_activity_template_model]
@@ -8958,11 +10883,11 @@ class TestWorkspaceActivity():
         log_summary_model['time_taken'] = 72.5
 
         workspace_activity_template_model = {} # WorkspaceActivityTemplate
-        workspace_activity_template_model['end_time'] = '2020-01-28T18:40:40.123456Z'
+        workspace_activity_template_model['end_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_activity_template_model['log_summary'] = log_summary_model
         workspace_activity_template_model['log_url'] = 'testString'
         workspace_activity_template_model['message'] = 'testString'
-        workspace_activity_template_model['start_time'] = '2020-01-28T18:40:40.123456Z'
+        workspace_activity_template_model['start_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_activity_template_model['status'] = 'testString'
         workspace_activity_template_model['template_id'] = 'testString'
         workspace_activity_template_model['template_type'] = 'testString'
@@ -8972,7 +10897,7 @@ class TestWorkspaceActivity():
         workspace_activity_model_json['action_id'] = 'testString'
         workspace_activity_model_json['message'] = ['testString']
         workspace_activity_model_json['name'] = 'testString'
-        workspace_activity_model_json['performed_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_activity_model_json['performed_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_activity_model_json['performed_by'] = 'testString'
         workspace_activity_model_json['status'] = 'testString'
         workspace_activity_model_json['templates'] = [workspace_activity_template_model]
@@ -9020,6 +10945,35 @@ class TestWorkspaceActivityApplyResult():
         # Convert model instance back to dict and verify no loss of data
         workspace_activity_apply_result_model_json2 = workspace_activity_apply_result_model.to_dict()
         assert workspace_activity_apply_result_model_json2 == workspace_activity_apply_result_model_json
+
+class TestWorkspaceActivityCommandResult():
+    """
+    Test Class for WorkspaceActivityCommandResult
+    """
+
+    def test_workspace_activity_command_result_serialization(self):
+        """
+        Test serialization/deserialization for WorkspaceActivityCommandResult
+        """
+
+        # Construct a json representation of a WorkspaceActivityCommandResult model
+        workspace_activity_command_result_model_json = {}
+        workspace_activity_command_result_model_json['activityid'] = 'testString'
+
+        # Construct a model instance of WorkspaceActivityCommandResult by calling from_dict on the json representation
+        workspace_activity_command_result_model = WorkspaceActivityCommandResult.from_dict(workspace_activity_command_result_model_json)
+        assert workspace_activity_command_result_model != False
+
+        # Construct a model instance of WorkspaceActivityCommandResult by calling from_dict on the json representation
+        workspace_activity_command_result_model_dict = WorkspaceActivityCommandResult.from_dict(workspace_activity_command_result_model_json).__dict__
+        workspace_activity_command_result_model2 = WorkspaceActivityCommandResult(**workspace_activity_command_result_model_dict)
+
+        # Verify the model instances are equivalent
+        assert workspace_activity_command_result_model == workspace_activity_command_result_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        workspace_activity_command_result_model_json2 = workspace_activity_command_result_model.to_dict()
+        assert workspace_activity_command_result_model_json2 == workspace_activity_command_result_model_json
 
 class TestWorkspaceActivityDestroyResult():
     """
@@ -9202,11 +11156,11 @@ class TestWorkspaceActivityTemplate():
 
         # Construct a json representation of a WorkspaceActivityTemplate model
         workspace_activity_template_model_json = {}
-        workspace_activity_template_model_json['end_time'] = '2020-01-28T18:40:40.123456Z'
+        workspace_activity_template_model_json['end_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_activity_template_model_json['log_summary'] = log_summary_model
         workspace_activity_template_model_json['log_url'] = 'testString'
         workspace_activity_template_model_json['message'] = 'testString'
-        workspace_activity_template_model_json['start_time'] = '2020-01-28T18:40:40.123456Z'
+        workspace_activity_template_model_json['start_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_activity_template_model_json['status'] = 'testString'
         workspace_activity_template_model_json['template_id'] = 'testString'
         workspace_activity_template_model_json['template_type'] = 'testString'
@@ -9303,7 +11257,7 @@ class TestWorkspaceJobResponse():
         job_status_type_model['failed'] = ['testString']
         job_status_type_model['in_progress'] = ['testString']
         job_status_type_model['success'] = ['testString']
-        job_status_type_model['last_updated_on'] = '2020-01-28T18:40:40.123456Z'
+        job_status_type_model['last_updated_on'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Construct a json representation of a WorkspaceJobResponse model
         workspace_job_response_model_json = {}
@@ -9382,7 +11336,7 @@ class TestWorkspaceResponse():
         template_source_data_response_model['folder'] = 'testString'
         template_source_data_response_model['has_githubtoken'] = True
         template_source_data_response_model['id'] = 'testString'
-        template_source_data_response_model['template_type'] = 'testString'
+        template_source_data_response_model['type'] = 'testString'
         template_source_data_response_model['uninstall_script_name'] = 'testString'
         template_source_data_response_model['values'] = 'testString'
         template_source_data_response_model['values_metadata'] = [{ 'foo': 'bar' }]
@@ -9400,11 +11354,11 @@ class TestWorkspaceResponse():
 
         workspace_status_response_model = {} # WorkspaceStatusResponse
         workspace_status_response_model['frozen'] = True
-        workspace_status_response_model['frozen_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_response_model['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_status_response_model['frozen_by'] = 'testString'
         workspace_status_response_model['locked'] = True
         workspace_status_response_model['locked_by'] = 'testString'
-        workspace_status_response_model['locked_time'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_response_model['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         workspace_status_message_model = {} # WorkspaceStatusMessage
         workspace_status_message_model['status_code'] = 'testString'
@@ -9414,12 +11368,12 @@ class TestWorkspaceResponse():
         workspace_response_model_json = {}
         workspace_response_model_json['applied_shareddata_ids'] = ['testString']
         workspace_response_model_json['catalog_ref'] = catalog_ref_model
-        workspace_response_model_json['created_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_response_model_json['created_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_response_model_json['created_by'] = 'testString'
         workspace_response_model_json['crn'] = 'testString'
         workspace_response_model_json['description'] = 'testString'
         workspace_response_model_json['id'] = 'testString'
-        workspace_response_model_json['last_health_check_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_response_model_json['last_health_check_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_response_model_json['location'] = 'testString'
         workspace_response_model_json['name'] = 'testString'
         workspace_response_model_json['resource_group'] = 'testString'
@@ -9431,7 +11385,7 @@ class TestWorkspaceResponse():
         workspace_response_model_json['template_ref'] = 'testString'
         workspace_response_model_json['template_repo'] = template_repo_response_model
         workspace_response_model_json['type'] = ['testString']
-        workspace_response_model_json['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_response_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_response_model_json['updated_by'] = 'testString'
         workspace_response_model_json['workspace_status'] = workspace_status_response_model
         workspace_response_model_json['workspace_status_msg'] = workspace_status_message_model
@@ -9509,7 +11463,7 @@ class TestWorkspaceResponseList():
         template_source_data_response_model['folder'] = 'testString'
         template_source_data_response_model['has_githubtoken'] = True
         template_source_data_response_model['id'] = 'testString'
-        template_source_data_response_model['template_type'] = 'testString'
+        template_source_data_response_model['type'] = 'testString'
         template_source_data_response_model['uninstall_script_name'] = 'testString'
         template_source_data_response_model['values'] = 'testString'
         template_source_data_response_model['values_metadata'] = [{ 'foo': 'bar' }]
@@ -9527,11 +11481,11 @@ class TestWorkspaceResponseList():
 
         workspace_status_response_model = {} # WorkspaceStatusResponse
         workspace_status_response_model['frozen'] = True
-        workspace_status_response_model['frozen_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_response_model['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_status_response_model['frozen_by'] = 'testString'
         workspace_status_response_model['locked'] = True
         workspace_status_response_model['locked_by'] = 'testString'
-        workspace_status_response_model['locked_time'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_response_model['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         workspace_status_message_model = {} # WorkspaceStatusMessage
         workspace_status_message_model['status_code'] = 'testString'
@@ -9540,12 +11494,12 @@ class TestWorkspaceResponseList():
         workspace_response_model = {} # WorkspaceResponse
         workspace_response_model['applied_shareddata_ids'] = ['testString']
         workspace_response_model['catalog_ref'] = catalog_ref_model
-        workspace_response_model['created_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_response_model['created_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_response_model['created_by'] = 'testString'
         workspace_response_model['crn'] = 'testString'
         workspace_response_model['description'] = 'testString'
         workspace_response_model['id'] = 'testString'
-        workspace_response_model['last_health_check_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_response_model['last_health_check_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_response_model['location'] = 'testString'
         workspace_response_model['name'] = 'testString'
         workspace_response_model['resource_group'] = 'testString'
@@ -9557,7 +11511,7 @@ class TestWorkspaceResponseList():
         workspace_response_model['template_ref'] = 'testString'
         workspace_response_model['template_repo'] = template_repo_response_model
         workspace_response_model['type'] = ['testString']
-        workspace_response_model['updated_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_response_model['updated_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_response_model['updated_by'] = 'testString'
         workspace_response_model['workspace_status'] = workspace_status_response_model
         workspace_response_model['workspace_status_msg'] = workspace_status_message_model
@@ -9627,11 +11581,11 @@ class TestWorkspaceStatusRequest():
         # Construct a json representation of a WorkspaceStatusRequest model
         workspace_status_request_model_json = {}
         workspace_status_request_model_json['frozen'] = True
-        workspace_status_request_model_json['frozen_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_request_model_json['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_status_request_model_json['frozen_by'] = 'testString'
         workspace_status_request_model_json['locked'] = True
         workspace_status_request_model_json['locked_by'] = 'testString'
-        workspace_status_request_model_json['locked_time'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_request_model_json['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Construct a model instance of WorkspaceStatusRequest by calling from_dict on the json representation
         workspace_status_request_model = WorkspaceStatusRequest.from_dict(workspace_status_request_model_json)
@@ -9661,11 +11615,11 @@ class TestWorkspaceStatusResponse():
         # Construct a json representation of a WorkspaceStatusResponse model
         workspace_status_response_model_json = {}
         workspace_status_response_model_json['frozen'] = True
-        workspace_status_response_model_json['frozen_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_response_model_json['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_status_response_model_json['frozen_by'] = 'testString'
         workspace_status_response_model_json['locked'] = True
         workspace_status_response_model_json['locked_by'] = 'testString'
-        workspace_status_response_model_json['locked_time'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_response_model_json['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Construct a model instance of WorkspaceStatusResponse by calling from_dict on the json representation
         workspace_status_response_model = WorkspaceStatusResponse.from_dict(workspace_status_response_model_json)
@@ -9695,11 +11649,11 @@ class TestWorkspaceStatusUpdateRequest():
         # Construct a json representation of a WorkspaceStatusUpdateRequest model
         workspace_status_update_request_model_json = {}
         workspace_status_update_request_model_json['frozen'] = True
-        workspace_status_update_request_model_json['frozen_at'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_update_request_model_json['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
         workspace_status_update_request_model_json['frozen_by'] = 'testString'
         workspace_status_update_request_model_json['locked'] = True
         workspace_status_update_request_model_json['locked_by'] = 'testString'
-        workspace_status_update_request_model_json['locked_time'] = '2020-01-28T18:40:40.123456Z'
+        workspace_status_update_request_model_json['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
 
         # Construct a model instance of WorkspaceStatusUpdateRequest by calling from_dict on the json representation
         workspace_status_update_request_model = WorkspaceStatusUpdateRequest.from_dict(workspace_status_update_request_model_json)
@@ -9768,7 +11722,7 @@ class TestWorkspaceTemplateValuesResponse():
         template_source_data_response_model['folder'] = 'testString'
         template_source_data_response_model['has_githubtoken'] = True
         template_source_data_response_model['id'] = 'testString'
-        template_source_data_response_model['template_type'] = 'testString'
+        template_source_data_response_model['type'] = 'testString'
         template_source_data_response_model['uninstall_script_name'] = 'testString'
         template_source_data_response_model['values'] = 'testString'
         template_source_data_response_model['values_metadata'] = [{ 'foo': 'bar' }]
