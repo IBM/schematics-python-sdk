@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/IBM/schematics-python-sdk/compare/v1.0.1...v1.1.0) (2021-08-16)
+
+
+### Features
+
+* **sdk:** Generate SDK using latest Schematics OpenAPI spec ([c599c7b](https://github.com/IBM/schematics-python-sdk/commit/c599c7bd40508b7dbdf26943fae35980f7727f47))
+
 # [1.1.0-beta.1](https://github.com/IBM/schematics-python-sdk/compare/v1.0.1...v1.1.0-beta.1) (2021-08-16)
 
 
