@@ -24,6 +24,7 @@ import base64
 import inspect
 import io
 import json
+import os
 import pytest
 import re
 import requests
@@ -33,17 +34,43 @@ import urllib
 from ibm_schematics.schematics_v1 import *
 
 
-service = SchematicsV1(
+_service = SchematicsV1(
     authenticator=NoAuthAuthenticator()
     )
 
-base_url = 'https://schematics-dev.containers.appdomain.cloud'
-service.set_service_url(base_url)
+_base_url = 'https://schematics-dev.containers.appdomain.cloud'
+_service.set_service_url(_base_url)
 
 ##############################################################################
-# Start of Service: Schematics
+# Start of Service: Util
 ##############################################################################
 # region
+
+class TestNewInstance():
+    """
+    Test Class for new_instance
+    """
+
+    def test_new_instance(self):
+        """
+        new_instance()
+        """
+        os.environ['TEST_SERVICE_AUTH_TYPE'] = 'noAuth'
+
+        service = SchematicsV1.new_instance(
+            service_name='TEST_SERVICE',
+        )
+
+        assert service is not None
+        assert isinstance(service, SchematicsV1)
+
+    def test_new_instance_without_authenticator(self):
+        """
+        new_instance_without_authenticator()
+        """
+        with pytest.raises(ValueError, match='authenticator must be provided'):
+            service = SchematicsV1.new_instance(
+            )
 
 class TestListSchematicsLocation():
     """
@@ -54,6 +81,8 @@ class TestListSchematicsLocation():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -65,8 +94,8 @@ class TestListSchematicsLocation():
         list_schematics_location()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/locations')
-        mock_response = '[{"country": "country", "geography": "geography", "id": "id", "kind": "kind", "metro": "metro", "multizone_metro": "multizone_metro", "name": "name"}]'
+        url = self.preprocess_url(_base_url + '/v1/locations')
+        mock_response = '[{"name": "name", "id": "id", "country": "country", "geography": "geography", "geography_code": "geography_code", "metro": "metro", "multizone_metro": "multizone_metro", "kind": "kind", "paired_region": ["paired_region"], "restricted": true}]'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -74,7 +103,46 @@ class TestListSchematicsLocation():
                       status=200)
 
         # Invoke method
-        response = service.list_schematics_location()
+        response = _service.list_schematics_location()
+
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+class TestListLocations():
+    """
+    Test Class for list_locations
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_list_locations_all_params(self):
+        """
+        list_locations()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/locations')
+        mock_response = '{"locations": [{"region": "region", "metro": "metro", "geography_code": "geography_code", "geography": "geography", "country": "country", "kind": "kind", "paired_region": ["paired_region"], "restricted": true}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Invoke method
+        response = _service.list_locations()
 
 
         # Check for correct operation
@@ -91,6 +159,8 @@ class TestListResourceGroup():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -102,7 +172,7 @@ class TestListResourceGroup():
         list_resource_group()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/resource_groups')
+        url = self.preprocess_url(_base_url + '/v1/resource_groups')
         mock_response = '[{"account_id": "account_id", "crn": "crn", "default": false, "name": "name", "resource_group_id": "resource_group_id", "state": "state"}]'
         responses.add(responses.GET,
                       url,
@@ -111,7 +181,7 @@ class TestListResourceGroup():
                       status=200)
 
         # Invoke method
-        response = service.list_resource_group()
+        response = _service.list_resource_group()
 
 
         # Check for correct operation
@@ -128,6 +198,8 @@ class TestGetSchematicsVersion():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -139,7 +211,7 @@ class TestGetSchematicsVersion():
         get_schematics_version()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/version')
+        url = self.preprocess_url(_base_url + '/v1/version')
         mock_response = '{"builddate": "builddate", "buildno": "buildno", "commitsha": "commitsha", "helm_provider_version": "helm_provider_version", "helm_version": "helm_version", "supported_template_types": {"anyKey": "anyValue"}, "terraform_provider_version": "terraform_provider_version", "terraform_version": "terraform_version"}'
         responses.add(responses.GET,
                       url,
@@ -148,7 +220,7 @@ class TestGetSchematicsVersion():
                       status=200)
 
         # Invoke method
-        response = service.get_schematics_version()
+        response = _service.get_schematics_version()
 
 
         # Check for correct operation
@@ -156,15 +228,261 @@ class TestGetSchematicsVersion():
         assert response.status_code == 200
 
 
+class TestProcessTemplateMetaData():
+    """
+    Test Class for process_template_meta_data
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_process_template_meta_data_all_params(self):
+        """
+        process_template_meta_data()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/template_metadata_processor')
+        mock_response = '{"type": "type", "variables": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}]}'
+        responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Construct a dict representation of a ExternalSourceGit model
+        external_source_git_model = {}
+        external_source_git_model['computed_git_repo_url'] = 'testString'
+        external_source_git_model['git_repo_url'] = 'testString'
+        external_source_git_model['git_token'] = 'testString'
+        external_source_git_model['git_repo_folder'] = 'testString'
+        external_source_git_model['git_release'] = 'testString'
+        external_source_git_model['git_branch'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCatalog model
+        external_source_catalog_model = {}
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCosBucket model
+        external_source_cos_bucket_model = {}
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSource model
+        external_source_model = {}
+        external_source_model['source_type'] = 'local'
+        external_source_model['git'] = external_source_git_model
+        external_source_model['catalog'] = external_source_catalog_model
+        external_source_model['cos_bucket'] = external_source_cos_bucket_model
+
+        # Set up parameter values
+        template_type = 'testString'
+        source = external_source_model
+        region = 'testString'
+        source_type = 'local'
+        x_github_token = 'testString'
+
+        # Invoke method
+        response = _service.process_template_meta_data(
+            template_type,
+            source,
+            region=region,
+            source_type=source_type,
+            x_github_token=x_github_token,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['template_type'] == 'testString'
+        assert req_body['source'] == external_source_model
+        assert req_body['region'] == 'testString'
+        assert req_body['source_type'] == 'local'
+
+
+    @responses.activate
+    def test_process_template_meta_data_required_params(self):
+        """
+        test_process_template_meta_data_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/template_metadata_processor')
+        mock_response = '{"type": "type", "variables": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}]}'
+        responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Construct a dict representation of a ExternalSourceGit model
+        external_source_git_model = {}
+        external_source_git_model['computed_git_repo_url'] = 'testString'
+        external_source_git_model['git_repo_url'] = 'testString'
+        external_source_git_model['git_token'] = 'testString'
+        external_source_git_model['git_repo_folder'] = 'testString'
+        external_source_git_model['git_release'] = 'testString'
+        external_source_git_model['git_branch'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCatalog model
+        external_source_catalog_model = {}
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCosBucket model
+        external_source_cos_bucket_model = {}
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSource model
+        external_source_model = {}
+        external_source_model['source_type'] = 'local'
+        external_source_model['git'] = external_source_git_model
+        external_source_model['catalog'] = external_source_catalog_model
+        external_source_model['cos_bucket'] = external_source_cos_bucket_model
+
+        # Set up parameter values
+        template_type = 'testString'
+        source = external_source_model
+        region = 'testString'
+        source_type = 'local'
+
+        # Invoke method
+        response = _service.process_template_meta_data(
+            template_type,
+            source,
+            region=region,
+            source_type=source_type,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['template_type'] == 'testString'
+        assert req_body['source'] == external_source_model
+        assert req_body['region'] == 'testString'
+        assert req_body['source_type'] == 'local'
+
+
+    @responses.activate
+    def test_process_template_meta_data_value_error(self):
+        """
+        test_process_template_meta_data_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/template_metadata_processor')
+        mock_response = '{"type": "type", "variables": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}]}'
+        responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Construct a dict representation of a ExternalSourceGit model
+        external_source_git_model = {}
+        external_source_git_model['computed_git_repo_url'] = 'testString'
+        external_source_git_model['git_repo_url'] = 'testString'
+        external_source_git_model['git_token'] = 'testString'
+        external_source_git_model['git_repo_folder'] = 'testString'
+        external_source_git_model['git_release'] = 'testString'
+        external_source_git_model['git_branch'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCatalog model
+        external_source_catalog_model = {}
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCosBucket model
+        external_source_cos_bucket_model = {}
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSource model
+        external_source_model = {}
+        external_source_model['source_type'] = 'local'
+        external_source_model['git'] = external_source_git_model
+        external_source_model['catalog'] = external_source_catalog_model
+        external_source_model['cos_bucket'] = external_source_cos_bucket_model
+
+        # Set up parameter values
+        template_type = 'testString'
+        source = external_source_model
+        region = 'testString'
+        source_type = 'local'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "template_type": template_type,
+            "source": source,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.process_template_meta_data(**req_copy)
+
+
+
 # endregion
 ##############################################################################
-# End of Service: Schematics
+# End of Service: Util
 ##############################################################################
 
 ##############################################################################
 # Start of Service: Workspaces
 ##############################################################################
 # region
+
+class TestNewInstance():
+    """
+    Test Class for new_instance
+    """
+
+    def test_new_instance(self):
+        """
+        new_instance()
+        """
+        os.environ['TEST_SERVICE_AUTH_TYPE'] = 'noAuth'
+
+        service = SchematicsV1.new_instance(
+            service_name='TEST_SERVICE',
+        )
+
+        assert service is not None
+        assert isinstance(service, SchematicsV1)
+
+    def test_new_instance_without_authenticator(self):
+        """
+        new_instance_without_authenticator()
+        """
+        with pytest.raises(ValueError, match='authenticator must be provided'):
+            service = SchematicsV1.new_instance(
+            )
 
 class TestListWorkspaces():
     """
@@ -175,6 +493,8 @@ class TestListWorkspaces():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -186,8 +506,8 @@ class TestListWorkspaces():
         list_workspaces()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces')
-        mock_response = '{"count": 5, "limit": 5, "offset": 6, "workspaces": [{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}]}'
+        url = self.preprocess_url(_base_url + '/v1/workspaces')
+        mock_response = '{"count": 5, "limit": 5, "offset": 6, "workspaces": [{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "owning_account": "owning_account", "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "compact": false, "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -199,7 +519,7 @@ class TestListWorkspaces():
         limit = 1
 
         # Invoke method
-        response = service.list_workspaces(
+        response = _service.list_workspaces(
             offset=offset,
             limit=limit,
             headers={}
@@ -221,8 +541,8 @@ class TestListWorkspaces():
         test_list_workspaces_required_params()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces')
-        mock_response = '{"count": 5, "limit": 5, "offset": 6, "workspaces": [{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}]}'
+        url = self.preprocess_url(_base_url + '/v1/workspaces')
+        mock_response = '{"count": 5, "limit": 5, "offset": 6, "workspaces": [{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "owning_account": "owning_account", "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "compact": false, "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -230,7 +550,7 @@ class TestListWorkspaces():
                       status=200)
 
         # Invoke method
-        response = service.list_workspaces()
+        response = _service.list_workspaces()
 
 
         # Check for correct operation
@@ -247,6 +567,8 @@ class TestCreateWorkspace():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -258,8 +580,8 @@ class TestCreateWorkspace():
         create_workspace()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces')
-        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
+        url = self.preprocess_url(_base_url + '/v1/workspaces')
+        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "owning_account": "owning_account", "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "compact": false, "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
         responses.add(responses.POST,
                       url,
                       body=mock_response,
@@ -269,6 +591,7 @@ class TestCreateWorkspace():
         # Construct a dict representation of a CatalogRef model
         catalog_ref_model = {}
         catalog_ref_model['dry_run'] = True
+        catalog_ref_model['owning_account'] = 'testString'
         catalog_ref_model['item_icon_url'] = 'testString'
         catalog_ref_model['item_id'] = 'testString'
         catalog_ref_model['item_name'] = 'testString'
@@ -303,6 +626,7 @@ class TestCreateWorkspace():
         template_source_data_request_model = {}
         template_source_data_request_model['env_values'] = [{ 'foo': 'bar' }]
         template_source_data_request_model['folder'] = 'testString'
+        template_source_data_request_model['compact'] = True
         template_source_data_request_model['init_state_file'] = 'testString'
         template_source_data_request_model['type'] = 'testString'
         template_source_data_request_model['uninstall_script_name'] = 'testString'
@@ -321,11 +645,11 @@ class TestCreateWorkspace():
         # Construct a dict representation of a WorkspaceStatusRequest model
         workspace_status_request_model = {}
         workspace_status_request_model['frozen'] = True
-        workspace_status_request_model['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_request_model['frozen_at'] = "2019-01-01T12:00:00Z"
         workspace_status_request_model['frozen_by'] = 'testString'
         workspace_status_request_model['locked'] = True
         workspace_status_request_model['locked_by'] = 'testString'
-        workspace_status_request_model['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_request_model['locked_time'] = "2019-01-01T12:00:00Z"
 
         # Set up parameter values
         applied_shareddata_ids = ['testString']
@@ -344,7 +668,7 @@ class TestCreateWorkspace():
         x_github_token = 'testString'
 
         # Invoke method
-        response = service.create_workspace(
+        response = _service.create_workspace(
             applied_shareddata_ids=applied_shareddata_ids,
             catalog_ref=catalog_ref,
             description=description,
@@ -388,8 +712,8 @@ class TestCreateWorkspace():
         test_create_workspace_required_params()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces')
-        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
+        url = self.preprocess_url(_base_url + '/v1/workspaces')
+        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "owning_account": "owning_account", "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "compact": false, "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
         responses.add(responses.POST,
                       url,
                       body=mock_response,
@@ -399,6 +723,7 @@ class TestCreateWorkspace():
         # Construct a dict representation of a CatalogRef model
         catalog_ref_model = {}
         catalog_ref_model['dry_run'] = True
+        catalog_ref_model['owning_account'] = 'testString'
         catalog_ref_model['item_icon_url'] = 'testString'
         catalog_ref_model['item_id'] = 'testString'
         catalog_ref_model['item_name'] = 'testString'
@@ -433,6 +758,7 @@ class TestCreateWorkspace():
         template_source_data_request_model = {}
         template_source_data_request_model['env_values'] = [{ 'foo': 'bar' }]
         template_source_data_request_model['folder'] = 'testString'
+        template_source_data_request_model['compact'] = True
         template_source_data_request_model['init_state_file'] = 'testString'
         template_source_data_request_model['type'] = 'testString'
         template_source_data_request_model['uninstall_script_name'] = 'testString'
@@ -451,11 +777,11 @@ class TestCreateWorkspace():
         # Construct a dict representation of a WorkspaceStatusRequest model
         workspace_status_request_model = {}
         workspace_status_request_model['frozen'] = True
-        workspace_status_request_model['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_request_model['frozen_at'] = "2019-01-01T12:00:00Z"
         workspace_status_request_model['frozen_by'] = 'testString'
         workspace_status_request_model['locked'] = True
         workspace_status_request_model['locked_by'] = 'testString'
-        workspace_status_request_model['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_request_model['locked_time'] = "2019-01-01T12:00:00Z"
 
         # Set up parameter values
         applied_shareddata_ids = ['testString']
@@ -473,7 +799,7 @@ class TestCreateWorkspace():
         workspace_status = workspace_status_request_model
 
         # Invoke method
-        response = service.create_workspace(
+        response = _service.create_workspace(
             applied_shareddata_ids=applied_shareddata_ids,
             catalog_ref=catalog_ref,
             description=description,
@@ -519,6 +845,8 @@ class TestGetWorkspace():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -530,8 +858,8 @@ class TestGetWorkspace():
         get_workspace()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString')
-        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString')
+        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "owning_account": "owning_account", "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "compact": false, "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -542,7 +870,7 @@ class TestGetWorkspace():
         w_id = 'testString'
 
         # Invoke method
-        response = service.get_workspace(
+        response = _service.get_workspace(
             w_id,
             headers={}
         )
@@ -558,8 +886,8 @@ class TestGetWorkspace():
         test_get_workspace_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString')
-        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString')
+        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "owning_account": "owning_account", "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "compact": false, "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -576,7 +904,7 @@ class TestGetWorkspace():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.get_workspace(**req_copy)
+                _service.get_workspace(**req_copy)
 
 
 
@@ -589,6 +917,8 @@ class TestReplaceWorkspace():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -600,8 +930,8 @@ class TestReplaceWorkspace():
         replace_workspace()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString')
-        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString')
+        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "owning_account": "owning_account", "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "compact": false, "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
         responses.add(responses.PUT,
                       url,
                       body=mock_response,
@@ -611,6 +941,7 @@ class TestReplaceWorkspace():
         # Construct a dict representation of a CatalogRef model
         catalog_ref_model = {}
         catalog_ref_model['dry_run'] = True
+        catalog_ref_model['owning_account'] = 'testString'
         catalog_ref_model['item_icon_url'] = 'testString'
         catalog_ref_model['item_id'] = 'testString'
         catalog_ref_model['item_name'] = 'testString'
@@ -645,6 +976,7 @@ class TestReplaceWorkspace():
         template_source_data_request_model = {}
         template_source_data_request_model['env_values'] = [{ 'foo': 'bar' }]
         template_source_data_request_model['folder'] = 'testString'
+        template_source_data_request_model['compact'] = True
         template_source_data_request_model['init_state_file'] = 'testString'
         template_source_data_request_model['type'] = 'testString'
         template_source_data_request_model['uninstall_script_name'] = 'testString'
@@ -663,11 +995,11 @@ class TestReplaceWorkspace():
         # Construct a dict representation of a WorkspaceStatusUpdateRequest model
         workspace_status_update_request_model = {}
         workspace_status_update_request_model['frozen'] = True
-        workspace_status_update_request_model['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_update_request_model['frozen_at'] = "2019-01-01T12:00:00Z"
         workspace_status_update_request_model['frozen_by'] = 'testString'
         workspace_status_update_request_model['locked'] = True
         workspace_status_update_request_model['locked_by'] = 'testString'
-        workspace_status_update_request_model['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_update_request_model['locked_time'] = "2019-01-01T12:00:00Z"
 
         # Construct a dict representation of a WorkspaceStatusMessage model
         workspace_status_message_model = {}
@@ -688,7 +1020,7 @@ class TestReplaceWorkspace():
         workspace_status_msg = workspace_status_message_model
 
         # Invoke method
-        response = service.replace_workspace(
+        response = _service.replace_workspace(
             w_id,
             catalog_ref=catalog_ref,
             description=description,
@@ -726,8 +1058,8 @@ class TestReplaceWorkspace():
         test_replace_workspace_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString')
-        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString')
+        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "owning_account": "owning_account", "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "compact": false, "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
         responses.add(responses.PUT,
                       url,
                       body=mock_response,
@@ -737,6 +1069,7 @@ class TestReplaceWorkspace():
         # Construct a dict representation of a CatalogRef model
         catalog_ref_model = {}
         catalog_ref_model['dry_run'] = True
+        catalog_ref_model['owning_account'] = 'testString'
         catalog_ref_model['item_icon_url'] = 'testString'
         catalog_ref_model['item_id'] = 'testString'
         catalog_ref_model['item_name'] = 'testString'
@@ -771,6 +1104,7 @@ class TestReplaceWorkspace():
         template_source_data_request_model = {}
         template_source_data_request_model['env_values'] = [{ 'foo': 'bar' }]
         template_source_data_request_model['folder'] = 'testString'
+        template_source_data_request_model['compact'] = True
         template_source_data_request_model['init_state_file'] = 'testString'
         template_source_data_request_model['type'] = 'testString'
         template_source_data_request_model['uninstall_script_name'] = 'testString'
@@ -789,11 +1123,11 @@ class TestReplaceWorkspace():
         # Construct a dict representation of a WorkspaceStatusUpdateRequest model
         workspace_status_update_request_model = {}
         workspace_status_update_request_model['frozen'] = True
-        workspace_status_update_request_model['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_update_request_model['frozen_at'] = "2019-01-01T12:00:00Z"
         workspace_status_update_request_model['frozen_by'] = 'testString'
         workspace_status_update_request_model['locked'] = True
         workspace_status_update_request_model['locked_by'] = 'testString'
-        workspace_status_update_request_model['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_update_request_model['locked_time'] = "2019-01-01T12:00:00Z"
 
         # Construct a dict representation of a WorkspaceStatusMessage model
         workspace_status_message_model = {}
@@ -820,7 +1154,7 @@ class TestReplaceWorkspace():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.replace_workspace(**req_copy)
+                _service.replace_workspace(**req_copy)
 
 
 
@@ -833,6 +1167,8 @@ class TestDeleteWorkspace():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -844,7 +1180,7 @@ class TestDeleteWorkspace():
         delete_workspace()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString')
         mock_response = '"operation_response"'
         responses.add(responses.DELETE,
                       url,
@@ -853,14 +1189,14 @@ class TestDeleteWorkspace():
                       status=200)
 
         # Set up parameter values
-        w_id = 'testString'
         refresh_token = 'testString'
+        w_id = 'testString'
         destroy_resources = 'testString'
 
         # Invoke method
-        response = service.delete_workspace(
-            w_id,
+        response = _service.delete_workspace(
             refresh_token,
+            w_id,
             destroy_resources=destroy_resources,
             headers={}
         )
@@ -880,7 +1216,7 @@ class TestDeleteWorkspace():
         test_delete_workspace_required_params()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString')
         mock_response = '"operation_response"'
         responses.add(responses.DELETE,
                       url,
@@ -889,13 +1225,13 @@ class TestDeleteWorkspace():
                       status=200)
 
         # Set up parameter values
-        w_id = 'testString'
         refresh_token = 'testString'
+        w_id = 'testString'
 
         # Invoke method
-        response = service.delete_workspace(
-            w_id,
+        response = _service.delete_workspace(
             refresh_token,
+            w_id,
             headers={}
         )
 
@@ -910,7 +1246,7 @@ class TestDeleteWorkspace():
         test_delete_workspace_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString')
         mock_response = '"operation_response"'
         responses.add(responses.DELETE,
                       url,
@@ -919,18 +1255,18 @@ class TestDeleteWorkspace():
                       status=200)
 
         # Set up parameter values
-        w_id = 'testString'
         refresh_token = 'testString'
+        w_id = 'testString'
 
         # Pass in all but one required param and check for a ValueError
         req_param_dict = {
-            "w_id": w_id,
             "refresh_token": refresh_token,
+            "w_id": w_id,
         }
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.delete_workspace(**req_copy)
+                _service.delete_workspace(**req_copy)
 
 
 
@@ -943,6 +1279,8 @@ class TestUpdateWorkspace():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -954,8 +1292,8 @@ class TestUpdateWorkspace():
         update_workspace()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString')
-        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString')
+        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "owning_account": "owning_account", "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "compact": false, "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
         responses.add(responses.PATCH,
                       url,
                       body=mock_response,
@@ -965,6 +1303,7 @@ class TestUpdateWorkspace():
         # Construct a dict representation of a CatalogRef model
         catalog_ref_model = {}
         catalog_ref_model['dry_run'] = True
+        catalog_ref_model['owning_account'] = 'testString'
         catalog_ref_model['item_icon_url'] = 'testString'
         catalog_ref_model['item_id'] = 'testString'
         catalog_ref_model['item_name'] = 'testString'
@@ -999,6 +1338,7 @@ class TestUpdateWorkspace():
         template_source_data_request_model = {}
         template_source_data_request_model['env_values'] = [{ 'foo': 'bar' }]
         template_source_data_request_model['folder'] = 'testString'
+        template_source_data_request_model['compact'] = True
         template_source_data_request_model['init_state_file'] = 'testString'
         template_source_data_request_model['type'] = 'testString'
         template_source_data_request_model['uninstall_script_name'] = 'testString'
@@ -1017,11 +1357,11 @@ class TestUpdateWorkspace():
         # Construct a dict representation of a WorkspaceStatusUpdateRequest model
         workspace_status_update_request_model = {}
         workspace_status_update_request_model['frozen'] = True
-        workspace_status_update_request_model['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_update_request_model['frozen_at'] = "2019-01-01T12:00:00Z"
         workspace_status_update_request_model['frozen_by'] = 'testString'
         workspace_status_update_request_model['locked'] = True
         workspace_status_update_request_model['locked_by'] = 'testString'
-        workspace_status_update_request_model['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_update_request_model['locked_time'] = "2019-01-01T12:00:00Z"
 
         # Construct a dict representation of a WorkspaceStatusMessage model
         workspace_status_message_model = {}
@@ -1042,7 +1382,7 @@ class TestUpdateWorkspace():
         workspace_status_msg = workspace_status_message_model
 
         # Invoke method
-        response = service.update_workspace(
+        response = _service.update_workspace(
             w_id,
             catalog_ref=catalog_ref,
             description=description,
@@ -1080,8 +1420,8 @@ class TestUpdateWorkspace():
         test_update_workspace_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString')
-        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString')
+        mock_response = '{"applied_shareddata_ids": ["applied_shareddata_ids"], "catalog_ref": {"dry_run": false, "owning_account": "owning_account", "item_icon_url": "item_icon_url", "item_id": "item_id", "item_name": "item_name", "item_readme_url": "item_readme_url", "item_url": "item_url", "launch_url": "launch_url", "offering_version": "offering_version"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "crn": "crn", "description": "description", "id": "id", "last_health_check_at": "2019-01-01T12:00:00.000Z", "location": "location", "name": "name", "resource_group": "resource_group", "runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_id": "cluster_id", "cluster_name": "cluster_name", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id"}, "status": "status", "tags": ["tags"], "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "compact": false, "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}], "template_ref": "template_ref", "template_repo": {"branch": "branch", "full_url": "full_url", "has_uploadedgitrepotar": true, "release": "release", "repo_sha_value": "repo_sha_value", "repo_url": "repo_url", "url": "url"}, "type": ["type"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "workspace_status": {"frozen": true, "frozen_at": "2019-01-01T12:00:00.000Z", "frozen_by": "frozen_by", "locked": true, "locked_by": "locked_by", "locked_time": "2019-01-01T12:00:00.000Z"}, "workspace_status_msg": {"status_code": "status_code", "status_msg": "status_msg"}}'
         responses.add(responses.PATCH,
                       url,
                       body=mock_response,
@@ -1091,6 +1431,7 @@ class TestUpdateWorkspace():
         # Construct a dict representation of a CatalogRef model
         catalog_ref_model = {}
         catalog_ref_model['dry_run'] = True
+        catalog_ref_model['owning_account'] = 'testString'
         catalog_ref_model['item_icon_url'] = 'testString'
         catalog_ref_model['item_id'] = 'testString'
         catalog_ref_model['item_name'] = 'testString'
@@ -1125,6 +1466,7 @@ class TestUpdateWorkspace():
         template_source_data_request_model = {}
         template_source_data_request_model['env_values'] = [{ 'foo': 'bar' }]
         template_source_data_request_model['folder'] = 'testString'
+        template_source_data_request_model['compact'] = True
         template_source_data_request_model['init_state_file'] = 'testString'
         template_source_data_request_model['type'] = 'testString'
         template_source_data_request_model['uninstall_script_name'] = 'testString'
@@ -1143,11 +1485,11 @@ class TestUpdateWorkspace():
         # Construct a dict representation of a WorkspaceStatusUpdateRequest model
         workspace_status_update_request_model = {}
         workspace_status_update_request_model['frozen'] = True
-        workspace_status_update_request_model['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_update_request_model['frozen_at'] = "2019-01-01T12:00:00Z"
         workspace_status_update_request_model['frozen_by'] = 'testString'
         workspace_status_update_request_model['locked'] = True
         workspace_status_update_request_model['locked_by'] = 'testString'
-        workspace_status_update_request_model['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_update_request_model['locked_time'] = "2019-01-01T12:00:00Z"
 
         # Construct a dict representation of a WorkspaceStatusMessage model
         workspace_status_message_model = {}
@@ -1174,115 +1516,7 @@ class TestUpdateWorkspace():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.update_workspace(**req_copy)
-
-
-
-class TestUploadTemplateTar():
-    """
-    Test Class for upload_template_tar
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_upload_template_tar_all_params(self):
-        """
-        upload_template_tar()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/template_data/testString/template_repo_upload')
-        mock_response = '{"file_value": "file_value", "has_received_file": false, "id": "id"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        w_id = 'testString'
-        t_id = 'testString'
-        file = io.BytesIO(b'This is a mock file.').getvalue()
-        file_content_type = 'testString'
-
-        # Invoke method
-        response = service.upload_template_tar(
-            w_id,
-            t_id,
-            file=file,
-            file_content_type=file_content_type,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-
-
-    @responses.activate
-    def test_upload_template_tar_required_params(self):
-        """
-        test_upload_template_tar_required_params()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/template_data/testString/template_repo_upload')
-        mock_response = '{"file_value": "file_value", "has_received_file": false, "id": "id"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        w_id = 'testString'
-        t_id = 'testString'
-
-        # Invoke method
-        response = service.upload_template_tar(
-            w_id,
-            t_id,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-
-
-    @responses.activate
-    def test_upload_template_tar_value_error(self):
-        """
-        test_upload_template_tar_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/template_data/testString/template_repo_upload')
-        mock_response = '{"file_value": "file_value", "has_received_file": false, "id": "id"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        w_id = 'testString'
-        t_id = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "w_id": w_id,
-            "t_id": t_id,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.upload_template_tar(**req_copy)
+                _service.update_workspace(**req_copy)
 
 
 
@@ -1295,6 +1529,8 @@ class TestGetWorkspaceReadme():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -1306,7 +1542,7 @@ class TestGetWorkspaceReadme():
         get_workspace_readme()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/templates/readme')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/templates/readme')
         mock_response = '{"readme": "readme"}'
         responses.add(responses.GET,
                       url,
@@ -1320,7 +1556,7 @@ class TestGetWorkspaceReadme():
         formatted = 'markdown'
 
         # Invoke method
-        response = service.get_workspace_readme(
+        response = _service.get_workspace_readme(
             w_id,
             ref=ref,
             formatted=formatted,
@@ -1343,7 +1579,7 @@ class TestGetWorkspaceReadme():
         test_get_workspace_readme_required_params()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/templates/readme')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/templates/readme')
         mock_response = '{"readme": "readme"}'
         responses.add(responses.GET,
                       url,
@@ -1355,7 +1591,7 @@ class TestGetWorkspaceReadme():
         w_id = 'testString'
 
         # Invoke method
-        response = service.get_workspace_readme(
+        response = _service.get_workspace_readme(
             w_id,
             headers={}
         )
@@ -1371,7 +1607,7 @@ class TestGetWorkspaceReadme():
         test_get_workspace_readme_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/templates/readme')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/templates/readme')
         mock_response = '{"readme": "readme"}'
         responses.add(responses.GET,
                       url,
@@ -1389,43 +1625,35 @@ class TestGetWorkspaceReadme():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.get_workspace_readme(**req_copy)
+                _service.get_workspace_readme(**req_copy)
 
 
 
-# endregion
-##############################################################################
-# End of Service: Workspaces
-##############################################################################
-
-##############################################################################
-# Start of Service: WorkspaceActivities
-##############################################################################
-# region
-
-class TestListWorkspaceActivities():
+class TestTemplateRepoUpload():
     """
-    Test Class for list_workspace_activities
+    Test Class for template_repo_upload
     """
 
     def preprocess_url(self, request_url: str):
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
             return re.compile(request_url.rstrip('/') + '/+')
 
     @responses.activate
-    def test_list_workspace_activities_all_params(self):
+    def test_template_repo_upload_all_params(self):
         """
-        list_workspace_activities()
+        template_repo_upload()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/actions')
-        mock_response = '{"actions": [{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00.000Z", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00.000Z", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00.000Z", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}], "workspace_id": "workspace_id", "workspace_name": "workspace_name"}'
-        responses.add(responses.GET,
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/template_data/testString/template_repo_upload')
+        mock_response = '{"file_value": "file_value", "has_received_file": false, "id": "id"}'
+        responses.add(responses.PUT,
                       url,
                       body=mock_response,
                       content_type='application/json',
@@ -1433,47 +1661,16 @@ class TestListWorkspaceActivities():
 
         # Set up parameter values
         w_id = 'testString'
-        offset = 0
-        limit = 1
+        t_id = 'testString'
+        file = io.BytesIO(b'This is a mock file.').getvalue()
+        file_content_type = 'testString'
 
         # Invoke method
-        response = service.list_workspace_activities(
+        response = _service.template_repo_upload(
             w_id,
-            offset=offset,
-            limit=limit,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-        # Validate query params
-        query_string = responses.calls[0].request.url.split('?',1)[1]
-        query_string = urllib.parse.unquote_plus(query_string)
-        assert 'offset={}'.format(offset) in query_string
-        assert 'limit={}'.format(limit) in query_string
-
-
-    @responses.activate
-    def test_list_workspace_activities_required_params(self):
-        """
-        test_list_workspace_activities_required_params()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/actions')
-        mock_response = '{"actions": [{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00.000Z", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00.000Z", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00.000Z", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}], "workspace_id": "workspace_id", "workspace_name": "workspace_name"}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        w_id = 'testString'
-
-        # Invoke method
-        response = service.list_workspace_activities(
-            w_id,
+            t_id,
+            file=file,
+            file_content_type=file_content_type,
             headers={}
         )
 
@@ -1483,14 +1680,14 @@ class TestListWorkspaceActivities():
 
 
     @responses.activate
-    def test_list_workspace_activities_value_error(self):
+    def test_template_repo_upload_required_params(self):
         """
-        test_list_workspace_activities_value_error()
+        test_template_repo_upload_required_params()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/actions')
-        mock_response = '{"actions": [{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00.000Z", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00.000Z", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00.000Z", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}], "workspace_id": "workspace_id", "workspace_name": "workspace_name"}'
-        responses.add(responses.GET,
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/template_data/testString/template_repo_upload')
+        mock_response = '{"file_value": "file_value", "has_received_file": false, "id": "id"}'
+        responses.add(responses.PUT,
                       url,
                       body=mock_response,
                       content_type='application/json',
@@ -1498,54 +1695,12 @@ class TestListWorkspaceActivities():
 
         # Set up parameter values
         w_id = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "w_id": w_id,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.list_workspace_activities(**req_copy)
-
-
-
-class TestGetWorkspaceActivity():
-    """
-    Test Class for get_workspace_activity
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_get_workspace_activity_all_params(self):
-        """
-        get_workspace_activity()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/actions/testString')
-        mock_response = '{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00.000Z", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00.000Z", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00.000Z", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        w_id = 'testString'
-        activity_id = 'testString'
+        t_id = 'testString'
 
         # Invoke method
-        response = service.get_workspace_activity(
+        response = _service.template_repo_upload(
             w_id,
-            activity_id,
+            t_id,
             headers={}
         )
 
@@ -1555,14 +1710,14 @@ class TestGetWorkspaceActivity():
 
 
     @responses.activate
-    def test_get_workspace_activity_value_error(self):
+    def test_template_repo_upload_value_error(self):
         """
-        test_get_workspace_activity_value_error()
+        test_template_repo_upload_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/actions/testString')
-        mock_response = '{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00.000Z", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00.000Z", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00.000Z", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}'
-        responses.add(responses.GET,
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/template_data/testString/template_repo_upload')
+        mock_response = '{"file_value": "file_value", "has_received_file": false, "id": "id"}'
+        responses.add(responses.PUT,
                       url,
                       body=mock_response,
                       content_type='application/json',
@@ -1570,539 +1725,19 @@ class TestGetWorkspaceActivity():
 
         # Set up parameter values
         w_id = 'testString'
-        activity_id = 'testString'
+        t_id = 'testString'
 
         # Pass in all but one required param and check for a ValueError
         req_param_dict = {
             "w_id": w_id,
-            "activity_id": activity_id,
+            "t_id": t_id,
         }
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.get_workspace_activity(**req_copy)
+                _service.template_repo_upload(**req_copy)
 
 
-
-class TestDeleteWorkspaceActivity():
-    """
-    Test Class for delete_workspace_activity
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_delete_workspace_activity_all_params(self):
-        """
-        delete_workspace_activity()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/actions/testString')
-        mock_response = '{"activityid": "activityid"}'
-        responses.add(responses.DELETE,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Set up parameter values
-        w_id = 'testString'
-        activity_id = 'testString'
-
-        # Invoke method
-        response = service.delete_workspace_activity(
-            w_id,
-            activity_id,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 202
-
-
-    @responses.activate
-    def test_delete_workspace_activity_value_error(self):
-        """
-        test_delete_workspace_activity_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/actions/testString')
-        mock_response = '{"activityid": "activityid"}'
-        responses.add(responses.DELETE,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Set up parameter values
-        w_id = 'testString'
-        activity_id = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "w_id": w_id,
-            "activity_id": activity_id,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.delete_workspace_activity(**req_copy)
-
-
-
-class TestRunWorkspaceCommands():
-    """
-    Test Class for run_workspace_commands
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_run_workspace_commands_all_params(self):
-        """
-        run_workspace_commands()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/commands')
-        mock_response = '{"activityid": "activityid"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Construct a dict representation of a TerraformCommand model
-        terraform_command_model = {}
-        terraform_command_model['command'] = 'testString'
-        terraform_command_model['command_params'] = 'testString'
-        terraform_command_model['command_name'] = 'testString'
-        terraform_command_model['command_desc'] = 'testString'
-        terraform_command_model['command_onError'] = 'testString'
-        terraform_command_model['command_dependsOn'] = 'testString'
-        terraform_command_model['command_status'] = 'testString'
-
-        # Set up parameter values
-        w_id = 'testString'
-        refresh_token = 'testString'
-        commands = [terraform_command_model]
-        operation_name = 'testString'
-        description = 'testString'
-
-        # Invoke method
-        response = service.run_workspace_commands(
-            w_id,
-            refresh_token,
-            commands=commands,
-            operation_name=operation_name,
-            description=description,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 202
-        # Validate body params
-        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
-        assert req_body['commands'] == [terraform_command_model]
-        assert req_body['operation_name'] == 'testString'
-        assert req_body['description'] == 'testString'
-
-
-    @responses.activate
-    def test_run_workspace_commands_value_error(self):
-        """
-        test_run_workspace_commands_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/commands')
-        mock_response = '{"activityid": "activityid"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Construct a dict representation of a TerraformCommand model
-        terraform_command_model = {}
-        terraform_command_model['command'] = 'testString'
-        terraform_command_model['command_params'] = 'testString'
-        terraform_command_model['command_name'] = 'testString'
-        terraform_command_model['command_desc'] = 'testString'
-        terraform_command_model['command_onError'] = 'testString'
-        terraform_command_model['command_dependsOn'] = 'testString'
-        terraform_command_model['command_status'] = 'testString'
-
-        # Set up parameter values
-        w_id = 'testString'
-        refresh_token = 'testString'
-        commands = [terraform_command_model]
-        operation_name = 'testString'
-        description = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "w_id": w_id,
-            "refresh_token": refresh_token,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.run_workspace_commands(**req_copy)
-
-
-
-class TestApplyWorkspaceCommand():
-    """
-    Test Class for apply_workspace_command
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_apply_workspace_command_all_params(self):
-        """
-        apply_workspace_command()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/apply')
-        mock_response = '{"activityid": "activityid"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Construct a dict representation of a WorkspaceActivityOptionsTemplate model
-        workspace_activity_options_template_model = {}
-        workspace_activity_options_template_model['target'] = ['testString']
-        workspace_activity_options_template_model['tf_vars'] = ['testString']
-
-        # Set up parameter values
-        w_id = 'testString'
-        refresh_token = 'testString'
-        action_options = workspace_activity_options_template_model
-
-        # Invoke method
-        response = service.apply_workspace_command(
-            w_id,
-            refresh_token,
-            action_options=action_options,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 202
-        # Validate body params
-        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
-        assert req_body['action_options'] == workspace_activity_options_template_model
-
-
-    @responses.activate
-    def test_apply_workspace_command_value_error(self):
-        """
-        test_apply_workspace_command_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/apply')
-        mock_response = '{"activityid": "activityid"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Construct a dict representation of a WorkspaceActivityOptionsTemplate model
-        workspace_activity_options_template_model = {}
-        workspace_activity_options_template_model['target'] = ['testString']
-        workspace_activity_options_template_model['tf_vars'] = ['testString']
-
-        # Set up parameter values
-        w_id = 'testString'
-        refresh_token = 'testString'
-        action_options = workspace_activity_options_template_model
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "w_id": w_id,
-            "refresh_token": refresh_token,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.apply_workspace_command(**req_copy)
-
-
-
-class TestDestroyWorkspaceCommand():
-    """
-    Test Class for destroy_workspace_command
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_destroy_workspace_command_all_params(self):
-        """
-        destroy_workspace_command()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/destroy')
-        mock_response = '{"activityid": "activityid"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Construct a dict representation of a WorkspaceActivityOptionsTemplate model
-        workspace_activity_options_template_model = {}
-        workspace_activity_options_template_model['target'] = ['testString']
-        workspace_activity_options_template_model['tf_vars'] = ['testString']
-
-        # Set up parameter values
-        w_id = 'testString'
-        refresh_token = 'testString'
-        action_options = workspace_activity_options_template_model
-
-        # Invoke method
-        response = service.destroy_workspace_command(
-            w_id,
-            refresh_token,
-            action_options=action_options,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 202
-        # Validate body params
-        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
-        assert req_body['action_options'] == workspace_activity_options_template_model
-
-
-    @responses.activate
-    def test_destroy_workspace_command_value_error(self):
-        """
-        test_destroy_workspace_command_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/destroy')
-        mock_response = '{"activityid": "activityid"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Construct a dict representation of a WorkspaceActivityOptionsTemplate model
-        workspace_activity_options_template_model = {}
-        workspace_activity_options_template_model['target'] = ['testString']
-        workspace_activity_options_template_model['tf_vars'] = ['testString']
-
-        # Set up parameter values
-        w_id = 'testString'
-        refresh_token = 'testString'
-        action_options = workspace_activity_options_template_model
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "w_id": w_id,
-            "refresh_token": refresh_token,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.destroy_workspace_command(**req_copy)
-
-
-
-class TestPlanWorkspaceCommand():
-    """
-    Test Class for plan_workspace_command
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_plan_workspace_command_all_params(self):
-        """
-        plan_workspace_command()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/plan')
-        mock_response = '{"activityid": "activityid"}'
-        responses.add(responses.POST,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Set up parameter values
-        w_id = 'testString'
-        refresh_token = 'testString'
-
-        # Invoke method
-        response = service.plan_workspace_command(
-            w_id,
-            refresh_token,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 202
-
-
-    @responses.activate
-    def test_plan_workspace_command_value_error(self):
-        """
-        test_plan_workspace_command_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/plan')
-        mock_response = '{"activityid": "activityid"}'
-        responses.add(responses.POST,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Set up parameter values
-        w_id = 'testString'
-        refresh_token = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "w_id": w_id,
-            "refresh_token": refresh_token,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.plan_workspace_command(**req_copy)
-
-
-
-class TestRefreshWorkspaceCommand():
-    """
-    Test Class for refresh_workspace_command
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_refresh_workspace_command_all_params(self):
-        """
-        refresh_workspace_command()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/refresh')
-        mock_response = '{"activityid": "activityid"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Set up parameter values
-        w_id = 'testString'
-        refresh_token = 'testString'
-
-        # Invoke method
-        response = service.refresh_workspace_command(
-            w_id,
-            refresh_token,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 202
-
-
-    @responses.activate
-    def test_refresh_workspace_command_value_error(self):
-        """
-        test_refresh_workspace_command_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/refresh')
-        mock_response = '{"activityid": "activityid"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Set up parameter values
-        w_id = 'testString'
-        refresh_token = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "w_id": w_id,
-            "refresh_token": refresh_token,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.refresh_workspace_command(**req_copy)
-
-
-
-# endregion
-##############################################################################
-# End of Service: WorkspaceActivities
-##############################################################################
-
-##############################################################################
-# Start of Service: WorkspaceInputs
-##############################################################################
-# region
 
 class TestGetWorkspaceInputs():
     """
@@ -2113,6 +1748,8 @@ class TestGetWorkspaceInputs():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -2124,7 +1761,7 @@ class TestGetWorkspaceInputs():
         get_workspace_inputs()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/template_data/testString/values')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/template_data/testString/values')
         mock_response = '{"values_metadata": [{"anyKey": "anyValue"}]}'
         responses.add(responses.GET,
                       url,
@@ -2137,7 +1774,7 @@ class TestGetWorkspaceInputs():
         t_id = 'testString'
 
         # Invoke method
-        response = service.get_workspace_inputs(
+        response = _service.get_workspace_inputs(
             w_id,
             t_id,
             headers={}
@@ -2154,7 +1791,7 @@ class TestGetWorkspaceInputs():
         test_get_workspace_inputs_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/template_data/testString/values')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/template_data/testString/values')
         mock_response = '{"values_metadata": [{"anyKey": "anyValue"}]}'
         responses.add(responses.GET,
                       url,
@@ -2174,7 +1811,7 @@ class TestGetWorkspaceInputs():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.get_workspace_inputs(**req_copy)
+                _service.get_workspace_inputs(**req_copy)
 
 
 
@@ -2187,6 +1824,8 @@ class TestReplaceWorkspaceInputs():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -2198,7 +1837,7 @@ class TestReplaceWorkspaceInputs():
         replace_workspace_inputs()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/template_data/testString/values')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/template_data/testString/values')
         mock_response = '{"env_values": [{"anyKey": "anyValue"}], "values": "values", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}'
         responses.add(responses.PUT,
                       url,
@@ -2223,7 +1862,7 @@ class TestReplaceWorkspaceInputs():
         variablestore = [workspace_variable_request_model]
 
         # Invoke method
-        response = service.replace_workspace_inputs(
+        response = _service.replace_workspace_inputs(
             w_id,
             t_id,
             env_values=env_values,
@@ -2248,7 +1887,7 @@ class TestReplaceWorkspaceInputs():
         test_replace_workspace_inputs_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/template_data/testString/values')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/template_data/testString/values')
         mock_response = '{"env_values": [{"anyKey": "anyValue"}], "values": "values", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}'
         responses.add(responses.PUT,
                       url,
@@ -2280,7 +1919,7 @@ class TestReplaceWorkspaceInputs():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.replace_workspace_inputs(**req_copy)
+                _service.replace_workspace_inputs(**req_copy)
 
 
 
@@ -2293,6 +1932,8 @@ class TestGetAllWorkspaceInputs():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -2304,8 +1945,8 @@ class TestGetAllWorkspaceInputs():
         get_all_workspace_inputs()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/templates/values')
-        mock_response = '{"runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_created_on": "cluster_created_on", "cluster_id": "cluster_id", "cluster_name": "cluster_name", "cluster_type": "cluster_type", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id", "worker_count": 12, "worker_machine_type": "worker_machine_type"}, "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}]}'
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/templates/values')
+        mock_response = '{"runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_created_on": "cluster_created_on", "cluster_id": "cluster_id", "cluster_name": "cluster_name", "cluster_type": "cluster_type", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id", "worker_count": 12, "worker_machine_type": "worker_machine_type"}, "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "compact": false, "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -2316,7 +1957,7 @@ class TestGetAllWorkspaceInputs():
         w_id = 'testString'
 
         # Invoke method
-        response = service.get_all_workspace_inputs(
+        response = _service.get_all_workspace_inputs(
             w_id,
             headers={}
         )
@@ -2332,8 +1973,8 @@ class TestGetAllWorkspaceInputs():
         test_get_all_workspace_inputs_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/templates/values')
-        mock_response = '{"runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_created_on": "cluster_created_on", "cluster_id": "cluster_id", "cluster_name": "cluster_name", "cluster_type": "cluster_type", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id", "worker_count": 12, "worker_machine_type": "worker_machine_type"}, "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}]}'
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/templates/values')
+        mock_response = '{"runtime_data": [{"engine_cmd": "engine_cmd", "engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url", "output_values": [{"anyKey": "anyValue"}], "resources": [[{"anyKey": "anyValue"}]], "state_store_url": "state_store_url"}], "shared_data": {"cluster_created_on": "cluster_created_on", "cluster_id": "cluster_id", "cluster_name": "cluster_name", "cluster_type": "cluster_type", "entitlement_keys": [{"anyKey": "anyValue"}], "namespace": "namespace", "region": "region", "resource_group_id": "resource_group_id", "worker_count": 12, "worker_machine_type": "worker_machine_type"}, "template_data": [{"env_values": [{"hidden": true, "name": "name", "secure": true, "value": "value"}], "folder": "folder", "compact": false, "has_githubtoken": false, "id": "id", "type": "type", "uninstall_script_name": "uninstall_script_name", "values": "values", "values_metadata": [{"anyKey": "anyValue"}], "values_url": "values_url", "variablestore": [{"description": "description", "name": "name", "secure": true, "type": "type", "value": "value"}]}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -2350,7 +1991,7 @@ class TestGetAllWorkspaceInputs():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.get_all_workspace_inputs(**req_copy)
+                _service.get_all_workspace_inputs(**req_copy)
 
 
 
@@ -2363,6 +2004,8 @@ class TestGetWorkspaceInputMetadata():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -2374,7 +2017,7 @@ class TestGetWorkspaceInputMetadata():
         get_workspace_input_metadata()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/template_data/testString/values_metadata')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/template_data/testString/values_metadata')
         mock_response = '[{"anyKey": "anyValue"}]'
         responses.add(responses.GET,
                       url,
@@ -2387,7 +2030,7 @@ class TestGetWorkspaceInputMetadata():
         t_id = 'testString'
 
         # Invoke method
-        response = service.get_workspace_input_metadata(
+        response = _service.get_workspace_input_metadata(
             w_id,
             t_id,
             headers={}
@@ -2404,7 +2047,7 @@ class TestGetWorkspaceInputMetadata():
         test_get_workspace_input_metadata_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/template_data/testString/values_metadata')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/template_data/testString/values_metadata')
         mock_response = '[{"anyKey": "anyValue"}]'
         responses.add(responses.GET,
                       url,
@@ -2424,19 +2067,9 @@ class TestGetWorkspaceInputMetadata():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.get_workspace_input_metadata(**req_copy)
+                _service.get_workspace_input_metadata(**req_copy)
 
 
-
-# endregion
-##############################################################################
-# End of Service: WorkspaceInputs
-##############################################################################
-
-##############################################################################
-# Start of Service: WorkspaceOutputs
-##############################################################################
-# region
 
 class TestGetWorkspaceOutputs():
     """
@@ -2447,6 +2080,8 @@ class TestGetWorkspaceOutputs():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -2458,7 +2093,7 @@ class TestGetWorkspaceOutputs():
         get_workspace_outputs()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/output_values')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/output_values')
         mock_response = '[{"folder": "folder", "id": "id", "output_values": [{"anyKey": "anyValue"}], "value_type": "value_type"}]'
         responses.add(responses.GET,
                       url,
@@ -2470,7 +2105,7 @@ class TestGetWorkspaceOutputs():
         w_id = 'testString'
 
         # Invoke method
-        response = service.get_workspace_outputs(
+        response = _service.get_workspace_outputs(
             w_id,
             headers={}
         )
@@ -2486,7 +2121,7 @@ class TestGetWorkspaceOutputs():
         test_get_workspace_outputs_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/output_values')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/output_values')
         mock_response = '[{"folder": "folder", "id": "id", "output_values": [{"anyKey": "anyValue"}], "value_type": "value_type"}]'
         responses.add(responses.GET,
                       url,
@@ -2504,7 +2139,7 @@ class TestGetWorkspaceOutputs():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.get_workspace_outputs(**req_copy)
+                _service.get_workspace_outputs(**req_copy)
 
 
 
@@ -2517,6 +2152,8 @@ class TestGetWorkspaceResources():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -2528,7 +2165,7 @@ class TestGetWorkspaceResources():
         get_workspace_resources()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/resources')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/resources')
         mock_response = '[{"folder": "folder", "id": "id", "null_resources": [{"anyKey": "anyValue"}], "related_resources": [{"anyKey": "anyValue"}], "resources": [{"anyKey": "anyValue"}], "resources_count": 15, "template_type": "template_type"}]'
         responses.add(responses.GET,
                       url,
@@ -2540,7 +2177,7 @@ class TestGetWorkspaceResources():
         w_id = 'testString'
 
         # Invoke method
-        response = service.get_workspace_resources(
+        response = _service.get_workspace_resources(
             w_id,
             headers={}
         )
@@ -2556,7 +2193,7 @@ class TestGetWorkspaceResources():
         test_get_workspace_resources_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/resources')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/resources')
         mock_response = '[{"folder": "folder", "id": "id", "null_resources": [{"anyKey": "anyValue"}], "related_resources": [{"anyKey": "anyValue"}], "resources": [{"anyKey": "anyValue"}], "resources_count": 15, "template_type": "template_type"}]'
         responses.add(responses.GET,
                       url,
@@ -2574,7 +2211,7 @@ class TestGetWorkspaceResources():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.get_workspace_resources(**req_copy)
+                _service.get_workspace_resources(**req_copy)
 
 
 
@@ -2587,6 +2224,8 @@ class TestGetWorkspaceState():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -2598,7 +2237,7 @@ class TestGetWorkspaceState():
         get_workspace_state()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/state_stores')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/state_stores')
         mock_response = '{"runtime_data": [{"engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "state_store_url": "state_store_url"}]}'
         responses.add(responses.GET,
                       url,
@@ -2610,7 +2249,7 @@ class TestGetWorkspaceState():
         w_id = 'testString'
 
         # Invoke method
-        response = service.get_workspace_state(
+        response = _service.get_workspace_state(
             w_id,
             headers={}
         )
@@ -2626,7 +2265,7 @@ class TestGetWorkspaceState():
         test_get_workspace_state_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/state_stores')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/state_stores')
         mock_response = '{"runtime_data": [{"engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "state_store_url": "state_store_url"}]}'
         responses.add(responses.GET,
                       url,
@@ -2644,7 +2283,7 @@ class TestGetWorkspaceState():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.get_workspace_state(**req_copy)
+                _service.get_workspace_state(**req_copy)
 
 
 
@@ -2657,6 +2296,8 @@ class TestGetWorkspaceTemplateState():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -2668,8 +2309,8 @@ class TestGetWorkspaceTemplateState():
         get_workspace_template_state()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/runtime_data/testString/state_store')
-        mock_response = '{"version": 7, "terraform_version": "terraform_version", "serial": 6, "lineage": "lineage", "modules": [{"anyKey": "anyValue"}]}'
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/runtime_data/testString/state_store')
+        mock_response = '[{"anyKey": "anyValue"}]'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -2681,7 +2322,7 @@ class TestGetWorkspaceTemplateState():
         t_id = 'testString'
 
         # Invoke method
-        response = service.get_workspace_template_state(
+        response = _service.get_workspace_template_state(
             w_id,
             t_id,
             headers={}
@@ -2698,8 +2339,8 @@ class TestGetWorkspaceTemplateState():
         test_get_workspace_template_state_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/runtime_data/testString/state_store')
-        mock_response = '{"version": 7, "terraform_version": "terraform_version", "serial": 6, "lineage": "lineage", "modules": [{"anyKey": "anyValue"}]}'
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/runtime_data/testString/state_store')
+        mock_response = '[{"anyKey": "anyValue"}]'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -2718,19 +2359,9 @@ class TestGetWorkspaceTemplateState():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.get_workspace_template_state(**req_copy)
+                _service.get_workspace_template_state(**req_copy)
 
 
-
-# endregion
-##############################################################################
-# End of Service: WorkspaceOutputs
-##############################################################################
-
-##############################################################################
-# Start of Service: WorkspaceLogs
-##############################################################################
-# region
 
 class TestGetWorkspaceActivityLogs():
     """
@@ -2741,6 +2372,8 @@ class TestGetWorkspaceActivityLogs():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -2752,7 +2385,7 @@ class TestGetWorkspaceActivityLogs():
         get_workspace_activity_logs()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/actions/testString/logs')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/actions/testString/logs')
         mock_response = '{"action_id": "action_id", "name": "name", "templates": [{"log_url": "log_url", "template_id": "template_id", "template_type": "template_type"}]}'
         responses.add(responses.GET,
                       url,
@@ -2765,7 +2398,7 @@ class TestGetWorkspaceActivityLogs():
         activity_id = 'testString'
 
         # Invoke method
-        response = service.get_workspace_activity_logs(
+        response = _service.get_workspace_activity_logs(
             w_id,
             activity_id,
             headers={}
@@ -2782,7 +2415,7 @@ class TestGetWorkspaceActivityLogs():
         test_get_workspace_activity_logs_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/actions/testString/logs')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/actions/testString/logs')
         mock_response = '{"action_id": "action_id", "name": "name", "templates": [{"log_url": "log_url", "template_id": "template_id", "template_type": "template_type"}]}'
         responses.add(responses.GET,
                       url,
@@ -2802,7 +2435,7 @@ class TestGetWorkspaceActivityLogs():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.get_workspace_activity_logs(**req_copy)
+                _service.get_workspace_activity_logs(**req_copy)
 
 
 
@@ -2815,6 +2448,8 @@ class TestGetWorkspaceLogUrls():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -2826,7 +2461,7 @@ class TestGetWorkspaceLogUrls():
         get_workspace_log_urls()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/log_stores')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/log_stores')
         mock_response = '{"runtime_data": [{"engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url"}]}'
         responses.add(responses.GET,
                       url,
@@ -2838,7 +2473,7 @@ class TestGetWorkspaceLogUrls():
         w_id = 'testString'
 
         # Invoke method
-        response = service.get_workspace_log_urls(
+        response = _service.get_workspace_log_urls(
             w_id,
             headers={}
         )
@@ -2854,7 +2489,7 @@ class TestGetWorkspaceLogUrls():
         test_get_workspace_log_urls_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/log_stores')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/log_stores')
         mock_response = '{"runtime_data": [{"engine_name": "engine_name", "engine_version": "engine_version", "id": "id", "log_store_url": "log_store_url"}]}'
         responses.add(responses.GET,
                       url,
@@ -2872,7 +2507,7 @@ class TestGetWorkspaceLogUrls():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.get_workspace_log_urls(**req_copy)
+                _service.get_workspace_log_urls(**req_copy)
 
 
 
@@ -2885,6 +2520,8 @@ class TestGetTemplateLogs():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -2896,7 +2533,7 @@ class TestGetTemplateLogs():
         get_template_logs()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/runtime_data/testString/log_store')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/runtime_data/testString/log_store')
         mock_response = '"operation_response"'
         responses.add(responses.GET,
                       url,
@@ -2913,7 +2550,7 @@ class TestGetTemplateLogs():
         log_tf_ansible = True
 
         # Invoke method
-        response = service.get_template_logs(
+        response = _service.get_template_logs(
             w_id,
             t_id,
             log_tf_cmd=log_tf_cmd,
@@ -2941,7 +2578,7 @@ class TestGetTemplateLogs():
         test_get_template_logs_required_params()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/runtime_data/testString/log_store')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/runtime_data/testString/log_store')
         mock_response = '"operation_response"'
         responses.add(responses.GET,
                       url,
@@ -2954,7 +2591,7 @@ class TestGetTemplateLogs():
         t_id = 'testString'
 
         # Invoke method
-        response = service.get_template_logs(
+        response = _service.get_template_logs(
             w_id,
             t_id,
             headers={}
@@ -2971,7 +2608,7 @@ class TestGetTemplateLogs():
         test_get_template_logs_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/runtime_data/testString/log_store')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/runtime_data/testString/log_store')
         mock_response = '"operation_response"'
         responses.add(responses.GET,
                       url,
@@ -2991,7 +2628,7 @@ class TestGetTemplateLogs():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.get_template_logs(**req_copy)
+                _service.get_template_logs(**req_copy)
 
 
 
@@ -3004,6 +2641,8 @@ class TestGetTemplateActivityLog():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -3015,7 +2654,7 @@ class TestGetTemplateActivityLog():
         get_template_activity_log()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/runtime_data/testString/log_store/actions/testString')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/runtime_data/testString/log_store/actions/testString')
         mock_response = '"operation_response"'
         responses.add(responses.GET,
                       url,
@@ -3033,7 +2672,7 @@ class TestGetTemplateActivityLog():
         log_tf_ansible = True
 
         # Invoke method
-        response = service.get_template_activity_log(
+        response = _service.get_template_activity_log(
             w_id,
             t_id,
             activity_id,
@@ -3062,7 +2701,7 @@ class TestGetTemplateActivityLog():
         test_get_template_activity_log_required_params()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/runtime_data/testString/log_store/actions/testString')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/runtime_data/testString/log_store/actions/testString')
         mock_response = '"operation_response"'
         responses.add(responses.GET,
                       url,
@@ -3076,7 +2715,7 @@ class TestGetTemplateActivityLog():
         activity_id = 'testString'
 
         # Invoke method
-        response = service.get_template_activity_log(
+        response = _service.get_template_activity_log(
             w_id,
             t_id,
             activity_id,
@@ -3094,7 +2733,7 @@ class TestGetTemplateActivityLog():
         test_get_template_activity_log_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspaces/testString/runtime_data/testString/log_store/actions/testString')
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/runtime_data/testString/log_store/actions/testString')
         mock_response = '"operation_response"'
         responses.add(responses.GET,
                       url,
@@ -3116,19 +2755,3830 @@ class TestGetTemplateActivityLog():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.get_template_activity_log(**req_copy)
+                _service.get_template_activity_log(**req_copy)
 
 
 
 # endregion
 ##############################################################################
-# End of Service: WorkspaceLogs
+# End of Service: Workspaces
 ##############################################################################
 
 ##############################################################################
-# Start of Service: WorkspaceBulkJobs
+# Start of Service: Actions
 ##############################################################################
 # region
+
+class TestNewInstance():
+    """
+    Test Class for new_instance
+    """
+
+    def test_new_instance(self):
+        """
+        new_instance()
+        """
+        os.environ['TEST_SERVICE_AUTH_TYPE'] = 'noAuth'
+
+        service = SchematicsV1.new_instance(
+            service_name='TEST_SERVICE',
+        )
+
+        assert service is not None
+        assert isinstance(service, SchematicsV1)
+
+    def test_new_instance_without_authenticator(self):
+        """
+        new_instance_without_authenticator()
+        """
+        with pytest.raises(ValueError, match='authenticator must be provided'):
+            service = SchematicsV1.new_instance(
+            )
+
+class TestListActions():
+    """
+    Test Class for list_actions
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_list_actions_all_params(self):
+        """
+        list_actions()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/actions')
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "actions": [{"name": "Stop Action", "description": "This Action can be used to Stop the targets", "id": "id", "crn": "crn", "location": "us-south", "resource_group": "resource_group", "namespace": "namespace", "tags": ["tags"], "playbook_name": "playbook_name", "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00.000Z"}, "state": {"status_code": "normal", "status_message": "status_message"}, "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by"}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        offset = 0
+        limit = 1
+        sort = 'testString'
+        profile = 'ids'
+
+        # Invoke method
+        response = _service.list_actions(
+            offset=offset,
+            limit=limit,
+            sort=sort,
+            profile=profile,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate query params
+        query_string = responses.calls[0].request.url.split('?',1)[1]
+        query_string = urllib.parse.unquote_plus(query_string)
+        assert 'offset={}'.format(offset) in query_string
+        assert 'limit={}'.format(limit) in query_string
+        assert 'sort={}'.format(sort) in query_string
+        assert 'profile={}'.format(profile) in query_string
+
+
+    @responses.activate
+    def test_list_actions_required_params(self):
+        """
+        test_list_actions_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/actions')
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "actions": [{"name": "Stop Action", "description": "This Action can be used to Stop the targets", "id": "id", "crn": "crn", "location": "us-south", "resource_group": "resource_group", "namespace": "namespace", "tags": ["tags"], "playbook_name": "playbook_name", "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00.000Z"}, "state": {"status_code": "normal", "status_message": "status_message"}, "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}, "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by"}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Invoke method
+        response = _service.list_actions()
+
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+class TestCreateAction():
+    """
+    Test Class for create_action
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_create_action_all_params(self):
+        """
+        create_action()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/actions')
+        mock_response = '{"name": "Stop Action", "description": "The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"computed_git_repo_url": "computed_git_repo_url", "git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}, "catalog": {"catalog_name": "catalog_name", "offering_name": "offering_name", "offering_version": "offering_version", "offering_kind": "offering_kind", "offering_id": "offering_id", "offering_version_id": "offering_version_id", "offering_repo_url": "offering_repo_url"}, "cos_bucket": {"cos_bucket_url": "cos_bucket_url"}}, "source_type": "local", "command_parameter": "command_parameter", "inventory": "inventory", "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "bastion": {"name": "name", "host": "host"}, "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "targets_ini": "targets_ini", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-01-01T12:00:00.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-01-01T12:00:00.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
+        responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=201)
+
+        # Construct a dict representation of a UserState model
+        user_state_model = {}
+        user_state_model['state'] = 'draft'
+        user_state_model['set_by'] = 'testString'
+        user_state_model['set_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a ExternalSourceGit model
+        external_source_git_model = {}
+        external_source_git_model['computed_git_repo_url'] = 'testString'
+        external_source_git_model['git_repo_url'] = 'testString'
+        external_source_git_model['git_token'] = 'testString'
+        external_source_git_model['git_repo_folder'] = 'testString'
+        external_source_git_model['git_release'] = 'testString'
+        external_source_git_model['git_branch'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCatalog model
+        external_source_catalog_model = {}
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCosBucket model
+        external_source_cos_bucket_model = {}
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSource model
+        external_source_model = {}
+        external_source_model['source_type'] = 'local'
+        external_source_model['git'] = external_source_git_model
+        external_source_model['catalog'] = external_source_catalog_model
+        external_source_model['cos_bucket'] = external_source_cos_bucket_model
+
+        # Construct a dict representation of a VariableMetadata model
+        variable_metadata_model = {}
+        variable_metadata_model['type'] = 'boolean'
+        variable_metadata_model['aliases'] = ['testString']
+        variable_metadata_model['description'] = 'testString'
+        variable_metadata_model['default_value'] = 'testString'
+        variable_metadata_model['secure'] = True
+        variable_metadata_model['immutable'] = True
+        variable_metadata_model['hidden'] = True
+        variable_metadata_model['options'] = ['testString']
+        variable_metadata_model['min_value'] = 38
+        variable_metadata_model['max_value'] = 38
+        variable_metadata_model['min_length'] = 38
+        variable_metadata_model['max_length'] = 38
+        variable_metadata_model['matches'] = 'testString'
+        variable_metadata_model['position'] = 38
+        variable_metadata_model['group_by'] = 'testString'
+        variable_metadata_model['source'] = 'testString'
+
+        # Construct a dict representation of a VariableData model
+        variable_data_model = {}
+        variable_data_model['name'] = 'testString'
+        variable_data_model['value'] = 'testString'
+        variable_data_model['metadata'] = variable_metadata_model
+
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
+
+        # Construct a dict representation of a ActionState model
+        action_state_model = {}
+        action_state_model['status_code'] = 'normal'
+        action_state_model['status_job_id'] = 'testString'
+        action_state_model['status_message'] = 'testString'
+
+        # Construct a dict representation of a SystemLock model
+        system_lock_model = {}
+        system_lock_model['sys_locked'] = True
+        system_lock_model['sys_locked_by'] = 'testString'
+        system_lock_model['sys_locked_at'] = "2019-01-01T12:00:00Z"
+
+        # Set up parameter values
+        name = 'Stop Action'
+        description = 'The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.'
+        location = 'us-south'
+        resource_group = 'testString'
+        tags = ['testString']
+        user_state = user_state_model
+        source_readme_url = 'testString'
+        source = external_source_model
+        source_type = 'local'
+        command_parameter = 'testString'
+        inventory = 'testString'
+        credentials = [variable_data_model]
+        bastion = bastion_resource_definition_model
+        bastion_credential = variable_data_model
+        targets_ini = 'testString'
+        inputs = [variable_data_model]
+        outputs = [variable_data_model]
+        settings = [variable_data_model]
+        state = action_state_model
+        sys_lock = system_lock_model
+        x_github_token = 'testString'
+
+        # Invoke method
+        response = _service.create_action(
+            name=name,
+            description=description,
+            location=location,
+            resource_group=resource_group,
+            tags=tags,
+            user_state=user_state,
+            source_readme_url=source_readme_url,
+            source=source,
+            source_type=source_type,
+            command_parameter=command_parameter,
+            inventory=inventory,
+            credentials=credentials,
+            bastion=bastion,
+            bastion_credential=bastion_credential,
+            targets_ini=targets_ini,
+            inputs=inputs,
+            outputs=outputs,
+            settings=settings,
+            state=state,
+            sys_lock=sys_lock,
+            x_github_token=x_github_token,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 201
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['name'] == 'Stop Action'
+        assert req_body['description'] == 'The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.'
+        assert req_body['location'] == 'us-south'
+        assert req_body['resource_group'] == 'testString'
+        assert req_body['tags'] == ['testString']
+        assert req_body['user_state'] == user_state_model
+        assert req_body['source_readme_url'] == 'testString'
+        assert req_body['source'] == external_source_model
+        assert req_body['source_type'] == 'local'
+        assert req_body['command_parameter'] == 'testString'
+        assert req_body['inventory'] == 'testString'
+        assert req_body['credentials'] == [variable_data_model]
+        assert req_body['bastion'] == bastion_resource_definition_model
+        assert req_body['bastion_credential'] == variable_data_model
+        assert req_body['targets_ini'] == 'testString'
+        assert req_body['inputs'] == [variable_data_model]
+        assert req_body['outputs'] == [variable_data_model]
+        assert req_body['settings'] == [variable_data_model]
+        assert req_body['state'] == action_state_model
+        assert req_body['sys_lock'] == system_lock_model
+
+
+    @responses.activate
+    def test_create_action_required_params(self):
+        """
+        test_create_action_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/actions')
+        mock_response = '{"name": "Stop Action", "description": "The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"computed_git_repo_url": "computed_git_repo_url", "git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}, "catalog": {"catalog_name": "catalog_name", "offering_name": "offering_name", "offering_version": "offering_version", "offering_kind": "offering_kind", "offering_id": "offering_id", "offering_version_id": "offering_version_id", "offering_repo_url": "offering_repo_url"}, "cos_bucket": {"cos_bucket_url": "cos_bucket_url"}}, "source_type": "local", "command_parameter": "command_parameter", "inventory": "inventory", "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "bastion": {"name": "name", "host": "host"}, "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "targets_ini": "targets_ini", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-01-01T12:00:00.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-01-01T12:00:00.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
+        responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=201)
+
+        # Construct a dict representation of a UserState model
+        user_state_model = {}
+        user_state_model['state'] = 'draft'
+        user_state_model['set_by'] = 'testString'
+        user_state_model['set_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a ExternalSourceGit model
+        external_source_git_model = {}
+        external_source_git_model['computed_git_repo_url'] = 'testString'
+        external_source_git_model['git_repo_url'] = 'testString'
+        external_source_git_model['git_token'] = 'testString'
+        external_source_git_model['git_repo_folder'] = 'testString'
+        external_source_git_model['git_release'] = 'testString'
+        external_source_git_model['git_branch'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCatalog model
+        external_source_catalog_model = {}
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCosBucket model
+        external_source_cos_bucket_model = {}
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSource model
+        external_source_model = {}
+        external_source_model['source_type'] = 'local'
+        external_source_model['git'] = external_source_git_model
+        external_source_model['catalog'] = external_source_catalog_model
+        external_source_model['cos_bucket'] = external_source_cos_bucket_model
+
+        # Construct a dict representation of a VariableMetadata model
+        variable_metadata_model = {}
+        variable_metadata_model['type'] = 'boolean'
+        variable_metadata_model['aliases'] = ['testString']
+        variable_metadata_model['description'] = 'testString'
+        variable_metadata_model['default_value'] = 'testString'
+        variable_metadata_model['secure'] = True
+        variable_metadata_model['immutable'] = True
+        variable_metadata_model['hidden'] = True
+        variable_metadata_model['options'] = ['testString']
+        variable_metadata_model['min_value'] = 38
+        variable_metadata_model['max_value'] = 38
+        variable_metadata_model['min_length'] = 38
+        variable_metadata_model['max_length'] = 38
+        variable_metadata_model['matches'] = 'testString'
+        variable_metadata_model['position'] = 38
+        variable_metadata_model['group_by'] = 'testString'
+        variable_metadata_model['source'] = 'testString'
+
+        # Construct a dict representation of a VariableData model
+        variable_data_model = {}
+        variable_data_model['name'] = 'testString'
+        variable_data_model['value'] = 'testString'
+        variable_data_model['metadata'] = variable_metadata_model
+
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
+
+        # Construct a dict representation of a ActionState model
+        action_state_model = {}
+        action_state_model['status_code'] = 'normal'
+        action_state_model['status_job_id'] = 'testString'
+        action_state_model['status_message'] = 'testString'
+
+        # Construct a dict representation of a SystemLock model
+        system_lock_model = {}
+        system_lock_model['sys_locked'] = True
+        system_lock_model['sys_locked_by'] = 'testString'
+        system_lock_model['sys_locked_at'] = "2019-01-01T12:00:00Z"
+
+        # Set up parameter values
+        name = 'Stop Action'
+        description = 'The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.'
+        location = 'us-south'
+        resource_group = 'testString'
+        tags = ['testString']
+        user_state = user_state_model
+        source_readme_url = 'testString'
+        source = external_source_model
+        source_type = 'local'
+        command_parameter = 'testString'
+        inventory = 'testString'
+        credentials = [variable_data_model]
+        bastion = bastion_resource_definition_model
+        bastion_credential = variable_data_model
+        targets_ini = 'testString'
+        inputs = [variable_data_model]
+        outputs = [variable_data_model]
+        settings = [variable_data_model]
+        state = action_state_model
+        sys_lock = system_lock_model
+
+        # Invoke method
+        response = _service.create_action(
+            name=name,
+            description=description,
+            location=location,
+            resource_group=resource_group,
+            tags=tags,
+            user_state=user_state,
+            source_readme_url=source_readme_url,
+            source=source,
+            source_type=source_type,
+            command_parameter=command_parameter,
+            inventory=inventory,
+            credentials=credentials,
+            bastion=bastion,
+            bastion_credential=bastion_credential,
+            targets_ini=targets_ini,
+            inputs=inputs,
+            outputs=outputs,
+            settings=settings,
+            state=state,
+            sys_lock=sys_lock,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 201
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['name'] == 'Stop Action'
+        assert req_body['description'] == 'The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.'
+        assert req_body['location'] == 'us-south'
+        assert req_body['resource_group'] == 'testString'
+        assert req_body['tags'] == ['testString']
+        assert req_body['user_state'] == user_state_model
+        assert req_body['source_readme_url'] == 'testString'
+        assert req_body['source'] == external_source_model
+        assert req_body['source_type'] == 'local'
+        assert req_body['command_parameter'] == 'testString'
+        assert req_body['inventory'] == 'testString'
+        assert req_body['credentials'] == [variable_data_model]
+        assert req_body['bastion'] == bastion_resource_definition_model
+        assert req_body['bastion_credential'] == variable_data_model
+        assert req_body['targets_ini'] == 'testString'
+        assert req_body['inputs'] == [variable_data_model]
+        assert req_body['outputs'] == [variable_data_model]
+        assert req_body['settings'] == [variable_data_model]
+        assert req_body['state'] == action_state_model
+        assert req_body['sys_lock'] == system_lock_model
+
+
+class TestGetAction():
+    """
+    Test Class for get_action
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_get_action_all_params(self):
+        """
+        get_action()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/actions/testString')
+        mock_response = '{"name": "Stop Action", "description": "The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"computed_git_repo_url": "computed_git_repo_url", "git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}, "catalog": {"catalog_name": "catalog_name", "offering_name": "offering_name", "offering_version": "offering_version", "offering_kind": "offering_kind", "offering_id": "offering_id", "offering_version_id": "offering_version_id", "offering_repo_url": "offering_repo_url"}, "cos_bucket": {"cos_bucket_url": "cos_bucket_url"}}, "source_type": "local", "command_parameter": "command_parameter", "inventory": "inventory", "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "bastion": {"name": "name", "host": "host"}, "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "targets_ini": "targets_ini", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-01-01T12:00:00.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-01-01T12:00:00.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        action_id = 'testString'
+        profile = 'summary'
+
+        # Invoke method
+        response = _service.get_action(
+            action_id,
+            profile=profile,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate query params
+        query_string = responses.calls[0].request.url.split('?',1)[1]
+        query_string = urllib.parse.unquote_plus(query_string)
+        assert 'profile={}'.format(profile) in query_string
+
+
+    @responses.activate
+    def test_get_action_required_params(self):
+        """
+        test_get_action_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/actions/testString')
+        mock_response = '{"name": "Stop Action", "description": "The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"computed_git_repo_url": "computed_git_repo_url", "git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}, "catalog": {"catalog_name": "catalog_name", "offering_name": "offering_name", "offering_version": "offering_version", "offering_kind": "offering_kind", "offering_id": "offering_id", "offering_version_id": "offering_version_id", "offering_repo_url": "offering_repo_url"}, "cos_bucket": {"cos_bucket_url": "cos_bucket_url"}}, "source_type": "local", "command_parameter": "command_parameter", "inventory": "inventory", "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "bastion": {"name": "name", "host": "host"}, "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "targets_ini": "targets_ini", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-01-01T12:00:00.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-01-01T12:00:00.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        action_id = 'testString'
+
+        # Invoke method
+        response = _service.get_action(
+            action_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+    @responses.activate
+    def test_get_action_value_error(self):
+        """
+        test_get_action_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/actions/testString')
+        mock_response = '{"name": "Stop Action", "description": "The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"computed_git_repo_url": "computed_git_repo_url", "git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}, "catalog": {"catalog_name": "catalog_name", "offering_name": "offering_name", "offering_version": "offering_version", "offering_kind": "offering_kind", "offering_id": "offering_id", "offering_version_id": "offering_version_id", "offering_repo_url": "offering_repo_url"}, "cos_bucket": {"cos_bucket_url": "cos_bucket_url"}}, "source_type": "local", "command_parameter": "command_parameter", "inventory": "inventory", "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "bastion": {"name": "name", "host": "host"}, "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "targets_ini": "targets_ini", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-01-01T12:00:00.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-01-01T12:00:00.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        action_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "action_id": action_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.get_action(**req_copy)
+
+
+
+class TestDeleteAction():
+    """
+    Test Class for delete_action
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_delete_action_all_params(self):
+        """
+        delete_action()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/actions/testString')
+        responses.add(responses.DELETE,
+                      url,
+                      status=204)
+
+        # Set up parameter values
+        action_id = 'testString'
+        force = True
+        propagate = True
+
+        # Invoke method
+        response = _service.delete_action(
+            action_id,
+            force=force,
+            propagate=propagate,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 204
+
+
+    @responses.activate
+    def test_delete_action_required_params(self):
+        """
+        test_delete_action_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/actions/testString')
+        responses.add(responses.DELETE,
+                      url,
+                      status=204)
+
+        # Set up parameter values
+        action_id = 'testString'
+
+        # Invoke method
+        response = _service.delete_action(
+            action_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 204
+
+
+    @responses.activate
+    def test_delete_action_value_error(self):
+        """
+        test_delete_action_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/actions/testString')
+        responses.add(responses.DELETE,
+                      url,
+                      status=204)
+
+        # Set up parameter values
+        action_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "action_id": action_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.delete_action(**req_copy)
+
+
+
+class TestUpdateAction():
+    """
+    Test Class for update_action
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_update_action_all_params(self):
+        """
+        update_action()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/actions/testString')
+        mock_response = '{"name": "Stop Action", "description": "The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"computed_git_repo_url": "computed_git_repo_url", "git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}, "catalog": {"catalog_name": "catalog_name", "offering_name": "offering_name", "offering_version": "offering_version", "offering_kind": "offering_kind", "offering_id": "offering_id", "offering_version_id": "offering_version_id", "offering_repo_url": "offering_repo_url"}, "cos_bucket": {"cos_bucket_url": "cos_bucket_url"}}, "source_type": "local", "command_parameter": "command_parameter", "inventory": "inventory", "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "bastion": {"name": "name", "host": "host"}, "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "targets_ini": "targets_ini", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-01-01T12:00:00.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-01-01T12:00:00.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
+        responses.add(responses.PATCH,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Construct a dict representation of a UserState model
+        user_state_model = {}
+        user_state_model['state'] = 'draft'
+        user_state_model['set_by'] = 'testString'
+        user_state_model['set_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a ExternalSourceGit model
+        external_source_git_model = {}
+        external_source_git_model['computed_git_repo_url'] = 'testString'
+        external_source_git_model['git_repo_url'] = 'testString'
+        external_source_git_model['git_token'] = 'testString'
+        external_source_git_model['git_repo_folder'] = 'testString'
+        external_source_git_model['git_release'] = 'testString'
+        external_source_git_model['git_branch'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCatalog model
+        external_source_catalog_model = {}
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCosBucket model
+        external_source_cos_bucket_model = {}
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSource model
+        external_source_model = {}
+        external_source_model['source_type'] = 'local'
+        external_source_model['git'] = external_source_git_model
+        external_source_model['catalog'] = external_source_catalog_model
+        external_source_model['cos_bucket'] = external_source_cos_bucket_model
+
+        # Construct a dict representation of a VariableMetadata model
+        variable_metadata_model = {}
+        variable_metadata_model['type'] = 'boolean'
+        variable_metadata_model['aliases'] = ['testString']
+        variable_metadata_model['description'] = 'testString'
+        variable_metadata_model['default_value'] = 'testString'
+        variable_metadata_model['secure'] = True
+        variable_metadata_model['immutable'] = True
+        variable_metadata_model['hidden'] = True
+        variable_metadata_model['options'] = ['testString']
+        variable_metadata_model['min_value'] = 38
+        variable_metadata_model['max_value'] = 38
+        variable_metadata_model['min_length'] = 38
+        variable_metadata_model['max_length'] = 38
+        variable_metadata_model['matches'] = 'testString'
+        variable_metadata_model['position'] = 38
+        variable_metadata_model['group_by'] = 'testString'
+        variable_metadata_model['source'] = 'testString'
+
+        # Construct a dict representation of a VariableData model
+        variable_data_model = {}
+        variable_data_model['name'] = 'testString'
+        variable_data_model['value'] = 'testString'
+        variable_data_model['metadata'] = variable_metadata_model
+
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
+
+        # Construct a dict representation of a ActionState model
+        action_state_model = {}
+        action_state_model['status_code'] = 'normal'
+        action_state_model['status_job_id'] = 'testString'
+        action_state_model['status_message'] = 'testString'
+
+        # Construct a dict representation of a SystemLock model
+        system_lock_model = {}
+        system_lock_model['sys_locked'] = True
+        system_lock_model['sys_locked_by'] = 'testString'
+        system_lock_model['sys_locked_at'] = "2019-01-01T12:00:00Z"
+
+        # Set up parameter values
+        action_id = 'testString'
+        name = 'Stop Action'
+        description = 'The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.'
+        location = 'us-south'
+        resource_group = 'testString'
+        tags = ['testString']
+        user_state = user_state_model
+        source_readme_url = 'testString'
+        source = external_source_model
+        source_type = 'local'
+        command_parameter = 'testString'
+        inventory = 'testString'
+        credentials = [variable_data_model]
+        bastion = bastion_resource_definition_model
+        bastion_credential = variable_data_model
+        targets_ini = 'testString'
+        inputs = [variable_data_model]
+        outputs = [variable_data_model]
+        settings = [variable_data_model]
+        state = action_state_model
+        sys_lock = system_lock_model
+        x_github_token = 'testString'
+
+        # Invoke method
+        response = _service.update_action(
+            action_id,
+            name=name,
+            description=description,
+            location=location,
+            resource_group=resource_group,
+            tags=tags,
+            user_state=user_state,
+            source_readme_url=source_readme_url,
+            source=source,
+            source_type=source_type,
+            command_parameter=command_parameter,
+            inventory=inventory,
+            credentials=credentials,
+            bastion=bastion,
+            bastion_credential=bastion_credential,
+            targets_ini=targets_ini,
+            inputs=inputs,
+            outputs=outputs,
+            settings=settings,
+            state=state,
+            sys_lock=sys_lock,
+            x_github_token=x_github_token,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['name'] == 'Stop Action'
+        assert req_body['description'] == 'The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.'
+        assert req_body['location'] == 'us-south'
+        assert req_body['resource_group'] == 'testString'
+        assert req_body['tags'] == ['testString']
+        assert req_body['user_state'] == user_state_model
+        assert req_body['source_readme_url'] == 'testString'
+        assert req_body['source'] == external_source_model
+        assert req_body['source_type'] == 'local'
+        assert req_body['command_parameter'] == 'testString'
+        assert req_body['inventory'] == 'testString'
+        assert req_body['credentials'] == [variable_data_model]
+        assert req_body['bastion'] == bastion_resource_definition_model
+        assert req_body['bastion_credential'] == variable_data_model
+        assert req_body['targets_ini'] == 'testString'
+        assert req_body['inputs'] == [variable_data_model]
+        assert req_body['outputs'] == [variable_data_model]
+        assert req_body['settings'] == [variable_data_model]
+        assert req_body['state'] == action_state_model
+        assert req_body['sys_lock'] == system_lock_model
+
+
+    @responses.activate
+    def test_update_action_required_params(self):
+        """
+        test_update_action_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/actions/testString')
+        mock_response = '{"name": "Stop Action", "description": "The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"computed_git_repo_url": "computed_git_repo_url", "git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}, "catalog": {"catalog_name": "catalog_name", "offering_name": "offering_name", "offering_version": "offering_version", "offering_kind": "offering_kind", "offering_id": "offering_id", "offering_version_id": "offering_version_id", "offering_repo_url": "offering_repo_url"}, "cos_bucket": {"cos_bucket_url": "cos_bucket_url"}}, "source_type": "local", "command_parameter": "command_parameter", "inventory": "inventory", "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "bastion": {"name": "name", "host": "host"}, "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "targets_ini": "targets_ini", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-01-01T12:00:00.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-01-01T12:00:00.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
+        responses.add(responses.PATCH,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Construct a dict representation of a UserState model
+        user_state_model = {}
+        user_state_model['state'] = 'draft'
+        user_state_model['set_by'] = 'testString'
+        user_state_model['set_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a ExternalSourceGit model
+        external_source_git_model = {}
+        external_source_git_model['computed_git_repo_url'] = 'testString'
+        external_source_git_model['git_repo_url'] = 'testString'
+        external_source_git_model['git_token'] = 'testString'
+        external_source_git_model['git_repo_folder'] = 'testString'
+        external_source_git_model['git_release'] = 'testString'
+        external_source_git_model['git_branch'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCatalog model
+        external_source_catalog_model = {}
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCosBucket model
+        external_source_cos_bucket_model = {}
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSource model
+        external_source_model = {}
+        external_source_model['source_type'] = 'local'
+        external_source_model['git'] = external_source_git_model
+        external_source_model['catalog'] = external_source_catalog_model
+        external_source_model['cos_bucket'] = external_source_cos_bucket_model
+
+        # Construct a dict representation of a VariableMetadata model
+        variable_metadata_model = {}
+        variable_metadata_model['type'] = 'boolean'
+        variable_metadata_model['aliases'] = ['testString']
+        variable_metadata_model['description'] = 'testString'
+        variable_metadata_model['default_value'] = 'testString'
+        variable_metadata_model['secure'] = True
+        variable_metadata_model['immutable'] = True
+        variable_metadata_model['hidden'] = True
+        variable_metadata_model['options'] = ['testString']
+        variable_metadata_model['min_value'] = 38
+        variable_metadata_model['max_value'] = 38
+        variable_metadata_model['min_length'] = 38
+        variable_metadata_model['max_length'] = 38
+        variable_metadata_model['matches'] = 'testString'
+        variable_metadata_model['position'] = 38
+        variable_metadata_model['group_by'] = 'testString'
+        variable_metadata_model['source'] = 'testString'
+
+        # Construct a dict representation of a VariableData model
+        variable_data_model = {}
+        variable_data_model['name'] = 'testString'
+        variable_data_model['value'] = 'testString'
+        variable_data_model['metadata'] = variable_metadata_model
+
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
+
+        # Construct a dict representation of a ActionState model
+        action_state_model = {}
+        action_state_model['status_code'] = 'normal'
+        action_state_model['status_job_id'] = 'testString'
+        action_state_model['status_message'] = 'testString'
+
+        # Construct a dict representation of a SystemLock model
+        system_lock_model = {}
+        system_lock_model['sys_locked'] = True
+        system_lock_model['sys_locked_by'] = 'testString'
+        system_lock_model['sys_locked_at'] = "2019-01-01T12:00:00Z"
+
+        # Set up parameter values
+        action_id = 'testString'
+        name = 'Stop Action'
+        description = 'The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.'
+        location = 'us-south'
+        resource_group = 'testString'
+        tags = ['testString']
+        user_state = user_state_model
+        source_readme_url = 'testString'
+        source = external_source_model
+        source_type = 'local'
+        command_parameter = 'testString'
+        inventory = 'testString'
+        credentials = [variable_data_model]
+        bastion = bastion_resource_definition_model
+        bastion_credential = variable_data_model
+        targets_ini = 'testString'
+        inputs = [variable_data_model]
+        outputs = [variable_data_model]
+        settings = [variable_data_model]
+        state = action_state_model
+        sys_lock = system_lock_model
+
+        # Invoke method
+        response = _service.update_action(
+            action_id,
+            name=name,
+            description=description,
+            location=location,
+            resource_group=resource_group,
+            tags=tags,
+            user_state=user_state,
+            source_readme_url=source_readme_url,
+            source=source,
+            source_type=source_type,
+            command_parameter=command_parameter,
+            inventory=inventory,
+            credentials=credentials,
+            bastion=bastion,
+            bastion_credential=bastion_credential,
+            targets_ini=targets_ini,
+            inputs=inputs,
+            outputs=outputs,
+            settings=settings,
+            state=state,
+            sys_lock=sys_lock,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['name'] == 'Stop Action'
+        assert req_body['description'] == 'The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.'
+        assert req_body['location'] == 'us-south'
+        assert req_body['resource_group'] == 'testString'
+        assert req_body['tags'] == ['testString']
+        assert req_body['user_state'] == user_state_model
+        assert req_body['source_readme_url'] == 'testString'
+        assert req_body['source'] == external_source_model
+        assert req_body['source_type'] == 'local'
+        assert req_body['command_parameter'] == 'testString'
+        assert req_body['inventory'] == 'testString'
+        assert req_body['credentials'] == [variable_data_model]
+        assert req_body['bastion'] == bastion_resource_definition_model
+        assert req_body['bastion_credential'] == variable_data_model
+        assert req_body['targets_ini'] == 'testString'
+        assert req_body['inputs'] == [variable_data_model]
+        assert req_body['outputs'] == [variable_data_model]
+        assert req_body['settings'] == [variable_data_model]
+        assert req_body['state'] == action_state_model
+        assert req_body['sys_lock'] == system_lock_model
+
+
+    @responses.activate
+    def test_update_action_value_error(self):
+        """
+        test_update_action_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/actions/testString')
+        mock_response = '{"name": "Stop Action", "description": "The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-01-01T12:00:00.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"computed_git_repo_url": "computed_git_repo_url", "git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}, "catalog": {"catalog_name": "catalog_name", "offering_name": "offering_name", "offering_version": "offering_version", "offering_kind": "offering_kind", "offering_id": "offering_id", "offering_version_id": "offering_version_id", "offering_repo_url": "offering_repo_url"}, "cos_bucket": {"cos_bucket_url": "cos_bucket_url"}}, "source_type": "local", "command_parameter": "command_parameter", "inventory": "inventory", "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "bastion": {"name": "name", "host": "host"}, "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "targets_ini": "targets_ini", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-01-01T12:00:00.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-01-01T12:00:00.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
+        responses.add(responses.PATCH,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Construct a dict representation of a UserState model
+        user_state_model = {}
+        user_state_model['state'] = 'draft'
+        user_state_model['set_by'] = 'testString'
+        user_state_model['set_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a ExternalSourceGit model
+        external_source_git_model = {}
+        external_source_git_model['computed_git_repo_url'] = 'testString'
+        external_source_git_model['git_repo_url'] = 'testString'
+        external_source_git_model['git_token'] = 'testString'
+        external_source_git_model['git_repo_folder'] = 'testString'
+        external_source_git_model['git_release'] = 'testString'
+        external_source_git_model['git_branch'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCatalog model
+        external_source_catalog_model = {}
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCosBucket model
+        external_source_cos_bucket_model = {}
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSource model
+        external_source_model = {}
+        external_source_model['source_type'] = 'local'
+        external_source_model['git'] = external_source_git_model
+        external_source_model['catalog'] = external_source_catalog_model
+        external_source_model['cos_bucket'] = external_source_cos_bucket_model
+
+        # Construct a dict representation of a VariableMetadata model
+        variable_metadata_model = {}
+        variable_metadata_model['type'] = 'boolean'
+        variable_metadata_model['aliases'] = ['testString']
+        variable_metadata_model['description'] = 'testString'
+        variable_metadata_model['default_value'] = 'testString'
+        variable_metadata_model['secure'] = True
+        variable_metadata_model['immutable'] = True
+        variable_metadata_model['hidden'] = True
+        variable_metadata_model['options'] = ['testString']
+        variable_metadata_model['min_value'] = 38
+        variable_metadata_model['max_value'] = 38
+        variable_metadata_model['min_length'] = 38
+        variable_metadata_model['max_length'] = 38
+        variable_metadata_model['matches'] = 'testString'
+        variable_metadata_model['position'] = 38
+        variable_metadata_model['group_by'] = 'testString'
+        variable_metadata_model['source'] = 'testString'
+
+        # Construct a dict representation of a VariableData model
+        variable_data_model = {}
+        variable_data_model['name'] = 'testString'
+        variable_data_model['value'] = 'testString'
+        variable_data_model['metadata'] = variable_metadata_model
+
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
+
+        # Construct a dict representation of a ActionState model
+        action_state_model = {}
+        action_state_model['status_code'] = 'normal'
+        action_state_model['status_job_id'] = 'testString'
+        action_state_model['status_message'] = 'testString'
+
+        # Construct a dict representation of a SystemLock model
+        system_lock_model = {}
+        system_lock_model['sys_locked'] = True
+        system_lock_model['sys_locked_by'] = 'testString'
+        system_lock_model['sys_locked_at'] = "2019-01-01T12:00:00Z"
+
+        # Set up parameter values
+        action_id = 'testString'
+        name = 'Stop Action'
+        description = 'The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.'
+        location = 'us-south'
+        resource_group = 'testString'
+        tags = ['testString']
+        user_state = user_state_model
+        source_readme_url = 'testString'
+        source = external_source_model
+        source_type = 'local'
+        command_parameter = 'testString'
+        inventory = 'testString'
+        credentials = [variable_data_model]
+        bastion = bastion_resource_definition_model
+        bastion_credential = variable_data_model
+        targets_ini = 'testString'
+        inputs = [variable_data_model]
+        outputs = [variable_data_model]
+        settings = [variable_data_model]
+        state = action_state_model
+        sys_lock = system_lock_model
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "action_id": action_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.update_action(**req_copy)
+
+
+
+class TestUploadTemplateTarAction():
+    """
+    Test Class for upload_template_tar_action
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_upload_template_tar_action_all_params(self):
+        """
+        upload_template_tar_action()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/actions/testString/template_repo_upload')
+        mock_response = '{"file_value": "file_value", "has_received_file": false, "id": "id"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        action_id = 'testString'
+        file = io.BytesIO(b'This is a mock file.').getvalue()
+        file_content_type = 'testString'
+
+        # Invoke method
+        response = _service.upload_template_tar_action(
+            action_id,
+            file=file,
+            file_content_type=file_content_type,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+    @responses.activate
+    def test_upload_template_tar_action_required_params(self):
+        """
+        test_upload_template_tar_action_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/actions/testString/template_repo_upload')
+        mock_response = '{"file_value": "file_value", "has_received_file": false, "id": "id"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        action_id = 'testString'
+
+        # Invoke method
+        response = _service.upload_template_tar_action(
+            action_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+    @responses.activate
+    def test_upload_template_tar_action_value_error(self):
+        """
+        test_upload_template_tar_action_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/actions/testString/template_repo_upload')
+        mock_response = '{"file_value": "file_value", "has_received_file": false, "id": "id"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        action_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "action_id": action_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.upload_template_tar_action(**req_copy)
+
+
+
+# endregion
+##############################################################################
+# End of Service: Actions
+##############################################################################
+
+##############################################################################
+# Start of Service: Jobs
+##############################################################################
+# region
+
+class TestNewInstance():
+    """
+    Test Class for new_instance
+    """
+
+    def test_new_instance(self):
+        """
+        new_instance()
+        """
+        os.environ['TEST_SERVICE_AUTH_TYPE'] = 'noAuth'
+
+        service = SchematicsV1.new_instance(
+            service_name='TEST_SERVICE',
+        )
+
+        assert service is not None
+        assert isinstance(service, SchematicsV1)
+
+    def test_new_instance_without_authenticator(self):
+        """
+        new_instance_without_authenticator()
+        """
+        with pytest.raises(ValueError, match='authenticator must be provided'):
+            service = SchematicsV1.new_instance(
+            )
+
+class TestListWorkspaceActivities():
+    """
+    Test Class for list_workspace_activities
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_list_workspace_activities_all_params(self):
+        """
+        list_workspace_activities()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/actions')
+        mock_response = '{"actions": [{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00.000Z", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00.000Z", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00.000Z", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}], "workspace_id": "workspace_id", "workspace_name": "workspace_name"}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        w_id = 'testString'
+        offset = 0
+        limit = 1
+
+        # Invoke method
+        response = _service.list_workspace_activities(
+            w_id,
+            offset=offset,
+            limit=limit,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate query params
+        query_string = responses.calls[0].request.url.split('?',1)[1]
+        query_string = urllib.parse.unquote_plus(query_string)
+        assert 'offset={}'.format(offset) in query_string
+        assert 'limit={}'.format(limit) in query_string
+
+
+    @responses.activate
+    def test_list_workspace_activities_required_params(self):
+        """
+        test_list_workspace_activities_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/actions')
+        mock_response = '{"actions": [{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00.000Z", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00.000Z", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00.000Z", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}], "workspace_id": "workspace_id", "workspace_name": "workspace_name"}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        w_id = 'testString'
+
+        # Invoke method
+        response = _service.list_workspace_activities(
+            w_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+    @responses.activate
+    def test_list_workspace_activities_value_error(self):
+        """
+        test_list_workspace_activities_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/actions')
+        mock_response = '{"actions": [{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00.000Z", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00.000Z", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00.000Z", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}], "workspace_id": "workspace_id", "workspace_name": "workspace_name"}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        w_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "w_id": w_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.list_workspace_activities(**req_copy)
+
+
+
+class TestGetWorkspaceActivity():
+    """
+    Test Class for get_workspace_activity
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_get_workspace_activity_all_params(self):
+        """
+        get_workspace_activity()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/actions/testString')
+        mock_response = '{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00.000Z", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00.000Z", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00.000Z", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        w_id = 'testString'
+        activity_id = 'testString'
+
+        # Invoke method
+        response = _service.get_workspace_activity(
+            w_id,
+            activity_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+    @responses.activate
+    def test_get_workspace_activity_value_error(self):
+        """
+        test_get_workspace_activity_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/actions/testString')
+        mock_response = '{"action_id": "action_id", "message": ["message"], "name": "name", "performed_at": "2019-01-01T12:00:00.000Z", "performed_by": "performed_by", "status": "status", "templates": [{"end_time": "2019-01-01T12:00:00.000Z", "log_summary": {"activity_status": "activity_status", "detected_template_type": "detected_template_type", "discarded_files": 15, "error": "error", "resources_added": 15, "resources_destroyed": 19, "resources_modified": 18, "scanned_files": 13, "template_variable_count": 23, "time_taken": 10}, "log_url": "log_url", "message": "message", "start_time": "2019-01-01T12:00:00.000Z", "status": "status", "template_id": "template_id", "template_type": "template_type"}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        w_id = 'testString'
+        activity_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "w_id": w_id,
+            "activity_id": activity_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.get_workspace_activity(**req_copy)
+
+
+
+class TestDeleteWorkspaceActivity():
+    """
+    Test Class for delete_workspace_activity
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_delete_workspace_activity_all_params(self):
+        """
+        delete_workspace_activity()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/actions/testString')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.DELETE,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=202)
+
+        # Set up parameter values
+        w_id = 'testString'
+        activity_id = 'testString'
+
+        # Invoke method
+        response = _service.delete_workspace_activity(
+            w_id,
+            activity_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 202
+
+
+    @responses.activate
+    def test_delete_workspace_activity_value_error(self):
+        """
+        test_delete_workspace_activity_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/actions/testString')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.DELETE,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=202)
+
+        # Set up parameter values
+        w_id = 'testString'
+        activity_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "w_id": w_id,
+            "activity_id": activity_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.delete_workspace_activity(**req_copy)
+
+
+
+class TestRunWorkspaceCommands():
+    """
+    Test Class for run_workspace_commands
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_run_workspace_commands_all_params(self):
+        """
+        run_workspace_commands()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/commands')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Construct a dict representation of a TerraformCommand model
+        terraform_command_model = {}
+        terraform_command_model['command'] = 'testString'
+        terraform_command_model['command_params'] = 'testString'
+        terraform_command_model['command_name'] = 'testString'
+        terraform_command_model['command_desc'] = 'testString'
+        terraform_command_model['command_on_error'] = 'testString'
+        terraform_command_model['command_depends_on'] = 'testString'
+        terraform_command_model['command_status'] = 'testString'
+
+        # Set up parameter values
+        w_id = 'testString'
+        refresh_token = 'testString'
+        commands = [terraform_command_model]
+        operation_name = 'testString'
+        description = 'testString'
+
+        # Invoke method
+        response = _service.run_workspace_commands(
+            w_id,
+            refresh_token,
+            commands=commands,
+            operation_name=operation_name,
+            description=description,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['commands'] == [terraform_command_model]
+        assert req_body['operation_name'] == 'testString'
+        assert req_body['description'] == 'testString'
+
+
+    @responses.activate
+    def test_run_workspace_commands_value_error(self):
+        """
+        test_run_workspace_commands_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/commands')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Construct a dict representation of a TerraformCommand model
+        terraform_command_model = {}
+        terraform_command_model['command'] = 'testString'
+        terraform_command_model['command_params'] = 'testString'
+        terraform_command_model['command_name'] = 'testString'
+        terraform_command_model['command_desc'] = 'testString'
+        terraform_command_model['command_on_error'] = 'testString'
+        terraform_command_model['command_depends_on'] = 'testString'
+        terraform_command_model['command_status'] = 'testString'
+
+        # Set up parameter values
+        w_id = 'testString'
+        refresh_token = 'testString'
+        commands = [terraform_command_model]
+        operation_name = 'testString'
+        description = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "w_id": w_id,
+            "refresh_token": refresh_token,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.run_workspace_commands(**req_copy)
+
+
+
+class TestApplyWorkspaceCommand():
+    """
+    Test Class for apply_workspace_command
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_apply_workspace_command_all_params(self):
+        """
+        apply_workspace_command()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/apply')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=202)
+
+        # Construct a dict representation of a WorkspaceActivityOptionsTemplate model
+        workspace_activity_options_template_model = {}
+        workspace_activity_options_template_model['target'] = ['testString']
+        workspace_activity_options_template_model['tf_vars'] = ['testString']
+
+        # Set up parameter values
+        w_id = 'testString'
+        refresh_token = 'testString'
+        action_options = workspace_activity_options_template_model
+        delegated_token = 'testString'
+
+        # Invoke method
+        response = _service.apply_workspace_command(
+            w_id,
+            refresh_token,
+            action_options=action_options,
+            delegated_token=delegated_token,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 202
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['action_options'] == workspace_activity_options_template_model
+
+
+    @responses.activate
+    def test_apply_workspace_command_required_params(self):
+        """
+        test_apply_workspace_command_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/apply')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=202)
+
+        # Construct a dict representation of a WorkspaceActivityOptionsTemplate model
+        workspace_activity_options_template_model = {}
+        workspace_activity_options_template_model['target'] = ['testString']
+        workspace_activity_options_template_model['tf_vars'] = ['testString']
+
+        # Set up parameter values
+        w_id = 'testString'
+        refresh_token = 'testString'
+        action_options = workspace_activity_options_template_model
+
+        # Invoke method
+        response = _service.apply_workspace_command(
+            w_id,
+            refresh_token,
+            action_options=action_options,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 202
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['action_options'] == workspace_activity_options_template_model
+
+
+    @responses.activate
+    def test_apply_workspace_command_value_error(self):
+        """
+        test_apply_workspace_command_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/apply')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=202)
+
+        # Construct a dict representation of a WorkspaceActivityOptionsTemplate model
+        workspace_activity_options_template_model = {}
+        workspace_activity_options_template_model['target'] = ['testString']
+        workspace_activity_options_template_model['tf_vars'] = ['testString']
+
+        # Set up parameter values
+        w_id = 'testString'
+        refresh_token = 'testString'
+        action_options = workspace_activity_options_template_model
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "w_id": w_id,
+            "refresh_token": refresh_token,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.apply_workspace_command(**req_copy)
+
+
+
+class TestDestroyWorkspaceCommand():
+    """
+    Test Class for destroy_workspace_command
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_destroy_workspace_command_all_params(self):
+        """
+        destroy_workspace_command()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/destroy')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=202)
+
+        # Construct a dict representation of a WorkspaceActivityOptionsTemplate model
+        workspace_activity_options_template_model = {}
+        workspace_activity_options_template_model['target'] = ['testString']
+        workspace_activity_options_template_model['tf_vars'] = ['testString']
+
+        # Set up parameter values
+        w_id = 'testString'
+        refresh_token = 'testString'
+        action_options = workspace_activity_options_template_model
+        delegated_token = 'testString'
+
+        # Invoke method
+        response = _service.destroy_workspace_command(
+            w_id,
+            refresh_token,
+            action_options=action_options,
+            delegated_token=delegated_token,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 202
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['action_options'] == workspace_activity_options_template_model
+
+
+    @responses.activate
+    def test_destroy_workspace_command_required_params(self):
+        """
+        test_destroy_workspace_command_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/destroy')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=202)
+
+        # Construct a dict representation of a WorkspaceActivityOptionsTemplate model
+        workspace_activity_options_template_model = {}
+        workspace_activity_options_template_model['target'] = ['testString']
+        workspace_activity_options_template_model['tf_vars'] = ['testString']
+
+        # Set up parameter values
+        w_id = 'testString'
+        refresh_token = 'testString'
+        action_options = workspace_activity_options_template_model
+
+        # Invoke method
+        response = _service.destroy_workspace_command(
+            w_id,
+            refresh_token,
+            action_options=action_options,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 202
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['action_options'] == workspace_activity_options_template_model
+
+
+    @responses.activate
+    def test_destroy_workspace_command_value_error(self):
+        """
+        test_destroy_workspace_command_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/destroy')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=202)
+
+        # Construct a dict representation of a WorkspaceActivityOptionsTemplate model
+        workspace_activity_options_template_model = {}
+        workspace_activity_options_template_model['target'] = ['testString']
+        workspace_activity_options_template_model['tf_vars'] = ['testString']
+
+        # Set up parameter values
+        w_id = 'testString'
+        refresh_token = 'testString'
+        action_options = workspace_activity_options_template_model
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "w_id": w_id,
+            "refresh_token": refresh_token,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.destroy_workspace_command(**req_copy)
+
+
+
+class TestPlanWorkspaceCommand():
+    """
+    Test Class for plan_workspace_command
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_plan_workspace_command_all_params(self):
+        """
+        plan_workspace_command()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/plan')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=202)
+
+        # Set up parameter values
+        w_id = 'testString'
+        refresh_token = 'testString'
+        delegated_token = 'testString'
+
+        # Invoke method
+        response = _service.plan_workspace_command(
+            w_id,
+            refresh_token,
+            delegated_token=delegated_token,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 202
+
+
+    @responses.activate
+    def test_plan_workspace_command_required_params(self):
+        """
+        test_plan_workspace_command_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/plan')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=202)
+
+        # Set up parameter values
+        w_id = 'testString'
+        refresh_token = 'testString'
+
+        # Invoke method
+        response = _service.plan_workspace_command(
+            w_id,
+            refresh_token,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 202
+
+
+    @responses.activate
+    def test_plan_workspace_command_value_error(self):
+        """
+        test_plan_workspace_command_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/plan')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=202)
+
+        # Set up parameter values
+        w_id = 'testString'
+        refresh_token = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "w_id": w_id,
+            "refresh_token": refresh_token,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.plan_workspace_command(**req_copy)
+
+
+
+class TestRefreshWorkspaceCommand():
+    """
+    Test Class for refresh_workspace_command
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_refresh_workspace_command_all_params(self):
+        """
+        refresh_workspace_command()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/refresh')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=202)
+
+        # Set up parameter values
+        w_id = 'testString'
+        refresh_token = 'testString'
+        delegated_token = 'testString'
+
+        # Invoke method
+        response = _service.refresh_workspace_command(
+            w_id,
+            refresh_token,
+            delegated_token=delegated_token,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 202
+
+
+    @responses.activate
+    def test_refresh_workspace_command_required_params(self):
+        """
+        test_refresh_workspace_command_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/refresh')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=202)
+
+        # Set up parameter values
+        w_id = 'testString'
+        refresh_token = 'testString'
+
+        # Invoke method
+        response = _service.refresh_workspace_command(
+            w_id,
+            refresh_token,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 202
+
+
+    @responses.activate
+    def test_refresh_workspace_command_value_error(self):
+        """
+        test_refresh_workspace_command_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v1/workspaces/testString/refresh')
+        mock_response = '{"activityid": "activityid"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=202)
+
+        # Set up parameter values
+        w_id = 'testString'
+        refresh_token = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "w_id": w_id,
+            "refresh_token": refresh_token,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.refresh_workspace_command(**req_copy)
+
+
+
+class TestListJobs():
+    """
+    Test Class for list_jobs
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_list_jobs_all_params(self):
+        """
+        list_jobs()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/jobs')
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "jobs": [{"id": "id", "name": "name", "description": "description", "command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_plan", "tags": ["tags"], "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-01-01T12:00:00.000Z", "submitted_by": "submitted_by", "duration": "duration", "start_at": "2019-01-01T12:00:00.000Z", "end_at": "2019-01-01T12:00:00.000Z", "status": {"workspace_job_status": {"workspace_name": "workspace_name", "status_code": "job_pending", "status_message": "status_message", "flow_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "template_status": [{"template_id": "template_id", "template_name": "template_name", "flow_index": 10, "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "flow_job_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00.000Z", "log_analyzed_till": "2019-01-01T12:00:00.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "workspace_job": {"resources_add": 13, "resources_modify": 16, "resources_destroy": 17}, "flow_job": {"workitems_completed": 19, "workitems_pending": 17, "workitems_failed": 16, "workitems": [{"workspace_id": "workspace_id", "job_id": "job_id", "resources_add": 13, "resources_modify": 16, "resources_destroy": 17, "log_url": "log_url"}]}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "updated_at": "2019-01-01T12:00:00.000Z"}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        offset = 0
+        limit = 1
+        sort = 'testString'
+        profile = 'ids'
+        resource = 'workspace'
+        resource_id = 'testString'
+        action_id = 'testString'
+        list = 'all'
+
+        # Invoke method
+        response = _service.list_jobs(
+            offset=offset,
+            limit=limit,
+            sort=sort,
+            profile=profile,
+            resource=resource,
+            resource_id=resource_id,
+            action_id=action_id,
+            list=list,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate query params
+        query_string = responses.calls[0].request.url.split('?',1)[1]
+        query_string = urllib.parse.unquote_plus(query_string)
+        assert 'offset={}'.format(offset) in query_string
+        assert 'limit={}'.format(limit) in query_string
+        assert 'sort={}'.format(sort) in query_string
+        assert 'profile={}'.format(profile) in query_string
+        assert 'resource={}'.format(resource) in query_string
+        assert 'resource_id={}'.format(resource_id) in query_string
+        assert 'action_id={}'.format(action_id) in query_string
+        assert 'list={}'.format(list) in query_string
+
+
+    @responses.activate
+    def test_list_jobs_required_params(self):
+        """
+        test_list_jobs_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/jobs')
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "jobs": [{"id": "id", "name": "name", "description": "description", "command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_plan", "tags": ["tags"], "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-01-01T12:00:00.000Z", "submitted_by": "submitted_by", "duration": "duration", "start_at": "2019-01-01T12:00:00.000Z", "end_at": "2019-01-01T12:00:00.000Z", "status": {"workspace_job_status": {"workspace_name": "workspace_name", "status_code": "job_pending", "status_message": "status_message", "flow_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "template_status": [{"template_id": "template_id", "template_name": "template_name", "flow_index": 10, "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "flow_job_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00.000Z", "log_analyzed_till": "2019-01-01T12:00:00.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "workspace_job": {"resources_add": 13, "resources_modify": 16, "resources_destroy": 17}, "flow_job": {"workitems_completed": 19, "workitems_pending": 17, "workitems_failed": 16, "workitems": [{"workspace_id": "workspace_id", "job_id": "job_id", "resources_add": 13, "resources_modify": 16, "resources_destroy": 17, "log_url": "log_url"}]}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "updated_at": "2019-01-01T12:00:00.000Z"}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Invoke method
+        response = _service.list_jobs()
+
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+class TestCreateJob():
+    """
+    Test Class for create_job
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_create_job_all_params(self):
+        """
+        create_job()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/jobs')
+        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_plan", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-01-01T12:00:00.000Z", "submitted_by": "submitted_by", "start_at": "2019-01-01T12:00:00.000Z", "end_at": "2019-01-01T12:00:00.000Z", "duration": "duration", "status": {"workspace_job_status": {"workspace_name": "workspace_name", "status_code": "job_pending", "status_message": "status_message", "flow_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "template_status": [{"template_id": "template_id", "template_name": "template_name", "flow_index": 10, "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "flow_job_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}}, "data": {"job_type": "repo_download_job", "workspace_job_data": {"workspace_name": "workspace_name", "flow_id": "flow_id", "flow_name": "flow_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "template_data": [{"template_id": "template_id", "template_name": "template_name", "flow_index": 10, "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-01-01T12:00:00.000Z"}, "flow_job_data": {"flow_id": "flow_id", "flow_name": "flow_name", "workitems": [{"command_object_id": "command_object_id", "command_object_name": "command_object_name", "layers": "layers", "source_type": "local", "source": {"source_type": "local", "git": {"computed_git_repo_url": "computed_git_repo_url", "git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}, "catalog": {"catalog_name": "catalog_name", "offering_name": "offering_name", "offering_version": "offering_version", "offering_kind": "offering_kind", "offering_id": "offering_id", "offering_version_id": "offering_version_id", "offering_repo_url": "offering_repo_url"}, "cos_bucket": {"cos_bucket_url": "cos_bucket_url"}}, "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "last_job": {"command_object": "workspace", "command_object_name": "command_object_name", "command_object_id": "command_object_id", "command_name": "workspace_plan", "job_id": "job_id", "job_status": "job_pending"}, "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00.000Z", "log_analyzed_till": "2019-01-01T12:00:00.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "workspace_job": {"resources_add": 13, "resources_modify": 16, "resources_destroy": 17}, "flow_job": {"workitems_completed": 19, "workitems_pending": 17, "workitems_failed": 16, "workitems": [{"workspace_id": "workspace_id", "job_id": "job_id", "resources_add": 13, "resources_modify": 16, "resources_destroy": 17, "log_url": "log_url"}]}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-01-01T12:00:00.000Z"}'
+        responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=201)
+
+        # Construct a dict representation of a VariableMetadata model
+        variable_metadata_model = {}
+        variable_metadata_model['type'] = 'boolean'
+        variable_metadata_model['aliases'] = ['testString']
+        variable_metadata_model['description'] = 'testString'
+        variable_metadata_model['default_value'] = 'testString'
+        variable_metadata_model['secure'] = True
+        variable_metadata_model['immutable'] = True
+        variable_metadata_model['hidden'] = True
+        variable_metadata_model['options'] = ['testString']
+        variable_metadata_model['min_value'] = 38
+        variable_metadata_model['max_value'] = 38
+        variable_metadata_model['min_length'] = 38
+        variable_metadata_model['max_length'] = 38
+        variable_metadata_model['matches'] = 'testString'
+        variable_metadata_model['position'] = 38
+        variable_metadata_model['group_by'] = 'testString'
+        variable_metadata_model['source'] = 'testString'
+
+        # Construct a dict representation of a VariableData model
+        variable_data_model = {}
+        variable_data_model['name'] = 'testString'
+        variable_data_model['value'] = 'testString'
+        variable_data_model['metadata'] = variable_metadata_model
+
+        # Construct a dict representation of a JobStatusWorkitem model
+        job_status_workitem_model = {}
+        job_status_workitem_model['workspace_id'] = 'testString'
+        job_status_workitem_model['workspace_name'] = 'testString'
+        job_status_workitem_model['job_id'] = 'testString'
+        job_status_workitem_model['status_code'] = 'job_pending'
+        job_status_workitem_model['status_message'] = 'testString'
+        job_status_workitem_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusFlow model
+        job_status_flow_model = {}
+        job_status_flow_model['flow_id'] = 'testString'
+        job_status_flow_model['flow_name'] = 'testString'
+        job_status_flow_model['status_code'] = 'job_pending'
+        job_status_flow_model['status_message'] = 'testString'
+        job_status_flow_model['workitems'] = [job_status_workitem_model]
+        job_status_flow_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusTemplate model
+        job_status_template_model = {}
+        job_status_template_model['template_id'] = 'testString'
+        job_status_template_model['template_name'] = 'testString'
+        job_status_template_model['flow_index'] = 38
+        job_status_template_model['status_code'] = 'job_pending'
+        job_status_template_model['status_message'] = 'testString'
+        job_status_template_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusWorkspace model
+        job_status_workspace_model = {}
+        job_status_workspace_model['workspace_name'] = 'testString'
+        job_status_workspace_model['status_code'] = 'job_pending'
+        job_status_workspace_model['status_message'] = 'testString'
+        job_status_workspace_model['flow_status'] = job_status_flow_model
+        job_status_workspace_model['template_status'] = [job_status_template_model]
+        job_status_workspace_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusAction model
+        job_status_action_model = {}
+        job_status_action_model['action_name'] = 'testString'
+        job_status_action_model['status_code'] = 'job_pending'
+        job_status_action_model['status_message'] = 'testString'
+        job_status_action_model['bastion_status_code'] = 'none'
+        job_status_action_model['bastion_status_message'] = 'testString'
+        job_status_action_model['targets_status_code'] = 'none'
+        job_status_action_model['targets_status_message'] = 'testString'
+        job_status_action_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusSchematicsResources model
+        job_status_schematics_resources_model = {}
+        job_status_schematics_resources_model['status_code'] = 'job_pending'
+        job_status_schematics_resources_model['status_message'] = 'testString'
+        job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
+        job_status_schematics_resources_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusSystem model
+        job_status_system_model = {}
+        job_status_system_model['system_status_message'] = 'testString'
+        job_status_system_model['system_status_code'] = 'job_pending'
+        job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
+        job_status_system_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatus model
+        job_status_model = {}
+        job_status_model['workspace_job_status'] = job_status_workspace_model
+        job_status_model['action_job_status'] = job_status_action_model
+        job_status_model['system_job_status'] = job_status_system_model
+        job_status_model['flow_job_status'] = job_status_flow_model
+
+        # Construct a dict representation of a JobDataTemplate model
+        job_data_template_model = {}
+        job_data_template_model['template_id'] = 'testString'
+        job_data_template_model['template_name'] = 'testString'
+        job_data_template_model['flow_index'] = 38
+        job_data_template_model['inputs'] = [variable_data_model]
+        job_data_template_model['outputs'] = [variable_data_model]
+        job_data_template_model['settings'] = [variable_data_model]
+        job_data_template_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobDataWorkspace model
+        job_data_workspace_model = {}
+        job_data_workspace_model['workspace_name'] = 'testString'
+        job_data_workspace_model['flow_id'] = 'testString'
+        job_data_workspace_model['flow_name'] = 'testString'
+        job_data_workspace_model['inputs'] = [variable_data_model]
+        job_data_workspace_model['outputs'] = [variable_data_model]
+        job_data_workspace_model['settings'] = [variable_data_model]
+        job_data_workspace_model['template_data'] = [job_data_template_model]
+        job_data_workspace_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a InventoryResourceRecord model
+        inventory_resource_record_model = {}
+        inventory_resource_record_model['name'] = 'testString'
+        inventory_resource_record_model['description'] = 'testString'
+        inventory_resource_record_model['location'] = 'us-south'
+        inventory_resource_record_model['resource_group'] = 'testString'
+        inventory_resource_record_model['inventories_ini'] = 'testString'
+        inventory_resource_record_model['resource_queries'] = ['testString']
+
+        # Construct a dict representation of a JobDataAction model
+        job_data_action_model = {}
+        job_data_action_model['action_name'] = 'testString'
+        job_data_action_model['inputs'] = [variable_data_model]
+        job_data_action_model['outputs'] = [variable_data_model]
+        job_data_action_model['settings'] = [variable_data_model]
+        job_data_action_model['updated_at'] = "2019-01-01T12:00:00Z"
+        job_data_action_model['inventory_record'] = inventory_resource_record_model
+        job_data_action_model['materialized_inventory'] = 'testString'
+
+        # Construct a dict representation of a JobDataSystem model
+        job_data_system_model = {}
+        job_data_system_model['key_id'] = 'testString'
+        job_data_system_model['schematics_resource_id'] = ['testString']
+        job_data_system_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a ExternalSourceGit model
+        external_source_git_model = {}
+        external_source_git_model['computed_git_repo_url'] = 'testString'
+        external_source_git_model['git_repo_url'] = 'testString'
+        external_source_git_model['git_token'] = 'testString'
+        external_source_git_model['git_repo_folder'] = 'testString'
+        external_source_git_model['git_release'] = 'testString'
+        external_source_git_model['git_branch'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCatalog model
+        external_source_catalog_model = {}
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCosBucket model
+        external_source_cos_bucket_model = {}
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSource model
+        external_source_model = {}
+        external_source_model['source_type'] = 'local'
+        external_source_model['git'] = external_source_git_model
+        external_source_model['catalog'] = external_source_catalog_model
+        external_source_model['cos_bucket'] = external_source_cos_bucket_model
+
+        # Construct a dict representation of a JobDataWorkItemLastJob model
+        job_data_work_item_last_job_model = {}
+        job_data_work_item_last_job_model['command_object'] = 'workspace'
+        job_data_work_item_last_job_model['command_object_name'] = 'testString'
+        job_data_work_item_last_job_model['command_object_id'] = 'testString'
+        job_data_work_item_last_job_model['command_name'] = 'workspace_plan'
+        job_data_work_item_last_job_model['job_id'] = 'testString'
+        job_data_work_item_last_job_model['job_status'] = 'job_pending'
+
+        # Construct a dict representation of a JobDataWorkItem model
+        job_data_work_item_model = {}
+        job_data_work_item_model['command_object_id'] = 'testString'
+        job_data_work_item_model['command_object_name'] = 'testString'
+        job_data_work_item_model['layers'] = 'testString'
+        job_data_work_item_model['source_type'] = 'local'
+        job_data_work_item_model['source'] = external_source_model
+        job_data_work_item_model['inputs'] = [variable_data_model]
+        job_data_work_item_model['outputs'] = [variable_data_model]
+        job_data_work_item_model['settings'] = [variable_data_model]
+        job_data_work_item_model['last_job'] = job_data_work_item_last_job_model
+        job_data_work_item_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobDataFlow model
+        job_data_flow_model = {}
+        job_data_flow_model['flow_id'] = 'testString'
+        job_data_flow_model['flow_name'] = 'testString'
+        job_data_flow_model['workitems'] = [job_data_work_item_model]
+        job_data_flow_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobData model
+        job_data_model = {}
+        job_data_model['job_type'] = 'repo_download_job'
+        job_data_model['workspace_job_data'] = job_data_workspace_model
+        job_data_model['action_job_data'] = job_data_action_model
+        job_data_model['system_job_data'] = job_data_system_model
+        job_data_model['flow_job_data'] = job_data_flow_model
+
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
+
+        # Construct a dict representation of a JobLogSummaryRepoDownloadJob model
+        job_log_summary_repo_download_job_model = {}
+
+        # Construct a dict representation of a JobLogSummaryWorkspaceJob model
+        job_log_summary_workspace_job_model = {}
+
+        # Construct a dict representation of a JobLogSummaryWorkitems model
+        job_log_summary_workitems_model = {}
+        job_log_summary_workitems_model['workspace_id'] = 'testString'
+        job_log_summary_workitems_model['job_id'] = 'testString'
+        job_log_summary_workitems_model['log_url'] = 'testString'
+
+        # Construct a dict representation of a JobLogSummaryFlowJob model
+        job_log_summary_flow_job_model = {}
+        job_log_summary_flow_job_model['workitems'] = [job_log_summary_workitems_model]
+
+        # Construct a dict representation of a JobLogSummaryActionJobRecap model
+        job_log_summary_action_job_recap_model = {}
+        job_log_summary_action_job_recap_model['target'] = ['testString']
+        job_log_summary_action_job_recap_model['ok'] = 72.5
+        job_log_summary_action_job_recap_model['changed'] = 72.5
+        job_log_summary_action_job_recap_model['failed'] = 72.5
+        job_log_summary_action_job_recap_model['skipped'] = 72.5
+        job_log_summary_action_job_recap_model['unreachable'] = 72.5
+
+        # Construct a dict representation of a JobLogSummaryActionJob model
+        job_log_summary_action_job_model = {}
+        job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
+
+        # Construct a dict representation of a JobLogSummarySystemJob model
+        job_log_summary_system_job_model = {}
+        job_log_summary_system_job_model['success'] = 72.5
+        job_log_summary_system_job_model['failed'] = 72.5
+
+        # Construct a dict representation of a JobLogSummary model
+        job_log_summary_model = {}
+        job_log_summary_model['job_type'] = 'repo_download_job'
+        job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
+        job_log_summary_model['workspace_job'] = job_log_summary_workspace_job_model
+        job_log_summary_model['flow_job'] = job_log_summary_flow_job_model
+        job_log_summary_model['action_job'] = job_log_summary_action_job_model
+        job_log_summary_model['system_job'] = job_log_summary_system_job_model
+
+        # Set up parameter values
+        refresh_token = 'testString'
+        command_object = 'workspace'
+        command_object_id = 'testString'
+        command_name = 'workspace_plan'
+        command_parameter = 'testString'
+        command_options = ['testString']
+        inputs = [variable_data_model]
+        settings = [variable_data_model]
+        tags = ['testString']
+        location = 'us-south'
+        status = job_status_model
+        data = job_data_model
+        bastion = bastion_resource_definition_model
+        log_summary = job_log_summary_model
+
+        # Invoke method
+        response = _service.create_job(
+            refresh_token,
+            command_object=command_object,
+            command_object_id=command_object_id,
+            command_name=command_name,
+            command_parameter=command_parameter,
+            command_options=command_options,
+            inputs=inputs,
+            settings=settings,
+            tags=tags,
+            location=location,
+            status=status,
+            data=data,
+            bastion=bastion,
+            log_summary=log_summary,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 201
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['command_object'] == 'workspace'
+        assert req_body['command_object_id'] == 'testString'
+        assert req_body['command_name'] == 'workspace_plan'
+        assert req_body['command_parameter'] == 'testString'
+        assert req_body['command_options'] == ['testString']
+        assert req_body['inputs'] == [variable_data_model]
+        assert req_body['settings'] == [variable_data_model]
+        assert req_body['tags'] == ['testString']
+        assert req_body['location'] == 'us-south'
+        assert req_body['status'] == job_status_model
+        assert req_body['data'] == job_data_model
+        assert req_body['bastion'] == bastion_resource_definition_model
+        assert req_body['log_summary'] == job_log_summary_model
+
+
+    @responses.activate
+    def test_create_job_value_error(self):
+        """
+        test_create_job_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/jobs')
+        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_plan", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-01-01T12:00:00.000Z", "submitted_by": "submitted_by", "start_at": "2019-01-01T12:00:00.000Z", "end_at": "2019-01-01T12:00:00.000Z", "duration": "duration", "status": {"workspace_job_status": {"workspace_name": "workspace_name", "status_code": "job_pending", "status_message": "status_message", "flow_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "template_status": [{"template_id": "template_id", "template_name": "template_name", "flow_index": 10, "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "flow_job_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}}, "data": {"job_type": "repo_download_job", "workspace_job_data": {"workspace_name": "workspace_name", "flow_id": "flow_id", "flow_name": "flow_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "template_data": [{"template_id": "template_id", "template_name": "template_name", "flow_index": 10, "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-01-01T12:00:00.000Z"}, "flow_job_data": {"flow_id": "flow_id", "flow_name": "flow_name", "workitems": [{"command_object_id": "command_object_id", "command_object_name": "command_object_name", "layers": "layers", "source_type": "local", "source": {"source_type": "local", "git": {"computed_git_repo_url": "computed_git_repo_url", "git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}, "catalog": {"catalog_name": "catalog_name", "offering_name": "offering_name", "offering_version": "offering_version", "offering_kind": "offering_kind", "offering_id": "offering_id", "offering_version_id": "offering_version_id", "offering_repo_url": "offering_repo_url"}, "cos_bucket": {"cos_bucket_url": "cos_bucket_url"}}, "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "last_job": {"command_object": "workspace", "command_object_name": "command_object_name", "command_object_id": "command_object_id", "command_name": "workspace_plan", "job_id": "job_id", "job_status": "job_pending"}, "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00.000Z", "log_analyzed_till": "2019-01-01T12:00:00.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "workspace_job": {"resources_add": 13, "resources_modify": 16, "resources_destroy": 17}, "flow_job": {"workitems_completed": 19, "workitems_pending": 17, "workitems_failed": 16, "workitems": [{"workspace_id": "workspace_id", "job_id": "job_id", "resources_add": 13, "resources_modify": 16, "resources_destroy": 17, "log_url": "log_url"}]}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-01-01T12:00:00.000Z"}'
+        responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=201)
+
+        # Construct a dict representation of a VariableMetadata model
+        variable_metadata_model = {}
+        variable_metadata_model['type'] = 'boolean'
+        variable_metadata_model['aliases'] = ['testString']
+        variable_metadata_model['description'] = 'testString'
+        variable_metadata_model['default_value'] = 'testString'
+        variable_metadata_model['secure'] = True
+        variable_metadata_model['immutable'] = True
+        variable_metadata_model['hidden'] = True
+        variable_metadata_model['options'] = ['testString']
+        variable_metadata_model['min_value'] = 38
+        variable_metadata_model['max_value'] = 38
+        variable_metadata_model['min_length'] = 38
+        variable_metadata_model['max_length'] = 38
+        variable_metadata_model['matches'] = 'testString'
+        variable_metadata_model['position'] = 38
+        variable_metadata_model['group_by'] = 'testString'
+        variable_metadata_model['source'] = 'testString'
+
+        # Construct a dict representation of a VariableData model
+        variable_data_model = {}
+        variable_data_model['name'] = 'testString'
+        variable_data_model['value'] = 'testString'
+        variable_data_model['metadata'] = variable_metadata_model
+
+        # Construct a dict representation of a JobStatusWorkitem model
+        job_status_workitem_model = {}
+        job_status_workitem_model['workspace_id'] = 'testString'
+        job_status_workitem_model['workspace_name'] = 'testString'
+        job_status_workitem_model['job_id'] = 'testString'
+        job_status_workitem_model['status_code'] = 'job_pending'
+        job_status_workitem_model['status_message'] = 'testString'
+        job_status_workitem_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusFlow model
+        job_status_flow_model = {}
+        job_status_flow_model['flow_id'] = 'testString'
+        job_status_flow_model['flow_name'] = 'testString'
+        job_status_flow_model['status_code'] = 'job_pending'
+        job_status_flow_model['status_message'] = 'testString'
+        job_status_flow_model['workitems'] = [job_status_workitem_model]
+        job_status_flow_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusTemplate model
+        job_status_template_model = {}
+        job_status_template_model['template_id'] = 'testString'
+        job_status_template_model['template_name'] = 'testString'
+        job_status_template_model['flow_index'] = 38
+        job_status_template_model['status_code'] = 'job_pending'
+        job_status_template_model['status_message'] = 'testString'
+        job_status_template_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusWorkspace model
+        job_status_workspace_model = {}
+        job_status_workspace_model['workspace_name'] = 'testString'
+        job_status_workspace_model['status_code'] = 'job_pending'
+        job_status_workspace_model['status_message'] = 'testString'
+        job_status_workspace_model['flow_status'] = job_status_flow_model
+        job_status_workspace_model['template_status'] = [job_status_template_model]
+        job_status_workspace_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusAction model
+        job_status_action_model = {}
+        job_status_action_model['action_name'] = 'testString'
+        job_status_action_model['status_code'] = 'job_pending'
+        job_status_action_model['status_message'] = 'testString'
+        job_status_action_model['bastion_status_code'] = 'none'
+        job_status_action_model['bastion_status_message'] = 'testString'
+        job_status_action_model['targets_status_code'] = 'none'
+        job_status_action_model['targets_status_message'] = 'testString'
+        job_status_action_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusSchematicsResources model
+        job_status_schematics_resources_model = {}
+        job_status_schematics_resources_model['status_code'] = 'job_pending'
+        job_status_schematics_resources_model['status_message'] = 'testString'
+        job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
+        job_status_schematics_resources_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusSystem model
+        job_status_system_model = {}
+        job_status_system_model['system_status_message'] = 'testString'
+        job_status_system_model['system_status_code'] = 'job_pending'
+        job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
+        job_status_system_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatus model
+        job_status_model = {}
+        job_status_model['workspace_job_status'] = job_status_workspace_model
+        job_status_model['action_job_status'] = job_status_action_model
+        job_status_model['system_job_status'] = job_status_system_model
+        job_status_model['flow_job_status'] = job_status_flow_model
+
+        # Construct a dict representation of a JobDataTemplate model
+        job_data_template_model = {}
+        job_data_template_model['template_id'] = 'testString'
+        job_data_template_model['template_name'] = 'testString'
+        job_data_template_model['flow_index'] = 38
+        job_data_template_model['inputs'] = [variable_data_model]
+        job_data_template_model['outputs'] = [variable_data_model]
+        job_data_template_model['settings'] = [variable_data_model]
+        job_data_template_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobDataWorkspace model
+        job_data_workspace_model = {}
+        job_data_workspace_model['workspace_name'] = 'testString'
+        job_data_workspace_model['flow_id'] = 'testString'
+        job_data_workspace_model['flow_name'] = 'testString'
+        job_data_workspace_model['inputs'] = [variable_data_model]
+        job_data_workspace_model['outputs'] = [variable_data_model]
+        job_data_workspace_model['settings'] = [variable_data_model]
+        job_data_workspace_model['template_data'] = [job_data_template_model]
+        job_data_workspace_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a InventoryResourceRecord model
+        inventory_resource_record_model = {}
+        inventory_resource_record_model['name'] = 'testString'
+        inventory_resource_record_model['description'] = 'testString'
+        inventory_resource_record_model['location'] = 'us-south'
+        inventory_resource_record_model['resource_group'] = 'testString'
+        inventory_resource_record_model['inventories_ini'] = 'testString'
+        inventory_resource_record_model['resource_queries'] = ['testString']
+
+        # Construct a dict representation of a JobDataAction model
+        job_data_action_model = {}
+        job_data_action_model['action_name'] = 'testString'
+        job_data_action_model['inputs'] = [variable_data_model]
+        job_data_action_model['outputs'] = [variable_data_model]
+        job_data_action_model['settings'] = [variable_data_model]
+        job_data_action_model['updated_at'] = "2019-01-01T12:00:00Z"
+        job_data_action_model['inventory_record'] = inventory_resource_record_model
+        job_data_action_model['materialized_inventory'] = 'testString'
+
+        # Construct a dict representation of a JobDataSystem model
+        job_data_system_model = {}
+        job_data_system_model['key_id'] = 'testString'
+        job_data_system_model['schematics_resource_id'] = ['testString']
+        job_data_system_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a ExternalSourceGit model
+        external_source_git_model = {}
+        external_source_git_model['computed_git_repo_url'] = 'testString'
+        external_source_git_model['git_repo_url'] = 'testString'
+        external_source_git_model['git_token'] = 'testString'
+        external_source_git_model['git_repo_folder'] = 'testString'
+        external_source_git_model['git_release'] = 'testString'
+        external_source_git_model['git_branch'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCatalog model
+        external_source_catalog_model = {}
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCosBucket model
+        external_source_cos_bucket_model = {}
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSource model
+        external_source_model = {}
+        external_source_model['source_type'] = 'local'
+        external_source_model['git'] = external_source_git_model
+        external_source_model['catalog'] = external_source_catalog_model
+        external_source_model['cos_bucket'] = external_source_cos_bucket_model
+
+        # Construct a dict representation of a JobDataWorkItemLastJob model
+        job_data_work_item_last_job_model = {}
+        job_data_work_item_last_job_model['command_object'] = 'workspace'
+        job_data_work_item_last_job_model['command_object_name'] = 'testString'
+        job_data_work_item_last_job_model['command_object_id'] = 'testString'
+        job_data_work_item_last_job_model['command_name'] = 'workspace_plan'
+        job_data_work_item_last_job_model['job_id'] = 'testString'
+        job_data_work_item_last_job_model['job_status'] = 'job_pending'
+
+        # Construct a dict representation of a JobDataWorkItem model
+        job_data_work_item_model = {}
+        job_data_work_item_model['command_object_id'] = 'testString'
+        job_data_work_item_model['command_object_name'] = 'testString'
+        job_data_work_item_model['layers'] = 'testString'
+        job_data_work_item_model['source_type'] = 'local'
+        job_data_work_item_model['source'] = external_source_model
+        job_data_work_item_model['inputs'] = [variable_data_model]
+        job_data_work_item_model['outputs'] = [variable_data_model]
+        job_data_work_item_model['settings'] = [variable_data_model]
+        job_data_work_item_model['last_job'] = job_data_work_item_last_job_model
+        job_data_work_item_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobDataFlow model
+        job_data_flow_model = {}
+        job_data_flow_model['flow_id'] = 'testString'
+        job_data_flow_model['flow_name'] = 'testString'
+        job_data_flow_model['workitems'] = [job_data_work_item_model]
+        job_data_flow_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobData model
+        job_data_model = {}
+        job_data_model['job_type'] = 'repo_download_job'
+        job_data_model['workspace_job_data'] = job_data_workspace_model
+        job_data_model['action_job_data'] = job_data_action_model
+        job_data_model['system_job_data'] = job_data_system_model
+        job_data_model['flow_job_data'] = job_data_flow_model
+
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
+
+        # Construct a dict representation of a JobLogSummaryRepoDownloadJob model
+        job_log_summary_repo_download_job_model = {}
+
+        # Construct a dict representation of a JobLogSummaryWorkspaceJob model
+        job_log_summary_workspace_job_model = {}
+
+        # Construct a dict representation of a JobLogSummaryWorkitems model
+        job_log_summary_workitems_model = {}
+        job_log_summary_workitems_model['workspace_id'] = 'testString'
+        job_log_summary_workitems_model['job_id'] = 'testString'
+        job_log_summary_workitems_model['log_url'] = 'testString'
+
+        # Construct a dict representation of a JobLogSummaryFlowJob model
+        job_log_summary_flow_job_model = {}
+        job_log_summary_flow_job_model['workitems'] = [job_log_summary_workitems_model]
+
+        # Construct a dict representation of a JobLogSummaryActionJobRecap model
+        job_log_summary_action_job_recap_model = {}
+        job_log_summary_action_job_recap_model['target'] = ['testString']
+        job_log_summary_action_job_recap_model['ok'] = 72.5
+        job_log_summary_action_job_recap_model['changed'] = 72.5
+        job_log_summary_action_job_recap_model['failed'] = 72.5
+        job_log_summary_action_job_recap_model['skipped'] = 72.5
+        job_log_summary_action_job_recap_model['unreachable'] = 72.5
+
+        # Construct a dict representation of a JobLogSummaryActionJob model
+        job_log_summary_action_job_model = {}
+        job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
+
+        # Construct a dict representation of a JobLogSummarySystemJob model
+        job_log_summary_system_job_model = {}
+        job_log_summary_system_job_model['success'] = 72.5
+        job_log_summary_system_job_model['failed'] = 72.5
+
+        # Construct a dict representation of a JobLogSummary model
+        job_log_summary_model = {}
+        job_log_summary_model['job_type'] = 'repo_download_job'
+        job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
+        job_log_summary_model['workspace_job'] = job_log_summary_workspace_job_model
+        job_log_summary_model['flow_job'] = job_log_summary_flow_job_model
+        job_log_summary_model['action_job'] = job_log_summary_action_job_model
+        job_log_summary_model['system_job'] = job_log_summary_system_job_model
+
+        # Set up parameter values
+        refresh_token = 'testString'
+        command_object = 'workspace'
+        command_object_id = 'testString'
+        command_name = 'workspace_plan'
+        command_parameter = 'testString'
+        command_options = ['testString']
+        inputs = [variable_data_model]
+        settings = [variable_data_model]
+        tags = ['testString']
+        location = 'us-south'
+        status = job_status_model
+        data = job_data_model
+        bastion = bastion_resource_definition_model
+        log_summary = job_log_summary_model
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "refresh_token": refresh_token,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.create_job(**req_copy)
+
+
+
+class TestGetJob():
+    """
+    Test Class for get_job
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_get_job_all_params(self):
+        """
+        get_job()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/jobs/testString')
+        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_plan", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-01-01T12:00:00.000Z", "submitted_by": "submitted_by", "start_at": "2019-01-01T12:00:00.000Z", "end_at": "2019-01-01T12:00:00.000Z", "duration": "duration", "status": {"workspace_job_status": {"workspace_name": "workspace_name", "status_code": "job_pending", "status_message": "status_message", "flow_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "template_status": [{"template_id": "template_id", "template_name": "template_name", "flow_index": 10, "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "flow_job_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}}, "data": {"job_type": "repo_download_job", "workspace_job_data": {"workspace_name": "workspace_name", "flow_id": "flow_id", "flow_name": "flow_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "template_data": [{"template_id": "template_id", "template_name": "template_name", "flow_index": 10, "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-01-01T12:00:00.000Z"}, "flow_job_data": {"flow_id": "flow_id", "flow_name": "flow_name", "workitems": [{"command_object_id": "command_object_id", "command_object_name": "command_object_name", "layers": "layers", "source_type": "local", "source": {"source_type": "local", "git": {"computed_git_repo_url": "computed_git_repo_url", "git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}, "catalog": {"catalog_name": "catalog_name", "offering_name": "offering_name", "offering_version": "offering_version", "offering_kind": "offering_kind", "offering_id": "offering_id", "offering_version_id": "offering_version_id", "offering_repo_url": "offering_repo_url"}, "cos_bucket": {"cos_bucket_url": "cos_bucket_url"}}, "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "last_job": {"command_object": "workspace", "command_object_name": "command_object_name", "command_object_id": "command_object_id", "command_name": "workspace_plan", "job_id": "job_id", "job_status": "job_pending"}, "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00.000Z", "log_analyzed_till": "2019-01-01T12:00:00.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "workspace_job": {"resources_add": 13, "resources_modify": 16, "resources_destroy": 17}, "flow_job": {"workitems_completed": 19, "workitems_pending": 17, "workitems_failed": 16, "workitems": [{"workspace_id": "workspace_id", "job_id": "job_id", "resources_add": 13, "resources_modify": 16, "resources_destroy": 17, "log_url": "log_url"}]}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-01-01T12:00:00.000Z"}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        job_id = 'testString'
+        profile = 'summary'
+
+        # Invoke method
+        response = _service.get_job(
+            job_id,
+            profile=profile,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate query params
+        query_string = responses.calls[0].request.url.split('?',1)[1]
+        query_string = urllib.parse.unquote_plus(query_string)
+        assert 'profile={}'.format(profile) in query_string
+
+
+    @responses.activate
+    def test_get_job_required_params(self):
+        """
+        test_get_job_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/jobs/testString')
+        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_plan", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-01-01T12:00:00.000Z", "submitted_by": "submitted_by", "start_at": "2019-01-01T12:00:00.000Z", "end_at": "2019-01-01T12:00:00.000Z", "duration": "duration", "status": {"workspace_job_status": {"workspace_name": "workspace_name", "status_code": "job_pending", "status_message": "status_message", "flow_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "template_status": [{"template_id": "template_id", "template_name": "template_name", "flow_index": 10, "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "flow_job_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}}, "data": {"job_type": "repo_download_job", "workspace_job_data": {"workspace_name": "workspace_name", "flow_id": "flow_id", "flow_name": "flow_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "template_data": [{"template_id": "template_id", "template_name": "template_name", "flow_index": 10, "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-01-01T12:00:00.000Z"}, "flow_job_data": {"flow_id": "flow_id", "flow_name": "flow_name", "workitems": [{"command_object_id": "command_object_id", "command_object_name": "command_object_name", "layers": "layers", "source_type": "local", "source": {"source_type": "local", "git": {"computed_git_repo_url": "computed_git_repo_url", "git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}, "catalog": {"catalog_name": "catalog_name", "offering_name": "offering_name", "offering_version": "offering_version", "offering_kind": "offering_kind", "offering_id": "offering_id", "offering_version_id": "offering_version_id", "offering_repo_url": "offering_repo_url"}, "cos_bucket": {"cos_bucket_url": "cos_bucket_url"}}, "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "last_job": {"command_object": "workspace", "command_object_name": "command_object_name", "command_object_id": "command_object_id", "command_name": "workspace_plan", "job_id": "job_id", "job_status": "job_pending"}, "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00.000Z", "log_analyzed_till": "2019-01-01T12:00:00.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "workspace_job": {"resources_add": 13, "resources_modify": 16, "resources_destroy": 17}, "flow_job": {"workitems_completed": 19, "workitems_pending": 17, "workitems_failed": 16, "workitems": [{"workspace_id": "workspace_id", "job_id": "job_id", "resources_add": 13, "resources_modify": 16, "resources_destroy": 17, "log_url": "log_url"}]}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-01-01T12:00:00.000Z"}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        job_id = 'testString'
+
+        # Invoke method
+        response = _service.get_job(
+            job_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+    @responses.activate
+    def test_get_job_value_error(self):
+        """
+        test_get_job_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/jobs/testString')
+        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_plan", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-01-01T12:00:00.000Z", "submitted_by": "submitted_by", "start_at": "2019-01-01T12:00:00.000Z", "end_at": "2019-01-01T12:00:00.000Z", "duration": "duration", "status": {"workspace_job_status": {"workspace_name": "workspace_name", "status_code": "job_pending", "status_message": "status_message", "flow_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "template_status": [{"template_id": "template_id", "template_name": "template_name", "flow_index": 10, "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "flow_job_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}}, "data": {"job_type": "repo_download_job", "workspace_job_data": {"workspace_name": "workspace_name", "flow_id": "flow_id", "flow_name": "flow_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "template_data": [{"template_id": "template_id", "template_name": "template_name", "flow_index": 10, "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-01-01T12:00:00.000Z"}, "flow_job_data": {"flow_id": "flow_id", "flow_name": "flow_name", "workitems": [{"command_object_id": "command_object_id", "command_object_name": "command_object_name", "layers": "layers", "source_type": "local", "source": {"source_type": "local", "git": {"computed_git_repo_url": "computed_git_repo_url", "git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}, "catalog": {"catalog_name": "catalog_name", "offering_name": "offering_name", "offering_version": "offering_version", "offering_kind": "offering_kind", "offering_id": "offering_id", "offering_version_id": "offering_version_id", "offering_repo_url": "offering_repo_url"}, "cos_bucket": {"cos_bucket_url": "cos_bucket_url"}}, "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "last_job": {"command_object": "workspace", "command_object_name": "command_object_name", "command_object_id": "command_object_id", "command_name": "workspace_plan", "job_id": "job_id", "job_status": "job_pending"}, "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00.000Z", "log_analyzed_till": "2019-01-01T12:00:00.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "workspace_job": {"resources_add": 13, "resources_modify": 16, "resources_destroy": 17}, "flow_job": {"workitems_completed": 19, "workitems_pending": 17, "workitems_failed": 16, "workitems": [{"workspace_id": "workspace_id", "job_id": "job_id", "resources_add": 13, "resources_modify": 16, "resources_destroy": 17, "log_url": "log_url"}]}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-01-01T12:00:00.000Z"}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        job_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "job_id": job_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.get_job(**req_copy)
+
+
+
+class TestUpdateJob():
+    """
+    Test Class for update_job
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_update_job_all_params(self):
+        """
+        update_job()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/jobs/testString')
+        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_plan", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-01-01T12:00:00.000Z", "submitted_by": "submitted_by", "start_at": "2019-01-01T12:00:00.000Z", "end_at": "2019-01-01T12:00:00.000Z", "duration": "duration", "status": {"workspace_job_status": {"workspace_name": "workspace_name", "status_code": "job_pending", "status_message": "status_message", "flow_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "template_status": [{"template_id": "template_id", "template_name": "template_name", "flow_index": 10, "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "flow_job_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}}, "data": {"job_type": "repo_download_job", "workspace_job_data": {"workspace_name": "workspace_name", "flow_id": "flow_id", "flow_name": "flow_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "template_data": [{"template_id": "template_id", "template_name": "template_name", "flow_index": 10, "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-01-01T12:00:00.000Z"}, "flow_job_data": {"flow_id": "flow_id", "flow_name": "flow_name", "workitems": [{"command_object_id": "command_object_id", "command_object_name": "command_object_name", "layers": "layers", "source_type": "local", "source": {"source_type": "local", "git": {"computed_git_repo_url": "computed_git_repo_url", "git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}, "catalog": {"catalog_name": "catalog_name", "offering_name": "offering_name", "offering_version": "offering_version", "offering_kind": "offering_kind", "offering_id": "offering_id", "offering_version_id": "offering_version_id", "offering_repo_url": "offering_repo_url"}, "cos_bucket": {"cos_bucket_url": "cos_bucket_url"}}, "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "last_job": {"command_object": "workspace", "command_object_name": "command_object_name", "command_object_id": "command_object_id", "command_name": "workspace_plan", "job_id": "job_id", "job_status": "job_pending"}, "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00.000Z", "log_analyzed_till": "2019-01-01T12:00:00.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "workspace_job": {"resources_add": 13, "resources_modify": 16, "resources_destroy": 17}, "flow_job": {"workitems_completed": 19, "workitems_pending": 17, "workitems_failed": 16, "workitems": [{"workspace_id": "workspace_id", "job_id": "job_id", "resources_add": 13, "resources_modify": 16, "resources_destroy": 17, "log_url": "log_url"}]}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-01-01T12:00:00.000Z"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Construct a dict representation of a VariableMetadata model
+        variable_metadata_model = {}
+        variable_metadata_model['type'] = 'boolean'
+        variable_metadata_model['aliases'] = ['testString']
+        variable_metadata_model['description'] = 'testString'
+        variable_metadata_model['default_value'] = 'testString'
+        variable_metadata_model['secure'] = True
+        variable_metadata_model['immutable'] = True
+        variable_metadata_model['hidden'] = True
+        variable_metadata_model['options'] = ['testString']
+        variable_metadata_model['min_value'] = 38
+        variable_metadata_model['max_value'] = 38
+        variable_metadata_model['min_length'] = 38
+        variable_metadata_model['max_length'] = 38
+        variable_metadata_model['matches'] = 'testString'
+        variable_metadata_model['position'] = 38
+        variable_metadata_model['group_by'] = 'testString'
+        variable_metadata_model['source'] = 'testString'
+
+        # Construct a dict representation of a VariableData model
+        variable_data_model = {}
+        variable_data_model['name'] = 'testString'
+        variable_data_model['value'] = 'testString'
+        variable_data_model['metadata'] = variable_metadata_model
+
+        # Construct a dict representation of a JobStatusWorkitem model
+        job_status_workitem_model = {}
+        job_status_workitem_model['workspace_id'] = 'testString'
+        job_status_workitem_model['workspace_name'] = 'testString'
+        job_status_workitem_model['job_id'] = 'testString'
+        job_status_workitem_model['status_code'] = 'job_pending'
+        job_status_workitem_model['status_message'] = 'testString'
+        job_status_workitem_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusFlow model
+        job_status_flow_model = {}
+        job_status_flow_model['flow_id'] = 'testString'
+        job_status_flow_model['flow_name'] = 'testString'
+        job_status_flow_model['status_code'] = 'job_pending'
+        job_status_flow_model['status_message'] = 'testString'
+        job_status_flow_model['workitems'] = [job_status_workitem_model]
+        job_status_flow_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusTemplate model
+        job_status_template_model = {}
+        job_status_template_model['template_id'] = 'testString'
+        job_status_template_model['template_name'] = 'testString'
+        job_status_template_model['flow_index'] = 38
+        job_status_template_model['status_code'] = 'job_pending'
+        job_status_template_model['status_message'] = 'testString'
+        job_status_template_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusWorkspace model
+        job_status_workspace_model = {}
+        job_status_workspace_model['workspace_name'] = 'testString'
+        job_status_workspace_model['status_code'] = 'job_pending'
+        job_status_workspace_model['status_message'] = 'testString'
+        job_status_workspace_model['flow_status'] = job_status_flow_model
+        job_status_workspace_model['template_status'] = [job_status_template_model]
+        job_status_workspace_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusAction model
+        job_status_action_model = {}
+        job_status_action_model['action_name'] = 'testString'
+        job_status_action_model['status_code'] = 'job_pending'
+        job_status_action_model['status_message'] = 'testString'
+        job_status_action_model['bastion_status_code'] = 'none'
+        job_status_action_model['bastion_status_message'] = 'testString'
+        job_status_action_model['targets_status_code'] = 'none'
+        job_status_action_model['targets_status_message'] = 'testString'
+        job_status_action_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusSchematicsResources model
+        job_status_schematics_resources_model = {}
+        job_status_schematics_resources_model['status_code'] = 'job_pending'
+        job_status_schematics_resources_model['status_message'] = 'testString'
+        job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
+        job_status_schematics_resources_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusSystem model
+        job_status_system_model = {}
+        job_status_system_model['system_status_message'] = 'testString'
+        job_status_system_model['system_status_code'] = 'job_pending'
+        job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
+        job_status_system_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatus model
+        job_status_model = {}
+        job_status_model['workspace_job_status'] = job_status_workspace_model
+        job_status_model['action_job_status'] = job_status_action_model
+        job_status_model['system_job_status'] = job_status_system_model
+        job_status_model['flow_job_status'] = job_status_flow_model
+
+        # Construct a dict representation of a JobDataTemplate model
+        job_data_template_model = {}
+        job_data_template_model['template_id'] = 'testString'
+        job_data_template_model['template_name'] = 'testString'
+        job_data_template_model['flow_index'] = 38
+        job_data_template_model['inputs'] = [variable_data_model]
+        job_data_template_model['outputs'] = [variable_data_model]
+        job_data_template_model['settings'] = [variable_data_model]
+        job_data_template_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobDataWorkspace model
+        job_data_workspace_model = {}
+        job_data_workspace_model['workspace_name'] = 'testString'
+        job_data_workspace_model['flow_id'] = 'testString'
+        job_data_workspace_model['flow_name'] = 'testString'
+        job_data_workspace_model['inputs'] = [variable_data_model]
+        job_data_workspace_model['outputs'] = [variable_data_model]
+        job_data_workspace_model['settings'] = [variable_data_model]
+        job_data_workspace_model['template_data'] = [job_data_template_model]
+        job_data_workspace_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a InventoryResourceRecord model
+        inventory_resource_record_model = {}
+        inventory_resource_record_model['name'] = 'testString'
+        inventory_resource_record_model['description'] = 'testString'
+        inventory_resource_record_model['location'] = 'us-south'
+        inventory_resource_record_model['resource_group'] = 'testString'
+        inventory_resource_record_model['inventories_ini'] = 'testString'
+        inventory_resource_record_model['resource_queries'] = ['testString']
+
+        # Construct a dict representation of a JobDataAction model
+        job_data_action_model = {}
+        job_data_action_model['action_name'] = 'testString'
+        job_data_action_model['inputs'] = [variable_data_model]
+        job_data_action_model['outputs'] = [variable_data_model]
+        job_data_action_model['settings'] = [variable_data_model]
+        job_data_action_model['updated_at'] = "2019-01-01T12:00:00Z"
+        job_data_action_model['inventory_record'] = inventory_resource_record_model
+        job_data_action_model['materialized_inventory'] = 'testString'
+
+        # Construct a dict representation of a JobDataSystem model
+        job_data_system_model = {}
+        job_data_system_model['key_id'] = 'testString'
+        job_data_system_model['schematics_resource_id'] = ['testString']
+        job_data_system_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a ExternalSourceGit model
+        external_source_git_model = {}
+        external_source_git_model['computed_git_repo_url'] = 'testString'
+        external_source_git_model['git_repo_url'] = 'testString'
+        external_source_git_model['git_token'] = 'testString'
+        external_source_git_model['git_repo_folder'] = 'testString'
+        external_source_git_model['git_release'] = 'testString'
+        external_source_git_model['git_branch'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCatalog model
+        external_source_catalog_model = {}
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCosBucket model
+        external_source_cos_bucket_model = {}
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSource model
+        external_source_model = {}
+        external_source_model['source_type'] = 'local'
+        external_source_model['git'] = external_source_git_model
+        external_source_model['catalog'] = external_source_catalog_model
+        external_source_model['cos_bucket'] = external_source_cos_bucket_model
+
+        # Construct a dict representation of a JobDataWorkItemLastJob model
+        job_data_work_item_last_job_model = {}
+        job_data_work_item_last_job_model['command_object'] = 'workspace'
+        job_data_work_item_last_job_model['command_object_name'] = 'testString'
+        job_data_work_item_last_job_model['command_object_id'] = 'testString'
+        job_data_work_item_last_job_model['command_name'] = 'workspace_plan'
+        job_data_work_item_last_job_model['job_id'] = 'testString'
+        job_data_work_item_last_job_model['job_status'] = 'job_pending'
+
+        # Construct a dict representation of a JobDataWorkItem model
+        job_data_work_item_model = {}
+        job_data_work_item_model['command_object_id'] = 'testString'
+        job_data_work_item_model['command_object_name'] = 'testString'
+        job_data_work_item_model['layers'] = 'testString'
+        job_data_work_item_model['source_type'] = 'local'
+        job_data_work_item_model['source'] = external_source_model
+        job_data_work_item_model['inputs'] = [variable_data_model]
+        job_data_work_item_model['outputs'] = [variable_data_model]
+        job_data_work_item_model['settings'] = [variable_data_model]
+        job_data_work_item_model['last_job'] = job_data_work_item_last_job_model
+        job_data_work_item_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobDataFlow model
+        job_data_flow_model = {}
+        job_data_flow_model['flow_id'] = 'testString'
+        job_data_flow_model['flow_name'] = 'testString'
+        job_data_flow_model['workitems'] = [job_data_work_item_model]
+        job_data_flow_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobData model
+        job_data_model = {}
+        job_data_model['job_type'] = 'repo_download_job'
+        job_data_model['workspace_job_data'] = job_data_workspace_model
+        job_data_model['action_job_data'] = job_data_action_model
+        job_data_model['system_job_data'] = job_data_system_model
+        job_data_model['flow_job_data'] = job_data_flow_model
+
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
+
+        # Construct a dict representation of a JobLogSummaryRepoDownloadJob model
+        job_log_summary_repo_download_job_model = {}
+
+        # Construct a dict representation of a JobLogSummaryWorkspaceJob model
+        job_log_summary_workspace_job_model = {}
+
+        # Construct a dict representation of a JobLogSummaryWorkitems model
+        job_log_summary_workitems_model = {}
+        job_log_summary_workitems_model['workspace_id'] = 'testString'
+        job_log_summary_workitems_model['job_id'] = 'testString'
+        job_log_summary_workitems_model['log_url'] = 'testString'
+
+        # Construct a dict representation of a JobLogSummaryFlowJob model
+        job_log_summary_flow_job_model = {}
+        job_log_summary_flow_job_model['workitems'] = [job_log_summary_workitems_model]
+
+        # Construct a dict representation of a JobLogSummaryActionJobRecap model
+        job_log_summary_action_job_recap_model = {}
+        job_log_summary_action_job_recap_model['target'] = ['testString']
+        job_log_summary_action_job_recap_model['ok'] = 72.5
+        job_log_summary_action_job_recap_model['changed'] = 72.5
+        job_log_summary_action_job_recap_model['failed'] = 72.5
+        job_log_summary_action_job_recap_model['skipped'] = 72.5
+        job_log_summary_action_job_recap_model['unreachable'] = 72.5
+
+        # Construct a dict representation of a JobLogSummaryActionJob model
+        job_log_summary_action_job_model = {}
+        job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
+
+        # Construct a dict representation of a JobLogSummarySystemJob model
+        job_log_summary_system_job_model = {}
+        job_log_summary_system_job_model['success'] = 72.5
+        job_log_summary_system_job_model['failed'] = 72.5
+
+        # Construct a dict representation of a JobLogSummary model
+        job_log_summary_model = {}
+        job_log_summary_model['job_type'] = 'repo_download_job'
+        job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
+        job_log_summary_model['workspace_job'] = job_log_summary_workspace_job_model
+        job_log_summary_model['flow_job'] = job_log_summary_flow_job_model
+        job_log_summary_model['action_job'] = job_log_summary_action_job_model
+        job_log_summary_model['system_job'] = job_log_summary_system_job_model
+
+        # Set up parameter values
+        job_id = 'testString'
+        refresh_token = 'testString'
+        command_object = 'workspace'
+        command_object_id = 'testString'
+        command_name = 'workspace_plan'
+        command_parameter = 'testString'
+        command_options = ['testString']
+        inputs = [variable_data_model]
+        settings = [variable_data_model]
+        tags = ['testString']
+        location = 'us-south'
+        status = job_status_model
+        data = job_data_model
+        bastion = bastion_resource_definition_model
+        log_summary = job_log_summary_model
+
+        # Invoke method
+        response = _service.update_job(
+            job_id,
+            refresh_token,
+            command_object=command_object,
+            command_object_id=command_object_id,
+            command_name=command_name,
+            command_parameter=command_parameter,
+            command_options=command_options,
+            inputs=inputs,
+            settings=settings,
+            tags=tags,
+            location=location,
+            status=status,
+            data=data,
+            bastion=bastion,
+            log_summary=log_summary,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['command_object'] == 'workspace'
+        assert req_body['command_object_id'] == 'testString'
+        assert req_body['command_name'] == 'workspace_plan'
+        assert req_body['command_parameter'] == 'testString'
+        assert req_body['command_options'] == ['testString']
+        assert req_body['inputs'] == [variable_data_model]
+        assert req_body['settings'] == [variable_data_model]
+        assert req_body['tags'] == ['testString']
+        assert req_body['location'] == 'us-south'
+        assert req_body['status'] == job_status_model
+        assert req_body['data'] == job_data_model
+        assert req_body['bastion'] == bastion_resource_definition_model
+        assert req_body['log_summary'] == job_log_summary_model
+
+
+    @responses.activate
+    def test_update_job_value_error(self):
+        """
+        test_update_job_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/jobs/testString')
+        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "workspace_plan", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-01-01T12:00:00.000Z", "submitted_by": "submitted_by", "start_at": "2019-01-01T12:00:00.000Z", "end_at": "2019-01-01T12:00:00.000Z", "duration": "duration", "status": {"workspace_job_status": {"workspace_name": "workspace_name", "status_code": "job_pending", "status_message": "status_message", "flow_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "template_status": [{"template_id": "template_id", "template_name": "template_name", "flow_index": 10, "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "targets_status_code": "none", "targets_status_message": "targets_status_message", "updated_at": "2019-01-01T12:00:00.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "flow_job_status": {"flow_id": "flow_id", "flow_name": "flow_name", "status_code": "job_pending", "status_message": "status_message", "workitems": [{"workspace_id": "workspace_id", "workspace_name": "workspace_name", "job_id": "job_id", "status_code": "job_pending", "status_message": "status_message", "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}}, "data": {"job_type": "repo_download_job", "workspace_job_data": {"workspace_name": "workspace_name", "flow_id": "flow_id", "flow_name": "flow_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "template_data": [{"template_id": "template_id", "template_name": "template_name", "flow_index": 10, "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}, "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-01-01T12:00:00.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-01-01T12:00:00.000Z"}, "flow_job_data": {"flow_id": "flow_id", "flow_name": "flow_name", "workitems": [{"command_object_id": "command_object_id", "command_object_name": "command_object_name", "layers": "layers", "source_type": "local", "source": {"source_type": "local", "git": {"computed_git_repo_url": "computed_git_repo_url", "git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}, "catalog": {"catalog_name": "catalog_name", "offering_name": "offering_name", "offering_version": "offering_version", "offering_kind": "offering_kind", "offering_id": "offering_id", "offering_version_id": "offering_version_id", "offering_repo_url": "offering_repo_url"}, "cos_bucket": {"cos_bucket_url": "cos_bucket_url"}}, "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "last_job": {"command_object": "workspace", "command_object_name": "command_object_name", "command_object_id": "command_object_id", "command_name": "workspace_plan", "job_id": "job_id", "job_status": "job_pending"}, "updated_at": "2019-01-01T12:00:00.000Z"}], "updated_at": "2019-01-01T12:00:00.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00.000Z", "log_analyzed_till": "2019-01-01T12:00:00.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "workspace_job": {"resources_add": 13, "resources_modify": 16, "resources_destroy": 17}, "flow_job": {"workitems_completed": 19, "workitems_pending": 17, "workitems_failed": 16, "workitems": [{"workspace_id": "workspace_id", "job_id": "job_id", "resources_add": 13, "resources_modify": 16, "resources_destroy": 17, "log_url": "log_url"}]}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-01-01T12:00:00.000Z"}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Construct a dict representation of a VariableMetadata model
+        variable_metadata_model = {}
+        variable_metadata_model['type'] = 'boolean'
+        variable_metadata_model['aliases'] = ['testString']
+        variable_metadata_model['description'] = 'testString'
+        variable_metadata_model['default_value'] = 'testString'
+        variable_metadata_model['secure'] = True
+        variable_metadata_model['immutable'] = True
+        variable_metadata_model['hidden'] = True
+        variable_metadata_model['options'] = ['testString']
+        variable_metadata_model['min_value'] = 38
+        variable_metadata_model['max_value'] = 38
+        variable_metadata_model['min_length'] = 38
+        variable_metadata_model['max_length'] = 38
+        variable_metadata_model['matches'] = 'testString'
+        variable_metadata_model['position'] = 38
+        variable_metadata_model['group_by'] = 'testString'
+        variable_metadata_model['source'] = 'testString'
+
+        # Construct a dict representation of a VariableData model
+        variable_data_model = {}
+        variable_data_model['name'] = 'testString'
+        variable_data_model['value'] = 'testString'
+        variable_data_model['metadata'] = variable_metadata_model
+
+        # Construct a dict representation of a JobStatusWorkitem model
+        job_status_workitem_model = {}
+        job_status_workitem_model['workspace_id'] = 'testString'
+        job_status_workitem_model['workspace_name'] = 'testString'
+        job_status_workitem_model['job_id'] = 'testString'
+        job_status_workitem_model['status_code'] = 'job_pending'
+        job_status_workitem_model['status_message'] = 'testString'
+        job_status_workitem_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusFlow model
+        job_status_flow_model = {}
+        job_status_flow_model['flow_id'] = 'testString'
+        job_status_flow_model['flow_name'] = 'testString'
+        job_status_flow_model['status_code'] = 'job_pending'
+        job_status_flow_model['status_message'] = 'testString'
+        job_status_flow_model['workitems'] = [job_status_workitem_model]
+        job_status_flow_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusTemplate model
+        job_status_template_model = {}
+        job_status_template_model['template_id'] = 'testString'
+        job_status_template_model['template_name'] = 'testString'
+        job_status_template_model['flow_index'] = 38
+        job_status_template_model['status_code'] = 'job_pending'
+        job_status_template_model['status_message'] = 'testString'
+        job_status_template_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusWorkspace model
+        job_status_workspace_model = {}
+        job_status_workspace_model['workspace_name'] = 'testString'
+        job_status_workspace_model['status_code'] = 'job_pending'
+        job_status_workspace_model['status_message'] = 'testString'
+        job_status_workspace_model['flow_status'] = job_status_flow_model
+        job_status_workspace_model['template_status'] = [job_status_template_model]
+        job_status_workspace_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusAction model
+        job_status_action_model = {}
+        job_status_action_model['action_name'] = 'testString'
+        job_status_action_model['status_code'] = 'job_pending'
+        job_status_action_model['status_message'] = 'testString'
+        job_status_action_model['bastion_status_code'] = 'none'
+        job_status_action_model['bastion_status_message'] = 'testString'
+        job_status_action_model['targets_status_code'] = 'none'
+        job_status_action_model['targets_status_message'] = 'testString'
+        job_status_action_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusSchematicsResources model
+        job_status_schematics_resources_model = {}
+        job_status_schematics_resources_model['status_code'] = 'job_pending'
+        job_status_schematics_resources_model['status_message'] = 'testString'
+        job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
+        job_status_schematics_resources_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatusSystem model
+        job_status_system_model = {}
+        job_status_system_model['system_status_message'] = 'testString'
+        job_status_system_model['system_status_code'] = 'job_pending'
+        job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
+        job_status_system_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobStatus model
+        job_status_model = {}
+        job_status_model['workspace_job_status'] = job_status_workspace_model
+        job_status_model['action_job_status'] = job_status_action_model
+        job_status_model['system_job_status'] = job_status_system_model
+        job_status_model['flow_job_status'] = job_status_flow_model
+
+        # Construct a dict representation of a JobDataTemplate model
+        job_data_template_model = {}
+        job_data_template_model['template_id'] = 'testString'
+        job_data_template_model['template_name'] = 'testString'
+        job_data_template_model['flow_index'] = 38
+        job_data_template_model['inputs'] = [variable_data_model]
+        job_data_template_model['outputs'] = [variable_data_model]
+        job_data_template_model['settings'] = [variable_data_model]
+        job_data_template_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobDataWorkspace model
+        job_data_workspace_model = {}
+        job_data_workspace_model['workspace_name'] = 'testString'
+        job_data_workspace_model['flow_id'] = 'testString'
+        job_data_workspace_model['flow_name'] = 'testString'
+        job_data_workspace_model['inputs'] = [variable_data_model]
+        job_data_workspace_model['outputs'] = [variable_data_model]
+        job_data_workspace_model['settings'] = [variable_data_model]
+        job_data_workspace_model['template_data'] = [job_data_template_model]
+        job_data_workspace_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a InventoryResourceRecord model
+        inventory_resource_record_model = {}
+        inventory_resource_record_model['name'] = 'testString'
+        inventory_resource_record_model['description'] = 'testString'
+        inventory_resource_record_model['location'] = 'us-south'
+        inventory_resource_record_model['resource_group'] = 'testString'
+        inventory_resource_record_model['inventories_ini'] = 'testString'
+        inventory_resource_record_model['resource_queries'] = ['testString']
+
+        # Construct a dict representation of a JobDataAction model
+        job_data_action_model = {}
+        job_data_action_model['action_name'] = 'testString'
+        job_data_action_model['inputs'] = [variable_data_model]
+        job_data_action_model['outputs'] = [variable_data_model]
+        job_data_action_model['settings'] = [variable_data_model]
+        job_data_action_model['updated_at'] = "2019-01-01T12:00:00Z"
+        job_data_action_model['inventory_record'] = inventory_resource_record_model
+        job_data_action_model['materialized_inventory'] = 'testString'
+
+        # Construct a dict representation of a JobDataSystem model
+        job_data_system_model = {}
+        job_data_system_model['key_id'] = 'testString'
+        job_data_system_model['schematics_resource_id'] = ['testString']
+        job_data_system_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a ExternalSourceGit model
+        external_source_git_model = {}
+        external_source_git_model['computed_git_repo_url'] = 'testString'
+        external_source_git_model['git_repo_url'] = 'testString'
+        external_source_git_model['git_token'] = 'testString'
+        external_source_git_model['git_repo_folder'] = 'testString'
+        external_source_git_model['git_release'] = 'testString'
+        external_source_git_model['git_branch'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCatalog model
+        external_source_catalog_model = {}
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSourceCosBucket model
+        external_source_cos_bucket_model = {}
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
+        # Construct a dict representation of a ExternalSource model
+        external_source_model = {}
+        external_source_model['source_type'] = 'local'
+        external_source_model['git'] = external_source_git_model
+        external_source_model['catalog'] = external_source_catalog_model
+        external_source_model['cos_bucket'] = external_source_cos_bucket_model
+
+        # Construct a dict representation of a JobDataWorkItemLastJob model
+        job_data_work_item_last_job_model = {}
+        job_data_work_item_last_job_model['command_object'] = 'workspace'
+        job_data_work_item_last_job_model['command_object_name'] = 'testString'
+        job_data_work_item_last_job_model['command_object_id'] = 'testString'
+        job_data_work_item_last_job_model['command_name'] = 'workspace_plan'
+        job_data_work_item_last_job_model['job_id'] = 'testString'
+        job_data_work_item_last_job_model['job_status'] = 'job_pending'
+
+        # Construct a dict representation of a JobDataWorkItem model
+        job_data_work_item_model = {}
+        job_data_work_item_model['command_object_id'] = 'testString'
+        job_data_work_item_model['command_object_name'] = 'testString'
+        job_data_work_item_model['layers'] = 'testString'
+        job_data_work_item_model['source_type'] = 'local'
+        job_data_work_item_model['source'] = external_source_model
+        job_data_work_item_model['inputs'] = [variable_data_model]
+        job_data_work_item_model['outputs'] = [variable_data_model]
+        job_data_work_item_model['settings'] = [variable_data_model]
+        job_data_work_item_model['last_job'] = job_data_work_item_last_job_model
+        job_data_work_item_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobDataFlow model
+        job_data_flow_model = {}
+        job_data_flow_model['flow_id'] = 'testString'
+        job_data_flow_model['flow_name'] = 'testString'
+        job_data_flow_model['workitems'] = [job_data_work_item_model]
+        job_data_flow_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a dict representation of a JobData model
+        job_data_model = {}
+        job_data_model['job_type'] = 'repo_download_job'
+        job_data_model['workspace_job_data'] = job_data_workspace_model
+        job_data_model['action_job_data'] = job_data_action_model
+        job_data_model['system_job_data'] = job_data_system_model
+        job_data_model['flow_job_data'] = job_data_flow_model
+
+        # Construct a dict representation of a BastionResourceDefinition model
+        bastion_resource_definition_model = {}
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
+
+        # Construct a dict representation of a JobLogSummaryRepoDownloadJob model
+        job_log_summary_repo_download_job_model = {}
+
+        # Construct a dict representation of a JobLogSummaryWorkspaceJob model
+        job_log_summary_workspace_job_model = {}
+
+        # Construct a dict representation of a JobLogSummaryWorkitems model
+        job_log_summary_workitems_model = {}
+        job_log_summary_workitems_model['workspace_id'] = 'testString'
+        job_log_summary_workitems_model['job_id'] = 'testString'
+        job_log_summary_workitems_model['log_url'] = 'testString'
+
+        # Construct a dict representation of a JobLogSummaryFlowJob model
+        job_log_summary_flow_job_model = {}
+        job_log_summary_flow_job_model['workitems'] = [job_log_summary_workitems_model]
+
+        # Construct a dict representation of a JobLogSummaryActionJobRecap model
+        job_log_summary_action_job_recap_model = {}
+        job_log_summary_action_job_recap_model['target'] = ['testString']
+        job_log_summary_action_job_recap_model['ok'] = 72.5
+        job_log_summary_action_job_recap_model['changed'] = 72.5
+        job_log_summary_action_job_recap_model['failed'] = 72.5
+        job_log_summary_action_job_recap_model['skipped'] = 72.5
+        job_log_summary_action_job_recap_model['unreachable'] = 72.5
+
+        # Construct a dict representation of a JobLogSummaryActionJob model
+        job_log_summary_action_job_model = {}
+        job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
+
+        # Construct a dict representation of a JobLogSummarySystemJob model
+        job_log_summary_system_job_model = {}
+        job_log_summary_system_job_model['success'] = 72.5
+        job_log_summary_system_job_model['failed'] = 72.5
+
+        # Construct a dict representation of a JobLogSummary model
+        job_log_summary_model = {}
+        job_log_summary_model['job_type'] = 'repo_download_job'
+        job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
+        job_log_summary_model['workspace_job'] = job_log_summary_workspace_job_model
+        job_log_summary_model['flow_job'] = job_log_summary_flow_job_model
+        job_log_summary_model['action_job'] = job_log_summary_action_job_model
+        job_log_summary_model['system_job'] = job_log_summary_system_job_model
+
+        # Set up parameter values
+        job_id = 'testString'
+        refresh_token = 'testString'
+        command_object = 'workspace'
+        command_object_id = 'testString'
+        command_name = 'workspace_plan'
+        command_parameter = 'testString'
+        command_options = ['testString']
+        inputs = [variable_data_model]
+        settings = [variable_data_model]
+        tags = ['testString']
+        location = 'us-south'
+        status = job_status_model
+        data = job_data_model
+        bastion = bastion_resource_definition_model
+        log_summary = job_log_summary_model
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "job_id": job_id,
+            "refresh_token": refresh_token,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.update_job(**req_copy)
+
+
+
+class TestDeleteJob():
+    """
+    Test Class for delete_job
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_delete_job_all_params(self):
+        """
+        delete_job()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/jobs/testString')
+        responses.add(responses.DELETE,
+                      url,
+                      status=204)
+
+        # Set up parameter values
+        job_id = 'testString'
+        refresh_token = 'testString'
+        force = True
+        propagate = True
+
+        # Invoke method
+        response = _service.delete_job(
+            job_id,
+            refresh_token,
+            force=force,
+            propagate=propagate,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 204
+
+
+    @responses.activate
+    def test_delete_job_required_params(self):
+        """
+        test_delete_job_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/jobs/testString')
+        responses.add(responses.DELETE,
+                      url,
+                      status=204)
+
+        # Set up parameter values
+        job_id = 'testString'
+        refresh_token = 'testString'
+
+        # Invoke method
+        response = _service.delete_job(
+            job_id,
+            refresh_token,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 204
+
+
+    @responses.activate
+    def test_delete_job_value_error(self):
+        """
+        test_delete_job_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/jobs/testString')
+        responses.add(responses.DELETE,
+                      url,
+                      status=204)
+
+        # Set up parameter values
+        job_id = 'testString'
+        refresh_token = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "job_id": job_id,
+            "refresh_token": refresh_token,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.delete_job(**req_copy)
+
+
+
+class TestListJobLogs():
+    """
+    Test Class for list_job_logs
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_list_job_logs_all_params(self):
+        """
+        list_job_logs()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/jobs/testString/logs')
+        mock_response = '{"job_id": "job_id", "job_name": "job_name", "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00.000Z", "log_analyzed_till": "2019-01-01T12:00:00.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "workspace_job": {"resources_add": 13, "resources_modify": 16, "resources_destroy": 17}, "flow_job": {"workitems_completed": 19, "workitems_pending": 17, "workitems_failed": 16, "workitems": [{"workspace_id": "workspace_id", "job_id": "job_id", "resources_add": 13, "resources_modify": 16, "resources_destroy": 17, "log_url": "log_url"}]}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "format": "json", "details": "VGhpcyBpcyBhbiBlbmNvZGVkIGJ5dGUgYXJyYXku", "updated_at": "2019-01-01T12:00:00.000Z"}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        job_id = 'testString'
+
+        # Invoke method
+        response = _service.list_job_logs(
+            job_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+    @responses.activate
+    def test_list_job_logs_value_error(self):
+        """
+        test_list_job_logs_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/jobs/testString/logs')
+        mock_response = '{"job_id": "job_id", "job_name": "job_name", "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-01-01T12:00:00.000Z", "log_analyzed_till": "2019-01-01T12:00:00.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "workspace_job": {"resources_add": 13, "resources_modify": 16, "resources_destroy": 17}, "flow_job": {"workitems_completed": 19, "workitems_pending": 17, "workitems_failed": 16, "workitems": [{"workspace_id": "workspace_id", "job_id": "job_id", "resources_add": 13, "resources_modify": 16, "resources_destroy": 17, "log_url": "log_url"}]}, "action_job": {"target_count": 12, "task_count": 10, "play_count": 10, "recap": {"target": ["target"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "format": "json", "details": "VGhpcyBpcyBhbiBlbmNvZGVkIGJ5dGUgYXJyYXku", "updated_at": "2019-01-01T12:00:00.000Z"}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        job_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "job_id": job_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.list_job_logs(**req_copy)
+
+
+
+# endregion
+##############################################################################
+# End of Service: Jobs
+##############################################################################
+
+##############################################################################
+# Start of Service: BulkJobs
+##############################################################################
+# region
+
+class TestNewInstance():
+    """
+    Test Class for new_instance
+    """
+
+    def test_new_instance(self):
+        """
+        new_instance()
+        """
+        os.environ['TEST_SERVICE_AUTH_TYPE'] = 'noAuth'
+
+        service = SchematicsV1.new_instance(
+            service_name='TEST_SERVICE',
+        )
+
+        assert service is not None
+        assert isinstance(service, SchematicsV1)
+
+    def test_new_instance_without_authenticator(self):
+        """
+        new_instance_without_authenticator()
+        """
+        with pytest.raises(ValueError, match='authenticator must be provided'):
+            service = SchematicsV1.new_instance(
+            )
 
 class TestCreateWorkspaceDeletionJob():
     """
@@ -3139,6 +6589,8 @@ class TestCreateWorkspaceDeletionJob():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -3150,7 +6602,7 @@ class TestCreateWorkspaceDeletionJob():
         create_workspace_deletion_job()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspace_jobs')
+        url = self.preprocess_url(_base_url + '/v1/workspace_jobs')
         mock_response = '{"job": "job", "job_id": "job_id"}'
         responses.add(responses.POST,
                       url,
@@ -3168,7 +6620,7 @@ class TestCreateWorkspaceDeletionJob():
         destroy_resources = 'testString'
 
         # Invoke method
-        response = service.create_workspace_deletion_job(
+        response = _service.create_workspace_deletion_job(
             refresh_token,
             new_delete_workspaces=new_delete_workspaces,
             new_destroy_resources=new_destroy_resources,
@@ -3201,7 +6653,7 @@ class TestCreateWorkspaceDeletionJob():
         test_create_workspace_deletion_job_required_params()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspace_jobs')
+        url = self.preprocess_url(_base_url + '/v1/workspace_jobs')
         mock_response = '{"job": "job", "job_id": "job_id"}'
         responses.add(responses.POST,
                       url,
@@ -3218,7 +6670,7 @@ class TestCreateWorkspaceDeletionJob():
         new_workspaces = ['testString']
 
         # Invoke method
-        response = service.create_workspace_deletion_job(
+        response = _service.create_workspace_deletion_job(
             refresh_token,
             new_delete_workspaces=new_delete_workspaces,
             new_destroy_resources=new_destroy_resources,
@@ -3246,7 +6698,7 @@ class TestCreateWorkspaceDeletionJob():
         test_create_workspace_deletion_job_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspace_jobs')
+        url = self.preprocess_url(_base_url + '/v1/workspace_jobs')
         mock_response = '{"job": "job", "job_id": "job_id"}'
         responses.add(responses.POST,
                       url,
@@ -3269,7 +6721,7 @@ class TestCreateWorkspaceDeletionJob():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.create_workspace_deletion_job(**req_copy)
+                _service.create_workspace_deletion_job(**req_copy)
 
 
 
@@ -3282,6 +6734,8 @@ class TestGetWorkspaceDeletionJobStatus():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -3293,7 +6747,7 @@ class TestGetWorkspaceDeletionJobStatus():
         get_workspace_deletion_job_status()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspace_jobs/testString/status')
+        url = self.preprocess_url(_base_url + '/v1/workspace_jobs/testString/status')
         mock_response = '{"job_status": {"failed": ["failed"], "in_progress": ["in_progress"], "success": ["success"], "last_updated_on": "2019-01-01T12:00:00.000Z"}}'
         responses.add(responses.GET,
                       url,
@@ -3305,7 +6759,7 @@ class TestGetWorkspaceDeletionJobStatus():
         wj_id = 'testString'
 
         # Invoke method
-        response = service.get_workspace_deletion_job_status(
+        response = _service.get_workspace_deletion_job_status(
             wj_id,
             headers={}
         )
@@ -3321,7 +6775,7 @@ class TestGetWorkspaceDeletionJobStatus():
         test_get_workspace_deletion_job_status_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v1/workspace_jobs/testString/status')
+        url = self.preprocess_url(_base_url + '/v1/workspace_jobs/testString/status')
         mock_response = '{"job_status": {"failed": ["failed"], "in_progress": ["in_progress"], "success": ["success"], "last_updated_on": "2019-01-01T12:00:00.000Z"}}'
         responses.add(responses.GET,
                       url,
@@ -3339,2996 +6793,45 @@ class TestGetWorkspaceDeletionJobStatus():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.get_workspace_deletion_job_status(**req_copy)
+                _service.get_workspace_deletion_job_status(**req_copy)
 
 
 
 # endregion
 ##############################################################################
-# End of Service: WorkspaceBulkJobs
+# End of Service: BulkJobs
 ##############################################################################
 
 ##############################################################################
-# Start of Service: Actions
-##############################################################################
-# region
-
-class TestCreateAction():
-    """
-    Test Class for create_action
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_create_action_all_params(self):
-        """
-        create_action()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/actions')
-        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "host": "host"}, "inventory": "inventory", "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-11-06T16:19:32.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-11-06T16:19:32.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
-        responses.add(responses.POST,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=201)
-
-        # Construct a dict representation of a UserState model
-        user_state_model = {}
-        user_state_model['state'] = 'draft'
-        user_state_model['set_by'] = 'testString'
-        user_state_model['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a ExternalSourceGit model
-        external_source_git_model = {}
-        external_source_git_model['git_repo_url'] = 'testString'
-        external_source_git_model['git_token'] = 'testString'
-        external_source_git_model['git_repo_folder'] = 'testString'
-        external_source_git_model['git_release'] = 'testString'
-        external_source_git_model['git_branch'] = 'testString'
-
-        # Construct a dict representation of a ExternalSource model
-        external_source_model = {}
-        external_source_model['source_type'] = 'local'
-        external_source_model['git'] = external_source_git_model
-
-        # Construct a dict representation of a BastionResourceDefinition model
-        bastion_resource_definition_model = {}
-        bastion_resource_definition_model['name'] = 'testString'
-        bastion_resource_definition_model['host'] = 'testString'
-
-        # Construct a dict representation of a VariableMetadata model
-        variable_metadata_model = {}
-        variable_metadata_model['type'] = 'boolean'
-        variable_metadata_model['aliases'] = ['testString']
-        variable_metadata_model['description'] = 'testString'
-        variable_metadata_model['default_value'] = 'testString'
-        variable_metadata_model['secure'] = True
-        variable_metadata_model['immutable'] = True
-        variable_metadata_model['hidden'] = True
-        variable_metadata_model['options'] = ['testString']
-        variable_metadata_model['min_value'] = 38
-        variable_metadata_model['max_value'] = 38
-        variable_metadata_model['min_length'] = 38
-        variable_metadata_model['max_length'] = 38
-        variable_metadata_model['matches'] = 'testString'
-        variable_metadata_model['position'] = 38
-        variable_metadata_model['group_by'] = 'testString'
-        variable_metadata_model['source'] = 'testString'
-
-        # Construct a dict representation of a VariableData model
-        variable_data_model = {}
-        variable_data_model['name'] = 'testString'
-        variable_data_model['value'] = 'testString'
-        variable_data_model['metadata'] = variable_metadata_model
-
-        # Construct a dict representation of a ActionState model
-        action_state_model = {}
-        action_state_model['status_code'] = 'normal'
-        action_state_model['status_job_id'] = 'testString'
-        action_state_model['status_message'] = 'testString'
-
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {}
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
-
-        # Set up parameter values
-        name = 'Stop Action'
-        description = 'This Action can be used to Stop the VSIs'
-        location = 'us-south'
-        resource_group = 'testString'
-        tags = ['testString']
-        user_state = user_state_model
-        source_readme_url = 'testString'
-        source = external_source_model
-        source_type = 'local'
-        command_parameter = 'testString'
-        bastion = bastion_resource_definition_model
-        inventory = 'testString'
-        bastion_credential = variable_data_model
-        credentials = [variable_data_model]
-        inputs = [variable_data_model]
-        outputs = [variable_data_model]
-        settings = [variable_data_model]
-        state = action_state_model
-        sys_lock = system_lock_model
-        x_github_token = 'testString'
-
-        # Invoke method
-        response = service.create_action(
-            name=name,
-            description=description,
-            location=location,
-            resource_group=resource_group,
-            tags=tags,
-            user_state=user_state,
-            source_readme_url=source_readme_url,
-            source=source,
-            source_type=source_type,
-            command_parameter=command_parameter,
-            bastion=bastion,
-            inventory=inventory,
-            bastion_credential=bastion_credential,
-            credentials=credentials,
-            inputs=inputs,
-            outputs=outputs,
-            settings=settings,
-            state=state,
-            sys_lock=sys_lock,
-            x_github_token=x_github_token,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 201
-        # Validate body params
-        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
-        assert req_body['name'] == 'Stop Action'
-        assert req_body['description'] == 'This Action can be used to Stop the VSIs'
-        assert req_body['location'] == 'us-south'
-        assert req_body['resource_group'] == 'testString'
-        assert req_body['tags'] == ['testString']
-        assert req_body['user_state'] == user_state_model
-        assert req_body['source_readme_url'] == 'testString'
-        assert req_body['source'] == external_source_model
-        assert req_body['source_type'] == 'local'
-        assert req_body['command_parameter'] == 'testString'
-        assert req_body['bastion'] == bastion_resource_definition_model
-        assert req_body['inventory'] == 'testString'
-        assert req_body['bastion_credential'] == variable_data_model
-        assert req_body['credentials'] == [variable_data_model]
-        assert req_body['inputs'] == [variable_data_model]
-        assert req_body['outputs'] == [variable_data_model]
-        assert req_body['settings'] == [variable_data_model]
-        assert req_body['state'] == action_state_model
-        assert req_body['sys_lock'] == system_lock_model
-
-
-    @responses.activate
-    def test_create_action_required_params(self):
-        """
-        test_create_action_required_params()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/actions')
-        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "host": "host"}, "inventory": "inventory", "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-11-06T16:19:32.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-11-06T16:19:32.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
-        responses.add(responses.POST,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=201)
-
-        # Construct a dict representation of a UserState model
-        user_state_model = {}
-        user_state_model['state'] = 'draft'
-        user_state_model['set_by'] = 'testString'
-        user_state_model['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a ExternalSourceGit model
-        external_source_git_model = {}
-        external_source_git_model['git_repo_url'] = 'testString'
-        external_source_git_model['git_token'] = 'testString'
-        external_source_git_model['git_repo_folder'] = 'testString'
-        external_source_git_model['git_release'] = 'testString'
-        external_source_git_model['git_branch'] = 'testString'
-
-        # Construct a dict representation of a ExternalSource model
-        external_source_model = {}
-        external_source_model['source_type'] = 'local'
-        external_source_model['git'] = external_source_git_model
-
-        # Construct a dict representation of a BastionResourceDefinition model
-        bastion_resource_definition_model = {}
-        bastion_resource_definition_model['name'] = 'testString'
-        bastion_resource_definition_model['host'] = 'testString'
-
-        # Construct a dict representation of a VariableMetadata model
-        variable_metadata_model = {}
-        variable_metadata_model['type'] = 'boolean'
-        variable_metadata_model['aliases'] = ['testString']
-        variable_metadata_model['description'] = 'testString'
-        variable_metadata_model['default_value'] = 'testString'
-        variable_metadata_model['secure'] = True
-        variable_metadata_model['immutable'] = True
-        variable_metadata_model['hidden'] = True
-        variable_metadata_model['options'] = ['testString']
-        variable_metadata_model['min_value'] = 38
-        variable_metadata_model['max_value'] = 38
-        variable_metadata_model['min_length'] = 38
-        variable_metadata_model['max_length'] = 38
-        variable_metadata_model['matches'] = 'testString'
-        variable_metadata_model['position'] = 38
-        variable_metadata_model['group_by'] = 'testString'
-        variable_metadata_model['source'] = 'testString'
-
-        # Construct a dict representation of a VariableData model
-        variable_data_model = {}
-        variable_data_model['name'] = 'testString'
-        variable_data_model['value'] = 'testString'
-        variable_data_model['metadata'] = variable_metadata_model
-
-        # Construct a dict representation of a ActionState model
-        action_state_model = {}
-        action_state_model['status_code'] = 'normal'
-        action_state_model['status_job_id'] = 'testString'
-        action_state_model['status_message'] = 'testString'
-
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {}
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
-
-        # Set up parameter values
-        name = 'Stop Action'
-        description = 'This Action can be used to Stop the VSIs'
-        location = 'us-south'
-        resource_group = 'testString'
-        tags = ['testString']
-        user_state = user_state_model
-        source_readme_url = 'testString'
-        source = external_source_model
-        source_type = 'local'
-        command_parameter = 'testString'
-        bastion = bastion_resource_definition_model
-        inventory = 'testString'
-        bastion_credential = variable_data_model
-        credentials = [variable_data_model]
-        inputs = [variable_data_model]
-        outputs = [variable_data_model]
-        settings = [variable_data_model]
-        state = action_state_model
-        sys_lock = system_lock_model
-
-        # Invoke method
-        response = service.create_action(
-            name=name,
-            description=description,
-            location=location,
-            resource_group=resource_group,
-            tags=tags,
-            user_state=user_state,
-            source_readme_url=source_readme_url,
-            source=source,
-            source_type=source_type,
-            command_parameter=command_parameter,
-            bastion=bastion,
-            inventory=inventory,
-            bastion_credential=bastion_credential,
-            credentials=credentials,
-            inputs=inputs,
-            outputs=outputs,
-            settings=settings,
-            state=state,
-            sys_lock=sys_lock,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 201
-        # Validate body params
-        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
-        assert req_body['name'] == 'Stop Action'
-        assert req_body['description'] == 'This Action can be used to Stop the VSIs'
-        assert req_body['location'] == 'us-south'
-        assert req_body['resource_group'] == 'testString'
-        assert req_body['tags'] == ['testString']
-        assert req_body['user_state'] == user_state_model
-        assert req_body['source_readme_url'] == 'testString'
-        assert req_body['source'] == external_source_model
-        assert req_body['source_type'] == 'local'
-        assert req_body['command_parameter'] == 'testString'
-        assert req_body['bastion'] == bastion_resource_definition_model
-        assert req_body['inventory'] == 'testString'
-        assert req_body['bastion_credential'] == variable_data_model
-        assert req_body['credentials'] == [variable_data_model]
-        assert req_body['inputs'] == [variable_data_model]
-        assert req_body['outputs'] == [variable_data_model]
-        assert req_body['settings'] == [variable_data_model]
-        assert req_body['state'] == action_state_model
-        assert req_body['sys_lock'] == system_lock_model
-
-
-class TestListActions():
-    """
-    Test Class for list_actions
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_list_actions_all_params(self):
-        """
-        list_actions()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/actions')
-        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "actions": [{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "id": "id", "crn": "crn", "location": "us-south", "resource_group": "resource_group", "namespace": "namespace", "tags": ["tags"], "playbook_name": "playbook_name", "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "state": {"status_code": "normal", "status_message": "status_message"}, "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}, "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by"}]}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        offset = 0
-        limit = 1
-        sort = 'testString'
-        profile = 'ids'
-
-        # Invoke method
-        response = service.list_actions(
-            offset=offset,
-            limit=limit,
-            sort=sort,
-            profile=profile,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-        # Validate query params
-        query_string = responses.calls[0].request.url.split('?',1)[1]
-        query_string = urllib.parse.unquote_plus(query_string)
-        assert 'offset={}'.format(offset) in query_string
-        assert 'limit={}'.format(limit) in query_string
-        assert 'sort={}'.format(sort) in query_string
-        assert 'profile={}'.format(profile) in query_string
-
-
-    @responses.activate
-    def test_list_actions_required_params(self):
-        """
-        test_list_actions_required_params()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/actions')
-        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "actions": [{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "id": "id", "crn": "crn", "location": "us-south", "resource_group": "resource_group", "namespace": "namespace", "tags": ["tags"], "playbook_name": "playbook_name", "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "state": {"status_code": "normal", "status_message": "status_message"}, "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}, "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by"}]}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Invoke method
-        response = service.list_actions()
-
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-
-
-class TestGetAction():
-    """
-    Test Class for get_action
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_get_action_all_params(self):
-        """
-        get_action()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/actions/testString')
-        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "host": "host"}, "inventory": "inventory", "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-11-06T16:19:32.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-11-06T16:19:32.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        action_id = 'testString'
-        profile = 'summary'
-
-        # Invoke method
-        response = service.get_action(
-            action_id,
-            profile=profile,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-        # Validate query params
-        query_string = responses.calls[0].request.url.split('?',1)[1]
-        query_string = urllib.parse.unquote_plus(query_string)
-        assert 'profile={}'.format(profile) in query_string
-
-
-    @responses.activate
-    def test_get_action_required_params(self):
-        """
-        test_get_action_required_params()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/actions/testString')
-        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "host": "host"}, "inventory": "inventory", "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-11-06T16:19:32.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-11-06T16:19:32.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        action_id = 'testString'
-
-        # Invoke method
-        response = service.get_action(
-            action_id,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-
-
-    @responses.activate
-    def test_get_action_value_error(self):
-        """
-        test_get_action_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/actions/testString')
-        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "host": "host"}, "inventory": "inventory", "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-11-06T16:19:32.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-11-06T16:19:32.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        action_id = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "action_id": action_id,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.get_action(**req_copy)
-
-
-
-class TestDeleteAction():
-    """
-    Test Class for delete_action
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_delete_action_all_params(self):
-        """
-        delete_action()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/actions/testString')
-        responses.add(responses.DELETE,
-                      url,
-                      status=204)
-
-        # Set up parameter values
-        action_id = 'testString'
-        force = True
-        propagate = True
-
-        # Invoke method
-        response = service.delete_action(
-            action_id,
-            force=force,
-            propagate=propagate,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 204
-
-
-    @responses.activate
-    def test_delete_action_required_params(self):
-        """
-        test_delete_action_required_params()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/actions/testString')
-        responses.add(responses.DELETE,
-                      url,
-                      status=204)
-
-        # Set up parameter values
-        action_id = 'testString'
-
-        # Invoke method
-        response = service.delete_action(
-            action_id,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 204
-
-
-    @responses.activate
-    def test_delete_action_value_error(self):
-        """
-        test_delete_action_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/actions/testString')
-        responses.add(responses.DELETE,
-                      url,
-                      status=204)
-
-        # Set up parameter values
-        action_id = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "action_id": action_id,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.delete_action(**req_copy)
-
-
-
-class TestUpdateAction():
-    """
-    Test Class for update_action
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_update_action_all_params(self):
-        """
-        update_action()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/actions/testString')
-        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "host": "host"}, "inventory": "inventory", "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-11-06T16:19:32.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-11-06T16:19:32.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
-        responses.add(responses.PATCH,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Construct a dict representation of a UserState model
-        user_state_model = {}
-        user_state_model['state'] = 'draft'
-        user_state_model['set_by'] = 'testString'
-        user_state_model['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a ExternalSourceGit model
-        external_source_git_model = {}
-        external_source_git_model['git_repo_url'] = 'testString'
-        external_source_git_model['git_token'] = 'testString'
-        external_source_git_model['git_repo_folder'] = 'testString'
-        external_source_git_model['git_release'] = 'testString'
-        external_source_git_model['git_branch'] = 'testString'
-
-        # Construct a dict representation of a ExternalSource model
-        external_source_model = {}
-        external_source_model['source_type'] = 'local'
-        external_source_model['git'] = external_source_git_model
-
-        # Construct a dict representation of a BastionResourceDefinition model
-        bastion_resource_definition_model = {}
-        bastion_resource_definition_model['name'] = 'testString'
-        bastion_resource_definition_model['host'] = 'testString'
-
-        # Construct a dict representation of a VariableMetadata model
-        variable_metadata_model = {}
-        variable_metadata_model['type'] = 'boolean'
-        variable_metadata_model['aliases'] = ['testString']
-        variable_metadata_model['description'] = 'testString'
-        variable_metadata_model['default_value'] = 'testString'
-        variable_metadata_model['secure'] = True
-        variable_metadata_model['immutable'] = True
-        variable_metadata_model['hidden'] = True
-        variable_metadata_model['options'] = ['testString']
-        variable_metadata_model['min_value'] = 38
-        variable_metadata_model['max_value'] = 38
-        variable_metadata_model['min_length'] = 38
-        variable_metadata_model['max_length'] = 38
-        variable_metadata_model['matches'] = 'testString'
-        variable_metadata_model['position'] = 38
-        variable_metadata_model['group_by'] = 'testString'
-        variable_metadata_model['source'] = 'testString'
-
-        # Construct a dict representation of a VariableData model
-        variable_data_model = {}
-        variable_data_model['name'] = 'testString'
-        variable_data_model['value'] = 'testString'
-        variable_data_model['metadata'] = variable_metadata_model
-
-        # Construct a dict representation of a ActionState model
-        action_state_model = {}
-        action_state_model['status_code'] = 'normal'
-        action_state_model['status_job_id'] = 'testString'
-        action_state_model['status_message'] = 'testString'
-
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {}
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
-
-        # Set up parameter values
-        action_id = 'testString'
-        name = 'Stop Action'
-        description = 'This Action can be used to Stop the VSIs'
-        location = 'us-south'
-        resource_group = 'testString'
-        tags = ['testString']
-        user_state = user_state_model
-        source_readme_url = 'testString'
-        source = external_source_model
-        source_type = 'local'
-        command_parameter = 'testString'
-        bastion = bastion_resource_definition_model
-        inventory = 'testString'
-        bastion_credential = variable_data_model
-        credentials = [variable_data_model]
-        inputs = [variable_data_model]
-        outputs = [variable_data_model]
-        settings = [variable_data_model]
-        state = action_state_model
-        sys_lock = system_lock_model
-        x_github_token = 'testString'
-
-        # Invoke method
-        response = service.update_action(
-            action_id,
-            name=name,
-            description=description,
-            location=location,
-            resource_group=resource_group,
-            tags=tags,
-            user_state=user_state,
-            source_readme_url=source_readme_url,
-            source=source,
-            source_type=source_type,
-            command_parameter=command_parameter,
-            bastion=bastion,
-            inventory=inventory,
-            bastion_credential=bastion_credential,
-            credentials=credentials,
-            inputs=inputs,
-            outputs=outputs,
-            settings=settings,
-            state=state,
-            sys_lock=sys_lock,
-            x_github_token=x_github_token,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-        # Validate body params
-        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
-        assert req_body['name'] == 'Stop Action'
-        assert req_body['description'] == 'This Action can be used to Stop the VSIs'
-        assert req_body['location'] == 'us-south'
-        assert req_body['resource_group'] == 'testString'
-        assert req_body['tags'] == ['testString']
-        assert req_body['user_state'] == user_state_model
-        assert req_body['source_readme_url'] == 'testString'
-        assert req_body['source'] == external_source_model
-        assert req_body['source_type'] == 'local'
-        assert req_body['command_parameter'] == 'testString'
-        assert req_body['bastion'] == bastion_resource_definition_model
-        assert req_body['inventory'] == 'testString'
-        assert req_body['bastion_credential'] == variable_data_model
-        assert req_body['credentials'] == [variable_data_model]
-        assert req_body['inputs'] == [variable_data_model]
-        assert req_body['outputs'] == [variable_data_model]
-        assert req_body['settings'] == [variable_data_model]
-        assert req_body['state'] == action_state_model
-        assert req_body['sys_lock'] == system_lock_model
-
-
-    @responses.activate
-    def test_update_action_required_params(self):
-        """
-        test_update_action_required_params()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/actions/testString')
-        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "host": "host"}, "inventory": "inventory", "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-11-06T16:19:32.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-11-06T16:19:32.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
-        responses.add(responses.PATCH,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Construct a dict representation of a UserState model
-        user_state_model = {}
-        user_state_model['state'] = 'draft'
-        user_state_model['set_by'] = 'testString'
-        user_state_model['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a ExternalSourceGit model
-        external_source_git_model = {}
-        external_source_git_model['git_repo_url'] = 'testString'
-        external_source_git_model['git_token'] = 'testString'
-        external_source_git_model['git_repo_folder'] = 'testString'
-        external_source_git_model['git_release'] = 'testString'
-        external_source_git_model['git_branch'] = 'testString'
-
-        # Construct a dict representation of a ExternalSource model
-        external_source_model = {}
-        external_source_model['source_type'] = 'local'
-        external_source_model['git'] = external_source_git_model
-
-        # Construct a dict representation of a BastionResourceDefinition model
-        bastion_resource_definition_model = {}
-        bastion_resource_definition_model['name'] = 'testString'
-        bastion_resource_definition_model['host'] = 'testString'
-
-        # Construct a dict representation of a VariableMetadata model
-        variable_metadata_model = {}
-        variable_metadata_model['type'] = 'boolean'
-        variable_metadata_model['aliases'] = ['testString']
-        variable_metadata_model['description'] = 'testString'
-        variable_metadata_model['default_value'] = 'testString'
-        variable_metadata_model['secure'] = True
-        variable_metadata_model['immutable'] = True
-        variable_metadata_model['hidden'] = True
-        variable_metadata_model['options'] = ['testString']
-        variable_metadata_model['min_value'] = 38
-        variable_metadata_model['max_value'] = 38
-        variable_metadata_model['min_length'] = 38
-        variable_metadata_model['max_length'] = 38
-        variable_metadata_model['matches'] = 'testString'
-        variable_metadata_model['position'] = 38
-        variable_metadata_model['group_by'] = 'testString'
-        variable_metadata_model['source'] = 'testString'
-
-        # Construct a dict representation of a VariableData model
-        variable_data_model = {}
-        variable_data_model['name'] = 'testString'
-        variable_data_model['value'] = 'testString'
-        variable_data_model['metadata'] = variable_metadata_model
-
-        # Construct a dict representation of a ActionState model
-        action_state_model = {}
-        action_state_model['status_code'] = 'normal'
-        action_state_model['status_job_id'] = 'testString'
-        action_state_model['status_message'] = 'testString'
-
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {}
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
-
-        # Set up parameter values
-        action_id = 'testString'
-        name = 'Stop Action'
-        description = 'This Action can be used to Stop the VSIs'
-        location = 'us-south'
-        resource_group = 'testString'
-        tags = ['testString']
-        user_state = user_state_model
-        source_readme_url = 'testString'
-        source = external_source_model
-        source_type = 'local'
-        command_parameter = 'testString'
-        bastion = bastion_resource_definition_model
-        inventory = 'testString'
-        bastion_credential = variable_data_model
-        credentials = [variable_data_model]
-        inputs = [variable_data_model]
-        outputs = [variable_data_model]
-        settings = [variable_data_model]
-        state = action_state_model
-        sys_lock = system_lock_model
-
-        # Invoke method
-        response = service.update_action(
-            action_id,
-            name=name,
-            description=description,
-            location=location,
-            resource_group=resource_group,
-            tags=tags,
-            user_state=user_state,
-            source_readme_url=source_readme_url,
-            source=source,
-            source_type=source_type,
-            command_parameter=command_parameter,
-            bastion=bastion,
-            inventory=inventory,
-            bastion_credential=bastion_credential,
-            credentials=credentials,
-            inputs=inputs,
-            outputs=outputs,
-            settings=settings,
-            state=state,
-            sys_lock=sys_lock,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-        # Validate body params
-        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
-        assert req_body['name'] == 'Stop Action'
-        assert req_body['description'] == 'This Action can be used to Stop the VSIs'
-        assert req_body['location'] == 'us-south'
-        assert req_body['resource_group'] == 'testString'
-        assert req_body['tags'] == ['testString']
-        assert req_body['user_state'] == user_state_model
-        assert req_body['source_readme_url'] == 'testString'
-        assert req_body['source'] == external_source_model
-        assert req_body['source_type'] == 'local'
-        assert req_body['command_parameter'] == 'testString'
-        assert req_body['bastion'] == bastion_resource_definition_model
-        assert req_body['inventory'] == 'testString'
-        assert req_body['bastion_credential'] == variable_data_model
-        assert req_body['credentials'] == [variable_data_model]
-        assert req_body['inputs'] == [variable_data_model]
-        assert req_body['outputs'] == [variable_data_model]
-        assert req_body['settings'] == [variable_data_model]
-        assert req_body['state'] == action_state_model
-        assert req_body['sys_lock'] == system_lock_model
-
-
-    @responses.activate
-    def test_update_action_value_error(self):
-        """
-        test_update_action_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/actions/testString')
-        mock_response = '{"name": "Stop Action", "description": "This Action can be used to Stop the VSIs", "location": "us-south", "resource_group": "resource_group", "tags": ["tags"], "user_state": {"state": "draft", "set_by": "set_by", "set_at": "2019-11-06T16:19:32.000Z"}, "source_readme_url": "source_readme_url", "source": {"source_type": "local", "git": {"git_repo_url": "git_repo_url", "git_token": "git_token", "git_repo_folder": "git_repo_folder", "git_release": "git_release", "git_branch": "git_branch"}}, "source_type": "local", "command_parameter": "command_parameter", "bastion": {"name": "name", "host": "host"}, "inventory": "inventory", "bastion_credential": {"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}, "credentials": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "id": "id", "crn": "crn", "account": "account", "source_created_at": "2019-11-06T16:19:32.000Z", "source_created_by": "source_created_by", "source_updated_at": "2019-11-06T16:19:32.000Z", "source_updated_by": "source_updated_by", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "state": {"status_code": "normal", "status_job_id": "status_job_id", "status_message": "status_message"}, "playbook_names": ["playbook_names"], "sys_lock": {"sys_locked": true, "sys_locked_by": "sys_locked_by", "sys_locked_at": "2019-01-01T12:00:00.000Z"}}'
-        responses.add(responses.PATCH,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Construct a dict representation of a UserState model
-        user_state_model = {}
-        user_state_model['state'] = 'draft'
-        user_state_model['set_by'] = 'testString'
-        user_state_model['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a ExternalSourceGit model
-        external_source_git_model = {}
-        external_source_git_model['git_repo_url'] = 'testString'
-        external_source_git_model['git_token'] = 'testString'
-        external_source_git_model['git_repo_folder'] = 'testString'
-        external_source_git_model['git_release'] = 'testString'
-        external_source_git_model['git_branch'] = 'testString'
-
-        # Construct a dict representation of a ExternalSource model
-        external_source_model = {}
-        external_source_model['source_type'] = 'local'
-        external_source_model['git'] = external_source_git_model
-
-        # Construct a dict representation of a BastionResourceDefinition model
-        bastion_resource_definition_model = {}
-        bastion_resource_definition_model['name'] = 'testString'
-        bastion_resource_definition_model['host'] = 'testString'
-
-        # Construct a dict representation of a VariableMetadata model
-        variable_metadata_model = {}
-        variable_metadata_model['type'] = 'boolean'
-        variable_metadata_model['aliases'] = ['testString']
-        variable_metadata_model['description'] = 'testString'
-        variable_metadata_model['default_value'] = 'testString'
-        variable_metadata_model['secure'] = True
-        variable_metadata_model['immutable'] = True
-        variable_metadata_model['hidden'] = True
-        variable_metadata_model['options'] = ['testString']
-        variable_metadata_model['min_value'] = 38
-        variable_metadata_model['max_value'] = 38
-        variable_metadata_model['min_length'] = 38
-        variable_metadata_model['max_length'] = 38
-        variable_metadata_model['matches'] = 'testString'
-        variable_metadata_model['position'] = 38
-        variable_metadata_model['group_by'] = 'testString'
-        variable_metadata_model['source'] = 'testString'
-
-        # Construct a dict representation of a VariableData model
-        variable_data_model = {}
-        variable_data_model['name'] = 'testString'
-        variable_data_model['value'] = 'testString'
-        variable_data_model['metadata'] = variable_metadata_model
-
-        # Construct a dict representation of a ActionState model
-        action_state_model = {}
-        action_state_model['status_code'] = 'normal'
-        action_state_model['status_job_id'] = 'testString'
-        action_state_model['status_message'] = 'testString'
-
-        # Construct a dict representation of a SystemLock model
-        system_lock_model = {}
-        system_lock_model['sys_locked'] = True
-        system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
-
-        # Set up parameter values
-        action_id = 'testString'
-        name = 'Stop Action'
-        description = 'This Action can be used to Stop the VSIs'
-        location = 'us-south'
-        resource_group = 'testString'
-        tags = ['testString']
-        user_state = user_state_model
-        source_readme_url = 'testString'
-        source = external_source_model
-        source_type = 'local'
-        command_parameter = 'testString'
-        bastion = bastion_resource_definition_model
-        inventory = 'testString'
-        bastion_credential = variable_data_model
-        credentials = [variable_data_model]
-        inputs = [variable_data_model]
-        outputs = [variable_data_model]
-        settings = [variable_data_model]
-        state = action_state_model
-        sys_lock = system_lock_model
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "action_id": action_id,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.update_action(**req_copy)
-
-
-
-class TestUploadTemplateTarAction():
-    """
-    Test Class for upload_template_tar_action
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_upload_template_tar_action_all_params(self):
-        """
-        upload_template_tar_action()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/actions/testString/template_repo_upload')
-        mock_response = '{"file_value": "file_value", "has_received_file": false, "id": "id"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        action_id = 'testString'
-        file = io.BytesIO(b'This is a mock file.').getvalue()
-        file_content_type = 'testString'
-
-        # Invoke method
-        response = service.upload_template_tar_action(
-            action_id,
-            file=file,
-            file_content_type=file_content_type,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-
-
-    @responses.activate
-    def test_upload_template_tar_action_required_params(self):
-        """
-        test_upload_template_tar_action_required_params()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/actions/testString/template_repo_upload')
-        mock_response = '{"file_value": "file_value", "has_received_file": false, "id": "id"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        action_id = 'testString'
-
-        # Invoke method
-        response = service.upload_template_tar_action(
-            action_id,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-
-
-    @responses.activate
-    def test_upload_template_tar_action_value_error(self):
-        """
-        test_upload_template_tar_action_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/actions/testString/template_repo_upload')
-        mock_response = '{"file_value": "file_value", "has_received_file": false, "id": "id"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        action_id = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "action_id": action_id,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.upload_template_tar_action(**req_copy)
-
-
-
-# endregion
-##############################################################################
-# End of Service: Actions
-##############################################################################
-
-##############################################################################
-# Start of Service: Jobs
+# Start of Service: Inventory
 ##############################################################################
 # region
 
-class TestCreateJob():
+class TestNewInstance():
     """
-    Test Class for create_job
+    Test Class for new_instance
     """
 
-    def preprocess_url(self, request_url: str):
+    def test_new_instance(self):
         """
-        Preprocess the request URL to ensure the mock response will be found.
+        new_instance()
         """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
+        os.environ['TEST_SERVICE_AUTH_TYPE'] = 'noAuth'
 
-    @responses.activate
-    def test_create_job_all_params(self):
-        """
-        create_job()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/jobs')
-        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-11-06T16:19:32.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-11-06T16:19:32.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-11-06T16:19:32.000Z"}'
-        responses.add(responses.POST,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Construct a dict representation of a VariableMetadata model
-        variable_metadata_model = {}
-        variable_metadata_model['type'] = 'boolean'
-        variable_metadata_model['aliases'] = ['testString']
-        variable_metadata_model['description'] = 'testString'
-        variable_metadata_model['default_value'] = 'testString'
-        variable_metadata_model['secure'] = True
-        variable_metadata_model['immutable'] = True
-        variable_metadata_model['hidden'] = True
-        variable_metadata_model['options'] = ['testString']
-        variable_metadata_model['min_value'] = 38
-        variable_metadata_model['max_value'] = 38
-        variable_metadata_model['min_length'] = 38
-        variable_metadata_model['max_length'] = 38
-        variable_metadata_model['matches'] = 'testString'
-        variable_metadata_model['position'] = 38
-        variable_metadata_model['group_by'] = 'testString'
-        variable_metadata_model['source'] = 'testString'
-
-        # Construct a dict representation of a VariableData model
-        variable_data_model = {}
-        variable_data_model['name'] = 'testString'
-        variable_data_model['value'] = 'testString'
-        variable_data_model['metadata'] = variable_metadata_model
-
-        # Construct a dict representation of a JobStatusAction model
-        job_status_action_model = {}
-        job_status_action_model['action_name'] = 'testString'
-        job_status_action_model['status_code'] = 'job_pending'
-        job_status_action_model['status_message'] = 'testString'
-        job_status_action_model['bastion_status_code'] = 'none'
-        job_status_action_model['bastion_status_message'] = 'testString'
-        job_status_action_model['inventory_status_code'] = 'none'
-        job_status_action_model['inventory_status_message'] = 'testString'
-        job_status_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a JobStatusSchematicsResources model
-        job_status_schematics_resources_model = {}
-        job_status_schematics_resources_model['status_code'] = 'job_pending'
-        job_status_schematics_resources_model['status_message'] = 'testString'
-        job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
-        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a JobStatusSystem model
-        job_status_system_model = {}
-        job_status_system_model['system_status_message'] = 'testString'
-        job_status_system_model['system_status_code'] = 'job_pending'
-        job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
-        job_status_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a JobStatus model
-        job_status_model = {}
-        job_status_model['action_job_status'] = job_status_action_model
-        job_status_model['system_job_status'] = job_status_system_model
-
-        # Construct a dict representation of a InventoryResourceRecord model
-        inventory_resource_record_model = {}
-        inventory_resource_record_model['name'] = 'testString'
-        inventory_resource_record_model['description'] = 'testString'
-        inventory_resource_record_model['location'] = 'us-south'
-        inventory_resource_record_model['resource_group'] = 'testString'
-        inventory_resource_record_model['inventories_ini'] = 'testString'
-        inventory_resource_record_model['resource_queries'] = ['testString']
-
-        # Construct a dict representation of a JobDataAction model
-        job_data_action_model = {}
-        job_data_action_model['action_name'] = 'testString'
-        job_data_action_model['inputs'] = [variable_data_model]
-        job_data_action_model['outputs'] = [variable_data_model]
-        job_data_action_model['settings'] = [variable_data_model]
-        job_data_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-        job_data_action_model['inventory_record'] = inventory_resource_record_model
-        job_data_action_model['materialized_inventory'] = 'testString'
-
-        # Construct a dict representation of a JobDataSystem model
-        job_data_system_model = {}
-        job_data_system_model['key_id'] = 'testString'
-        job_data_system_model['schematics_resource_id'] = ['testString']
-        job_data_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a JobData model
-        job_data_model = {}
-        job_data_model['job_type'] = 'repo_download_job'
-        job_data_model['action_job_data'] = job_data_action_model
-        job_data_model['system_job_data'] = job_data_system_model
-
-        # Construct a dict representation of a BastionResourceDefinition model
-        bastion_resource_definition_model = {}
-        bastion_resource_definition_model['name'] = 'testString'
-        bastion_resource_definition_model['host'] = 'testString'
-
-        # Construct a dict representation of a JobLogSummaryRepoDownloadJob model
-        job_log_summary_repo_download_job_model = {}
-
-        # Construct a dict representation of a JobLogSummaryActionJobRecap model
-        job_log_summary_action_job_recap_model = {}
-        job_log_summary_action_job_recap_model['hosts'] = ['testString']
-        job_log_summary_action_job_recap_model['ok'] = 72.5
-        job_log_summary_action_job_recap_model['changed'] = 72.5
-        job_log_summary_action_job_recap_model['failed'] = 72.5
-        job_log_summary_action_job_recap_model['skipped'] = 72.5
-        job_log_summary_action_job_recap_model['unreachable'] = 72.5
-
-        # Construct a dict representation of a JobLogSummaryActionJob model
-        job_log_summary_action_job_model = {}
-        job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
-
-        # Construct a dict representation of a JobLogSummarySystemJob model
-        job_log_summary_system_job_model = {}
-        job_log_summary_system_job_model['success'] = 72.5
-        job_log_summary_system_job_model['failed'] = 72.5
-
-        # Construct a dict representation of a JobLogSummary model
-        job_log_summary_model = {}
-        job_log_summary_model['job_type'] = 'repo_download_job'
-        job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
-        job_log_summary_model['action_job'] = job_log_summary_action_job_model
-        job_log_summary_model['system_job'] = job_log_summary_system_job_model
-
-        # Set up parameter values
-        refresh_token = 'testString'
-        command_object = 'workspace'
-        command_object_id = 'testString'
-        command_name = 'ansible_playbook_run'
-        command_parameter = 'testString'
-        command_options = ['testString']
-        inputs = [variable_data_model]
-        settings = [variable_data_model]
-        tags = ['testString']
-        location = 'us-south'
-        status = job_status_model
-        data = job_data_model
-        bastion = bastion_resource_definition_model
-        log_summary = job_log_summary_model
-
-        # Invoke method
-        response = service.create_job(
-            refresh_token,
-            command_object=command_object,
-            command_object_id=command_object_id,
-            command_name=command_name,
-            command_parameter=command_parameter,
-            command_options=command_options,
-            inputs=inputs,
-            settings=settings,
-            tags=tags,
-            location=location,
-            status=status,
-            data=data,
-            bastion=bastion,
-            log_summary=log_summary,
-            headers={}
+        service = SchematicsV1.new_instance(
+            service_name='TEST_SERVICE',
         )
 
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 202
-        # Validate body params
-        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
-        assert req_body['command_object'] == 'workspace'
-        assert req_body['command_object_id'] == 'testString'
-        assert req_body['command_name'] == 'ansible_playbook_run'
-        assert req_body['command_parameter'] == 'testString'
-        assert req_body['command_options'] == ['testString']
-        assert req_body['inputs'] == [variable_data_model]
-        assert req_body['settings'] == [variable_data_model]
-        assert req_body['tags'] == ['testString']
-        assert req_body['location'] == 'us-south'
-        assert req_body['status'] == job_status_model
-        assert req_body['data'] == job_data_model
-        assert req_body['bastion'] == bastion_resource_definition_model
-        assert req_body['log_summary'] == job_log_summary_model
+        assert service is not None
+        assert isinstance(service, SchematicsV1)
 
-
-    @responses.activate
-    def test_create_job_value_error(self):
-        """
-        test_create_job_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/jobs')
-        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-11-06T16:19:32.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-11-06T16:19:32.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-11-06T16:19:32.000Z"}'
-        responses.add(responses.POST,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Construct a dict representation of a VariableMetadata model
-        variable_metadata_model = {}
-        variable_metadata_model['type'] = 'boolean'
-        variable_metadata_model['aliases'] = ['testString']
-        variable_metadata_model['description'] = 'testString'
-        variable_metadata_model['default_value'] = 'testString'
-        variable_metadata_model['secure'] = True
-        variable_metadata_model['immutable'] = True
-        variable_metadata_model['hidden'] = True
-        variable_metadata_model['options'] = ['testString']
-        variable_metadata_model['min_value'] = 38
-        variable_metadata_model['max_value'] = 38
-        variable_metadata_model['min_length'] = 38
-        variable_metadata_model['max_length'] = 38
-        variable_metadata_model['matches'] = 'testString'
-        variable_metadata_model['position'] = 38
-        variable_metadata_model['group_by'] = 'testString'
-        variable_metadata_model['source'] = 'testString'
-
-        # Construct a dict representation of a VariableData model
-        variable_data_model = {}
-        variable_data_model['name'] = 'testString'
-        variable_data_model['value'] = 'testString'
-        variable_data_model['metadata'] = variable_metadata_model
-
-        # Construct a dict representation of a JobStatusAction model
-        job_status_action_model = {}
-        job_status_action_model['action_name'] = 'testString'
-        job_status_action_model['status_code'] = 'job_pending'
-        job_status_action_model['status_message'] = 'testString'
-        job_status_action_model['bastion_status_code'] = 'none'
-        job_status_action_model['bastion_status_message'] = 'testString'
-        job_status_action_model['inventory_status_code'] = 'none'
-        job_status_action_model['inventory_status_message'] = 'testString'
-        job_status_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a JobStatusSchematicsResources model
-        job_status_schematics_resources_model = {}
-        job_status_schematics_resources_model['status_code'] = 'job_pending'
-        job_status_schematics_resources_model['status_message'] = 'testString'
-        job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
-        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a JobStatusSystem model
-        job_status_system_model = {}
-        job_status_system_model['system_status_message'] = 'testString'
-        job_status_system_model['system_status_code'] = 'job_pending'
-        job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
-        job_status_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a JobStatus model
-        job_status_model = {}
-        job_status_model['action_job_status'] = job_status_action_model
-        job_status_model['system_job_status'] = job_status_system_model
-
-        # Construct a dict representation of a InventoryResourceRecord model
-        inventory_resource_record_model = {}
-        inventory_resource_record_model['name'] = 'testString'
-        inventory_resource_record_model['description'] = 'testString'
-        inventory_resource_record_model['location'] = 'us-south'
-        inventory_resource_record_model['resource_group'] = 'testString'
-        inventory_resource_record_model['inventories_ini'] = 'testString'
-        inventory_resource_record_model['resource_queries'] = ['testString']
-
-        # Construct a dict representation of a JobDataAction model
-        job_data_action_model = {}
-        job_data_action_model['action_name'] = 'testString'
-        job_data_action_model['inputs'] = [variable_data_model]
-        job_data_action_model['outputs'] = [variable_data_model]
-        job_data_action_model['settings'] = [variable_data_model]
-        job_data_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-        job_data_action_model['inventory_record'] = inventory_resource_record_model
-        job_data_action_model['materialized_inventory'] = 'testString'
-
-        # Construct a dict representation of a JobDataSystem model
-        job_data_system_model = {}
-        job_data_system_model['key_id'] = 'testString'
-        job_data_system_model['schematics_resource_id'] = ['testString']
-        job_data_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a JobData model
-        job_data_model = {}
-        job_data_model['job_type'] = 'repo_download_job'
-        job_data_model['action_job_data'] = job_data_action_model
-        job_data_model['system_job_data'] = job_data_system_model
-
-        # Construct a dict representation of a BastionResourceDefinition model
-        bastion_resource_definition_model = {}
-        bastion_resource_definition_model['name'] = 'testString'
-        bastion_resource_definition_model['host'] = 'testString'
-
-        # Construct a dict representation of a JobLogSummaryRepoDownloadJob model
-        job_log_summary_repo_download_job_model = {}
-
-        # Construct a dict representation of a JobLogSummaryActionJobRecap model
-        job_log_summary_action_job_recap_model = {}
-        job_log_summary_action_job_recap_model['hosts'] = ['testString']
-        job_log_summary_action_job_recap_model['ok'] = 72.5
-        job_log_summary_action_job_recap_model['changed'] = 72.5
-        job_log_summary_action_job_recap_model['failed'] = 72.5
-        job_log_summary_action_job_recap_model['skipped'] = 72.5
-        job_log_summary_action_job_recap_model['unreachable'] = 72.5
-
-        # Construct a dict representation of a JobLogSummaryActionJob model
-        job_log_summary_action_job_model = {}
-        job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
-
-        # Construct a dict representation of a JobLogSummarySystemJob model
-        job_log_summary_system_job_model = {}
-        job_log_summary_system_job_model['success'] = 72.5
-        job_log_summary_system_job_model['failed'] = 72.5
-
-        # Construct a dict representation of a JobLogSummary model
-        job_log_summary_model = {}
-        job_log_summary_model['job_type'] = 'repo_download_job'
-        job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
-        job_log_summary_model['action_job'] = job_log_summary_action_job_model
-        job_log_summary_model['system_job'] = job_log_summary_system_job_model
-
-        # Set up parameter values
-        refresh_token = 'testString'
-        command_object = 'workspace'
-        command_object_id = 'testString'
-        command_name = 'ansible_playbook_run'
-        command_parameter = 'testString'
-        command_options = ['testString']
-        inputs = [variable_data_model]
-        settings = [variable_data_model]
-        tags = ['testString']
-        location = 'us-south'
-        status = job_status_model
-        data = job_data_model
-        bastion = bastion_resource_definition_model
-        log_summary = job_log_summary_model
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "refresh_token": refresh_token,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.create_job(**req_copy)
-
-
-
-class TestListJobs():
-    """
-    Test Class for list_jobs
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_list_jobs_all_params(self):
-        """
-        list_jobs()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/jobs')
-        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "jobs": [{"id": "id", "name": "name", "description": "description", "command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "tags": ["tags"], "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "duration": "duration", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "updated_at": "2019-11-06T16:19:32.000Z"}]}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        offset = 0
-        limit = 1
-        sort = 'testString'
-        profile = 'ids'
-        resource = 'workspace'
-        action_id = 'testString'
-        list = 'all'
-
-        # Invoke method
-        response = service.list_jobs(
-            offset=offset,
-            limit=limit,
-            sort=sort,
-            profile=profile,
-            resource=resource,
-            action_id=action_id,
-            list=list,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-        # Validate query params
-        query_string = responses.calls[0].request.url.split('?',1)[1]
-        query_string = urllib.parse.unquote_plus(query_string)
-        assert 'offset={}'.format(offset) in query_string
-        assert 'limit={}'.format(limit) in query_string
-        assert 'sort={}'.format(sort) in query_string
-        assert 'profile={}'.format(profile) in query_string
-        assert 'resource={}'.format(resource) in query_string
-        assert 'action_id={}'.format(action_id) in query_string
-        assert 'list={}'.format(list) in query_string
-
-
-    @responses.activate
-    def test_list_jobs_required_params(self):
-        """
-        test_list_jobs_required_params()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/jobs')
-        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "jobs": [{"id": "id", "name": "name", "description": "description", "command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "tags": ["tags"], "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "duration": "duration", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "updated_at": "2019-11-06T16:19:32.000Z"}]}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Invoke method
-        response = service.list_jobs()
-
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-
-
-class TestReplaceJob():
-    """
-    Test Class for replace_job
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_replace_job_all_params(self):
-        """
-        replace_job()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/jobs/testString')
-        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-11-06T16:19:32.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-11-06T16:19:32.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-11-06T16:19:32.000Z"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Construct a dict representation of a VariableMetadata model
-        variable_metadata_model = {}
-        variable_metadata_model['type'] = 'boolean'
-        variable_metadata_model['aliases'] = ['testString']
-        variable_metadata_model['description'] = 'testString'
-        variable_metadata_model['default_value'] = 'testString'
-        variable_metadata_model['secure'] = True
-        variable_metadata_model['immutable'] = True
-        variable_metadata_model['hidden'] = True
-        variable_metadata_model['options'] = ['testString']
-        variable_metadata_model['min_value'] = 38
-        variable_metadata_model['max_value'] = 38
-        variable_metadata_model['min_length'] = 38
-        variable_metadata_model['max_length'] = 38
-        variable_metadata_model['matches'] = 'testString'
-        variable_metadata_model['position'] = 38
-        variable_metadata_model['group_by'] = 'testString'
-        variable_metadata_model['source'] = 'testString'
-
-        # Construct a dict representation of a VariableData model
-        variable_data_model = {}
-        variable_data_model['name'] = 'testString'
-        variable_data_model['value'] = 'testString'
-        variable_data_model['metadata'] = variable_metadata_model
-
-        # Construct a dict representation of a JobStatusAction model
-        job_status_action_model = {}
-        job_status_action_model['action_name'] = 'testString'
-        job_status_action_model['status_code'] = 'job_pending'
-        job_status_action_model['status_message'] = 'testString'
-        job_status_action_model['bastion_status_code'] = 'none'
-        job_status_action_model['bastion_status_message'] = 'testString'
-        job_status_action_model['inventory_status_code'] = 'none'
-        job_status_action_model['inventory_status_message'] = 'testString'
-        job_status_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a JobStatusSchematicsResources model
-        job_status_schematics_resources_model = {}
-        job_status_schematics_resources_model['status_code'] = 'job_pending'
-        job_status_schematics_resources_model['status_message'] = 'testString'
-        job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
-        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a JobStatusSystem model
-        job_status_system_model = {}
-        job_status_system_model['system_status_message'] = 'testString'
-        job_status_system_model['system_status_code'] = 'job_pending'
-        job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
-        job_status_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a JobStatus model
-        job_status_model = {}
-        job_status_model['action_job_status'] = job_status_action_model
-        job_status_model['system_job_status'] = job_status_system_model
-
-        # Construct a dict representation of a InventoryResourceRecord model
-        inventory_resource_record_model = {}
-        inventory_resource_record_model['name'] = 'testString'
-        inventory_resource_record_model['description'] = 'testString'
-        inventory_resource_record_model['location'] = 'us-south'
-        inventory_resource_record_model['resource_group'] = 'testString'
-        inventory_resource_record_model['inventories_ini'] = 'testString'
-        inventory_resource_record_model['resource_queries'] = ['testString']
-
-        # Construct a dict representation of a JobDataAction model
-        job_data_action_model = {}
-        job_data_action_model['action_name'] = 'testString'
-        job_data_action_model['inputs'] = [variable_data_model]
-        job_data_action_model['outputs'] = [variable_data_model]
-        job_data_action_model['settings'] = [variable_data_model]
-        job_data_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-        job_data_action_model['inventory_record'] = inventory_resource_record_model
-        job_data_action_model['materialized_inventory'] = 'testString'
-
-        # Construct a dict representation of a JobDataSystem model
-        job_data_system_model = {}
-        job_data_system_model['key_id'] = 'testString'
-        job_data_system_model['schematics_resource_id'] = ['testString']
-        job_data_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a JobData model
-        job_data_model = {}
-        job_data_model['job_type'] = 'repo_download_job'
-        job_data_model['action_job_data'] = job_data_action_model
-        job_data_model['system_job_data'] = job_data_system_model
-
-        # Construct a dict representation of a BastionResourceDefinition model
-        bastion_resource_definition_model = {}
-        bastion_resource_definition_model['name'] = 'testString'
-        bastion_resource_definition_model['host'] = 'testString'
-
-        # Construct a dict representation of a JobLogSummaryRepoDownloadJob model
-        job_log_summary_repo_download_job_model = {}
-
-        # Construct a dict representation of a JobLogSummaryActionJobRecap model
-        job_log_summary_action_job_recap_model = {}
-        job_log_summary_action_job_recap_model['hosts'] = ['testString']
-        job_log_summary_action_job_recap_model['ok'] = 72.5
-        job_log_summary_action_job_recap_model['changed'] = 72.5
-        job_log_summary_action_job_recap_model['failed'] = 72.5
-        job_log_summary_action_job_recap_model['skipped'] = 72.5
-        job_log_summary_action_job_recap_model['unreachable'] = 72.5
-
-        # Construct a dict representation of a JobLogSummaryActionJob model
-        job_log_summary_action_job_model = {}
-        job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
-
-        # Construct a dict representation of a JobLogSummarySystemJob model
-        job_log_summary_system_job_model = {}
-        job_log_summary_system_job_model['success'] = 72.5
-        job_log_summary_system_job_model['failed'] = 72.5
-
-        # Construct a dict representation of a JobLogSummary model
-        job_log_summary_model = {}
-        job_log_summary_model['job_type'] = 'repo_download_job'
-        job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
-        job_log_summary_model['action_job'] = job_log_summary_action_job_model
-        job_log_summary_model['system_job'] = job_log_summary_system_job_model
-
-        # Set up parameter values
-        job_id = 'testString'
-        refresh_token = 'testString'
-        command_object = 'workspace'
-        command_object_id = 'testString'
-        command_name = 'ansible_playbook_run'
-        command_parameter = 'testString'
-        command_options = ['testString']
-        inputs = [variable_data_model]
-        settings = [variable_data_model]
-        tags = ['testString']
-        location = 'us-south'
-        status = job_status_model
-        data = job_data_model
-        bastion = bastion_resource_definition_model
-        log_summary = job_log_summary_model
-
-        # Invoke method
-        response = service.replace_job(
-            job_id,
-            refresh_token,
-            command_object=command_object,
-            command_object_id=command_object_id,
-            command_name=command_name,
-            command_parameter=command_parameter,
-            command_options=command_options,
-            inputs=inputs,
-            settings=settings,
-            tags=tags,
-            location=location,
-            status=status,
-            data=data,
-            bastion=bastion,
-            log_summary=log_summary,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 202
-        # Validate body params
-        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
-        assert req_body['command_object'] == 'workspace'
-        assert req_body['command_object_id'] == 'testString'
-        assert req_body['command_name'] == 'ansible_playbook_run'
-        assert req_body['command_parameter'] == 'testString'
-        assert req_body['command_options'] == ['testString']
-        assert req_body['inputs'] == [variable_data_model]
-        assert req_body['settings'] == [variable_data_model]
-        assert req_body['tags'] == ['testString']
-        assert req_body['location'] == 'us-south'
-        assert req_body['status'] == job_status_model
-        assert req_body['data'] == job_data_model
-        assert req_body['bastion'] == bastion_resource_definition_model
-        assert req_body['log_summary'] == job_log_summary_model
-
-
-    @responses.activate
-    def test_replace_job_value_error(self):
-        """
-        test_replace_job_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/jobs/testString')
-        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-11-06T16:19:32.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-11-06T16:19:32.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-11-06T16:19:32.000Z"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Construct a dict representation of a VariableMetadata model
-        variable_metadata_model = {}
-        variable_metadata_model['type'] = 'boolean'
-        variable_metadata_model['aliases'] = ['testString']
-        variable_metadata_model['description'] = 'testString'
-        variable_metadata_model['default_value'] = 'testString'
-        variable_metadata_model['secure'] = True
-        variable_metadata_model['immutable'] = True
-        variable_metadata_model['hidden'] = True
-        variable_metadata_model['options'] = ['testString']
-        variable_metadata_model['min_value'] = 38
-        variable_metadata_model['max_value'] = 38
-        variable_metadata_model['min_length'] = 38
-        variable_metadata_model['max_length'] = 38
-        variable_metadata_model['matches'] = 'testString'
-        variable_metadata_model['position'] = 38
-        variable_metadata_model['group_by'] = 'testString'
-        variable_metadata_model['source'] = 'testString'
-
-        # Construct a dict representation of a VariableData model
-        variable_data_model = {}
-        variable_data_model['name'] = 'testString'
-        variable_data_model['value'] = 'testString'
-        variable_data_model['metadata'] = variable_metadata_model
-
-        # Construct a dict representation of a JobStatusAction model
-        job_status_action_model = {}
-        job_status_action_model['action_name'] = 'testString'
-        job_status_action_model['status_code'] = 'job_pending'
-        job_status_action_model['status_message'] = 'testString'
-        job_status_action_model['bastion_status_code'] = 'none'
-        job_status_action_model['bastion_status_message'] = 'testString'
-        job_status_action_model['inventory_status_code'] = 'none'
-        job_status_action_model['inventory_status_message'] = 'testString'
-        job_status_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a JobStatusSchematicsResources model
-        job_status_schematics_resources_model = {}
-        job_status_schematics_resources_model['status_code'] = 'job_pending'
-        job_status_schematics_resources_model['status_message'] = 'testString'
-        job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
-        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a JobStatusSystem model
-        job_status_system_model = {}
-        job_status_system_model['system_status_message'] = 'testString'
-        job_status_system_model['system_status_code'] = 'job_pending'
-        job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
-        job_status_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a JobStatus model
-        job_status_model = {}
-        job_status_model['action_job_status'] = job_status_action_model
-        job_status_model['system_job_status'] = job_status_system_model
-
-        # Construct a dict representation of a InventoryResourceRecord model
-        inventory_resource_record_model = {}
-        inventory_resource_record_model['name'] = 'testString'
-        inventory_resource_record_model['description'] = 'testString'
-        inventory_resource_record_model['location'] = 'us-south'
-        inventory_resource_record_model['resource_group'] = 'testString'
-        inventory_resource_record_model['inventories_ini'] = 'testString'
-        inventory_resource_record_model['resource_queries'] = ['testString']
-
-        # Construct a dict representation of a JobDataAction model
-        job_data_action_model = {}
-        job_data_action_model['action_name'] = 'testString'
-        job_data_action_model['inputs'] = [variable_data_model]
-        job_data_action_model['outputs'] = [variable_data_model]
-        job_data_action_model['settings'] = [variable_data_model]
-        job_data_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-        job_data_action_model['inventory_record'] = inventory_resource_record_model
-        job_data_action_model['materialized_inventory'] = 'testString'
-
-        # Construct a dict representation of a JobDataSystem model
-        job_data_system_model = {}
-        job_data_system_model['key_id'] = 'testString'
-        job_data_system_model['schematics_resource_id'] = ['testString']
-        job_data_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-
-        # Construct a dict representation of a JobData model
-        job_data_model = {}
-        job_data_model['job_type'] = 'repo_download_job'
-        job_data_model['action_job_data'] = job_data_action_model
-        job_data_model['system_job_data'] = job_data_system_model
-
-        # Construct a dict representation of a BastionResourceDefinition model
-        bastion_resource_definition_model = {}
-        bastion_resource_definition_model['name'] = 'testString'
-        bastion_resource_definition_model['host'] = 'testString'
-
-        # Construct a dict representation of a JobLogSummaryRepoDownloadJob model
-        job_log_summary_repo_download_job_model = {}
-
-        # Construct a dict representation of a JobLogSummaryActionJobRecap model
-        job_log_summary_action_job_recap_model = {}
-        job_log_summary_action_job_recap_model['hosts'] = ['testString']
-        job_log_summary_action_job_recap_model['ok'] = 72.5
-        job_log_summary_action_job_recap_model['changed'] = 72.5
-        job_log_summary_action_job_recap_model['failed'] = 72.5
-        job_log_summary_action_job_recap_model['skipped'] = 72.5
-        job_log_summary_action_job_recap_model['unreachable'] = 72.5
-
-        # Construct a dict representation of a JobLogSummaryActionJob model
-        job_log_summary_action_job_model = {}
-        job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
-
-        # Construct a dict representation of a JobLogSummarySystemJob model
-        job_log_summary_system_job_model = {}
-        job_log_summary_system_job_model['success'] = 72.5
-        job_log_summary_system_job_model['failed'] = 72.5
-
-        # Construct a dict representation of a JobLogSummary model
-        job_log_summary_model = {}
-        job_log_summary_model['job_type'] = 'repo_download_job'
-        job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
-        job_log_summary_model['action_job'] = job_log_summary_action_job_model
-        job_log_summary_model['system_job'] = job_log_summary_system_job_model
-
-        # Set up parameter values
-        job_id = 'testString'
-        refresh_token = 'testString'
-        command_object = 'workspace'
-        command_object_id = 'testString'
-        command_name = 'ansible_playbook_run'
-        command_parameter = 'testString'
-        command_options = ['testString']
-        inputs = [variable_data_model]
-        settings = [variable_data_model]
-        tags = ['testString']
-        location = 'us-south'
-        status = job_status_model
-        data = job_data_model
-        bastion = bastion_resource_definition_model
-        log_summary = job_log_summary_model
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "job_id": job_id,
-            "refresh_token": refresh_token,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.replace_job(**req_copy)
-
-
-
-class TestDeleteJob():
-    """
-    Test Class for delete_job
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_delete_job_all_params(self):
-        """
-        delete_job()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/jobs/testString')
-        responses.add(responses.DELETE,
-                      url,
-                      status=204)
-
-        # Set up parameter values
-        job_id = 'testString'
-        refresh_token = 'testString'
-        force = True
-        propagate = True
-
-        # Invoke method
-        response = service.delete_job(
-            job_id,
-            refresh_token,
-            force=force,
-            propagate=propagate,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 204
-
-
-    @responses.activate
-    def test_delete_job_required_params(self):
-        """
-        test_delete_job_required_params()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/jobs/testString')
-        responses.add(responses.DELETE,
-                      url,
-                      status=204)
-
-        # Set up parameter values
-        job_id = 'testString'
-        refresh_token = 'testString'
-
-        # Invoke method
-        response = service.delete_job(
-            job_id,
-            refresh_token,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 204
-
-
-    @responses.activate
-    def test_delete_job_value_error(self):
-        """
-        test_delete_job_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/jobs/testString')
-        responses.add(responses.DELETE,
-                      url,
-                      status=204)
-
-        # Set up parameter values
-        job_id = 'testString'
-        refresh_token = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "job_id": job_id,
-            "refresh_token": refresh_token,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.delete_job(**req_copy)
-
-
-
-class TestGetJob():
-    """
-    Test Class for get_job
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_get_job_all_params(self):
-        """
-        get_job()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/jobs/testString')
-        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-11-06T16:19:32.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-11-06T16:19:32.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-11-06T16:19:32.000Z"}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        job_id = 'testString'
-        profile = 'summary'
-
-        # Invoke method
-        response = service.get_job(
-            job_id,
-            profile=profile,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-        # Validate query params
-        query_string = responses.calls[0].request.url.split('?',1)[1]
-        query_string = urllib.parse.unquote_plus(query_string)
-        assert 'profile={}'.format(profile) in query_string
-
-
-    @responses.activate
-    def test_get_job_required_params(self):
-        """
-        test_get_job_required_params()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/jobs/testString')
-        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-11-06T16:19:32.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-11-06T16:19:32.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-11-06T16:19:32.000Z"}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        job_id = 'testString'
-
-        # Invoke method
-        response = service.get_job(
-            job_id,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-
-
-    @responses.activate
-    def test_get_job_value_error(self):
-        """
-        test_get_job_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/jobs/testString')
-        mock_response = '{"command_object": "workspace", "command_object_id": "command_object_id", "command_name": "ansible_playbook_run", "command_parameter": "command_parameter", "command_options": ["command_options"], "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "tags": ["tags"], "id": "id", "name": "name", "description": "description", "location": "us-south", "resource_group": "resource_group", "submitted_at": "2019-11-06T16:19:32.000Z", "submitted_by": "submitted_by", "start_at": "2019-11-06T16:19:32.000Z", "end_at": "2019-11-06T16:19:32.000Z", "duration": "duration", "status": {"action_job_status": {"action_name": "action_name", "status_code": "job_pending", "status_message": "status_message", "bastion_status_code": "none", "bastion_status_message": "bastion_status_message", "inventory_status_code": "none", "inventory_status_message": "inventory_status_message", "updated_at": "2019-11-06T16:19:32.000Z"}, "system_job_status": {"system_status_message": "system_status_message", "system_status_code": "job_pending", "schematics_resource_status": [{"status_code": "job_pending", "status_message": "status_message", "schematics_resource_id": "schematics_resource_id", "updated_at": "2019-11-06T16:19:32.000Z"}], "updated_at": "2019-11-06T16:19:32.000Z"}}, "data": {"job_type": "repo_download_job", "action_job_data": {"action_name": "action_name", "inputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "outputs": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "settings": [{"name": "name", "value": "value", "metadata": {"type": "boolean", "aliases": ["aliases"], "description": "description", "default_value": "default_value", "secure": true, "immutable": false, "hidden": true, "options": ["options"], "min_value": 9, "max_value": 9, "min_length": 10, "max_length": 10, "matches": "matches", "position": 8, "group_by": "group_by", "source": "source"}, "link": "link"}], "updated_at": "2019-11-06T16:19:32.000Z", "inventory_record": {"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}, "materialized_inventory": "materialized_inventory"}, "system_job_data": {"key_id": "key_id", "schematics_resource_id": ["schematics_resource_id"], "updated_at": "2019-11-06T16:19:32.000Z"}}, "bastion": {"name": "name", "host": "host"}, "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "log_store_url": "log_store_url", "state_store_url": "state_store_url", "results_url": "results_url", "updated_at": "2019-11-06T16:19:32.000Z"}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        job_id = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "job_id": job_id,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.get_job(**req_copy)
-
-
-
-class TestListJobLogs():
-    """
-    Test Class for list_job_logs
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_list_job_logs_all_params(self):
-        """
-        list_job_logs()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/jobs/testString/logs')
-        mock_response = '{"job_id": "job_id", "job_name": "job_name", "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "format": "json", "details": "VGhpcyBpcyBhbiBlbmNvZGVkIGJ5dGUgYXJyYXku", "updated_at": "2019-11-06T16:19:32.000Z"}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Set up parameter values
-        job_id = 'testString'
-
-        # Invoke method
-        response = service.list_job_logs(
-            job_id,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 202
-
-
-    @responses.activate
-    def test_list_job_logs_value_error(self):
-        """
-        test_list_job_logs_value_error()
+    def test_new_instance_without_authenticator(self):
         """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/jobs/testString/logs')
-        mock_response = '{"job_id": "job_id", "job_name": "job_name", "log_summary": {"job_id": "job_id", "job_type": "repo_download_job", "log_start_at": "2019-11-06T16:19:32.000Z", "log_analyzed_till": "2019-11-06T16:19:32.000Z", "elapsed_time": 12, "log_errors": [{"error_code": "error_code", "error_msg": "error_msg", "error_count": 11}], "repo_download_job": {"scanned_file_count": 18, "quarantined_file_count": 22, "detected_filetype": "detected_filetype", "inputs_count": "inputs_count", "outputs_count": "outputs_count"}, "action_job": {"host_count": 10, "task_count": 10, "play_count": 10, "recap": {"hosts": ["hosts"], "ok": 2, "changed": 7, "failed": 6, "skipped": 7, "unreachable": 11}}, "system_job": {"target_count": 12, "success": 7, "failed": 6}}, "format": "json", "details": "VGhpcyBpcyBhbiBlbmNvZGVkIGJ5dGUgYXJyYXku", "updated_at": "2019-11-06T16:19:32.000Z"}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=202)
-
-        # Set up parameter values
-        job_id = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "job_id": job_id,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.list_job_logs(**req_copy)
-
-
-
-# endregion
-##############################################################################
-# End of Service: Jobs
-##############################################################################
-
-##############################################################################
-# Start of Service: Datasets
-##############################################################################
-# region
-
-class TestListSharedDatasets():
-    """
-    Test Class for list_shared_datasets
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_list_shared_datasets_all_params(self):
-        """
-        list_shared_datasets()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/shared_datasets')
-        mock_response = '{"count": 5, "shared_datasets": [{"account": "account", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "version": "version"}]}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Invoke method
-        response = service.list_shared_datasets()
-
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-
-
-class TestCreateSharedDataset():
-    """
-    Test Class for create_shared_dataset
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_create_shared_dataset_all_params(self):
-        """
-        create_shared_dataset()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/shared_datasets')
-        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "version": "version"}'
-        responses.add(responses.POST,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=201)
-
-        # Construct a dict representation of a SharedDatasetData model
-        shared_dataset_data_model = {}
-        shared_dataset_data_model['default_value'] = 'testString'
-        shared_dataset_data_model['description'] = 'testString'
-        shared_dataset_data_model['hidden'] = True
-        shared_dataset_data_model['immutable'] = True
-        shared_dataset_data_model['matches'] = 'testString'
-        shared_dataset_data_model['max_value'] = 'testString'
-        shared_dataset_data_model['max_value_len'] = 'testString'
-        shared_dataset_data_model['min_value'] = 'testString'
-        shared_dataset_data_model['min_value_len'] = 'testString'
-        shared_dataset_data_model['options'] = ['testString']
-        shared_dataset_data_model['override_value'] = 'testString'
-        shared_dataset_data_model['secure'] = True
-        shared_dataset_data_model['var_aliases'] = ['testString']
-        shared_dataset_data_model['var_name'] = 'testString'
-        shared_dataset_data_model['var_ref'] = 'testString'
-        shared_dataset_data_model['var_type'] = 'testString'
-
-        # Set up parameter values
-        auto_propagate_change = True
-        description = 'testString'
-        effected_workspace_ids = ['testString']
-        resource_group = 'testString'
-        shared_dataset_data = [shared_dataset_data_model]
-        shared_dataset_name = 'testString'
-        shared_dataset_source_name = 'testString'
-        shared_dataset_type = ['testString']
-        tags = ['testString']
-        version = 'testString'
-
-        # Invoke method
-        response = service.create_shared_dataset(
-            auto_propagate_change=auto_propagate_change,
-            description=description,
-            effected_workspace_ids=effected_workspace_ids,
-            resource_group=resource_group,
-            shared_dataset_data=shared_dataset_data,
-            shared_dataset_name=shared_dataset_name,
-            shared_dataset_source_name=shared_dataset_source_name,
-            shared_dataset_type=shared_dataset_type,
-            tags=tags,
-            version=version,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 201
-        # Validate body params
-        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
-        assert req_body['auto_propagate_change'] == True
-        assert req_body['description'] == 'testString'
-        assert req_body['effected_workspace_ids'] == ['testString']
-        assert req_body['resource_group'] == 'testString'
-        assert req_body['shared_dataset_data'] == [shared_dataset_data_model]
-        assert req_body['shared_dataset_name'] == 'testString'
-        assert req_body['shared_dataset_source_name'] == 'testString'
-        assert req_body['shared_dataset_type'] == ['testString']
-        assert req_body['tags'] == ['testString']
-        assert req_body['version'] == 'testString'
-
-
-class TestGetSharedDataset():
-    """
-    Test Class for get_shared_dataset
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_get_shared_dataset_all_params(self):
-        """
-        get_shared_dataset()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/shared_datasets/testString')
-        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "version": "version"}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        sd_id = 'testString'
-
-        # Invoke method
-        response = service.get_shared_dataset(
-            sd_id,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-
-
-    @responses.activate
-    def test_get_shared_dataset_value_error(self):
-        """
-        test_get_shared_dataset_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/shared_datasets/testString')
-        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "version": "version"}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        sd_id = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "sd_id": sd_id,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.get_shared_dataset(**req_copy)
-
-
-
-class TestReplaceSharedDataset():
-    """
-    Test Class for replace_shared_dataset
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_replace_shared_dataset_all_params(self):
-        """
-        replace_shared_dataset()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/shared_datasets/testString')
-        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "version": "version"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Construct a dict representation of a SharedDatasetData model
-        shared_dataset_data_model = {}
-        shared_dataset_data_model['default_value'] = 'testString'
-        shared_dataset_data_model['description'] = 'testString'
-        shared_dataset_data_model['hidden'] = True
-        shared_dataset_data_model['immutable'] = True
-        shared_dataset_data_model['matches'] = 'testString'
-        shared_dataset_data_model['max_value'] = 'testString'
-        shared_dataset_data_model['max_value_len'] = 'testString'
-        shared_dataset_data_model['min_value'] = 'testString'
-        shared_dataset_data_model['min_value_len'] = 'testString'
-        shared_dataset_data_model['options'] = ['testString']
-        shared_dataset_data_model['override_value'] = 'testString'
-        shared_dataset_data_model['secure'] = True
-        shared_dataset_data_model['var_aliases'] = ['testString']
-        shared_dataset_data_model['var_name'] = 'testString'
-        shared_dataset_data_model['var_ref'] = 'testString'
-        shared_dataset_data_model['var_type'] = 'testString'
-
-        # Set up parameter values
-        sd_id = 'testString'
-        auto_propagate_change = True
-        description = 'testString'
-        effected_workspace_ids = ['testString']
-        resource_group = 'testString'
-        shared_dataset_data = [shared_dataset_data_model]
-        shared_dataset_name = 'testString'
-        shared_dataset_source_name = 'testString'
-        shared_dataset_type = ['testString']
-        tags = ['testString']
-        version = 'testString'
-
-        # Invoke method
-        response = service.replace_shared_dataset(
-            sd_id,
-            auto_propagate_change=auto_propagate_change,
-            description=description,
-            effected_workspace_ids=effected_workspace_ids,
-            resource_group=resource_group,
-            shared_dataset_data=shared_dataset_data,
-            shared_dataset_name=shared_dataset_name,
-            shared_dataset_source_name=shared_dataset_source_name,
-            shared_dataset_type=shared_dataset_type,
-            tags=tags,
-            version=version,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-        # Validate body params
-        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
-        assert req_body['auto_propagate_change'] == True
-        assert req_body['description'] == 'testString'
-        assert req_body['effected_workspace_ids'] == ['testString']
-        assert req_body['resource_group'] == 'testString'
-        assert req_body['shared_dataset_data'] == [shared_dataset_data_model]
-        assert req_body['shared_dataset_name'] == 'testString'
-        assert req_body['shared_dataset_source_name'] == 'testString'
-        assert req_body['shared_dataset_type'] == ['testString']
-        assert req_body['tags'] == ['testString']
-        assert req_body['version'] == 'testString'
-
-
-    @responses.activate
-    def test_replace_shared_dataset_value_error(self):
-        """
-        test_replace_shared_dataset_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/shared_datasets/testString')
-        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "version": "version"}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Construct a dict representation of a SharedDatasetData model
-        shared_dataset_data_model = {}
-        shared_dataset_data_model['default_value'] = 'testString'
-        shared_dataset_data_model['description'] = 'testString'
-        shared_dataset_data_model['hidden'] = True
-        shared_dataset_data_model['immutable'] = True
-        shared_dataset_data_model['matches'] = 'testString'
-        shared_dataset_data_model['max_value'] = 'testString'
-        shared_dataset_data_model['max_value_len'] = 'testString'
-        shared_dataset_data_model['min_value'] = 'testString'
-        shared_dataset_data_model['min_value_len'] = 'testString'
-        shared_dataset_data_model['options'] = ['testString']
-        shared_dataset_data_model['override_value'] = 'testString'
-        shared_dataset_data_model['secure'] = True
-        shared_dataset_data_model['var_aliases'] = ['testString']
-        shared_dataset_data_model['var_name'] = 'testString'
-        shared_dataset_data_model['var_ref'] = 'testString'
-        shared_dataset_data_model['var_type'] = 'testString'
-
-        # Set up parameter values
-        sd_id = 'testString'
-        auto_propagate_change = True
-        description = 'testString'
-        effected_workspace_ids = ['testString']
-        resource_group = 'testString'
-        shared_dataset_data = [shared_dataset_data_model]
-        shared_dataset_name = 'testString'
-        shared_dataset_source_name = 'testString'
-        shared_dataset_type = ['testString']
-        tags = ['testString']
-        version = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "sd_id": sd_id,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.replace_shared_dataset(**req_copy)
-
-
-
-class TestDeleteSharedDataset():
-    """
-    Test Class for delete_shared_dataset
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_delete_shared_dataset_all_params(self):
-        """
-        delete_shared_dataset()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/shared_datasets/testString')
-        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "version": "version"}'
-        responses.add(responses.DELETE,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        sd_id = 'testString'
-
-        # Invoke method
-        response = service.delete_shared_dataset(
-            sd_id,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-
-
-    @responses.activate
-    def test_delete_shared_dataset_value_error(self):
-        """
-        test_delete_shared_dataset_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/shared_datasets/testString')
-        mock_response = '{"account": "account", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "description": "description", "effected_workspace_ids": ["effected_workspace_ids"], "resource_group": "resource_group", "shared_dataset_data": [{"default_value": "default_value", "description": "description", "hidden": true, "immutable": false, "matches": "matches", "max_value": "max_value", "max_value_len": "max_value_len", "min_value": "min_value", "min_value_len": "min_value_len", "options": ["options"], "override_value": "override_value", "secure": true, "var_aliases": ["var_aliases"], "var_name": "var_name", "var_ref": "var_ref", "var_type": "var_type"}], "shared_dataset_id": "shared_dataset_id", "shared_dataset_name": "shared_dataset_name", "shared_dataset_type": ["shared_dataset_type"], "state": "state", "tags": ["tags"], "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "version": "version"}'
-        responses.add(responses.DELETE,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        sd_id = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "sd_id": sd_id,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.delete_shared_dataset(**req_copy)
-
-
-
-# endregion
-##############################################################################
-# End of Service: Datasets
-##############################################################################
-
-##############################################################################
-# Start of Service: SettingsKms
-##############################################################################
-# region
-
-class TestGetKmsSettings():
-    """
-    Test Class for get_kms_settings
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_get_kms_settings_all_params(self):
-        """
-        get_kms_settings()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/settings/kms')
-        mock_response = '{"location": "location", "encryption_scheme": "encryption_scheme", "resource_group": "resource_group", "primary_crk": {"kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "key_crn": "key_crn"}, "secondary_crk": {"kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "key_crn": "key_crn"}}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        location = 'testString'
-
-        # Invoke method
-        response = service.get_kms_settings(
-            location,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-        # Validate query params
-        query_string = responses.calls[0].request.url.split('?',1)[1]
-        query_string = urllib.parse.unquote_plus(query_string)
-        assert 'location={}'.format(location) in query_string
-
-
-    @responses.activate
-    def test_get_kms_settings_value_error(self):
-        """
-        test_get_kms_settings_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/settings/kms')
-        mock_response = '{"location": "location", "encryption_scheme": "encryption_scheme", "resource_group": "resource_group", "primary_crk": {"kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "key_crn": "key_crn"}, "secondary_crk": {"kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "key_crn": "key_crn"}}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        location = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "location": location,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.get_kms_settings(**req_copy)
-
-
-
-class TestReplaceKmsSettings():
-    """
-    Test Class for replace_kms_settings
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_replace_kms_settings_all_params(self):
-        """
-        replace_kms_settings()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/settings/kms')
-        mock_response = '{"location": "location", "encryption_scheme": "encryption_scheme", "resource_group": "resource_group", "primary_crk": {"kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "key_crn": "key_crn"}, "secondary_crk": {"kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "key_crn": "key_crn"}}'
-        responses.add(responses.PUT,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Construct a dict representation of a KMSSettingsPrimaryCrk model
-        kms_settings_primary_crk_model = {}
-        kms_settings_primary_crk_model['kms_name'] = 'testString'
-        kms_settings_primary_crk_model['kms_private_endpoint'] = 'testString'
-        kms_settings_primary_crk_model['key_crn'] = 'testString'
-
-        # Construct a dict representation of a KMSSettingsSecondaryCrk model
-        kms_settings_secondary_crk_model = {}
-        kms_settings_secondary_crk_model['kms_name'] = 'testString'
-        kms_settings_secondary_crk_model['kms_private_endpoint'] = 'testString'
-        kms_settings_secondary_crk_model['key_crn'] = 'testString'
-
-        # Set up parameter values
-        location = 'testString'
-        encryption_scheme = 'testString'
-        resource_group = 'testString'
-        primary_crk = kms_settings_primary_crk_model
-        secondary_crk = kms_settings_secondary_crk_model
-
-        # Invoke method
-        response = service.replace_kms_settings(
-            location=location,
-            encryption_scheme=encryption_scheme,
-            resource_group=resource_group,
-            primary_crk=primary_crk,
-            secondary_crk=secondary_crk,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-        # Validate body params
-        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
-        assert req_body['location'] == 'testString'
-        assert req_body['encryption_scheme'] == 'testString'
-        assert req_body['resource_group'] == 'testString'
-        assert req_body['primary_crk'] == kms_settings_primary_crk_model
-        assert req_body['secondary_crk'] == kms_settings_secondary_crk_model
-
-
-class TestGetDiscoveredKmsInstances():
-    """
-    Test Class for get_discovered_kms_instances
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_get_discovered_kms_instances_all_params(self):
-        """
-        get_discovered_kms_instances()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/settings/kms_instances')
-        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "kms_instances": [{"location": "location", "encryption_scheme": "encryption_scheme", "resource_group": "resource_group", "kms_crn": "kms_crn", "kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "kms_public_endpoint": "kms_public_endpoint", "keys": [{"name": "name", "crn": "crn", "error": "error"}]}]}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        encryption_scheme = 'testString'
-        location = 'testString'
-        resource_group = 'testString'
-        limit = 1
-        sort = 'testString'
-
-        # Invoke method
-        response = service.get_discovered_kms_instances(
-            encryption_scheme,
-            location,
-            resource_group=resource_group,
-            limit=limit,
-            sort=sort,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-        # Validate query params
-        query_string = responses.calls[0].request.url.split('?',1)[1]
-        query_string = urllib.parse.unquote_plus(query_string)
-        assert 'encryption_scheme={}'.format(encryption_scheme) in query_string
-        assert 'location={}'.format(location) in query_string
-        assert 'resource_group={}'.format(resource_group) in query_string
-        assert 'limit={}'.format(limit) in query_string
-        assert 'sort={}'.format(sort) in query_string
-
-
-    @responses.activate
-    def test_get_discovered_kms_instances_required_params(self):
-        """
-        test_get_discovered_kms_instances_required_params()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/settings/kms_instances')
-        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "kms_instances": [{"location": "location", "encryption_scheme": "encryption_scheme", "resource_group": "resource_group", "kms_crn": "kms_crn", "kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "kms_public_endpoint": "kms_public_endpoint", "keys": [{"name": "name", "crn": "crn", "error": "error"}]}]}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        encryption_scheme = 'testString'
-        location = 'testString'
-
-        # Invoke method
-        response = service.get_discovered_kms_instances(
-            encryption_scheme,
-            location,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-        # Validate query params
-        query_string = responses.calls[0].request.url.split('?',1)[1]
-        query_string = urllib.parse.unquote_plus(query_string)
-        assert 'encryption_scheme={}'.format(encryption_scheme) in query_string
-        assert 'location={}'.format(location) in query_string
-
-
-    @responses.activate
-    def test_get_discovered_kms_instances_value_error(self):
-        """
-        test_get_discovered_kms_instances_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/settings/kms_instances')
-        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "kms_instances": [{"location": "location", "encryption_scheme": "encryption_scheme", "resource_group": "resource_group", "kms_crn": "kms_crn", "kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "kms_public_endpoint": "kms_public_endpoint", "keys": [{"name": "name", "crn": "crn", "error": "error"}]}]}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        encryption_scheme = 'testString'
-        location = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "encryption_scheme": encryption_scheme,
-            "location": location,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.get_discovered_kms_instances(**req_copy)
-
-
-
-# endregion
-##############################################################################
-# End of Service: SettingsKms
-##############################################################################
-
-##############################################################################
-# Start of Service: SettingsInventory
-##############################################################################
-# region
-
-class TestCreateInventory():
-    """
-    Test Class for create_inventory
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_create_inventory_all_params(self):
+        new_instance_without_authenticator()
         """
-        create_inventory()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/inventories')
-        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
-        responses.add(responses.POST,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        name = 'testString'
-        description = 'testString'
-        location = 'us-south'
-        resource_group = 'testString'
-        inventories_ini = 'testString'
-        resource_queries = ['testString']
-
-        # Invoke method
-        response = service.create_inventory(
-            name=name,
-            description=description,
-            location=location,
-            resource_group=resource_group,
-            inventories_ini=inventories_ini,
-            resource_queries=resource_queries,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-        # Validate body params
-        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
-        assert req_body['name'] == 'testString'
-        assert req_body['description'] == 'testString'
-        assert req_body['location'] == 'us-south'
-        assert req_body['resource_group'] == 'testString'
-        assert req_body['inventories_ini'] == 'testString'
-        assert req_body['resource_queries'] == ['testString']
-
+        with pytest.raises(ValueError, match='authenticator must be provided'):
+            service = SchematicsV1.new_instance(
+            )
 
 class TestListInventories():
     """
@@ -6339,6 +6842,8 @@ class TestListInventories():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -6350,8 +6855,8 @@ class TestListInventories():
         list_inventories()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v2/inventories')
-        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "inventories": [{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}]}'
+        url = self.preprocess_url(_base_url + '/v2/inventories')
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "inventories": [{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -6365,7 +6870,7 @@ class TestListInventories():
         profile = 'ids'
 
         # Invoke method
-        response = service.list_inventories(
+        response = _service.list_inventories(
             offset=offset,
             limit=limit,
             sort=sort,
@@ -6391,8 +6896,8 @@ class TestListInventories():
         test_list_inventories_required_params()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v2/inventories')
-        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "inventories": [{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}]}'
+        url = self.preprocess_url(_base_url + '/v2/inventories')
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "inventories": [{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -6400,12 +6905,146 @@ class TestListInventories():
                       status=200)
 
         # Invoke method
-        response = service.list_inventories()
+        response = _service.list_inventories()
 
 
         # Check for correct operation
         assert len(responses.calls) == 1
         assert response.status_code == 200
+
+
+class TestCreateInventory():
+    """
+    Test Class for create_inventory
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_create_inventory_all_params(self):
+        """
+        create_inventory()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/inventories')
+        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
+        responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        name = 'testString'
+        description = 'testString'
+        location = 'us-south'
+        resource_group = 'testString'
+        inventories_ini = 'testString'
+        resource_queries = ['testString']
+
+        # Invoke method
+        response = _service.create_inventory(
+            name=name,
+            description=description,
+            location=location,
+            resource_group=resource_group,
+            inventories_ini=inventories_ini,
+            resource_queries=resource_queries,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['name'] == 'testString'
+        assert req_body['description'] == 'testString'
+        assert req_body['location'] == 'us-south'
+        assert req_body['resource_group'] == 'testString'
+        assert req_body['inventories_ini'] == 'testString'
+        assert req_body['resource_queries'] == ['testString']
+
+
+class TestGetInventory():
+    """
+    Test Class for get_inventory
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_get_inventory_all_params(self):
+        """
+        get_inventory()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/inventories/testString')
+        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+
+        # Invoke method
+        response = _service.get_inventory(
+            inventory_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+    @responses.activate
+    def test_get_inventory_value_error(self):
+        """
+        test_get_inventory_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/inventories/testString')
+        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "inventory_id": inventory_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.get_inventory(**req_copy)
+
 
 
 class TestReplaceInventory():
@@ -6417,6 +7056,8 @@ class TestReplaceInventory():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -6428,8 +7069,8 @@ class TestReplaceInventory():
         replace_inventory()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v2/inventories/testString')
-        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
+        url = self.preprocess_url(_base_url + '/v2/inventories/testString')
+        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
         responses.add(responses.PUT,
                       url,
                       body=mock_response,
@@ -6446,7 +7087,7 @@ class TestReplaceInventory():
         resource_queries = ['testString']
 
         # Invoke method
-        response = service.replace_inventory(
+        response = _service.replace_inventory(
             inventory_id,
             name=name,
             description=description,
@@ -6476,8 +7117,8 @@ class TestReplaceInventory():
         test_replace_inventory_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v2/inventories/testString')
-        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
+        url = self.preprocess_url(_base_url + '/v2/inventories/testString')
+        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
         responses.add(responses.PUT,
                       url,
                       body=mock_response,
@@ -6500,7 +7141,102 @@ class TestReplaceInventory():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.replace_inventory(**req_copy)
+                _service.replace_inventory(**req_copy)
+
+
+
+class TestDeleteInventory():
+    """
+    Test Class for delete_inventory
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_delete_inventory_all_params(self):
+        """
+        delete_inventory()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/inventories/testString')
+        responses.add(responses.DELETE,
+                      url,
+                      status=204)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+        force = True
+        propagate = True
+
+        # Invoke method
+        response = _service.delete_inventory(
+            inventory_id,
+            force=force,
+            propagate=propagate,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 204
+
+
+    @responses.activate
+    def test_delete_inventory_required_params(self):
+        """
+        test_delete_inventory_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/inventories/testString')
+        responses.add(responses.DELETE,
+                      url,
+                      status=204)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+
+        # Invoke method
+        response = _service.delete_inventory(
+            inventory_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 204
+
+
+    @responses.activate
+    def test_delete_inventory_value_error(self):
+        """
+        test_delete_inventory_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/inventories/testString')
+        responses.add(responses.DELETE,
+                      url,
+                      status=204)
+
+        # Set up parameter values
+        inventory_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "inventory_id": inventory_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.delete_inventory(**req_copy)
 
 
 
@@ -6513,6 +7249,8 @@ class TestUpdateInventory():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -6524,8 +7262,8 @@ class TestUpdateInventory():
         update_inventory()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v2/inventories/testString')
-        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
+        url = self.preprocess_url(_base_url + '/v2/inventories/testString')
+        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
         responses.add(responses.PATCH,
                       url,
                       body=mock_response,
@@ -6542,7 +7280,7 @@ class TestUpdateInventory():
         resource_queries = ['testString']
 
         # Invoke method
-        response = service.update_inventory(
+        response = _service.update_inventory(
             inventory_id,
             name=name,
             description=description,
@@ -6572,8 +7310,8 @@ class TestUpdateInventory():
         test_update_inventory_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v2/inventories/testString')
-        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
+        url = self.preprocess_url(_base_url + '/v2/inventories/testString')
+        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
         responses.add(responses.PATCH,
                       url,
                       body=mock_response,
@@ -6596,389 +7334,45 @@ class TestUpdateInventory():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.update_inventory(**req_copy)
-
-
-
-class TestDeleteInventory():
-    """
-    Test Class for delete_inventory
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_delete_inventory_all_params(self):
-        """
-        delete_inventory()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/inventories/testString')
-        responses.add(responses.DELETE,
-                      url,
-                      status=204)
-
-        # Set up parameter values
-        inventory_id = 'testString'
-        force = True
-        propagate = True
-
-        # Invoke method
-        response = service.delete_inventory(
-            inventory_id,
-            force=force,
-            propagate=propagate,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 204
-
-
-    @responses.activate
-    def test_delete_inventory_required_params(self):
-        """
-        test_delete_inventory_required_params()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/inventories/testString')
-        responses.add(responses.DELETE,
-                      url,
-                      status=204)
-
-        # Set up parameter values
-        inventory_id = 'testString'
-
-        # Invoke method
-        response = service.delete_inventory(
-            inventory_id,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 204
-
-
-    @responses.activate
-    def test_delete_inventory_value_error(self):
-        """
-        test_delete_inventory_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/inventories/testString')
-        responses.add(responses.DELETE,
-                      url,
-                      status=204)
-
-        # Set up parameter values
-        inventory_id = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "inventory_id": inventory_id,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.delete_inventory(**req_copy)
-
-
-
-class TestGetInventory():
-    """
-    Test Class for get_inventory
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_get_inventory_all_params(self):
-        """
-        get_inventory()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/inventories/testString')
-        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        inventory_id = 'testString'
-
-        # Invoke method
-        response = service.get_inventory(
-            inventory_id,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-
-
-    @responses.activate
-    def test_get_inventory_value_error(self):
-        """
-        test_get_inventory_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/inventories/testString')
-        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        inventory_id = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "inventory_id": inventory_id,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.get_inventory(**req_copy)
-
-
-
-class TestListInventoryValues():
-    """
-    Test Class for list_inventory_values
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_list_inventory_values_all_params(self):
-        """
-        list_inventory_values()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/inventories/testString/variables')
-        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "inventories": [{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}]}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        inventory_id = 'testString'
-
-        # Invoke method
-        response = service.list_inventory_values(
-            inventory_id,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-
-
-    @responses.activate
-    def test_list_inventory_values_value_error(self):
-        """
-        test_list_inventory_values_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/inventories/testString/variables')
-        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "inventories": [{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}]}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        inventory_id = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "inventory_id": inventory_id,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.list_inventory_values(**req_copy)
-
-
-
-class TestGetInventoryValue():
-    """
-    Test Class for get_inventory_value
-    """
-
-    def preprocess_url(self, request_url: str):
-        """
-        Preprocess the request URL to ensure the mock response will be found.
-        """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
-
-    @responses.activate
-    def test_get_inventory_value_all_params(self):
-        """
-        get_inventory_value()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/inventories/testString/variables/testString')
-        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        inventory_id = 'testString'
-        var_name = 'testString'
-
-        # Invoke method
-        response = service.get_inventory_value(
-            inventory_id,
-            var_name,
-            headers={}
-        )
-
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-
-
-    @responses.activate
-    def test_get_inventory_value_value_error(self):
-        """
-        test_get_inventory_value_value_error()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/inventories/testString/variables/testString')
-        mock_response = '{"name": "name", "id": "id", "description": "description", "location": "us-south", "resource_group": "resource_group", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "inventories_ini": "inventories_ini", "resource_queries": ["resource_queries"]}'
-        responses.add(responses.GET,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Set up parameter values
-        inventory_id = 'testString'
-        var_name = 'testString'
-
-        # Pass in all but one required param and check for a ValueError
-        req_param_dict = {
-            "inventory_id": inventory_id,
-            "var_name": var_name,
-        }
-        for param in req_param_dict.keys():
-            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
-            with pytest.raises(ValueError):
-                service.get_inventory_value(**req_copy)
+                _service.update_inventory(**req_copy)
 
 
 
 # endregion
 ##############################################################################
-# End of Service: SettingsInventory
+# End of Service: Inventory
 ##############################################################################
 
 ##############################################################################
-# Start of Service: SettingsResources
+# Start of Service: ResourceQuery
 ##############################################################################
 # region
 
-class TestCreateResourceQuery():
+class TestNewInstance():
     """
-    Test Class for create_resource_query
+    Test Class for new_instance
     """
 
-    def preprocess_url(self, request_url: str):
+    def test_new_instance(self):
         """
-        Preprocess the request URL to ensure the mock response will be found.
+        new_instance()
         """
-        if re.fullmatch('.*/+', request_url) is None:
-            return request_url
-        else:
-            return re.compile(request_url.rstrip('/') + '/+')
+        os.environ['TEST_SERVICE_AUTH_TYPE'] = 'noAuth'
 
-    @responses.activate
-    def test_create_resource_query_all_params(self):
-        """
-        create_resource_query()
-        """
-        # Set up mock
-        url = self.preprocess_url(base_url + '/v2/resources_query')
-        mock_response = '{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}'
-        responses.add(responses.POST,
-                      url,
-                      body=mock_response,
-                      content_type='application/json',
-                      status=200)
-
-        # Construct a dict representation of a ResourceQueryParam model
-        resource_query_param_model = {}
-        resource_query_param_model['name'] = 'testString'
-        resource_query_param_model['value'] = 'testString'
-        resource_query_param_model['description'] = 'testString'
-
-        # Construct a dict representation of a ResourceQuery model
-        resource_query_model = {}
-        resource_query_model['query_type'] = 'workspaces'
-        resource_query_model['query_condition'] = [resource_query_param_model]
-        resource_query_model['query_select'] = ['testString']
-
-        # Set up parameter values
-        type = 'vsi'
-        name = 'testString'
-        queries = [resource_query_model]
-
-        # Invoke method
-        response = service.create_resource_query(
-            type=type,
-            name=name,
-            queries=queries,
-            headers={}
+        service = SchematicsV1.new_instance(
+            service_name='TEST_SERVICE',
         )
 
-        # Check for correct operation
-        assert len(responses.calls) == 1
-        assert response.status_code == 200
-        # Validate body params
-        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
-        assert req_body['type'] == 'vsi'
-        assert req_body['name'] == 'testString'
-        assert req_body['queries'] == [resource_query_model]
+        assert service is not None
+        assert isinstance(service, SchematicsV1)
 
+    def test_new_instance_without_authenticator(self):
+        """
+        new_instance_without_authenticator()
+        """
+        with pytest.raises(ValueError, match='authenticator must be provided'):
+            service = SchematicsV1.new_instance(
+            )
 
 class TestListResourceQuery():
     """
@@ -6989,6 +7383,8 @@ class TestListResourceQuery():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -7000,8 +7396,8 @@ class TestListResourceQuery():
         list_resource_query()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v2/resources_query')
-        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "ResourceQueries": [{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}]}'
+        url = self.preprocess_url(_base_url + '/v2/resources_query')
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "resource_queries": [{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -7015,7 +7411,7 @@ class TestListResourceQuery():
         profile = 'ids'
 
         # Invoke method
-        response = service.list_resource_query(
+        response = _service.list_resource_query(
             offset=offset,
             limit=limit,
             sort=sort,
@@ -7041,8 +7437,8 @@ class TestListResourceQuery():
         test_list_resource_query_required_params()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v2/resources_query')
-        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "ResourceQueries": [{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}]}'
+        url = self.preprocess_url(_base_url + '/v2/resources_query')
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "resource_queries": [{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}]}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -7050,7 +7446,7 @@ class TestListResourceQuery():
                       status=200)
 
         # Invoke method
-        response = service.list_resource_query()
+        response = _service.list_resource_query()
 
 
         # Check for correct operation
@@ -7058,29 +7454,96 @@ class TestListResourceQuery():
         assert response.status_code == 200
 
 
-class TestExecuteResourceQuery():
+class TestCreateResourceQuery():
     """
-    Test Class for execute_resource_query
+    Test Class for create_resource_query
     """
 
     def preprocess_url(self, request_url: str):
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
             return re.compile(request_url.rstrip('/') + '/+')
 
     @responses.activate
-    def test_execute_resource_query_all_params(self):
+    def test_create_resource_query_all_params(self):
         """
-        execute_resource_query()
+        create_resource_query()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
-        mock_response = '{"response": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"], "query_output": [{"name": "name", "value": "value"}]}]}'
+        url = self.preprocess_url(_base_url + '/v2/resources_query')
+        mock_response = '{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}'
         responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Construct a dict representation of a ResourceQueryParam model
+        resource_query_param_model = {}
+        resource_query_param_model['name'] = 'testString'
+        resource_query_param_model['value'] = 'testString'
+        resource_query_param_model['description'] = 'testString'
+
+        # Construct a dict representation of a ResourceQuery model
+        resource_query_model = {}
+        resource_query_model['query_type'] = 'workspaces'
+        resource_query_model['query_condition'] = [resource_query_param_model]
+        resource_query_model['query_select'] = ['testString']
+
+        # Set up parameter values
+        type = 'vsi'
+        name = 'testString'
+        queries = [resource_query_model]
+
+        # Invoke method
+        response = _service.create_resource_query(
+            type=type,
+            name=name,
+            queries=queries,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['type'] == 'vsi'
+        assert req_body['name'] == 'testString'
+        assert req_body['queries'] == [resource_query_model]
+
+
+class TestGetResourcesQuery():
+    """
+    Test Class for get_resources_query
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_get_resources_query_all_params(self):
+        """
+        get_resources_query()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/resources_query/testString')
+        mock_response = '{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}'
+        responses.add(responses.GET,
                       url,
                       body=mock_response,
                       content_type='application/json',
@@ -7090,7 +7553,7 @@ class TestExecuteResourceQuery():
         query_id = 'testString'
 
         # Invoke method
-        response = service.execute_resource_query(
+        response = _service.get_resources_query(
             query_id,
             headers={}
         )
@@ -7101,14 +7564,14 @@ class TestExecuteResourceQuery():
 
 
     @responses.activate
-    def test_execute_resource_query_value_error(self):
+    def test_get_resources_query_value_error(self):
         """
-        test_execute_resource_query_value_error()
+        test_get_resources_query_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
-        mock_response = '{"response": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"], "query_output": [{"name": "name", "value": "value"}]}]}'
-        responses.add(responses.POST,
+        url = self.preprocess_url(_base_url + '/v2/resources_query/testString')
+        mock_response = '{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}'
+        responses.add(responses.GET,
                       url,
                       body=mock_response,
                       content_type='application/json',
@@ -7124,7 +7587,7 @@ class TestExecuteResourceQuery():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.execute_resource_query(**req_copy)
+                _service.get_resources_query(**req_copy)
 
 
 
@@ -7137,6 +7600,8 @@ class TestReplaceResourcesQuery():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -7148,8 +7613,8 @@ class TestReplaceResourcesQuery():
         replace_resources_query()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
-        mock_response = '{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}'
+        url = self.preprocess_url(_base_url + '/v2/resources_query/testString')
+        mock_response = '{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}'
         responses.add(responses.PUT,
                       url,
                       body=mock_response,
@@ -7175,7 +7640,7 @@ class TestReplaceResourcesQuery():
         queries = [resource_query_model]
 
         # Invoke method
-        response = service.replace_resources_query(
+        response = _service.replace_resources_query(
             query_id,
             type=type,
             name=name,
@@ -7199,8 +7664,8 @@ class TestReplaceResourcesQuery():
         test_replace_resources_query_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
-        mock_response = '{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}'
+        url = self.preprocess_url(_base_url + '/v2/resources_query/testString')
+        mock_response = '{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-01-01T12:00:00.000Z", "created_by": "created_by", "updated_at": "2019-01-01T12:00:00.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}'
         responses.add(responses.PUT,
                       url,
                       body=mock_response,
@@ -7232,7 +7697,79 @@ class TestReplaceResourcesQuery():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.replace_resources_query(**req_copy)
+                _service.replace_resources_query(**req_copy)
+
+
+
+class TestExecuteResourceQuery():
+    """
+    Test Class for execute_resource_query
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_execute_resource_query_all_params(self):
+        """
+        execute_resource_query()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/resources_query/testString')
+        mock_response = '{"response": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"], "query_output": [{"name": "name", "value": "value"}]}]}'
+        responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        query_id = 'testString'
+
+        # Invoke method
+        response = _service.execute_resource_query(
+            query_id,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+
+
+    @responses.activate
+    def test_execute_resource_query_value_error(self):
+        """
+        test_execute_resource_query_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/resources_query/testString')
+        mock_response = '{"response": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"], "query_output": [{"name": "name", "value": "value"}]}]}'
+        responses.add(responses.POST,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        query_id = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "query_id": query_id,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.execute_resource_query(**req_copy)
 
 
 
@@ -7245,6 +7782,8 @@ class TestDeleteResourcesQuery():
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
@@ -7256,7 +7795,7 @@ class TestDeleteResourcesQuery():
         delete_resources_query()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
+        url = self.preprocess_url(_base_url + '/v2/resources_query/testString')
         responses.add(responses.DELETE,
                       url,
                       status=204)
@@ -7267,7 +7806,7 @@ class TestDeleteResourcesQuery():
         propagate = True
 
         # Invoke method
-        response = service.delete_resources_query(
+        response = _service.delete_resources_query(
             query_id,
             force=force,
             propagate=propagate,
@@ -7285,7 +7824,7 @@ class TestDeleteResourcesQuery():
         test_delete_resources_query_required_params()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
+        url = self.preprocess_url(_base_url + '/v2/resources_query/testString')
         responses.add(responses.DELETE,
                       url,
                       status=204)
@@ -7294,7 +7833,7 @@ class TestDeleteResourcesQuery():
         query_id = 'testString'
 
         # Invoke method
-        response = service.delete_resources_query(
+        response = _service.delete_resources_query(
             query_id,
             headers={}
         )
@@ -7310,7 +7849,7 @@ class TestDeleteResourcesQuery():
         test_delete_resources_query_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
+        url = self.preprocess_url(_base_url + '/v2/resources_query/testString')
         responses.add(responses.DELETE,
                       url,
                       status=204)
@@ -7325,32 +7864,70 @@ class TestDeleteResourcesQuery():
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.delete_resources_query(**req_copy)
+                _service.delete_resources_query(**req_copy)
 
 
 
-class TestGetResourcesQuery():
+# endregion
+##############################################################################
+# End of Service: ResourceQuery
+##############################################################################
+
+##############################################################################
+# Start of Service: SettingsKms
+##############################################################################
+# region
+
+class TestNewInstance():
     """
-    Test Class for get_resources_query
+    Test Class for new_instance
+    """
+
+    def test_new_instance(self):
+        """
+        new_instance()
+        """
+        os.environ['TEST_SERVICE_AUTH_TYPE'] = 'noAuth'
+
+        service = SchematicsV1.new_instance(
+            service_name='TEST_SERVICE',
+        )
+
+        assert service is not None
+        assert isinstance(service, SchematicsV1)
+
+    def test_new_instance_without_authenticator(self):
+        """
+        new_instance_without_authenticator()
+        """
+        with pytest.raises(ValueError, match='authenticator must be provided'):
+            service = SchematicsV1.new_instance(
+            )
+
+class TestGetKmsSettings():
+    """
+    Test Class for get_kms_settings
     """
 
     def preprocess_url(self, request_url: str):
         """
         Preprocess the request URL to ensure the mock response will be found.
         """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
         if re.fullmatch('.*/+', request_url) is None:
             return request_url
         else:
             return re.compile(request_url.rstrip('/') + '/+')
 
     @responses.activate
-    def test_get_resources_query_all_params(self):
+    def test_get_kms_settings_all_params(self):
         """
-        get_resources_query()
+        get_kms_settings()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
-        mock_response = '{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}'
+        url = self.preprocess_url(_base_url + '/v2/settings/kms')
+        mock_response = '{"location": "location", "encryption_scheme": "encryption_scheme", "resource_group": "resource_group", "primary_crk": {"kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "key_crn": "key_crn"}, "secondary_crk": {"kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "key_crn": "key_crn"}}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -7358,27 +7935,31 @@ class TestGetResourcesQuery():
                       status=200)
 
         # Set up parameter values
-        query_id = 'testString'
+        location = 'testString'
 
         # Invoke method
-        response = service.get_resources_query(
-            query_id,
+        response = _service.get_kms_settings(
+            location,
             headers={}
         )
 
         # Check for correct operation
         assert len(responses.calls) == 1
         assert response.status_code == 200
+        # Validate query params
+        query_string = responses.calls[0].request.url.split('?',1)[1]
+        query_string = urllib.parse.unquote_plus(query_string)
+        assert 'location={}'.format(location) in query_string
 
 
     @responses.activate
-    def test_get_resources_query_value_error(self):
+    def test_get_kms_settings_value_error(self):
         """
-        test_get_resources_query_value_error()
+        test_get_kms_settings_value_error()
         """
         # Set up mock
-        url = self.preprocess_url(base_url + '/v2/resources_query/testString')
-        mock_response = '{"type": "vsi", "name": "name", "id": "id", "created_at": "2019-11-06T16:19:32.000Z", "created_by": "created_by", "updated_at": "2019-11-06T16:19:32.000Z", "updated_by": "updated_by", "queries": [{"query_type": "workspaces", "query_condition": [{"name": "name", "value": "value", "description": "description"}], "query_select": ["query_select"]}]}'
+        url = self.preprocess_url(_base_url + '/v2/settings/kms')
+        mock_response = '{"location": "location", "encryption_scheme": "encryption_scheme", "resource_group": "resource_group", "primary_crk": {"kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "key_crn": "key_crn"}, "secondary_crk": {"kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "key_crn": "key_crn"}}'
         responses.add(responses.GET,
                       url,
                       body=mock_response,
@@ -7386,22 +7967,218 @@ class TestGetResourcesQuery():
                       status=200)
 
         # Set up parameter values
-        query_id = 'testString'
+        location = 'testString'
 
         # Pass in all but one required param and check for a ValueError
         req_param_dict = {
-            "query_id": query_id,
+            "location": location,
         }
         for param in req_param_dict.keys():
             req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
             with pytest.raises(ValueError):
-                service.get_resources_query(**req_copy)
+                _service.get_kms_settings(**req_copy)
+
+
+
+class TestUpdateKmsSettings():
+    """
+    Test Class for update_kms_settings
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_update_kms_settings_all_params(self):
+        """
+        update_kms_settings()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/settings/kms')
+        mock_response = '{"location": "location", "encryption_scheme": "encryption_scheme", "resource_group": "resource_group", "primary_crk": {"kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "key_crn": "key_crn"}, "secondary_crk": {"kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "key_crn": "key_crn"}}'
+        responses.add(responses.PUT,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Construct a dict representation of a KMSSettingsPrimaryCrk model
+        kms_settings_primary_crk_model = {}
+        kms_settings_primary_crk_model['kms_name'] = 'testString'
+        kms_settings_primary_crk_model['kms_private_endpoint'] = 'testString'
+        kms_settings_primary_crk_model['key_crn'] = 'testString'
+
+        # Construct a dict representation of a KMSSettingsSecondaryCrk model
+        kms_settings_secondary_crk_model = {}
+        kms_settings_secondary_crk_model['kms_name'] = 'testString'
+        kms_settings_secondary_crk_model['kms_private_endpoint'] = 'testString'
+        kms_settings_secondary_crk_model['key_crn'] = 'testString'
+
+        # Set up parameter values
+        location = 'testString'
+        encryption_scheme = 'testString'
+        resource_group = 'testString'
+        primary_crk = kms_settings_primary_crk_model
+        secondary_crk = kms_settings_secondary_crk_model
+
+        # Invoke method
+        response = _service.update_kms_settings(
+            location=location,
+            encryption_scheme=encryption_scheme,
+            resource_group=resource_group,
+            primary_crk=primary_crk,
+            secondary_crk=secondary_crk,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate body params
+        req_body = json.loads(str(responses.calls[0].request.body, 'utf-8'))
+        assert req_body['location'] == 'testString'
+        assert req_body['encryption_scheme'] == 'testString'
+        assert req_body['resource_group'] == 'testString'
+        assert req_body['primary_crk'] == kms_settings_primary_crk_model
+        assert req_body['secondary_crk'] == kms_settings_secondary_crk_model
+
+
+class TestListKms():
+    """
+    Test Class for list_kms
+    """
+
+    def preprocess_url(self, request_url: str):
+        """
+        Preprocess the request URL to ensure the mock response will be found.
+        """
+        request_url = urllib.parse.unquote(request_url) # don't double-encode if already encoded
+        request_url = urllib.parse.quote(request_url, safe=':/')
+        if re.fullmatch('.*/+', request_url) is None:
+            return request_url
+        else:
+            return re.compile(request_url.rstrip('/') + '/+')
+
+    @responses.activate
+    def test_list_kms_all_params(self):
+        """
+        list_kms()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/settings/kms_instances')
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "kms_instances": [{"location": "location", "encryption_scheme": "encryption_scheme", "resource_group": "resource_group", "kms_crn": "kms_crn", "kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "kms_public_endpoint": "kms_public_endpoint", "keys": [{"name": "name", "crn": "crn", "error": "error"}]}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        encryption_scheme = 'testString'
+        location = 'testString'
+        resource_group = 'testString'
+        limit = 1
+        sort = 'testString'
+
+        # Invoke method
+        response = _service.list_kms(
+            encryption_scheme,
+            location,
+            resource_group=resource_group,
+            limit=limit,
+            sort=sort,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate query params
+        query_string = responses.calls[0].request.url.split('?',1)[1]
+        query_string = urllib.parse.unquote_plus(query_string)
+        assert 'encryption_scheme={}'.format(encryption_scheme) in query_string
+        assert 'location={}'.format(location) in query_string
+        assert 'resource_group={}'.format(resource_group) in query_string
+        assert 'limit={}'.format(limit) in query_string
+        assert 'sort={}'.format(sort) in query_string
+
+
+    @responses.activate
+    def test_list_kms_required_params(self):
+        """
+        test_list_kms_required_params()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/settings/kms_instances')
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "kms_instances": [{"location": "location", "encryption_scheme": "encryption_scheme", "resource_group": "resource_group", "kms_crn": "kms_crn", "kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "kms_public_endpoint": "kms_public_endpoint", "keys": [{"name": "name", "crn": "crn", "error": "error"}]}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        encryption_scheme = 'testString'
+        location = 'testString'
+
+        # Invoke method
+        response = _service.list_kms(
+            encryption_scheme,
+            location,
+            headers={}
+        )
+
+        # Check for correct operation
+        assert len(responses.calls) == 1
+        assert response.status_code == 200
+        # Validate query params
+        query_string = responses.calls[0].request.url.split('?',1)[1]
+        query_string = urllib.parse.unquote_plus(query_string)
+        assert 'encryption_scheme={}'.format(encryption_scheme) in query_string
+        assert 'location={}'.format(location) in query_string
+
+
+    @responses.activate
+    def test_list_kms_value_error(self):
+        """
+        test_list_kms_value_error()
+        """
+        # Set up mock
+        url = self.preprocess_url(_base_url + '/v2/settings/kms_instances')
+        mock_response = '{"total_count": 11, "limit": 5, "offset": 6, "kms_instances": [{"location": "location", "encryption_scheme": "encryption_scheme", "resource_group": "resource_group", "kms_crn": "kms_crn", "kms_name": "kms_name", "kms_private_endpoint": "kms_private_endpoint", "kms_public_endpoint": "kms_public_endpoint", "keys": [{"name": "name", "crn": "crn", "error": "error"}]}]}'
+        responses.add(responses.GET,
+                      url,
+                      body=mock_response,
+                      content_type='application/json',
+                      status=200)
+
+        # Set up parameter values
+        encryption_scheme = 'testString'
+        location = 'testString'
+
+        # Pass in all but one required param and check for a ValueError
+        req_param_dict = {
+            "encryption_scheme": encryption_scheme,
+            "location": location,
+        }
+        for param in req_param_dict.keys():
+            req_copy = {key:val if key is not param else None for (key,val) in req_param_dict.items()}
+            with pytest.raises(ValueError):
+                _service.list_kms(**req_copy)
 
 
 
 # endregion
 ##############################################################################
-# End of Service: SettingsResources
+# End of Service: SettingsKms
 ##############################################################################
 
 
@@ -7409,7 +8186,7 @@ class TestGetResourcesQuery():
 # Start of Model Tests
 ##############################################################################
 # region
-class TestAction():
+class TestModel_Action():
     """
     Test Class for Action
     """
@@ -7424,22 +8201,33 @@ class TestAction():
         user_state_model = {} # UserState
         user_state_model['state'] = 'draft'
         user_state_model['set_by'] = 'testString'
-        user_state_model['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        user_state_model['set_at'] = "2019-01-01T12:00:00Z"
 
         external_source_git_model = {} # ExternalSourceGit
+        external_source_git_model['computed_git_repo_url'] = 'testString'
         external_source_git_model['git_repo_url'] = 'testString'
         external_source_git_model['git_token'] = 'testString'
         external_source_git_model['git_repo_folder'] = 'testString'
         external_source_git_model['git_release'] = 'testString'
         external_source_git_model['git_branch'] = 'testString'
 
+        external_source_catalog_model = {} # ExternalSourceCatalog
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        external_source_cos_bucket_model = {} # ExternalSourceCosBucket
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
         external_source_model = {} # ExternalSource
         external_source_model['source_type'] = 'local'
         external_source_model['git'] = external_source_git_model
-
-        bastion_resource_definition_model = {} # BastionResourceDefinition
-        bastion_resource_definition_model['name'] = 'testString'
-        bastion_resource_definition_model['host'] = 'testString'
+        external_source_model['catalog'] = external_source_catalog_model
+        external_source_model['cos_bucket'] = external_source_cos_bucket_model
 
         variable_metadata_model = {} # VariableMetadata
         variable_metadata_model['type'] = 'boolean'
@@ -7465,6 +8253,10 @@ class TestAction():
         variable_data_model['metadata'] = variable_metadata_model
         variable_data_model['link'] = 'testString'
 
+        bastion_resource_definition_model = {} # BastionResourceDefinition
+        bastion_resource_definition_model['name'] = 'testString'
+        bastion_resource_definition_model['host'] = 'testString'
+
         action_state_model = {} # ActionState
         action_state_model['status_code'] = 'normal'
         action_state_model['status_job_id'] = 'testString'
@@ -7473,12 +8265,12 @@ class TestAction():
         system_lock_model = {} # SystemLock
         system_lock_model['sys_locked'] = True
         system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        system_lock_model['sys_locked_at'] = "2019-01-01T12:00:00Z"
 
         # Construct a json representation of a Action model
         action_model_json = {}
         action_model_json['name'] = 'Stop Action'
-        action_model_json['description'] = 'This Action can be used to Stop the VSIs'
+        action_model_json['description'] = 'The description of your action. The description can be up to 2048 characters long in size. **Example** you can use the description to stop the targets.'
         action_model_json['location'] = 'us-south'
         action_model_json['resource_group'] = 'testString'
         action_model_json['tags'] = ['testString']
@@ -7487,23 +8279,24 @@ class TestAction():
         action_model_json['source'] = external_source_model
         action_model_json['source_type'] = 'local'
         action_model_json['command_parameter'] = 'testString'
-        action_model_json['bastion'] = bastion_resource_definition_model
         action_model_json['inventory'] = 'testString'
-        action_model_json['bastion_credential'] = variable_data_model
         action_model_json['credentials'] = [variable_data_model]
+        action_model_json['bastion'] = bastion_resource_definition_model
+        action_model_json['bastion_credential'] = variable_data_model
+        action_model_json['targets_ini'] = 'testString'
         action_model_json['inputs'] = [variable_data_model]
         action_model_json['outputs'] = [variable_data_model]
         action_model_json['settings'] = [variable_data_model]
         action_model_json['id'] = 'testString'
         action_model_json['crn'] = 'testString'
         action_model_json['account'] = 'testString'
-        action_model_json['source_created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        action_model_json['source_created_at'] = "2019-01-01T12:00:00Z"
         action_model_json['source_created_by'] = 'testString'
-        action_model_json['source_updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        action_model_json['source_updated_at'] = "2019-01-01T12:00:00Z"
         action_model_json['source_updated_by'] = 'testString'
-        action_model_json['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        action_model_json['created_at'] = "2019-01-01T12:00:00Z"
         action_model_json['created_by'] = 'testString'
-        action_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        action_model_json['updated_at'] = "2019-01-01T12:00:00Z"
         action_model_json['updated_by'] = 'testString'
         action_model_json['state'] = action_state_model
         action_model_json['playbook_names'] = ['testString']
@@ -7524,7 +8317,7 @@ class TestAction():
         action_model_json2 = action_model.to_dict()
         assert action_model_json2 == action_model_json
 
-class TestActionList():
+class TestModel_ActionList():
     """
     Test Class for ActionList
     """
@@ -7539,7 +8332,7 @@ class TestActionList():
         user_state_model = {} # UserState
         user_state_model['state'] = 'draft'
         user_state_model['set_by'] = 'testString'
-        user_state_model['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        user_state_model['set_at'] = "2019-01-01T12:00:00Z"
 
         action_lite_state_model = {} # ActionLiteState
         action_lite_state_model['status_code'] = 'normal'
@@ -7548,11 +8341,11 @@ class TestActionList():
         system_lock_model = {} # SystemLock
         system_lock_model['sys_locked'] = True
         system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        system_lock_model['sys_locked_at'] = "2019-01-01T12:00:00Z"
 
         action_lite_model = {} # ActionLite
         action_lite_model['name'] = 'Stop Action'
-        action_lite_model['description'] = 'This Action can be used to Stop the VSIs'
+        action_lite_model['description'] = 'This Action can be used to Stop the targets'
         action_lite_model['id'] = 'testString'
         action_lite_model['crn'] = 'testString'
         action_lite_model['location'] = 'us-south'
@@ -7563,9 +8356,9 @@ class TestActionList():
         action_lite_model['user_state'] = user_state_model
         action_lite_model['state'] = action_lite_state_model
         action_lite_model['sys_lock'] = system_lock_model
-        action_lite_model['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        action_lite_model['created_at'] = "2019-01-01T12:00:00Z"
         action_lite_model['created_by'] = 'testString'
-        action_lite_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        action_lite_model['updated_at'] = "2019-01-01T12:00:00Z"
         action_lite_model['updated_by'] = 'testString'
 
         # Construct a json representation of a ActionList model
@@ -7590,7 +8383,7 @@ class TestActionList():
         action_list_model_json2 = action_list_model.to_dict()
         assert action_list_model_json2 == action_list_model_json
 
-class TestActionLite():
+class TestModel_ActionLite():
     """
     Test Class for ActionLite
     """
@@ -7605,7 +8398,7 @@ class TestActionLite():
         user_state_model = {} # UserState
         user_state_model['state'] = 'draft'
         user_state_model['set_by'] = 'testString'
-        user_state_model['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        user_state_model['set_at'] = "2019-01-01T12:00:00Z"
 
         action_lite_state_model = {} # ActionLiteState
         action_lite_state_model['status_code'] = 'normal'
@@ -7614,12 +8407,12 @@ class TestActionLite():
         system_lock_model = {} # SystemLock
         system_lock_model['sys_locked'] = True
         system_lock_model['sys_locked_by'] = 'testString'
-        system_lock_model['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        system_lock_model['sys_locked_at'] = "2019-01-01T12:00:00Z"
 
         # Construct a json representation of a ActionLite model
         action_lite_model_json = {}
         action_lite_model_json['name'] = 'Stop Action'
-        action_lite_model_json['description'] = 'This Action can be used to Stop the VSIs'
+        action_lite_model_json['description'] = 'This Action can be used to Stop the targets'
         action_lite_model_json['id'] = 'testString'
         action_lite_model_json['crn'] = 'testString'
         action_lite_model_json['location'] = 'us-south'
@@ -7630,9 +8423,9 @@ class TestActionLite():
         action_lite_model_json['user_state'] = user_state_model
         action_lite_model_json['state'] = action_lite_state_model
         action_lite_model_json['sys_lock'] = system_lock_model
-        action_lite_model_json['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        action_lite_model_json['created_at'] = "2019-01-01T12:00:00Z"
         action_lite_model_json['created_by'] = 'testString'
-        action_lite_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        action_lite_model_json['updated_at'] = "2019-01-01T12:00:00Z"
         action_lite_model_json['updated_by'] = 'testString'
 
         # Construct a model instance of ActionLite by calling from_dict on the json representation
@@ -7650,7 +8443,7 @@ class TestActionLite():
         action_lite_model_json2 = action_lite_model.to_dict()
         assert action_lite_model_json2 == action_lite_model_json
 
-class TestActionLiteState():
+class TestModel_ActionLiteState():
     """
     Test Class for ActionLiteState
     """
@@ -7680,7 +8473,7 @@ class TestActionLiteState():
         action_lite_state_model_json2 = action_lite_state_model.to_dict()
         assert action_lite_state_model_json2 == action_lite_state_model_json
 
-class TestActionState():
+class TestModel_ActionState():
     """
     Test Class for ActionState
     """
@@ -7711,7 +8504,7 @@ class TestActionState():
         action_state_model_json2 = action_state_model.to_dict()
         assert action_state_model_json2 == action_state_model_json
 
-class TestBastionResourceDefinition():
+class TestModel_BastionResourceDefinition():
     """
     Test Class for BastionResourceDefinition
     """
@@ -7741,7 +8534,7 @@ class TestBastionResourceDefinition():
         bastion_resource_definition_model_json2 = bastion_resource_definition_model.to_dict()
         assert bastion_resource_definition_model_json2 == bastion_resource_definition_model_json
 
-class TestCatalogRef():
+class TestModel_CatalogRef():
     """
     Test Class for CatalogRef
     """
@@ -7754,6 +8547,7 @@ class TestCatalogRef():
         # Construct a json representation of a CatalogRef model
         catalog_ref_model_json = {}
         catalog_ref_model_json['dry_run'] = True
+        catalog_ref_model_json['owning_account'] = 'testString'
         catalog_ref_model_json['item_icon_url'] = 'testString'
         catalog_ref_model_json['item_id'] = 'testString'
         catalog_ref_model_json['item_name'] = 'testString'
@@ -7777,7 +8571,7 @@ class TestCatalogRef():
         catalog_ref_model_json2 = catalog_ref_model.to_dict()
         assert catalog_ref_model_json2 == catalog_ref_model_json
 
-class TestEnvVariableResponse():
+class TestModel_EnvVariableResponse():
     """
     Test Class for EnvVariableResponse
     """
@@ -7809,7 +8603,7 @@ class TestEnvVariableResponse():
         env_variable_response_model_json2 = env_variable_response_model.to_dict()
         assert env_variable_response_model_json2 == env_variable_response_model_json
 
-class TestExternalSource():
+class TestModel_ExternalSource():
     """
     Test Class for ExternalSource
     """
@@ -7822,16 +8616,31 @@ class TestExternalSource():
         # Construct dict forms of any model objects needed in order to build this model.
 
         external_source_git_model = {} # ExternalSourceGit
+        external_source_git_model['computed_git_repo_url'] = 'testString'
         external_source_git_model['git_repo_url'] = 'testString'
         external_source_git_model['git_token'] = 'testString'
         external_source_git_model['git_repo_folder'] = 'testString'
         external_source_git_model['git_release'] = 'testString'
         external_source_git_model['git_branch'] = 'testString'
 
+        external_source_catalog_model = {} # ExternalSourceCatalog
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        external_source_cos_bucket_model = {} # ExternalSourceCosBucket
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
         # Construct a json representation of a ExternalSource model
         external_source_model_json = {}
         external_source_model_json['source_type'] = 'local'
         external_source_model_json['git'] = external_source_git_model
+        external_source_model_json['catalog'] = external_source_catalog_model
+        external_source_model_json['cos_bucket'] = external_source_cos_bucket_model
 
         # Construct a model instance of ExternalSource by calling from_dict on the json representation
         external_source_model = ExternalSource.from_dict(external_source_model_json)
@@ -7848,7 +8657,71 @@ class TestExternalSource():
         external_source_model_json2 = external_source_model.to_dict()
         assert external_source_model_json2 == external_source_model_json
 
-class TestExternalSourceGit():
+class TestModel_ExternalSourceCatalog():
+    """
+    Test Class for ExternalSourceCatalog
+    """
+
+    def test_external_source_catalog_serialization(self):
+        """
+        Test serialization/deserialization for ExternalSourceCatalog
+        """
+
+        # Construct a json representation of a ExternalSourceCatalog model
+        external_source_catalog_model_json = {}
+        external_source_catalog_model_json['catalog_name'] = 'testString'
+        external_source_catalog_model_json['offering_name'] = 'testString'
+        external_source_catalog_model_json['offering_version'] = 'testString'
+        external_source_catalog_model_json['offering_kind'] = 'testString'
+        external_source_catalog_model_json['offering_id'] = 'testString'
+        external_source_catalog_model_json['offering_version_id'] = 'testString'
+        external_source_catalog_model_json['offering_repo_url'] = 'testString'
+
+        # Construct a model instance of ExternalSourceCatalog by calling from_dict on the json representation
+        external_source_catalog_model = ExternalSourceCatalog.from_dict(external_source_catalog_model_json)
+        assert external_source_catalog_model != False
+
+        # Construct a model instance of ExternalSourceCatalog by calling from_dict on the json representation
+        external_source_catalog_model_dict = ExternalSourceCatalog.from_dict(external_source_catalog_model_json).__dict__
+        external_source_catalog_model2 = ExternalSourceCatalog(**external_source_catalog_model_dict)
+
+        # Verify the model instances are equivalent
+        assert external_source_catalog_model == external_source_catalog_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        external_source_catalog_model_json2 = external_source_catalog_model.to_dict()
+        assert external_source_catalog_model_json2 == external_source_catalog_model_json
+
+class TestModel_ExternalSourceCosBucket():
+    """
+    Test Class for ExternalSourceCosBucket
+    """
+
+    def test_external_source_cos_bucket_serialization(self):
+        """
+        Test serialization/deserialization for ExternalSourceCosBucket
+        """
+
+        # Construct a json representation of a ExternalSourceCosBucket model
+        external_source_cos_bucket_model_json = {}
+        external_source_cos_bucket_model_json['cos_bucket_url'] = 'testString'
+
+        # Construct a model instance of ExternalSourceCosBucket by calling from_dict on the json representation
+        external_source_cos_bucket_model = ExternalSourceCosBucket.from_dict(external_source_cos_bucket_model_json)
+        assert external_source_cos_bucket_model != False
+
+        # Construct a model instance of ExternalSourceCosBucket by calling from_dict on the json representation
+        external_source_cos_bucket_model_dict = ExternalSourceCosBucket.from_dict(external_source_cos_bucket_model_json).__dict__
+        external_source_cos_bucket_model2 = ExternalSourceCosBucket(**external_source_cos_bucket_model_dict)
+
+        # Verify the model instances are equivalent
+        assert external_source_cos_bucket_model == external_source_cos_bucket_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        external_source_cos_bucket_model_json2 = external_source_cos_bucket_model.to_dict()
+        assert external_source_cos_bucket_model_json2 == external_source_cos_bucket_model_json
+
+class TestModel_ExternalSourceGit():
     """
     Test Class for ExternalSourceGit
     """
@@ -7860,6 +8733,7 @@ class TestExternalSourceGit():
 
         # Construct a json representation of a ExternalSourceGit model
         external_source_git_model_json = {}
+        external_source_git_model_json['computed_git_repo_url'] = 'testString'
         external_source_git_model_json['git_repo_url'] = 'testString'
         external_source_git_model_json['git_token'] = 'testString'
         external_source_git_model_json['git_repo_folder'] = 'testString'
@@ -7881,7 +8755,7 @@ class TestExternalSourceGit():
         external_source_git_model_json2 = external_source_git_model.to_dict()
         assert external_source_git_model_json2 == external_source_git_model_json
 
-class TestInventoryResourceRecord():
+class TestModel_InventoryResourceRecord():
     """
     Test Class for InventoryResourceRecord
     """
@@ -7898,9 +8772,9 @@ class TestInventoryResourceRecord():
         inventory_resource_record_model_json['description'] = 'testString'
         inventory_resource_record_model_json['location'] = 'us-south'
         inventory_resource_record_model_json['resource_group'] = 'testString'
-        inventory_resource_record_model_json['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model_json['created_at'] = "2019-01-01T12:00:00Z"
         inventory_resource_record_model_json['created_by'] = 'testString'
-        inventory_resource_record_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model_json['updated_at'] = "2019-01-01T12:00:00Z"
         inventory_resource_record_model_json['updated_by'] = 'testString'
         inventory_resource_record_model_json['inventories_ini'] = 'testString'
         inventory_resource_record_model_json['resource_queries'] = ['testString']
@@ -7920,7 +8794,7 @@ class TestInventoryResourceRecord():
         inventory_resource_record_model_json2 = inventory_resource_record_model.to_dict()
         assert inventory_resource_record_model_json2 == inventory_resource_record_model_json
 
-class TestInventoryResourceRecordList():
+class TestModel_InventoryResourceRecordList():
     """
     Test Class for InventoryResourceRecordList
     """
@@ -7938,9 +8812,9 @@ class TestInventoryResourceRecordList():
         inventory_resource_record_model['description'] = 'testString'
         inventory_resource_record_model['location'] = 'us-south'
         inventory_resource_record_model['resource_group'] = 'testString'
-        inventory_resource_record_model['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model['created_at'] = "2019-01-01T12:00:00Z"
         inventory_resource_record_model['created_by'] = 'testString'
-        inventory_resource_record_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model['updated_at'] = "2019-01-01T12:00:00Z"
         inventory_resource_record_model['updated_by'] = 'testString'
         inventory_resource_record_model['inventories_ini'] = 'testString'
         inventory_resource_record_model['resource_queries'] = ['testString']
@@ -7967,7 +8841,7 @@ class TestInventoryResourceRecordList():
         inventory_resource_record_list_model_json2 = inventory_resource_record_list_model.to_dict()
         assert inventory_resource_record_list_model_json2 == inventory_resource_record_list_model_json
 
-class TestJob():
+class TestModel_Job():
     """
     Test Class for Job
     """
@@ -8003,31 +8877,84 @@ class TestJob():
         variable_data_model['metadata'] = variable_metadata_model
         variable_data_model['link'] = 'testString'
 
+        job_status_workitem_model = {} # JobStatusWorkitem
+        job_status_workitem_model['workspace_id'] = 'testString'
+        job_status_workitem_model['workspace_name'] = 'testString'
+        job_status_workitem_model['job_id'] = 'testString'
+        job_status_workitem_model['status_code'] = 'job_pending'
+        job_status_workitem_model['status_message'] = 'testString'
+        job_status_workitem_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_status_flow_model = {} # JobStatusFlow
+        job_status_flow_model['flow_id'] = 'testString'
+        job_status_flow_model['flow_name'] = 'testString'
+        job_status_flow_model['status_code'] = 'job_pending'
+        job_status_flow_model['status_message'] = 'testString'
+        job_status_flow_model['workitems'] = [job_status_workitem_model]
+        job_status_flow_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_status_template_model = {} # JobStatusTemplate
+        job_status_template_model['template_id'] = 'testString'
+        job_status_template_model['template_name'] = 'testString'
+        job_status_template_model['flow_index'] = 38
+        job_status_template_model['status_code'] = 'job_pending'
+        job_status_template_model['status_message'] = 'testString'
+        job_status_template_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_status_workspace_model = {} # JobStatusWorkspace
+        job_status_workspace_model['workspace_name'] = 'testString'
+        job_status_workspace_model['status_code'] = 'job_pending'
+        job_status_workspace_model['status_message'] = 'testString'
+        job_status_workspace_model['flow_status'] = job_status_flow_model
+        job_status_workspace_model['template_status'] = [job_status_template_model]
+        job_status_workspace_model['updated_at'] = "2019-01-01T12:00:00Z"
+
         job_status_action_model = {} # JobStatusAction
         job_status_action_model['action_name'] = 'testString'
         job_status_action_model['status_code'] = 'job_pending'
         job_status_action_model['status_message'] = 'testString'
         job_status_action_model['bastion_status_code'] = 'none'
         job_status_action_model['bastion_status_message'] = 'testString'
-        job_status_action_model['inventory_status_code'] = 'none'
-        job_status_action_model['inventory_status_message'] = 'testString'
-        job_status_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_status_action_model['targets_status_code'] = 'none'
+        job_status_action_model['targets_status_message'] = 'testString'
+        job_status_action_model['updated_at'] = "2019-01-01T12:00:00Z"
 
         job_status_schematics_resources_model = {} # JobStatusSchematicsResources
         job_status_schematics_resources_model['status_code'] = 'job_pending'
         job_status_schematics_resources_model['status_message'] = 'testString'
         job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
-        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_status_schematics_resources_model['updated_at'] = "2019-01-01T12:00:00Z"
 
         job_status_system_model = {} # JobStatusSystem
         job_status_system_model['system_status_message'] = 'testString'
         job_status_system_model['system_status_code'] = 'job_pending'
         job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
-        job_status_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_status_system_model['updated_at'] = "2019-01-01T12:00:00Z"
 
         job_status_model = {} # JobStatus
+        job_status_model['workspace_job_status'] = job_status_workspace_model
         job_status_model['action_job_status'] = job_status_action_model
         job_status_model['system_job_status'] = job_status_system_model
+        job_status_model['flow_job_status'] = job_status_flow_model
+
+        job_data_template_model = {} # JobDataTemplate
+        job_data_template_model['template_id'] = 'testString'
+        job_data_template_model['template_name'] = 'testString'
+        job_data_template_model['flow_index'] = 38
+        job_data_template_model['inputs'] = [variable_data_model]
+        job_data_template_model['outputs'] = [variable_data_model]
+        job_data_template_model['settings'] = [variable_data_model]
+        job_data_template_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_data_workspace_model = {} # JobDataWorkspace
+        job_data_workspace_model['workspace_name'] = 'testString'
+        job_data_workspace_model['flow_id'] = 'testString'
+        job_data_workspace_model['flow_name'] = 'testString'
+        job_data_workspace_model['inputs'] = [variable_data_model]
+        job_data_workspace_model['outputs'] = [variable_data_model]
+        job_data_workspace_model['settings'] = [variable_data_model]
+        job_data_workspace_model['template_data'] = [job_data_template_model]
+        job_data_workspace_model['updated_at'] = "2019-01-01T12:00:00Z"
 
         inventory_resource_record_model = {} # InventoryResourceRecord
         inventory_resource_record_model['name'] = 'testString'
@@ -8035,9 +8962,9 @@ class TestJob():
         inventory_resource_record_model['description'] = 'testString'
         inventory_resource_record_model['location'] = 'us-south'
         inventory_resource_record_model['resource_group'] = 'testString'
-        inventory_resource_record_model['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model['created_at'] = "2019-01-01T12:00:00Z"
         inventory_resource_record_model['created_by'] = 'testString'
-        inventory_resource_record_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model['updated_at'] = "2019-01-01T12:00:00Z"
         inventory_resource_record_model['updated_by'] = 'testString'
         inventory_resource_record_model['inventories_ini'] = 'testString'
         inventory_resource_record_model['resource_queries'] = ['testString']
@@ -8047,28 +8974,82 @@ class TestJob():
         job_data_action_model['inputs'] = [variable_data_model]
         job_data_action_model['outputs'] = [variable_data_model]
         job_data_action_model['settings'] = [variable_data_model]
-        job_data_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_data_action_model['updated_at'] = "2019-01-01T12:00:00Z"
         job_data_action_model['inventory_record'] = inventory_resource_record_model
         job_data_action_model['materialized_inventory'] = 'testString'
 
         job_data_system_model = {} # JobDataSystem
         job_data_system_model['key_id'] = 'testString'
         job_data_system_model['schematics_resource_id'] = ['testString']
-        job_data_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_data_system_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        external_source_git_model = {} # ExternalSourceGit
+        external_source_git_model['computed_git_repo_url'] = 'testString'
+        external_source_git_model['git_repo_url'] = 'testString'
+        external_source_git_model['git_token'] = 'testString'
+        external_source_git_model['git_repo_folder'] = 'testString'
+        external_source_git_model['git_release'] = 'testString'
+        external_source_git_model['git_branch'] = 'testString'
+
+        external_source_catalog_model = {} # ExternalSourceCatalog
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        external_source_cos_bucket_model = {} # ExternalSourceCosBucket
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
+        external_source_model = {} # ExternalSource
+        external_source_model['source_type'] = 'local'
+        external_source_model['git'] = external_source_git_model
+        external_source_model['catalog'] = external_source_catalog_model
+        external_source_model['cos_bucket'] = external_source_cos_bucket_model
+
+        job_data_work_item_last_job_model = {} # JobDataWorkItemLastJob
+        job_data_work_item_last_job_model['command_object'] = 'workspace'
+        job_data_work_item_last_job_model['command_object_name'] = 'testString'
+        job_data_work_item_last_job_model['command_object_id'] = 'testString'
+        job_data_work_item_last_job_model['command_name'] = 'workspace_plan'
+        job_data_work_item_last_job_model['job_id'] = 'testString'
+        job_data_work_item_last_job_model['job_status'] = 'job_pending'
+
+        job_data_work_item_model = {} # JobDataWorkItem
+        job_data_work_item_model['command_object_id'] = 'testString'
+        job_data_work_item_model['command_object_name'] = 'testString'
+        job_data_work_item_model['layers'] = 'testString'
+        job_data_work_item_model['source_type'] = 'local'
+        job_data_work_item_model['source'] = external_source_model
+        job_data_work_item_model['inputs'] = [variable_data_model]
+        job_data_work_item_model['outputs'] = [variable_data_model]
+        job_data_work_item_model['settings'] = [variable_data_model]
+        job_data_work_item_model['last_job'] = job_data_work_item_last_job_model
+        job_data_work_item_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_data_flow_model = {} # JobDataFlow
+        job_data_flow_model['flow_id'] = 'testString'
+        job_data_flow_model['flow_name'] = 'testString'
+        job_data_flow_model['workitems'] = [job_data_work_item_model]
+        job_data_flow_model['updated_at'] = "2019-01-01T12:00:00Z"
 
         job_data_model = {} # JobData
         job_data_model['job_type'] = 'repo_download_job'
+        job_data_model['workspace_job_data'] = job_data_workspace_model
         job_data_model['action_job_data'] = job_data_action_model
         job_data_model['system_job_data'] = job_data_system_model
+        job_data_model['flow_job_data'] = job_data_flow_model
 
         bastion_resource_definition_model = {} # BastionResourceDefinition
         bastion_resource_definition_model['name'] = 'testString'
         bastion_resource_definition_model['host'] = 'testString'
 
-        job_log_summary_log_errors_item_model = {} # JobLogSummaryLogErrorsItem
-        job_log_summary_log_errors_item_model['error_code'] = 'testString'
-        job_log_summary_log_errors_item_model['error_msg'] = 'testString'
-        job_log_summary_log_errors_item_model['error_count'] = 72.5
+        job_log_summary_log_errors_model = {} # JobLogSummaryLogErrors
+        job_log_summary_log_errors_model['error_code'] = 'testString'
+        job_log_summary_log_errors_model['error_msg'] = 'testString'
+        job_log_summary_log_errors_model['error_count'] = 72.5
 
         job_log_summary_repo_download_job_model = {} # JobLogSummaryRepoDownloadJob
         job_log_summary_repo_download_job_model['scanned_file_count'] = 72.5
@@ -8077,8 +9058,27 @@ class TestJob():
         job_log_summary_repo_download_job_model['inputs_count'] = 'testString'
         job_log_summary_repo_download_job_model['outputs_count'] = 'testString'
 
+        job_log_summary_workspace_job_model = {} # JobLogSummaryWorkspaceJob
+        job_log_summary_workspace_job_model['resources_add'] = 72.5
+        job_log_summary_workspace_job_model['resources_modify'] = 72.5
+        job_log_summary_workspace_job_model['resources_destroy'] = 72.5
+
+        job_log_summary_workitems_model = {} # JobLogSummaryWorkitems
+        job_log_summary_workitems_model['workspace_id'] = 'testString'
+        job_log_summary_workitems_model['job_id'] = 'testString'
+        job_log_summary_workitems_model['resources_add'] = 72.5
+        job_log_summary_workitems_model['resources_modify'] = 72.5
+        job_log_summary_workitems_model['resources_destroy'] = 72.5
+        job_log_summary_workitems_model['log_url'] = 'testString'
+
+        job_log_summary_flow_job_model = {} # JobLogSummaryFlowJob
+        job_log_summary_flow_job_model['workitems_completed'] = 72.5
+        job_log_summary_flow_job_model['workitems_pending'] = 72.5
+        job_log_summary_flow_job_model['workitems_failed'] = 72.5
+        job_log_summary_flow_job_model['workitems'] = [job_log_summary_workitems_model]
+
         job_log_summary_action_job_recap_model = {} # JobLogSummaryActionJobRecap
-        job_log_summary_action_job_recap_model['hosts'] = ['testString']
+        job_log_summary_action_job_recap_model['target'] = ['testString']
         job_log_summary_action_job_recap_model['ok'] = 72.5
         job_log_summary_action_job_recap_model['changed'] = 72.5
         job_log_summary_action_job_recap_model['failed'] = 72.5
@@ -8086,7 +9086,7 @@ class TestJob():
         job_log_summary_action_job_recap_model['unreachable'] = 72.5
 
         job_log_summary_action_job_model = {} # JobLogSummaryActionJob
-        job_log_summary_action_job_model['host_count'] = 72.5
+        job_log_summary_action_job_model['target_count'] = 72.5
         job_log_summary_action_job_model['task_count'] = 72.5
         job_log_summary_action_job_model['play_count'] = 72.5
         job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
@@ -8099,11 +9099,13 @@ class TestJob():
         job_log_summary_model = {} # JobLogSummary
         job_log_summary_model['job_id'] = 'testString'
         job_log_summary_model['job_type'] = 'repo_download_job'
-        job_log_summary_model['log_start_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-        job_log_summary_model['log_analyzed_till'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_log_summary_model['log_start_at'] = "2019-01-01T12:00:00Z"
+        job_log_summary_model['log_analyzed_till'] = "2019-01-01T12:00:00Z"
         job_log_summary_model['elapsed_time'] = 72.5
-        job_log_summary_model['log_errors'] = [job_log_summary_log_errors_item_model]
+        job_log_summary_model['log_errors'] = [job_log_summary_log_errors_model]
         job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
+        job_log_summary_model['workspace_job'] = job_log_summary_workspace_job_model
+        job_log_summary_model['flow_job'] = job_log_summary_flow_job_model
         job_log_summary_model['action_job'] = job_log_summary_action_job_model
         job_log_summary_model['system_job'] = job_log_summary_system_job_model
 
@@ -8111,7 +9113,7 @@ class TestJob():
         job_model_json = {}
         job_model_json['command_object'] = 'workspace'
         job_model_json['command_object_id'] = 'testString'
-        job_model_json['command_name'] = 'ansible_playbook_run'
+        job_model_json['command_name'] = 'workspace_plan'
         job_model_json['command_parameter'] = 'testString'
         job_model_json['command_options'] = ['testString']
         job_model_json['inputs'] = [variable_data_model]
@@ -8122,10 +9124,10 @@ class TestJob():
         job_model_json['description'] = 'testString'
         job_model_json['location'] = 'us-south'
         job_model_json['resource_group'] = 'testString'
-        job_model_json['submitted_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_model_json['submitted_at'] = "2019-01-01T12:00:00Z"
         job_model_json['submitted_by'] = 'testString'
-        job_model_json['start_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-        job_model_json['end_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_model_json['start_at'] = "2019-01-01T12:00:00Z"
+        job_model_json['end_at'] = "2019-01-01T12:00:00Z"
         job_model_json['duration'] = 'testString'
         job_model_json['status'] = job_status_model
         job_model_json['data'] = job_data_model
@@ -8134,7 +9136,7 @@ class TestJob():
         job_model_json['log_store_url'] = 'testString'
         job_model_json['state_store_url'] = 'testString'
         job_model_json['results_url'] = 'testString'
-        job_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_model_json['updated_at'] = "2019-01-01T12:00:00Z"
 
         # Construct a model instance of Job by calling from_dict on the json representation
         job_model = Job.from_dict(job_model_json)
@@ -8151,7 +9153,7 @@ class TestJob():
         job_model_json2 = job_model.to_dict()
         assert job_model_json2 == job_model_json
 
-class TestJobData():
+class TestModel_JobData():
     """
     Test Class for JobData
     """
@@ -8187,15 +9189,34 @@ class TestJobData():
         variable_data_model['metadata'] = variable_metadata_model
         variable_data_model['link'] = 'testString'
 
+        job_data_template_model = {} # JobDataTemplate
+        job_data_template_model['template_id'] = 'testString'
+        job_data_template_model['template_name'] = 'testString'
+        job_data_template_model['flow_index'] = 38
+        job_data_template_model['inputs'] = [variable_data_model]
+        job_data_template_model['outputs'] = [variable_data_model]
+        job_data_template_model['settings'] = [variable_data_model]
+        job_data_template_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_data_workspace_model = {} # JobDataWorkspace
+        job_data_workspace_model['workspace_name'] = 'testString'
+        job_data_workspace_model['flow_id'] = 'testString'
+        job_data_workspace_model['flow_name'] = 'testString'
+        job_data_workspace_model['inputs'] = [variable_data_model]
+        job_data_workspace_model['outputs'] = [variable_data_model]
+        job_data_workspace_model['settings'] = [variable_data_model]
+        job_data_workspace_model['template_data'] = [job_data_template_model]
+        job_data_workspace_model['updated_at'] = "2019-01-01T12:00:00Z"
+
         inventory_resource_record_model = {} # InventoryResourceRecord
         inventory_resource_record_model['name'] = 'testString'
         inventory_resource_record_model['id'] = 'testString'
         inventory_resource_record_model['description'] = 'testString'
         inventory_resource_record_model['location'] = 'us-south'
         inventory_resource_record_model['resource_group'] = 'testString'
-        inventory_resource_record_model['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model['created_at'] = "2019-01-01T12:00:00Z"
         inventory_resource_record_model['created_by'] = 'testString'
-        inventory_resource_record_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model['updated_at'] = "2019-01-01T12:00:00Z"
         inventory_resource_record_model['updated_by'] = 'testString'
         inventory_resource_record_model['inventories_ini'] = 'testString'
         inventory_resource_record_model['resource_queries'] = ['testString']
@@ -8205,20 +9226,74 @@ class TestJobData():
         job_data_action_model['inputs'] = [variable_data_model]
         job_data_action_model['outputs'] = [variable_data_model]
         job_data_action_model['settings'] = [variable_data_model]
-        job_data_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_data_action_model['updated_at'] = "2019-01-01T12:00:00Z"
         job_data_action_model['inventory_record'] = inventory_resource_record_model
         job_data_action_model['materialized_inventory'] = 'testString'
 
         job_data_system_model = {} # JobDataSystem
         job_data_system_model['key_id'] = 'testString'
         job_data_system_model['schematics_resource_id'] = ['testString']
-        job_data_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_data_system_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        external_source_git_model = {} # ExternalSourceGit
+        external_source_git_model['computed_git_repo_url'] = 'testString'
+        external_source_git_model['git_repo_url'] = 'testString'
+        external_source_git_model['git_token'] = 'testString'
+        external_source_git_model['git_repo_folder'] = 'testString'
+        external_source_git_model['git_release'] = 'testString'
+        external_source_git_model['git_branch'] = 'testString'
+
+        external_source_catalog_model = {} # ExternalSourceCatalog
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        external_source_cos_bucket_model = {} # ExternalSourceCosBucket
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
+        external_source_model = {} # ExternalSource
+        external_source_model['source_type'] = 'local'
+        external_source_model['git'] = external_source_git_model
+        external_source_model['catalog'] = external_source_catalog_model
+        external_source_model['cos_bucket'] = external_source_cos_bucket_model
+
+        job_data_work_item_last_job_model = {} # JobDataWorkItemLastJob
+        job_data_work_item_last_job_model['command_object'] = 'workspace'
+        job_data_work_item_last_job_model['command_object_name'] = 'testString'
+        job_data_work_item_last_job_model['command_object_id'] = 'testString'
+        job_data_work_item_last_job_model['command_name'] = 'workspace_plan'
+        job_data_work_item_last_job_model['job_id'] = 'testString'
+        job_data_work_item_last_job_model['job_status'] = 'job_pending'
+
+        job_data_work_item_model = {} # JobDataWorkItem
+        job_data_work_item_model['command_object_id'] = 'testString'
+        job_data_work_item_model['command_object_name'] = 'testString'
+        job_data_work_item_model['layers'] = 'testString'
+        job_data_work_item_model['source_type'] = 'local'
+        job_data_work_item_model['source'] = external_source_model
+        job_data_work_item_model['inputs'] = [variable_data_model]
+        job_data_work_item_model['outputs'] = [variable_data_model]
+        job_data_work_item_model['settings'] = [variable_data_model]
+        job_data_work_item_model['last_job'] = job_data_work_item_last_job_model
+        job_data_work_item_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_data_flow_model = {} # JobDataFlow
+        job_data_flow_model['flow_id'] = 'testString'
+        job_data_flow_model['flow_name'] = 'testString'
+        job_data_flow_model['workitems'] = [job_data_work_item_model]
+        job_data_flow_model['updated_at'] = "2019-01-01T12:00:00Z"
 
         # Construct a json representation of a JobData model
         job_data_model_json = {}
         job_data_model_json['job_type'] = 'repo_download_job'
+        job_data_model_json['workspace_job_data'] = job_data_workspace_model
         job_data_model_json['action_job_data'] = job_data_action_model
         job_data_model_json['system_job_data'] = job_data_system_model
+        job_data_model_json['flow_job_data'] = job_data_flow_model
 
         # Construct a model instance of JobData by calling from_dict on the json representation
         job_data_model = JobData.from_dict(job_data_model_json)
@@ -8235,7 +9310,7 @@ class TestJobData():
         job_data_model_json2 = job_data_model.to_dict()
         assert job_data_model_json2 == job_data_model_json
 
-class TestJobDataAction():
+class TestModel_JobDataAction():
     """
     Test Class for JobDataAction
     """
@@ -8277,9 +9352,9 @@ class TestJobDataAction():
         inventory_resource_record_model['description'] = 'testString'
         inventory_resource_record_model['location'] = 'us-south'
         inventory_resource_record_model['resource_group'] = 'testString'
-        inventory_resource_record_model['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model['created_at'] = "2019-01-01T12:00:00Z"
         inventory_resource_record_model['created_by'] = 'testString'
-        inventory_resource_record_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        inventory_resource_record_model['updated_at'] = "2019-01-01T12:00:00Z"
         inventory_resource_record_model['updated_by'] = 'testString'
         inventory_resource_record_model['inventories_ini'] = 'testString'
         inventory_resource_record_model['resource_queries'] = ['testString']
@@ -8290,7 +9365,7 @@ class TestJobDataAction():
         job_data_action_model_json['inputs'] = [variable_data_model]
         job_data_action_model_json['outputs'] = [variable_data_model]
         job_data_action_model_json['settings'] = [variable_data_model]
-        job_data_action_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_data_action_model_json['updated_at'] = "2019-01-01T12:00:00Z"
         job_data_action_model_json['inventory_record'] = inventory_resource_record_model
         job_data_action_model_json['materialized_inventory'] = 'testString'
 
@@ -8309,7 +9384,111 @@ class TestJobDataAction():
         job_data_action_model_json2 = job_data_action_model.to_dict()
         assert job_data_action_model_json2 == job_data_action_model_json
 
-class TestJobDataSystem():
+class TestModel_JobDataFlow():
+    """
+    Test Class for JobDataFlow
+    """
+
+    def test_job_data_flow_serialization(self):
+        """
+        Test serialization/deserialization for JobDataFlow
+        """
+
+        # Construct dict forms of any model objects needed in order to build this model.
+
+        external_source_git_model = {} # ExternalSourceGit
+        external_source_git_model['computed_git_repo_url'] = 'testString'
+        external_source_git_model['git_repo_url'] = 'testString'
+        external_source_git_model['git_token'] = 'testString'
+        external_source_git_model['git_repo_folder'] = 'testString'
+        external_source_git_model['git_release'] = 'testString'
+        external_source_git_model['git_branch'] = 'testString'
+
+        external_source_catalog_model = {} # ExternalSourceCatalog
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        external_source_cos_bucket_model = {} # ExternalSourceCosBucket
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
+        external_source_model = {} # ExternalSource
+        external_source_model['source_type'] = 'local'
+        external_source_model['git'] = external_source_git_model
+        external_source_model['catalog'] = external_source_catalog_model
+        external_source_model['cos_bucket'] = external_source_cos_bucket_model
+
+        variable_metadata_model = {} # VariableMetadata
+        variable_metadata_model['type'] = 'boolean'
+        variable_metadata_model['aliases'] = ['testString']
+        variable_metadata_model['description'] = 'testString'
+        variable_metadata_model['default_value'] = 'testString'
+        variable_metadata_model['secure'] = True
+        variable_metadata_model['immutable'] = True
+        variable_metadata_model['hidden'] = True
+        variable_metadata_model['options'] = ['testString']
+        variable_metadata_model['min_value'] = 38
+        variable_metadata_model['max_value'] = 38
+        variable_metadata_model['min_length'] = 38
+        variable_metadata_model['max_length'] = 38
+        variable_metadata_model['matches'] = 'testString'
+        variable_metadata_model['position'] = 38
+        variable_metadata_model['group_by'] = 'testString'
+        variable_metadata_model['source'] = 'testString'
+
+        variable_data_model = {} # VariableData
+        variable_data_model['name'] = 'testString'
+        variable_data_model['value'] = 'testString'
+        variable_data_model['metadata'] = variable_metadata_model
+        variable_data_model['link'] = 'testString'
+
+        job_data_work_item_last_job_model = {} # JobDataWorkItemLastJob
+        job_data_work_item_last_job_model['command_object'] = 'workspace'
+        job_data_work_item_last_job_model['command_object_name'] = 'testString'
+        job_data_work_item_last_job_model['command_object_id'] = 'testString'
+        job_data_work_item_last_job_model['command_name'] = 'workspace_plan'
+        job_data_work_item_last_job_model['job_id'] = 'testString'
+        job_data_work_item_last_job_model['job_status'] = 'job_pending'
+
+        job_data_work_item_model = {} # JobDataWorkItem
+        job_data_work_item_model['command_object_id'] = 'testString'
+        job_data_work_item_model['command_object_name'] = 'testString'
+        job_data_work_item_model['layers'] = 'testString'
+        job_data_work_item_model['source_type'] = 'local'
+        job_data_work_item_model['source'] = external_source_model
+        job_data_work_item_model['inputs'] = [variable_data_model]
+        job_data_work_item_model['outputs'] = [variable_data_model]
+        job_data_work_item_model['settings'] = [variable_data_model]
+        job_data_work_item_model['last_job'] = job_data_work_item_last_job_model
+        job_data_work_item_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a json representation of a JobDataFlow model
+        job_data_flow_model_json = {}
+        job_data_flow_model_json['flow_id'] = 'testString'
+        job_data_flow_model_json['flow_name'] = 'testString'
+        job_data_flow_model_json['workitems'] = [job_data_work_item_model]
+        job_data_flow_model_json['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a model instance of JobDataFlow by calling from_dict on the json representation
+        job_data_flow_model = JobDataFlow.from_dict(job_data_flow_model_json)
+        assert job_data_flow_model != False
+
+        # Construct a model instance of JobDataFlow by calling from_dict on the json representation
+        job_data_flow_model_dict = JobDataFlow.from_dict(job_data_flow_model_json).__dict__
+        job_data_flow_model2 = JobDataFlow(**job_data_flow_model_dict)
+
+        # Verify the model instances are equivalent
+        assert job_data_flow_model == job_data_flow_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        job_data_flow_model_json2 = job_data_flow_model.to_dict()
+        assert job_data_flow_model_json2 == job_data_flow_model_json
+
+class TestModel_JobDataSystem():
     """
     Test Class for JobDataSystem
     """
@@ -8323,7 +9502,7 @@ class TestJobDataSystem():
         job_data_system_model_json = {}
         job_data_system_model_json['key_id'] = 'testString'
         job_data_system_model_json['schematics_resource_id'] = ['testString']
-        job_data_system_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_data_system_model_json['updated_at'] = "2019-01-01T12:00:00Z"
 
         # Construct a model instance of JobDataSystem by calling from_dict on the json representation
         job_data_system_model = JobDataSystem.from_dict(job_data_system_model_json)
@@ -8340,7 +9519,271 @@ class TestJobDataSystem():
         job_data_system_model_json2 = job_data_system_model.to_dict()
         assert job_data_system_model_json2 == job_data_system_model_json
 
-class TestJobList():
+class TestModel_JobDataTemplate():
+    """
+    Test Class for JobDataTemplate
+    """
+
+    def test_job_data_template_serialization(self):
+        """
+        Test serialization/deserialization for JobDataTemplate
+        """
+
+        # Construct dict forms of any model objects needed in order to build this model.
+
+        variable_metadata_model = {} # VariableMetadata
+        variable_metadata_model['type'] = 'boolean'
+        variable_metadata_model['aliases'] = ['testString']
+        variable_metadata_model['description'] = 'testString'
+        variable_metadata_model['default_value'] = 'testString'
+        variable_metadata_model['secure'] = True
+        variable_metadata_model['immutable'] = True
+        variable_metadata_model['hidden'] = True
+        variable_metadata_model['options'] = ['testString']
+        variable_metadata_model['min_value'] = 38
+        variable_metadata_model['max_value'] = 38
+        variable_metadata_model['min_length'] = 38
+        variable_metadata_model['max_length'] = 38
+        variable_metadata_model['matches'] = 'testString'
+        variable_metadata_model['position'] = 38
+        variable_metadata_model['group_by'] = 'testString'
+        variable_metadata_model['source'] = 'testString'
+
+        variable_data_model = {} # VariableData
+        variable_data_model['name'] = 'testString'
+        variable_data_model['value'] = 'testString'
+        variable_data_model['metadata'] = variable_metadata_model
+        variable_data_model['link'] = 'testString'
+
+        # Construct a json representation of a JobDataTemplate model
+        job_data_template_model_json = {}
+        job_data_template_model_json['template_id'] = 'testString'
+        job_data_template_model_json['template_name'] = 'testString'
+        job_data_template_model_json['flow_index'] = 38
+        job_data_template_model_json['inputs'] = [variable_data_model]
+        job_data_template_model_json['outputs'] = [variable_data_model]
+        job_data_template_model_json['settings'] = [variable_data_model]
+        job_data_template_model_json['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a model instance of JobDataTemplate by calling from_dict on the json representation
+        job_data_template_model = JobDataTemplate.from_dict(job_data_template_model_json)
+        assert job_data_template_model != False
+
+        # Construct a model instance of JobDataTemplate by calling from_dict on the json representation
+        job_data_template_model_dict = JobDataTemplate.from_dict(job_data_template_model_json).__dict__
+        job_data_template_model2 = JobDataTemplate(**job_data_template_model_dict)
+
+        # Verify the model instances are equivalent
+        assert job_data_template_model == job_data_template_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        job_data_template_model_json2 = job_data_template_model.to_dict()
+        assert job_data_template_model_json2 == job_data_template_model_json
+
+class TestModel_JobDataWorkItem():
+    """
+    Test Class for JobDataWorkItem
+    """
+
+    def test_job_data_work_item_serialization(self):
+        """
+        Test serialization/deserialization for JobDataWorkItem
+        """
+
+        # Construct dict forms of any model objects needed in order to build this model.
+
+        external_source_git_model = {} # ExternalSourceGit
+        external_source_git_model['computed_git_repo_url'] = 'testString'
+        external_source_git_model['git_repo_url'] = 'testString'
+        external_source_git_model['git_token'] = 'testString'
+        external_source_git_model['git_repo_folder'] = 'testString'
+        external_source_git_model['git_release'] = 'testString'
+        external_source_git_model['git_branch'] = 'testString'
+
+        external_source_catalog_model = {} # ExternalSourceCatalog
+        external_source_catalog_model['catalog_name'] = 'testString'
+        external_source_catalog_model['offering_name'] = 'testString'
+        external_source_catalog_model['offering_version'] = 'testString'
+        external_source_catalog_model['offering_kind'] = 'testString'
+        external_source_catalog_model['offering_id'] = 'testString'
+        external_source_catalog_model['offering_version_id'] = 'testString'
+        external_source_catalog_model['offering_repo_url'] = 'testString'
+
+        external_source_cos_bucket_model = {} # ExternalSourceCosBucket
+        external_source_cos_bucket_model['cos_bucket_url'] = 'testString'
+
+        external_source_model = {} # ExternalSource
+        external_source_model['source_type'] = 'local'
+        external_source_model['git'] = external_source_git_model
+        external_source_model['catalog'] = external_source_catalog_model
+        external_source_model['cos_bucket'] = external_source_cos_bucket_model
+
+        variable_metadata_model = {} # VariableMetadata
+        variable_metadata_model['type'] = 'boolean'
+        variable_metadata_model['aliases'] = ['testString']
+        variable_metadata_model['description'] = 'testString'
+        variable_metadata_model['default_value'] = 'testString'
+        variable_metadata_model['secure'] = True
+        variable_metadata_model['immutable'] = True
+        variable_metadata_model['hidden'] = True
+        variable_metadata_model['options'] = ['testString']
+        variable_metadata_model['min_value'] = 38
+        variable_metadata_model['max_value'] = 38
+        variable_metadata_model['min_length'] = 38
+        variable_metadata_model['max_length'] = 38
+        variable_metadata_model['matches'] = 'testString'
+        variable_metadata_model['position'] = 38
+        variable_metadata_model['group_by'] = 'testString'
+        variable_metadata_model['source'] = 'testString'
+
+        variable_data_model = {} # VariableData
+        variable_data_model['name'] = 'testString'
+        variable_data_model['value'] = 'testString'
+        variable_data_model['metadata'] = variable_metadata_model
+        variable_data_model['link'] = 'testString'
+
+        job_data_work_item_last_job_model = {} # JobDataWorkItemLastJob
+        job_data_work_item_last_job_model['command_object'] = 'workspace'
+        job_data_work_item_last_job_model['command_object_name'] = 'testString'
+        job_data_work_item_last_job_model['command_object_id'] = 'testString'
+        job_data_work_item_last_job_model['command_name'] = 'workspace_plan'
+        job_data_work_item_last_job_model['job_id'] = 'testString'
+        job_data_work_item_last_job_model['job_status'] = 'job_pending'
+
+        # Construct a json representation of a JobDataWorkItem model
+        job_data_work_item_model_json = {}
+        job_data_work_item_model_json['command_object_id'] = 'testString'
+        job_data_work_item_model_json['command_object_name'] = 'testString'
+        job_data_work_item_model_json['layers'] = 'testString'
+        job_data_work_item_model_json['source_type'] = 'local'
+        job_data_work_item_model_json['source'] = external_source_model
+        job_data_work_item_model_json['inputs'] = [variable_data_model]
+        job_data_work_item_model_json['outputs'] = [variable_data_model]
+        job_data_work_item_model_json['settings'] = [variable_data_model]
+        job_data_work_item_model_json['last_job'] = job_data_work_item_last_job_model
+        job_data_work_item_model_json['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a model instance of JobDataWorkItem by calling from_dict on the json representation
+        job_data_work_item_model = JobDataWorkItem.from_dict(job_data_work_item_model_json)
+        assert job_data_work_item_model != False
+
+        # Construct a model instance of JobDataWorkItem by calling from_dict on the json representation
+        job_data_work_item_model_dict = JobDataWorkItem.from_dict(job_data_work_item_model_json).__dict__
+        job_data_work_item_model2 = JobDataWorkItem(**job_data_work_item_model_dict)
+
+        # Verify the model instances are equivalent
+        assert job_data_work_item_model == job_data_work_item_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        job_data_work_item_model_json2 = job_data_work_item_model.to_dict()
+        assert job_data_work_item_model_json2 == job_data_work_item_model_json
+
+class TestModel_JobDataWorkItemLastJob():
+    """
+    Test Class for JobDataWorkItemLastJob
+    """
+
+    def test_job_data_work_item_last_job_serialization(self):
+        """
+        Test serialization/deserialization for JobDataWorkItemLastJob
+        """
+
+        # Construct a json representation of a JobDataWorkItemLastJob model
+        job_data_work_item_last_job_model_json = {}
+        job_data_work_item_last_job_model_json['command_object'] = 'workspace'
+        job_data_work_item_last_job_model_json['command_object_name'] = 'testString'
+        job_data_work_item_last_job_model_json['command_object_id'] = 'testString'
+        job_data_work_item_last_job_model_json['command_name'] = 'workspace_plan'
+        job_data_work_item_last_job_model_json['job_id'] = 'testString'
+        job_data_work_item_last_job_model_json['job_status'] = 'job_pending'
+
+        # Construct a model instance of JobDataWorkItemLastJob by calling from_dict on the json representation
+        job_data_work_item_last_job_model = JobDataWorkItemLastJob.from_dict(job_data_work_item_last_job_model_json)
+        assert job_data_work_item_last_job_model != False
+
+        # Construct a model instance of JobDataWorkItemLastJob by calling from_dict on the json representation
+        job_data_work_item_last_job_model_dict = JobDataWorkItemLastJob.from_dict(job_data_work_item_last_job_model_json).__dict__
+        job_data_work_item_last_job_model2 = JobDataWorkItemLastJob(**job_data_work_item_last_job_model_dict)
+
+        # Verify the model instances are equivalent
+        assert job_data_work_item_last_job_model == job_data_work_item_last_job_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        job_data_work_item_last_job_model_json2 = job_data_work_item_last_job_model.to_dict()
+        assert job_data_work_item_last_job_model_json2 == job_data_work_item_last_job_model_json
+
+class TestModel_JobDataWorkspace():
+    """
+    Test Class for JobDataWorkspace
+    """
+
+    def test_job_data_workspace_serialization(self):
+        """
+        Test serialization/deserialization for JobDataWorkspace
+        """
+
+        # Construct dict forms of any model objects needed in order to build this model.
+
+        variable_metadata_model = {} # VariableMetadata
+        variable_metadata_model['type'] = 'boolean'
+        variable_metadata_model['aliases'] = ['testString']
+        variable_metadata_model['description'] = 'testString'
+        variable_metadata_model['default_value'] = 'testString'
+        variable_metadata_model['secure'] = True
+        variable_metadata_model['immutable'] = True
+        variable_metadata_model['hidden'] = True
+        variable_metadata_model['options'] = ['testString']
+        variable_metadata_model['min_value'] = 38
+        variable_metadata_model['max_value'] = 38
+        variable_metadata_model['min_length'] = 38
+        variable_metadata_model['max_length'] = 38
+        variable_metadata_model['matches'] = 'testString'
+        variable_metadata_model['position'] = 38
+        variable_metadata_model['group_by'] = 'testString'
+        variable_metadata_model['source'] = 'testString'
+
+        variable_data_model = {} # VariableData
+        variable_data_model['name'] = 'testString'
+        variable_data_model['value'] = 'testString'
+        variable_data_model['metadata'] = variable_metadata_model
+        variable_data_model['link'] = 'testString'
+
+        job_data_template_model = {} # JobDataTemplate
+        job_data_template_model['template_id'] = 'testString'
+        job_data_template_model['template_name'] = 'testString'
+        job_data_template_model['flow_index'] = 38
+        job_data_template_model['inputs'] = [variable_data_model]
+        job_data_template_model['outputs'] = [variable_data_model]
+        job_data_template_model['settings'] = [variable_data_model]
+        job_data_template_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a json representation of a JobDataWorkspace model
+        job_data_workspace_model_json = {}
+        job_data_workspace_model_json['workspace_name'] = 'testString'
+        job_data_workspace_model_json['flow_id'] = 'testString'
+        job_data_workspace_model_json['flow_name'] = 'testString'
+        job_data_workspace_model_json['inputs'] = [variable_data_model]
+        job_data_workspace_model_json['outputs'] = [variable_data_model]
+        job_data_workspace_model_json['settings'] = [variable_data_model]
+        job_data_workspace_model_json['template_data'] = [job_data_template_model]
+        job_data_workspace_model_json['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a model instance of JobDataWorkspace by calling from_dict on the json representation
+        job_data_workspace_model = JobDataWorkspace.from_dict(job_data_workspace_model_json)
+        assert job_data_workspace_model != False
+
+        # Construct a model instance of JobDataWorkspace by calling from_dict on the json representation
+        job_data_workspace_model_dict = JobDataWorkspace.from_dict(job_data_workspace_model_json).__dict__
+        job_data_workspace_model2 = JobDataWorkspace(**job_data_workspace_model_dict)
+
+        # Verify the model instances are equivalent
+        assert job_data_workspace_model == job_data_workspace_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        job_data_workspace_model_json2 = job_data_workspace_model.to_dict()
+        assert job_data_workspace_model_json2 == job_data_workspace_model_json
+
+class TestModel_JobList():
     """
     Test Class for JobList
     """
@@ -8352,36 +9795,70 @@ class TestJobList():
 
         # Construct dict forms of any model objects needed in order to build this model.
 
+        job_status_workitem_model = {} # JobStatusWorkitem
+        job_status_workitem_model['workspace_id'] = 'testString'
+        job_status_workitem_model['workspace_name'] = 'testString'
+        job_status_workitem_model['job_id'] = 'testString'
+        job_status_workitem_model['status_code'] = 'job_pending'
+        job_status_workitem_model['status_message'] = 'testString'
+        job_status_workitem_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_status_flow_model = {} # JobStatusFlow
+        job_status_flow_model['flow_id'] = 'testString'
+        job_status_flow_model['flow_name'] = 'testString'
+        job_status_flow_model['status_code'] = 'job_pending'
+        job_status_flow_model['status_message'] = 'testString'
+        job_status_flow_model['workitems'] = [job_status_workitem_model]
+        job_status_flow_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_status_template_model = {} # JobStatusTemplate
+        job_status_template_model['template_id'] = 'testString'
+        job_status_template_model['template_name'] = 'testString'
+        job_status_template_model['flow_index'] = 38
+        job_status_template_model['status_code'] = 'job_pending'
+        job_status_template_model['status_message'] = 'testString'
+        job_status_template_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_status_workspace_model = {} # JobStatusWorkspace
+        job_status_workspace_model['workspace_name'] = 'testString'
+        job_status_workspace_model['status_code'] = 'job_pending'
+        job_status_workspace_model['status_message'] = 'testString'
+        job_status_workspace_model['flow_status'] = job_status_flow_model
+        job_status_workspace_model['template_status'] = [job_status_template_model]
+        job_status_workspace_model['updated_at'] = "2019-01-01T12:00:00Z"
+
         job_status_action_model = {} # JobStatusAction
         job_status_action_model['action_name'] = 'testString'
         job_status_action_model['status_code'] = 'job_pending'
         job_status_action_model['status_message'] = 'testString'
         job_status_action_model['bastion_status_code'] = 'none'
         job_status_action_model['bastion_status_message'] = 'testString'
-        job_status_action_model['inventory_status_code'] = 'none'
-        job_status_action_model['inventory_status_message'] = 'testString'
-        job_status_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_status_action_model['targets_status_code'] = 'none'
+        job_status_action_model['targets_status_message'] = 'testString'
+        job_status_action_model['updated_at'] = "2019-01-01T12:00:00Z"
 
         job_status_schematics_resources_model = {} # JobStatusSchematicsResources
         job_status_schematics_resources_model['status_code'] = 'job_pending'
         job_status_schematics_resources_model['status_message'] = 'testString'
         job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
-        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_status_schematics_resources_model['updated_at'] = "2019-01-01T12:00:00Z"
 
         job_status_system_model = {} # JobStatusSystem
         job_status_system_model['system_status_message'] = 'testString'
         job_status_system_model['system_status_code'] = 'job_pending'
         job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
-        job_status_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_status_system_model['updated_at'] = "2019-01-01T12:00:00Z"
 
         job_status_model = {} # JobStatus
+        job_status_model['workspace_job_status'] = job_status_workspace_model
         job_status_model['action_job_status'] = job_status_action_model
         job_status_model['system_job_status'] = job_status_system_model
+        job_status_model['flow_job_status'] = job_status_flow_model
 
-        job_log_summary_log_errors_item_model = {} # JobLogSummaryLogErrorsItem
-        job_log_summary_log_errors_item_model['error_code'] = 'testString'
-        job_log_summary_log_errors_item_model['error_msg'] = 'testString'
-        job_log_summary_log_errors_item_model['error_count'] = 72.5
+        job_log_summary_log_errors_model = {} # JobLogSummaryLogErrors
+        job_log_summary_log_errors_model['error_code'] = 'testString'
+        job_log_summary_log_errors_model['error_msg'] = 'testString'
+        job_log_summary_log_errors_model['error_count'] = 72.5
 
         job_log_summary_repo_download_job_model = {} # JobLogSummaryRepoDownloadJob
         job_log_summary_repo_download_job_model['scanned_file_count'] = 72.5
@@ -8390,8 +9867,27 @@ class TestJobList():
         job_log_summary_repo_download_job_model['inputs_count'] = 'testString'
         job_log_summary_repo_download_job_model['outputs_count'] = 'testString'
 
+        job_log_summary_workspace_job_model = {} # JobLogSummaryWorkspaceJob
+        job_log_summary_workspace_job_model['resources_add'] = 72.5
+        job_log_summary_workspace_job_model['resources_modify'] = 72.5
+        job_log_summary_workspace_job_model['resources_destroy'] = 72.5
+
+        job_log_summary_workitems_model = {} # JobLogSummaryWorkitems
+        job_log_summary_workitems_model['workspace_id'] = 'testString'
+        job_log_summary_workitems_model['job_id'] = 'testString'
+        job_log_summary_workitems_model['resources_add'] = 72.5
+        job_log_summary_workitems_model['resources_modify'] = 72.5
+        job_log_summary_workitems_model['resources_destroy'] = 72.5
+        job_log_summary_workitems_model['log_url'] = 'testString'
+
+        job_log_summary_flow_job_model = {} # JobLogSummaryFlowJob
+        job_log_summary_flow_job_model['workitems_completed'] = 72.5
+        job_log_summary_flow_job_model['workitems_pending'] = 72.5
+        job_log_summary_flow_job_model['workitems_failed'] = 72.5
+        job_log_summary_flow_job_model['workitems'] = [job_log_summary_workitems_model]
+
         job_log_summary_action_job_recap_model = {} # JobLogSummaryActionJobRecap
-        job_log_summary_action_job_recap_model['hosts'] = ['testString']
+        job_log_summary_action_job_recap_model['target'] = ['testString']
         job_log_summary_action_job_recap_model['ok'] = 72.5
         job_log_summary_action_job_recap_model['changed'] = 72.5
         job_log_summary_action_job_recap_model['failed'] = 72.5
@@ -8399,7 +9895,7 @@ class TestJobList():
         job_log_summary_action_job_recap_model['unreachable'] = 72.5
 
         job_log_summary_action_job_model = {} # JobLogSummaryActionJob
-        job_log_summary_action_job_model['host_count'] = 72.5
+        job_log_summary_action_job_model['target_count'] = 72.5
         job_log_summary_action_job_model['task_count'] = 72.5
         job_log_summary_action_job_model['play_count'] = 72.5
         job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
@@ -8412,11 +9908,13 @@ class TestJobList():
         job_log_summary_model = {} # JobLogSummary
         job_log_summary_model['job_id'] = 'testString'
         job_log_summary_model['job_type'] = 'repo_download_job'
-        job_log_summary_model['log_start_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-        job_log_summary_model['log_analyzed_till'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_log_summary_model['log_start_at'] = "2019-01-01T12:00:00Z"
+        job_log_summary_model['log_analyzed_till'] = "2019-01-01T12:00:00Z"
         job_log_summary_model['elapsed_time'] = 72.5
-        job_log_summary_model['log_errors'] = [job_log_summary_log_errors_item_model]
+        job_log_summary_model['log_errors'] = [job_log_summary_log_errors_model]
         job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
+        job_log_summary_model['workspace_job'] = job_log_summary_workspace_job_model
+        job_log_summary_model['flow_job'] = job_log_summary_flow_job_model
         job_log_summary_model['action_job'] = job_log_summary_action_job_model
         job_log_summary_model['system_job'] = job_log_summary_system_job_model
 
@@ -8426,18 +9924,18 @@ class TestJobList():
         job_lite_model['description'] = 'testString'
         job_lite_model['command_object'] = 'workspace'
         job_lite_model['command_object_id'] = 'testString'
-        job_lite_model['command_name'] = 'ansible_playbook_run'
+        job_lite_model['command_name'] = 'workspace_plan'
         job_lite_model['tags'] = ['testString']
         job_lite_model['location'] = 'us-south'
         job_lite_model['resource_group'] = 'testString'
-        job_lite_model['submitted_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_lite_model['submitted_at'] = "2019-01-01T12:00:00Z"
         job_lite_model['submitted_by'] = 'testString'
         job_lite_model['duration'] = 'testString'
-        job_lite_model['start_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-        job_lite_model['end_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_lite_model['start_at'] = "2019-01-01T12:00:00Z"
+        job_lite_model['end_at'] = "2019-01-01T12:00:00Z"
         job_lite_model['status'] = job_status_model
         job_lite_model['log_summary'] = job_log_summary_model
-        job_lite_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_lite_model['updated_at'] = "2019-01-01T12:00:00Z"
 
         # Construct a json representation of a JobList model
         job_list_model_json = {}
@@ -8461,7 +9959,7 @@ class TestJobList():
         job_list_model_json2 = job_list_model.to_dict()
         assert job_list_model_json2 == job_list_model_json
 
-class TestJobLite():
+class TestModel_JobLite():
     """
     Test Class for JobLite
     """
@@ -8473,36 +9971,70 @@ class TestJobLite():
 
         # Construct dict forms of any model objects needed in order to build this model.
 
+        job_status_workitem_model = {} # JobStatusWorkitem
+        job_status_workitem_model['workspace_id'] = 'testString'
+        job_status_workitem_model['workspace_name'] = 'testString'
+        job_status_workitem_model['job_id'] = 'testString'
+        job_status_workitem_model['status_code'] = 'job_pending'
+        job_status_workitem_model['status_message'] = 'testString'
+        job_status_workitem_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_status_flow_model = {} # JobStatusFlow
+        job_status_flow_model['flow_id'] = 'testString'
+        job_status_flow_model['flow_name'] = 'testString'
+        job_status_flow_model['status_code'] = 'job_pending'
+        job_status_flow_model['status_message'] = 'testString'
+        job_status_flow_model['workitems'] = [job_status_workitem_model]
+        job_status_flow_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_status_template_model = {} # JobStatusTemplate
+        job_status_template_model['template_id'] = 'testString'
+        job_status_template_model['template_name'] = 'testString'
+        job_status_template_model['flow_index'] = 38
+        job_status_template_model['status_code'] = 'job_pending'
+        job_status_template_model['status_message'] = 'testString'
+        job_status_template_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_status_workspace_model = {} # JobStatusWorkspace
+        job_status_workspace_model['workspace_name'] = 'testString'
+        job_status_workspace_model['status_code'] = 'job_pending'
+        job_status_workspace_model['status_message'] = 'testString'
+        job_status_workspace_model['flow_status'] = job_status_flow_model
+        job_status_workspace_model['template_status'] = [job_status_template_model]
+        job_status_workspace_model['updated_at'] = "2019-01-01T12:00:00Z"
+
         job_status_action_model = {} # JobStatusAction
         job_status_action_model['action_name'] = 'testString'
         job_status_action_model['status_code'] = 'job_pending'
         job_status_action_model['status_message'] = 'testString'
         job_status_action_model['bastion_status_code'] = 'none'
         job_status_action_model['bastion_status_message'] = 'testString'
-        job_status_action_model['inventory_status_code'] = 'none'
-        job_status_action_model['inventory_status_message'] = 'testString'
-        job_status_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_status_action_model['targets_status_code'] = 'none'
+        job_status_action_model['targets_status_message'] = 'testString'
+        job_status_action_model['updated_at'] = "2019-01-01T12:00:00Z"
 
         job_status_schematics_resources_model = {} # JobStatusSchematicsResources
         job_status_schematics_resources_model['status_code'] = 'job_pending'
         job_status_schematics_resources_model['status_message'] = 'testString'
         job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
-        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_status_schematics_resources_model['updated_at'] = "2019-01-01T12:00:00Z"
 
         job_status_system_model = {} # JobStatusSystem
         job_status_system_model['system_status_message'] = 'testString'
         job_status_system_model['system_status_code'] = 'job_pending'
         job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
-        job_status_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_status_system_model['updated_at'] = "2019-01-01T12:00:00Z"
 
         job_status_model = {} # JobStatus
+        job_status_model['workspace_job_status'] = job_status_workspace_model
         job_status_model['action_job_status'] = job_status_action_model
         job_status_model['system_job_status'] = job_status_system_model
+        job_status_model['flow_job_status'] = job_status_flow_model
 
-        job_log_summary_log_errors_item_model = {} # JobLogSummaryLogErrorsItem
-        job_log_summary_log_errors_item_model['error_code'] = 'testString'
-        job_log_summary_log_errors_item_model['error_msg'] = 'testString'
-        job_log_summary_log_errors_item_model['error_count'] = 72.5
+        job_log_summary_log_errors_model = {} # JobLogSummaryLogErrors
+        job_log_summary_log_errors_model['error_code'] = 'testString'
+        job_log_summary_log_errors_model['error_msg'] = 'testString'
+        job_log_summary_log_errors_model['error_count'] = 72.5
 
         job_log_summary_repo_download_job_model = {} # JobLogSummaryRepoDownloadJob
         job_log_summary_repo_download_job_model['scanned_file_count'] = 72.5
@@ -8511,8 +10043,27 @@ class TestJobLite():
         job_log_summary_repo_download_job_model['inputs_count'] = 'testString'
         job_log_summary_repo_download_job_model['outputs_count'] = 'testString'
 
+        job_log_summary_workspace_job_model = {} # JobLogSummaryWorkspaceJob
+        job_log_summary_workspace_job_model['resources_add'] = 72.5
+        job_log_summary_workspace_job_model['resources_modify'] = 72.5
+        job_log_summary_workspace_job_model['resources_destroy'] = 72.5
+
+        job_log_summary_workitems_model = {} # JobLogSummaryWorkitems
+        job_log_summary_workitems_model['workspace_id'] = 'testString'
+        job_log_summary_workitems_model['job_id'] = 'testString'
+        job_log_summary_workitems_model['resources_add'] = 72.5
+        job_log_summary_workitems_model['resources_modify'] = 72.5
+        job_log_summary_workitems_model['resources_destroy'] = 72.5
+        job_log_summary_workitems_model['log_url'] = 'testString'
+
+        job_log_summary_flow_job_model = {} # JobLogSummaryFlowJob
+        job_log_summary_flow_job_model['workitems_completed'] = 72.5
+        job_log_summary_flow_job_model['workitems_pending'] = 72.5
+        job_log_summary_flow_job_model['workitems_failed'] = 72.5
+        job_log_summary_flow_job_model['workitems'] = [job_log_summary_workitems_model]
+
         job_log_summary_action_job_recap_model = {} # JobLogSummaryActionJobRecap
-        job_log_summary_action_job_recap_model['hosts'] = ['testString']
+        job_log_summary_action_job_recap_model['target'] = ['testString']
         job_log_summary_action_job_recap_model['ok'] = 72.5
         job_log_summary_action_job_recap_model['changed'] = 72.5
         job_log_summary_action_job_recap_model['failed'] = 72.5
@@ -8520,7 +10071,7 @@ class TestJobLite():
         job_log_summary_action_job_recap_model['unreachable'] = 72.5
 
         job_log_summary_action_job_model = {} # JobLogSummaryActionJob
-        job_log_summary_action_job_model['host_count'] = 72.5
+        job_log_summary_action_job_model['target_count'] = 72.5
         job_log_summary_action_job_model['task_count'] = 72.5
         job_log_summary_action_job_model['play_count'] = 72.5
         job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
@@ -8533,11 +10084,13 @@ class TestJobLite():
         job_log_summary_model = {} # JobLogSummary
         job_log_summary_model['job_id'] = 'testString'
         job_log_summary_model['job_type'] = 'repo_download_job'
-        job_log_summary_model['log_start_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-        job_log_summary_model['log_analyzed_till'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_log_summary_model['log_start_at'] = "2019-01-01T12:00:00Z"
+        job_log_summary_model['log_analyzed_till'] = "2019-01-01T12:00:00Z"
         job_log_summary_model['elapsed_time'] = 72.5
-        job_log_summary_model['log_errors'] = [job_log_summary_log_errors_item_model]
+        job_log_summary_model['log_errors'] = [job_log_summary_log_errors_model]
         job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
+        job_log_summary_model['workspace_job'] = job_log_summary_workspace_job_model
+        job_log_summary_model['flow_job'] = job_log_summary_flow_job_model
         job_log_summary_model['action_job'] = job_log_summary_action_job_model
         job_log_summary_model['system_job'] = job_log_summary_system_job_model
 
@@ -8548,18 +10101,18 @@ class TestJobLite():
         job_lite_model_json['description'] = 'testString'
         job_lite_model_json['command_object'] = 'workspace'
         job_lite_model_json['command_object_id'] = 'testString'
-        job_lite_model_json['command_name'] = 'ansible_playbook_run'
+        job_lite_model_json['command_name'] = 'workspace_plan'
         job_lite_model_json['tags'] = ['testString']
         job_lite_model_json['location'] = 'us-south'
         job_lite_model_json['resource_group'] = 'testString'
-        job_lite_model_json['submitted_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_lite_model_json['submitted_at'] = "2019-01-01T12:00:00Z"
         job_lite_model_json['submitted_by'] = 'testString'
         job_lite_model_json['duration'] = 'testString'
-        job_lite_model_json['start_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-        job_lite_model_json['end_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_lite_model_json['start_at'] = "2019-01-01T12:00:00Z"
+        job_lite_model_json['end_at'] = "2019-01-01T12:00:00Z"
         job_lite_model_json['status'] = job_status_model
         job_lite_model_json['log_summary'] = job_log_summary_model
-        job_lite_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_lite_model_json['updated_at'] = "2019-01-01T12:00:00Z"
 
         # Construct a model instance of JobLite by calling from_dict on the json representation
         job_lite_model = JobLite.from_dict(job_lite_model_json)
@@ -8576,7 +10129,7 @@ class TestJobLite():
         job_lite_model_json2 = job_lite_model.to_dict()
         assert job_lite_model_json2 == job_lite_model_json
 
-class TestJobLog():
+class TestModel_JobLog():
     """
     Test Class for JobLog
     """
@@ -8588,10 +10141,10 @@ class TestJobLog():
 
         # Construct dict forms of any model objects needed in order to build this model.
 
-        job_log_summary_log_errors_item_model = {} # JobLogSummaryLogErrorsItem
-        job_log_summary_log_errors_item_model['error_code'] = 'testString'
-        job_log_summary_log_errors_item_model['error_msg'] = 'testString'
-        job_log_summary_log_errors_item_model['error_count'] = 72.5
+        job_log_summary_log_errors_model = {} # JobLogSummaryLogErrors
+        job_log_summary_log_errors_model['error_code'] = 'testString'
+        job_log_summary_log_errors_model['error_msg'] = 'testString'
+        job_log_summary_log_errors_model['error_count'] = 72.5
 
         job_log_summary_repo_download_job_model = {} # JobLogSummaryRepoDownloadJob
         job_log_summary_repo_download_job_model['scanned_file_count'] = 72.5
@@ -8600,8 +10153,27 @@ class TestJobLog():
         job_log_summary_repo_download_job_model['inputs_count'] = 'testString'
         job_log_summary_repo_download_job_model['outputs_count'] = 'testString'
 
+        job_log_summary_workspace_job_model = {} # JobLogSummaryWorkspaceJob
+        job_log_summary_workspace_job_model['resources_add'] = 72.5
+        job_log_summary_workspace_job_model['resources_modify'] = 72.5
+        job_log_summary_workspace_job_model['resources_destroy'] = 72.5
+
+        job_log_summary_workitems_model = {} # JobLogSummaryWorkitems
+        job_log_summary_workitems_model['workspace_id'] = 'testString'
+        job_log_summary_workitems_model['job_id'] = 'testString'
+        job_log_summary_workitems_model['resources_add'] = 72.5
+        job_log_summary_workitems_model['resources_modify'] = 72.5
+        job_log_summary_workitems_model['resources_destroy'] = 72.5
+        job_log_summary_workitems_model['log_url'] = 'testString'
+
+        job_log_summary_flow_job_model = {} # JobLogSummaryFlowJob
+        job_log_summary_flow_job_model['workitems_completed'] = 72.5
+        job_log_summary_flow_job_model['workitems_pending'] = 72.5
+        job_log_summary_flow_job_model['workitems_failed'] = 72.5
+        job_log_summary_flow_job_model['workitems'] = [job_log_summary_workitems_model]
+
         job_log_summary_action_job_recap_model = {} # JobLogSummaryActionJobRecap
-        job_log_summary_action_job_recap_model['hosts'] = ['testString']
+        job_log_summary_action_job_recap_model['target'] = ['testString']
         job_log_summary_action_job_recap_model['ok'] = 72.5
         job_log_summary_action_job_recap_model['changed'] = 72.5
         job_log_summary_action_job_recap_model['failed'] = 72.5
@@ -8609,7 +10181,7 @@ class TestJobLog():
         job_log_summary_action_job_recap_model['unreachable'] = 72.5
 
         job_log_summary_action_job_model = {} # JobLogSummaryActionJob
-        job_log_summary_action_job_model['host_count'] = 72.5
+        job_log_summary_action_job_model['target_count'] = 72.5
         job_log_summary_action_job_model['task_count'] = 72.5
         job_log_summary_action_job_model['play_count'] = 72.5
         job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
@@ -8622,11 +10194,13 @@ class TestJobLog():
         job_log_summary_model = {} # JobLogSummary
         job_log_summary_model['job_id'] = 'testString'
         job_log_summary_model['job_type'] = 'repo_download_job'
-        job_log_summary_model['log_start_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-        job_log_summary_model['log_analyzed_till'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_log_summary_model['log_start_at'] = "2019-01-01T12:00:00Z"
+        job_log_summary_model['log_analyzed_till'] = "2019-01-01T12:00:00Z"
         job_log_summary_model['elapsed_time'] = 72.5
-        job_log_summary_model['log_errors'] = [job_log_summary_log_errors_item_model]
+        job_log_summary_model['log_errors'] = [job_log_summary_log_errors_model]
         job_log_summary_model['repo_download_job'] = job_log_summary_repo_download_job_model
+        job_log_summary_model['workspace_job'] = job_log_summary_workspace_job_model
+        job_log_summary_model['flow_job'] = job_log_summary_flow_job_model
         job_log_summary_model['action_job'] = job_log_summary_action_job_model
         job_log_summary_model['system_job'] = job_log_summary_system_job_model
 
@@ -8637,7 +10211,7 @@ class TestJobLog():
         job_log_model_json['log_summary'] = job_log_summary_model
         job_log_model_json['format'] = 'json'
         job_log_model_json['details'] = 'VGhpcyBpcyBhIG1vY2sgYnl0ZSBhcnJheSB2YWx1ZS4='
-        job_log_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_log_model_json['updated_at'] = "2019-01-01T12:00:00Z"
 
         # Construct a model instance of JobLog by calling from_dict on the json representation
         job_log_model = JobLog.from_dict(job_log_model_json)
@@ -8654,7 +10228,7 @@ class TestJobLog():
         job_log_model_json2 = job_log_model.to_dict()
         assert job_log_model_json2 == job_log_model_json
 
-class TestJobLogSummary():
+class TestModel_JobLogSummary():
     """
     Test Class for JobLogSummary
     """
@@ -8666,10 +10240,10 @@ class TestJobLogSummary():
 
         # Construct dict forms of any model objects needed in order to build this model.
 
-        job_log_summary_log_errors_item_model = {} # JobLogSummaryLogErrorsItem
-        job_log_summary_log_errors_item_model['error_code'] = 'testString'
-        job_log_summary_log_errors_item_model['error_msg'] = 'testString'
-        job_log_summary_log_errors_item_model['error_count'] = 72.5
+        job_log_summary_log_errors_model = {} # JobLogSummaryLogErrors
+        job_log_summary_log_errors_model['error_code'] = 'testString'
+        job_log_summary_log_errors_model['error_msg'] = 'testString'
+        job_log_summary_log_errors_model['error_count'] = 72.5
 
         job_log_summary_repo_download_job_model = {} # JobLogSummaryRepoDownloadJob
         job_log_summary_repo_download_job_model['scanned_file_count'] = 72.5
@@ -8678,8 +10252,27 @@ class TestJobLogSummary():
         job_log_summary_repo_download_job_model['inputs_count'] = 'testString'
         job_log_summary_repo_download_job_model['outputs_count'] = 'testString'
 
+        job_log_summary_workspace_job_model = {} # JobLogSummaryWorkspaceJob
+        job_log_summary_workspace_job_model['resources_add'] = 72.5
+        job_log_summary_workspace_job_model['resources_modify'] = 72.5
+        job_log_summary_workspace_job_model['resources_destroy'] = 72.5
+
+        job_log_summary_workitems_model = {} # JobLogSummaryWorkitems
+        job_log_summary_workitems_model['workspace_id'] = 'testString'
+        job_log_summary_workitems_model['job_id'] = 'testString'
+        job_log_summary_workitems_model['resources_add'] = 72.5
+        job_log_summary_workitems_model['resources_modify'] = 72.5
+        job_log_summary_workitems_model['resources_destroy'] = 72.5
+        job_log_summary_workitems_model['log_url'] = 'testString'
+
+        job_log_summary_flow_job_model = {} # JobLogSummaryFlowJob
+        job_log_summary_flow_job_model['workitems_completed'] = 72.5
+        job_log_summary_flow_job_model['workitems_pending'] = 72.5
+        job_log_summary_flow_job_model['workitems_failed'] = 72.5
+        job_log_summary_flow_job_model['workitems'] = [job_log_summary_workitems_model]
+
         job_log_summary_action_job_recap_model = {} # JobLogSummaryActionJobRecap
-        job_log_summary_action_job_recap_model['hosts'] = ['testString']
+        job_log_summary_action_job_recap_model['target'] = ['testString']
         job_log_summary_action_job_recap_model['ok'] = 72.5
         job_log_summary_action_job_recap_model['changed'] = 72.5
         job_log_summary_action_job_recap_model['failed'] = 72.5
@@ -8687,7 +10280,7 @@ class TestJobLogSummary():
         job_log_summary_action_job_recap_model['unreachable'] = 72.5
 
         job_log_summary_action_job_model = {} # JobLogSummaryActionJob
-        job_log_summary_action_job_model['host_count'] = 72.5
+        job_log_summary_action_job_model['target_count'] = 72.5
         job_log_summary_action_job_model['task_count'] = 72.5
         job_log_summary_action_job_model['play_count'] = 72.5
         job_log_summary_action_job_model['recap'] = job_log_summary_action_job_recap_model
@@ -8701,11 +10294,13 @@ class TestJobLogSummary():
         job_log_summary_model_json = {}
         job_log_summary_model_json['job_id'] = 'testString'
         job_log_summary_model_json['job_type'] = 'repo_download_job'
-        job_log_summary_model_json['log_start_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
-        job_log_summary_model_json['log_analyzed_till'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_log_summary_model_json['log_start_at'] = "2019-01-01T12:00:00Z"
+        job_log_summary_model_json['log_analyzed_till'] = "2019-01-01T12:00:00Z"
         job_log_summary_model_json['elapsed_time'] = 72.5
-        job_log_summary_model_json['log_errors'] = [job_log_summary_log_errors_item_model]
+        job_log_summary_model_json['log_errors'] = [job_log_summary_log_errors_model]
         job_log_summary_model_json['repo_download_job'] = job_log_summary_repo_download_job_model
+        job_log_summary_model_json['workspace_job'] = job_log_summary_workspace_job_model
+        job_log_summary_model_json['flow_job'] = job_log_summary_flow_job_model
         job_log_summary_model_json['action_job'] = job_log_summary_action_job_model
         job_log_summary_model_json['system_job'] = job_log_summary_system_job_model
 
@@ -8724,7 +10319,41 @@ class TestJobLogSummary():
         job_log_summary_model_json2 = job_log_summary_model.to_dict()
         assert job_log_summary_model_json2 == job_log_summary_model_json
 
-class TestJobLogSummaryActionJob():
+class TestModel_JobLogSummaryWorkitems():
+    """
+    Test Class for JobLogSummaryWorkitems
+    """
+
+    def test_job_log_summary_workitems_serialization(self):
+        """
+        Test serialization/deserialization for JobLogSummaryWorkitems
+        """
+
+        # Construct a json representation of a JobLogSummaryWorkitems model
+        job_log_summary_workitems_model_json = {}
+        job_log_summary_workitems_model_json['workspace_id'] = 'testString'
+        job_log_summary_workitems_model_json['job_id'] = 'testString'
+        job_log_summary_workitems_model_json['resources_add'] = 72.5
+        job_log_summary_workitems_model_json['resources_modify'] = 72.5
+        job_log_summary_workitems_model_json['resources_destroy'] = 72.5
+        job_log_summary_workitems_model_json['log_url'] = 'testString'
+
+        # Construct a model instance of JobLogSummaryWorkitems by calling from_dict on the json representation
+        job_log_summary_workitems_model = JobLogSummaryWorkitems.from_dict(job_log_summary_workitems_model_json)
+        assert job_log_summary_workitems_model != False
+
+        # Construct a model instance of JobLogSummaryWorkitems by calling from_dict on the json representation
+        job_log_summary_workitems_model_dict = JobLogSummaryWorkitems.from_dict(job_log_summary_workitems_model_json).__dict__
+        job_log_summary_workitems_model2 = JobLogSummaryWorkitems(**job_log_summary_workitems_model_dict)
+
+        # Verify the model instances are equivalent
+        assert job_log_summary_workitems_model == job_log_summary_workitems_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        job_log_summary_workitems_model_json2 = job_log_summary_workitems_model.to_dict()
+        assert job_log_summary_workitems_model_json2 == job_log_summary_workitems_model_json
+
+class TestModel_JobLogSummaryActionJob():
     """
     Test Class for JobLogSummaryActionJob
     """
@@ -8737,7 +10366,7 @@ class TestJobLogSummaryActionJob():
         # Construct dict forms of any model objects needed in order to build this model.
 
         job_log_summary_action_job_recap_model = {} # JobLogSummaryActionJobRecap
-        job_log_summary_action_job_recap_model['hosts'] = ['testString']
+        job_log_summary_action_job_recap_model['target'] = ['testString']
         job_log_summary_action_job_recap_model['ok'] = 72.5
         job_log_summary_action_job_recap_model['changed'] = 72.5
         job_log_summary_action_job_recap_model['failed'] = 72.5
@@ -8746,7 +10375,7 @@ class TestJobLogSummaryActionJob():
 
         # Construct a json representation of a JobLogSummaryActionJob model
         job_log_summary_action_job_model_json = {}
-        job_log_summary_action_job_model_json['host_count'] = 72.5
+        job_log_summary_action_job_model_json['target_count'] = 72.5
         job_log_summary_action_job_model_json['task_count'] = 72.5
         job_log_summary_action_job_model_json['play_count'] = 72.5
         job_log_summary_action_job_model_json['recap'] = job_log_summary_action_job_recap_model
@@ -8766,7 +10395,7 @@ class TestJobLogSummaryActionJob():
         job_log_summary_action_job_model_json2 = job_log_summary_action_job_model.to_dict()
         assert job_log_summary_action_job_model_json2 == job_log_summary_action_job_model_json
 
-class TestJobLogSummaryActionJobRecap():
+class TestModel_JobLogSummaryActionJobRecap():
     """
     Test Class for JobLogSummaryActionJobRecap
     """
@@ -8778,7 +10407,7 @@ class TestJobLogSummaryActionJobRecap():
 
         # Construct a json representation of a JobLogSummaryActionJobRecap model
         job_log_summary_action_job_recap_model_json = {}
-        job_log_summary_action_job_recap_model_json['hosts'] = ['testString']
+        job_log_summary_action_job_recap_model_json['target'] = ['testString']
         job_log_summary_action_job_recap_model_json['ok'] = 72.5
         job_log_summary_action_job_recap_model_json['changed'] = 72.5
         job_log_summary_action_job_recap_model_json['failed'] = 72.5
@@ -8800,38 +10429,80 @@ class TestJobLogSummaryActionJobRecap():
         job_log_summary_action_job_recap_model_json2 = job_log_summary_action_job_recap_model.to_dict()
         assert job_log_summary_action_job_recap_model_json2 == job_log_summary_action_job_recap_model_json
 
-class TestJobLogSummaryLogErrorsItem():
+class TestModel_JobLogSummaryFlowJob():
     """
-    Test Class for JobLogSummaryLogErrorsItem
+    Test Class for JobLogSummaryFlowJob
     """
 
-    def test_job_log_summary_log_errors_item_serialization(self):
+    def test_job_log_summary_flow_job_serialization(self):
         """
-        Test serialization/deserialization for JobLogSummaryLogErrorsItem
+        Test serialization/deserialization for JobLogSummaryFlowJob
         """
 
-        # Construct a json representation of a JobLogSummaryLogErrorsItem model
-        job_log_summary_log_errors_item_model_json = {}
-        job_log_summary_log_errors_item_model_json['error_code'] = 'testString'
-        job_log_summary_log_errors_item_model_json['error_msg'] = 'testString'
-        job_log_summary_log_errors_item_model_json['error_count'] = 72.5
+        # Construct dict forms of any model objects needed in order to build this model.
 
-        # Construct a model instance of JobLogSummaryLogErrorsItem by calling from_dict on the json representation
-        job_log_summary_log_errors_item_model = JobLogSummaryLogErrorsItem.from_dict(job_log_summary_log_errors_item_model_json)
-        assert job_log_summary_log_errors_item_model != False
+        job_log_summary_workitems_model = {} # JobLogSummaryWorkitems
+        job_log_summary_workitems_model['workspace_id'] = 'testString'
+        job_log_summary_workitems_model['job_id'] = 'testString'
+        job_log_summary_workitems_model['resources_add'] = 72.5
+        job_log_summary_workitems_model['resources_modify'] = 72.5
+        job_log_summary_workitems_model['resources_destroy'] = 72.5
+        job_log_summary_workitems_model['log_url'] = 'testString'
 
-        # Construct a model instance of JobLogSummaryLogErrorsItem by calling from_dict on the json representation
-        job_log_summary_log_errors_item_model_dict = JobLogSummaryLogErrorsItem.from_dict(job_log_summary_log_errors_item_model_json).__dict__
-        job_log_summary_log_errors_item_model2 = JobLogSummaryLogErrorsItem(**job_log_summary_log_errors_item_model_dict)
+        # Construct a json representation of a JobLogSummaryFlowJob model
+        job_log_summary_flow_job_model_json = {}
+        job_log_summary_flow_job_model_json['workitems_completed'] = 72.5
+        job_log_summary_flow_job_model_json['workitems_pending'] = 72.5
+        job_log_summary_flow_job_model_json['workitems_failed'] = 72.5
+        job_log_summary_flow_job_model_json['workitems'] = [job_log_summary_workitems_model]
+
+        # Construct a model instance of JobLogSummaryFlowJob by calling from_dict on the json representation
+        job_log_summary_flow_job_model = JobLogSummaryFlowJob.from_dict(job_log_summary_flow_job_model_json)
+        assert job_log_summary_flow_job_model != False
+
+        # Construct a model instance of JobLogSummaryFlowJob by calling from_dict on the json representation
+        job_log_summary_flow_job_model_dict = JobLogSummaryFlowJob.from_dict(job_log_summary_flow_job_model_json).__dict__
+        job_log_summary_flow_job_model2 = JobLogSummaryFlowJob(**job_log_summary_flow_job_model_dict)
 
         # Verify the model instances are equivalent
-        assert job_log_summary_log_errors_item_model == job_log_summary_log_errors_item_model2
+        assert job_log_summary_flow_job_model == job_log_summary_flow_job_model2
 
         # Convert model instance back to dict and verify no loss of data
-        job_log_summary_log_errors_item_model_json2 = job_log_summary_log_errors_item_model.to_dict()
-        assert job_log_summary_log_errors_item_model_json2 == job_log_summary_log_errors_item_model_json
+        job_log_summary_flow_job_model_json2 = job_log_summary_flow_job_model.to_dict()
+        assert job_log_summary_flow_job_model_json2 == job_log_summary_flow_job_model_json
 
-class TestJobLogSummaryRepoDownloadJob():
+class TestModel_JobLogSummaryLogErrors():
+    """
+    Test Class for JobLogSummaryLogErrors
+    """
+
+    def test_job_log_summary_log_errors_serialization(self):
+        """
+        Test serialization/deserialization for JobLogSummaryLogErrors
+        """
+
+        # Construct a json representation of a JobLogSummaryLogErrors model
+        job_log_summary_log_errors_model_json = {}
+        job_log_summary_log_errors_model_json['error_code'] = 'testString'
+        job_log_summary_log_errors_model_json['error_msg'] = 'testString'
+        job_log_summary_log_errors_model_json['error_count'] = 72.5
+
+        # Construct a model instance of JobLogSummaryLogErrors by calling from_dict on the json representation
+        job_log_summary_log_errors_model = JobLogSummaryLogErrors.from_dict(job_log_summary_log_errors_model_json)
+        assert job_log_summary_log_errors_model != False
+
+        # Construct a model instance of JobLogSummaryLogErrors by calling from_dict on the json representation
+        job_log_summary_log_errors_model_dict = JobLogSummaryLogErrors.from_dict(job_log_summary_log_errors_model_json).__dict__
+        job_log_summary_log_errors_model2 = JobLogSummaryLogErrors(**job_log_summary_log_errors_model_dict)
+
+        # Verify the model instances are equivalent
+        assert job_log_summary_log_errors_model == job_log_summary_log_errors_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        job_log_summary_log_errors_model_json2 = job_log_summary_log_errors_model.to_dict()
+        assert job_log_summary_log_errors_model_json2 == job_log_summary_log_errors_model_json
+
+class TestModel_JobLogSummaryRepoDownloadJob():
     """
     Test Class for JobLogSummaryRepoDownloadJob
     """
@@ -8864,7 +10535,7 @@ class TestJobLogSummaryRepoDownloadJob():
         job_log_summary_repo_download_job_model_json2 = job_log_summary_repo_download_job_model.to_dict()
         assert job_log_summary_repo_download_job_model_json2 == job_log_summary_repo_download_job_model_json
 
-class TestJobLogSummarySystemJob():
+class TestModel_JobLogSummarySystemJob():
     """
     Test Class for JobLogSummarySystemJob
     """
@@ -8895,7 +10566,38 @@ class TestJobLogSummarySystemJob():
         job_log_summary_system_job_model_json2 = job_log_summary_system_job_model.to_dict()
         assert job_log_summary_system_job_model_json2 == job_log_summary_system_job_model_json
 
-class TestJobStatus():
+class TestModel_JobLogSummaryWorkspaceJob():
+    """
+    Test Class for JobLogSummaryWorkspaceJob
+    """
+
+    def test_job_log_summary_workspace_job_serialization(self):
+        """
+        Test serialization/deserialization for JobLogSummaryWorkspaceJob
+        """
+
+        # Construct a json representation of a JobLogSummaryWorkspaceJob model
+        job_log_summary_workspace_job_model_json = {}
+        job_log_summary_workspace_job_model_json['resources_add'] = 72.5
+        job_log_summary_workspace_job_model_json['resources_modify'] = 72.5
+        job_log_summary_workspace_job_model_json['resources_destroy'] = 72.5
+
+        # Construct a model instance of JobLogSummaryWorkspaceJob by calling from_dict on the json representation
+        job_log_summary_workspace_job_model = JobLogSummaryWorkspaceJob.from_dict(job_log_summary_workspace_job_model_json)
+        assert job_log_summary_workspace_job_model != False
+
+        # Construct a model instance of JobLogSummaryWorkspaceJob by calling from_dict on the json representation
+        job_log_summary_workspace_job_model_dict = JobLogSummaryWorkspaceJob.from_dict(job_log_summary_workspace_job_model_json).__dict__
+        job_log_summary_workspace_job_model2 = JobLogSummaryWorkspaceJob(**job_log_summary_workspace_job_model_dict)
+
+        # Verify the model instances are equivalent
+        assert job_log_summary_workspace_job_model == job_log_summary_workspace_job_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        job_log_summary_workspace_job_model_json2 = job_log_summary_workspace_job_model.to_dict()
+        assert job_log_summary_workspace_job_model_json2 == job_log_summary_workspace_job_model_json
+
+class TestModel_JobStatus():
     """
     Test Class for JobStatus
     """
@@ -8907,32 +10609,66 @@ class TestJobStatus():
 
         # Construct dict forms of any model objects needed in order to build this model.
 
+        job_status_workitem_model = {} # JobStatusWorkitem
+        job_status_workitem_model['workspace_id'] = 'testString'
+        job_status_workitem_model['workspace_name'] = 'testString'
+        job_status_workitem_model['job_id'] = 'testString'
+        job_status_workitem_model['status_code'] = 'job_pending'
+        job_status_workitem_model['status_message'] = 'testString'
+        job_status_workitem_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_status_flow_model = {} # JobStatusFlow
+        job_status_flow_model['flow_id'] = 'testString'
+        job_status_flow_model['flow_name'] = 'testString'
+        job_status_flow_model['status_code'] = 'job_pending'
+        job_status_flow_model['status_message'] = 'testString'
+        job_status_flow_model['workitems'] = [job_status_workitem_model]
+        job_status_flow_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_status_template_model = {} # JobStatusTemplate
+        job_status_template_model['template_id'] = 'testString'
+        job_status_template_model['template_name'] = 'testString'
+        job_status_template_model['flow_index'] = 38
+        job_status_template_model['status_code'] = 'job_pending'
+        job_status_template_model['status_message'] = 'testString'
+        job_status_template_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_status_workspace_model = {} # JobStatusWorkspace
+        job_status_workspace_model['workspace_name'] = 'testString'
+        job_status_workspace_model['status_code'] = 'job_pending'
+        job_status_workspace_model['status_message'] = 'testString'
+        job_status_workspace_model['flow_status'] = job_status_flow_model
+        job_status_workspace_model['template_status'] = [job_status_template_model]
+        job_status_workspace_model['updated_at'] = "2019-01-01T12:00:00Z"
+
         job_status_action_model = {} # JobStatusAction
         job_status_action_model['action_name'] = 'testString'
         job_status_action_model['status_code'] = 'job_pending'
         job_status_action_model['status_message'] = 'testString'
         job_status_action_model['bastion_status_code'] = 'none'
         job_status_action_model['bastion_status_message'] = 'testString'
-        job_status_action_model['inventory_status_code'] = 'none'
-        job_status_action_model['inventory_status_message'] = 'testString'
-        job_status_action_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_status_action_model['targets_status_code'] = 'none'
+        job_status_action_model['targets_status_message'] = 'testString'
+        job_status_action_model['updated_at'] = "2019-01-01T12:00:00Z"
 
         job_status_schematics_resources_model = {} # JobStatusSchematicsResources
         job_status_schematics_resources_model['status_code'] = 'job_pending'
         job_status_schematics_resources_model['status_message'] = 'testString'
         job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
-        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_status_schematics_resources_model['updated_at'] = "2019-01-01T12:00:00Z"
 
         job_status_system_model = {} # JobStatusSystem
         job_status_system_model['system_status_message'] = 'testString'
         job_status_system_model['system_status_code'] = 'job_pending'
         job_status_system_model['schematics_resource_status'] = [job_status_schematics_resources_model]
-        job_status_system_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_status_system_model['updated_at'] = "2019-01-01T12:00:00Z"
 
         # Construct a json representation of a JobStatus model
         job_status_model_json = {}
+        job_status_model_json['workspace_job_status'] = job_status_workspace_model
         job_status_model_json['action_job_status'] = job_status_action_model
         job_status_model_json['system_job_status'] = job_status_system_model
+        job_status_model_json['flow_job_status'] = job_status_flow_model
 
         # Construct a model instance of JobStatus by calling from_dict on the json representation
         job_status_model = JobStatus.from_dict(job_status_model_json)
@@ -8949,7 +10685,7 @@ class TestJobStatus():
         job_status_model_json2 = job_status_model.to_dict()
         assert job_status_model_json2 == job_status_model_json
 
-class TestJobStatusAction():
+class TestModel_JobStatusAction():
     """
     Test Class for JobStatusAction
     """
@@ -8966,9 +10702,9 @@ class TestJobStatusAction():
         job_status_action_model_json['status_message'] = 'testString'
         job_status_action_model_json['bastion_status_code'] = 'none'
         job_status_action_model_json['bastion_status_message'] = 'testString'
-        job_status_action_model_json['inventory_status_code'] = 'none'
-        job_status_action_model_json['inventory_status_message'] = 'testString'
-        job_status_action_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_status_action_model_json['targets_status_code'] = 'none'
+        job_status_action_model_json['targets_status_message'] = 'testString'
+        job_status_action_model_json['updated_at'] = "2019-01-01T12:00:00Z"
 
         # Construct a model instance of JobStatusAction by calling from_dict on the json representation
         job_status_action_model = JobStatusAction.from_dict(job_status_action_model_json)
@@ -8985,7 +10721,51 @@ class TestJobStatusAction():
         job_status_action_model_json2 = job_status_action_model.to_dict()
         assert job_status_action_model_json2 == job_status_action_model_json
 
-class TestJobStatusSchematicsResources():
+class TestModel_JobStatusFlow():
+    """
+    Test Class for JobStatusFlow
+    """
+
+    def test_job_status_flow_serialization(self):
+        """
+        Test serialization/deserialization for JobStatusFlow
+        """
+
+        # Construct dict forms of any model objects needed in order to build this model.
+
+        job_status_workitem_model = {} # JobStatusWorkitem
+        job_status_workitem_model['workspace_id'] = 'testString'
+        job_status_workitem_model['workspace_name'] = 'testString'
+        job_status_workitem_model['job_id'] = 'testString'
+        job_status_workitem_model['status_code'] = 'job_pending'
+        job_status_workitem_model['status_message'] = 'testString'
+        job_status_workitem_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a json representation of a JobStatusFlow model
+        job_status_flow_model_json = {}
+        job_status_flow_model_json['flow_id'] = 'testString'
+        job_status_flow_model_json['flow_name'] = 'testString'
+        job_status_flow_model_json['status_code'] = 'job_pending'
+        job_status_flow_model_json['status_message'] = 'testString'
+        job_status_flow_model_json['workitems'] = [job_status_workitem_model]
+        job_status_flow_model_json['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a model instance of JobStatusFlow by calling from_dict on the json representation
+        job_status_flow_model = JobStatusFlow.from_dict(job_status_flow_model_json)
+        assert job_status_flow_model != False
+
+        # Construct a model instance of JobStatusFlow by calling from_dict on the json representation
+        job_status_flow_model_dict = JobStatusFlow.from_dict(job_status_flow_model_json).__dict__
+        job_status_flow_model2 = JobStatusFlow(**job_status_flow_model_dict)
+
+        # Verify the model instances are equivalent
+        assert job_status_flow_model == job_status_flow_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        job_status_flow_model_json2 = job_status_flow_model.to_dict()
+        assert job_status_flow_model_json2 == job_status_flow_model_json
+
+class TestModel_JobStatusSchematicsResources():
     """
     Test Class for JobStatusSchematicsResources
     """
@@ -9000,7 +10780,7 @@ class TestJobStatusSchematicsResources():
         job_status_schematics_resources_model_json['status_code'] = 'job_pending'
         job_status_schematics_resources_model_json['status_message'] = 'testString'
         job_status_schematics_resources_model_json['schematics_resource_id'] = 'testString'
-        job_status_schematics_resources_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_status_schematics_resources_model_json['updated_at'] = "2019-01-01T12:00:00Z"
 
         # Construct a model instance of JobStatusSchematicsResources by calling from_dict on the json representation
         job_status_schematics_resources_model = JobStatusSchematicsResources.from_dict(job_status_schematics_resources_model_json)
@@ -9017,7 +10797,7 @@ class TestJobStatusSchematicsResources():
         job_status_schematics_resources_model_json2 = job_status_schematics_resources_model.to_dict()
         assert job_status_schematics_resources_model_json2 == job_status_schematics_resources_model_json
 
-class TestJobStatusSystem():
+class TestModel_JobStatusSystem():
     """
     Test Class for JobStatusSystem
     """
@@ -9033,14 +10813,14 @@ class TestJobStatusSystem():
         job_status_schematics_resources_model['status_code'] = 'job_pending'
         job_status_schematics_resources_model['status_message'] = 'testString'
         job_status_schematics_resources_model['schematics_resource_id'] = 'testString'
-        job_status_schematics_resources_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_status_schematics_resources_model['updated_at'] = "2019-01-01T12:00:00Z"
 
         # Construct a json representation of a JobStatusSystem model
         job_status_system_model_json = {}
         job_status_system_model_json['system_status_message'] = 'testString'
         job_status_system_model_json['system_status_code'] = 'job_pending'
         job_status_system_model_json['schematics_resource_status'] = [job_status_schematics_resources_model]
-        job_status_system_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        job_status_system_model_json['updated_at'] = "2019-01-01T12:00:00Z"
 
         # Construct a model instance of JobStatusSystem by calling from_dict on the json representation
         job_status_system_model = JobStatusSystem.from_dict(job_status_system_model_json)
@@ -9057,39 +10837,135 @@ class TestJobStatusSystem():
         job_status_system_model_json2 = job_status_system_model.to_dict()
         assert job_status_system_model_json2 == job_status_system_model_json
 
-class TestJobStatusType():
+class TestModel_JobStatusTemplate():
     """
-    Test Class for JobStatusType
+    Test Class for JobStatusTemplate
     """
 
-    def test_job_status_type_serialization(self):
+    def test_job_status_template_serialization(self):
         """
-        Test serialization/deserialization for JobStatusType
+        Test serialization/deserialization for JobStatusTemplate
         """
 
-        # Construct a json representation of a JobStatusType model
-        job_status_type_model_json = {}
-        job_status_type_model_json['failed'] = ['testString']
-        job_status_type_model_json['in_progress'] = ['testString']
-        job_status_type_model_json['success'] = ['testString']
-        job_status_type_model_json['last_updated_on'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        # Construct a json representation of a JobStatusTemplate model
+        job_status_template_model_json = {}
+        job_status_template_model_json['template_id'] = 'testString'
+        job_status_template_model_json['template_name'] = 'testString'
+        job_status_template_model_json['flow_index'] = 38
+        job_status_template_model_json['status_code'] = 'job_pending'
+        job_status_template_model_json['status_message'] = 'testString'
+        job_status_template_model_json['updated_at'] = "2019-01-01T12:00:00Z"
 
-        # Construct a model instance of JobStatusType by calling from_dict on the json representation
-        job_status_type_model = JobStatusType.from_dict(job_status_type_model_json)
-        assert job_status_type_model != False
+        # Construct a model instance of JobStatusTemplate by calling from_dict on the json representation
+        job_status_template_model = JobStatusTemplate.from_dict(job_status_template_model_json)
+        assert job_status_template_model != False
 
-        # Construct a model instance of JobStatusType by calling from_dict on the json representation
-        job_status_type_model_dict = JobStatusType.from_dict(job_status_type_model_json).__dict__
-        job_status_type_model2 = JobStatusType(**job_status_type_model_dict)
+        # Construct a model instance of JobStatusTemplate by calling from_dict on the json representation
+        job_status_template_model_dict = JobStatusTemplate.from_dict(job_status_template_model_json).__dict__
+        job_status_template_model2 = JobStatusTemplate(**job_status_template_model_dict)
 
         # Verify the model instances are equivalent
-        assert job_status_type_model == job_status_type_model2
+        assert job_status_template_model == job_status_template_model2
 
         # Convert model instance back to dict and verify no loss of data
-        job_status_type_model_json2 = job_status_type_model.to_dict()
-        assert job_status_type_model_json2 == job_status_type_model_json
+        job_status_template_model_json2 = job_status_template_model.to_dict()
+        assert job_status_template_model_json2 == job_status_template_model_json
 
-class TestKMSDiscovery():
+class TestModel_JobStatusWorkitem():
+    """
+    Test Class for JobStatusWorkitem
+    """
+
+    def test_job_status_workitem_serialization(self):
+        """
+        Test serialization/deserialization for JobStatusWorkitem
+        """
+
+        # Construct a json representation of a JobStatusWorkitem model
+        job_status_workitem_model_json = {}
+        job_status_workitem_model_json['workspace_id'] = 'testString'
+        job_status_workitem_model_json['workspace_name'] = 'testString'
+        job_status_workitem_model_json['job_id'] = 'testString'
+        job_status_workitem_model_json['status_code'] = 'job_pending'
+        job_status_workitem_model_json['status_message'] = 'testString'
+        job_status_workitem_model_json['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a model instance of JobStatusWorkitem by calling from_dict on the json representation
+        job_status_workitem_model = JobStatusWorkitem.from_dict(job_status_workitem_model_json)
+        assert job_status_workitem_model != False
+
+        # Construct a model instance of JobStatusWorkitem by calling from_dict on the json representation
+        job_status_workitem_model_dict = JobStatusWorkitem.from_dict(job_status_workitem_model_json).__dict__
+        job_status_workitem_model2 = JobStatusWorkitem(**job_status_workitem_model_dict)
+
+        # Verify the model instances are equivalent
+        assert job_status_workitem_model == job_status_workitem_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        job_status_workitem_model_json2 = job_status_workitem_model.to_dict()
+        assert job_status_workitem_model_json2 == job_status_workitem_model_json
+
+class TestModel_JobStatusWorkspace():
+    """
+    Test Class for JobStatusWorkspace
+    """
+
+    def test_job_status_workspace_serialization(self):
+        """
+        Test serialization/deserialization for JobStatusWorkspace
+        """
+
+        # Construct dict forms of any model objects needed in order to build this model.
+
+        job_status_workitem_model = {} # JobStatusWorkitem
+        job_status_workitem_model['workspace_id'] = 'testString'
+        job_status_workitem_model['workspace_name'] = 'testString'
+        job_status_workitem_model['job_id'] = 'testString'
+        job_status_workitem_model['status_code'] = 'job_pending'
+        job_status_workitem_model['status_message'] = 'testString'
+        job_status_workitem_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_status_flow_model = {} # JobStatusFlow
+        job_status_flow_model['flow_id'] = 'testString'
+        job_status_flow_model['flow_name'] = 'testString'
+        job_status_flow_model['status_code'] = 'job_pending'
+        job_status_flow_model['status_message'] = 'testString'
+        job_status_flow_model['workitems'] = [job_status_workitem_model]
+        job_status_flow_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        job_status_template_model = {} # JobStatusTemplate
+        job_status_template_model['template_id'] = 'testString'
+        job_status_template_model['template_name'] = 'testString'
+        job_status_template_model['flow_index'] = 38
+        job_status_template_model['status_code'] = 'job_pending'
+        job_status_template_model['status_message'] = 'testString'
+        job_status_template_model['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a json representation of a JobStatusWorkspace model
+        job_status_workspace_model_json = {}
+        job_status_workspace_model_json['workspace_name'] = 'testString'
+        job_status_workspace_model_json['status_code'] = 'job_pending'
+        job_status_workspace_model_json['status_message'] = 'testString'
+        job_status_workspace_model_json['flow_status'] = job_status_flow_model
+        job_status_workspace_model_json['template_status'] = [job_status_template_model]
+        job_status_workspace_model_json['updated_at'] = "2019-01-01T12:00:00Z"
+
+        # Construct a model instance of JobStatusWorkspace by calling from_dict on the json representation
+        job_status_workspace_model = JobStatusWorkspace.from_dict(job_status_workspace_model_json)
+        assert job_status_workspace_model != False
+
+        # Construct a model instance of JobStatusWorkspace by calling from_dict on the json representation
+        job_status_workspace_model_dict = JobStatusWorkspace.from_dict(job_status_workspace_model_json).__dict__
+        job_status_workspace_model2 = JobStatusWorkspace(**job_status_workspace_model_dict)
+
+        # Verify the model instances are equivalent
+        assert job_status_workspace_model == job_status_workspace_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        job_status_workspace_model_json2 = job_status_workspace_model.to_dict()
+        assert job_status_workspace_model_json2 == job_status_workspace_model_json
+
+class TestModel_KMSDiscovery():
     """
     Test Class for KMSDiscovery
     """
@@ -9101,10 +10977,10 @@ class TestKMSDiscovery():
 
         # Construct dict forms of any model objects needed in order to build this model.
 
-        kms_instances_keys_item_model = {} # KMSInstancesKeysItem
-        kms_instances_keys_item_model['name'] = 'testString'
-        kms_instances_keys_item_model['crn'] = 'testString'
-        kms_instances_keys_item_model['error'] = 'testString'
+        kms_instances_keys_model = {} # KMSInstancesKeys
+        kms_instances_keys_model['name'] = 'testString'
+        kms_instances_keys_model['crn'] = 'testString'
+        kms_instances_keys_model['error'] = 'testString'
 
         kms_instances_model = {} # KMSInstances
         kms_instances_model['location'] = 'testString'
@@ -9114,7 +10990,7 @@ class TestKMSDiscovery():
         kms_instances_model['kms_name'] = 'testString'
         kms_instances_model['kms_private_endpoint'] = 'testString'
         kms_instances_model['kms_public_endpoint'] = 'testString'
-        kms_instances_model['keys'] = [kms_instances_keys_item_model]
+        kms_instances_model['keys'] = [kms_instances_keys_model]
 
         # Construct a json representation of a KMSDiscovery model
         kms_discovery_model_json = {}
@@ -9138,7 +11014,7 @@ class TestKMSDiscovery():
         kms_discovery_model_json2 = kms_discovery_model.to_dict()
         assert kms_discovery_model_json2 == kms_discovery_model_json
 
-class TestKMSInstances():
+class TestModel_KMSInstances():
     """
     Test Class for KMSInstances
     """
@@ -9150,10 +11026,10 @@ class TestKMSInstances():
 
         # Construct dict forms of any model objects needed in order to build this model.
 
-        kms_instances_keys_item_model = {} # KMSInstancesKeysItem
-        kms_instances_keys_item_model['name'] = 'testString'
-        kms_instances_keys_item_model['crn'] = 'testString'
-        kms_instances_keys_item_model['error'] = 'testString'
+        kms_instances_keys_model = {} # KMSInstancesKeys
+        kms_instances_keys_model['name'] = 'testString'
+        kms_instances_keys_model['crn'] = 'testString'
+        kms_instances_keys_model['error'] = 'testString'
 
         # Construct a json representation of a KMSInstances model
         kms_instances_model_json = {}
@@ -9164,7 +11040,7 @@ class TestKMSInstances():
         kms_instances_model_json['kms_name'] = 'testString'
         kms_instances_model_json['kms_private_endpoint'] = 'testString'
         kms_instances_model_json['kms_public_endpoint'] = 'testString'
-        kms_instances_model_json['keys'] = [kms_instances_keys_item_model]
+        kms_instances_model_json['keys'] = [kms_instances_keys_model]
 
         # Construct a model instance of KMSInstances by calling from_dict on the json representation
         kms_instances_model = KMSInstances.from_dict(kms_instances_model_json)
@@ -9181,38 +11057,38 @@ class TestKMSInstances():
         kms_instances_model_json2 = kms_instances_model.to_dict()
         assert kms_instances_model_json2 == kms_instances_model_json
 
-class TestKMSInstancesKeysItem():
+class TestModel_KMSInstancesKeys():
     """
-    Test Class for KMSInstancesKeysItem
+    Test Class for KMSInstancesKeys
     """
 
-    def test_kms_instances_keys_item_serialization(self):
+    def test_kms_instances_keys_serialization(self):
         """
-        Test serialization/deserialization for KMSInstancesKeysItem
+        Test serialization/deserialization for KMSInstancesKeys
         """
 
-        # Construct a json representation of a KMSInstancesKeysItem model
-        kms_instances_keys_item_model_json = {}
-        kms_instances_keys_item_model_json['name'] = 'testString'
-        kms_instances_keys_item_model_json['crn'] = 'testString'
-        kms_instances_keys_item_model_json['error'] = 'testString'
+        # Construct a json representation of a KMSInstancesKeys model
+        kms_instances_keys_model_json = {}
+        kms_instances_keys_model_json['name'] = 'testString'
+        kms_instances_keys_model_json['crn'] = 'testString'
+        kms_instances_keys_model_json['error'] = 'testString'
 
-        # Construct a model instance of KMSInstancesKeysItem by calling from_dict on the json representation
-        kms_instances_keys_item_model = KMSInstancesKeysItem.from_dict(kms_instances_keys_item_model_json)
-        assert kms_instances_keys_item_model != False
+        # Construct a model instance of KMSInstancesKeys by calling from_dict on the json representation
+        kms_instances_keys_model = KMSInstancesKeys.from_dict(kms_instances_keys_model_json)
+        assert kms_instances_keys_model != False
 
-        # Construct a model instance of KMSInstancesKeysItem by calling from_dict on the json representation
-        kms_instances_keys_item_model_dict = KMSInstancesKeysItem.from_dict(kms_instances_keys_item_model_json).__dict__
-        kms_instances_keys_item_model2 = KMSInstancesKeysItem(**kms_instances_keys_item_model_dict)
+        # Construct a model instance of KMSInstancesKeys by calling from_dict on the json representation
+        kms_instances_keys_model_dict = KMSInstancesKeys.from_dict(kms_instances_keys_model_json).__dict__
+        kms_instances_keys_model2 = KMSInstancesKeys(**kms_instances_keys_model_dict)
 
         # Verify the model instances are equivalent
-        assert kms_instances_keys_item_model == kms_instances_keys_item_model2
+        assert kms_instances_keys_model == kms_instances_keys_model2
 
         # Convert model instance back to dict and verify no loss of data
-        kms_instances_keys_item_model_json2 = kms_instances_keys_item_model.to_dict()
-        assert kms_instances_keys_item_model_json2 == kms_instances_keys_item_model_json
+        kms_instances_keys_model_json2 = kms_instances_keys_model.to_dict()
+        assert kms_instances_keys_model_json2 == kms_instances_keys_model_json
 
-class TestKMSSettings():
+class TestModel_KMSSettings():
     """
     Test Class for KMSSettings
     """
@@ -9257,7 +11133,7 @@ class TestKMSSettings():
         kms_settings_model_json2 = kms_settings_model.to_dict()
         assert kms_settings_model_json2 == kms_settings_model_json
 
-class TestKMSSettingsPrimaryCrk():
+class TestModel_KMSSettingsPrimaryCrk():
     """
     Test Class for KMSSettingsPrimaryCrk
     """
@@ -9288,7 +11164,7 @@ class TestKMSSettingsPrimaryCrk():
         kms_settings_primary_crk_model_json2 = kms_settings_primary_crk_model.to_dict()
         assert kms_settings_primary_crk_model_json2 == kms_settings_primary_crk_model_json
 
-class TestKMSSettingsSecondaryCrk():
+class TestModel_KMSSettingsSecondaryCrk():
     """
     Test Class for KMSSettingsSecondaryCrk
     """
@@ -9319,7 +11195,7 @@ class TestKMSSettingsSecondaryCrk():
         kms_settings_secondary_crk_model_json2 = kms_settings_secondary_crk_model.to_dict()
         assert kms_settings_secondary_crk_model_json2 == kms_settings_secondary_crk_model_json
 
-class TestLogStoreResponse():
+class TestModel_LogStoreResponse():
     """
     Test Class for LogStoreResponse
     """
@@ -9351,7 +11227,7 @@ class TestLogStoreResponse():
         log_store_response_model_json2 = log_store_response_model.to_dict()
         assert log_store_response_model_json2 == log_store_response_model_json
 
-class TestLogStoreResponseList():
+class TestModel_LogStoreResponseList():
     """
     Test Class for LogStoreResponseList
     """
@@ -9388,7 +11264,7 @@ class TestLogStoreResponseList():
         log_store_response_list_model_json2 = log_store_response_list_model.to_dict()
         assert log_store_response_list_model_json2 == log_store_response_list_model_json
 
-class TestLogSummary():
+class TestModel_LogSummary():
     """
     Test Class for LogSummary
     """
@@ -9426,39 +11302,39 @@ class TestLogSummary():
         log_summary_model_json2 = log_summary_model.to_dict()
         assert log_summary_model_json2 == log_summary_model_json
 
-class TestOutputValuesItem():
+class TestModel_OutputValuesInner():
     """
-    Test Class for OutputValuesItem
+    Test Class for OutputValuesInner
     """
 
-    def test_output_values_item_serialization(self):
+    def test_output_values_inner_serialization(self):
         """
-        Test serialization/deserialization for OutputValuesItem
+        Test serialization/deserialization for OutputValuesInner
         """
 
-        # Construct a json representation of a OutputValuesItem model
-        output_values_item_model_json = {}
-        output_values_item_model_json['folder'] = 'testString'
-        output_values_item_model_json['id'] = 'testString'
-        output_values_item_model_json['output_values'] = [{ 'foo': 'bar' }]
-        output_values_item_model_json['value_type'] = 'testString'
+        # Construct a json representation of a OutputValuesInner model
+        output_values_inner_model_json = {}
+        output_values_inner_model_json['folder'] = 'testString'
+        output_values_inner_model_json['id'] = 'testString'
+        output_values_inner_model_json['output_values'] = [{ 'foo': 'bar' }]
+        output_values_inner_model_json['value_type'] = 'testString'
 
-        # Construct a model instance of OutputValuesItem by calling from_dict on the json representation
-        output_values_item_model = OutputValuesItem.from_dict(output_values_item_model_json)
-        assert output_values_item_model != False
+        # Construct a model instance of OutputValuesInner by calling from_dict on the json representation
+        output_values_inner_model = OutputValuesInner.from_dict(output_values_inner_model_json)
+        assert output_values_inner_model != False
 
-        # Construct a model instance of OutputValuesItem by calling from_dict on the json representation
-        output_values_item_model_dict = OutputValuesItem.from_dict(output_values_item_model_json).__dict__
-        output_values_item_model2 = OutputValuesItem(**output_values_item_model_dict)
+        # Construct a model instance of OutputValuesInner by calling from_dict on the json representation
+        output_values_inner_model_dict = OutputValuesInner.from_dict(output_values_inner_model_json).__dict__
+        output_values_inner_model2 = OutputValuesInner(**output_values_inner_model_dict)
 
         # Verify the model instances are equivalent
-        assert output_values_item_model == output_values_item_model2
+        assert output_values_inner_model == output_values_inner_model2
 
         # Convert model instance back to dict and verify no loss of data
-        output_values_item_model_json2 = output_values_item_model.to_dict()
-        assert output_values_item_model_json2 == output_values_item_model_json
+        output_values_inner_model_json2 = output_values_inner_model.to_dict()
+        assert output_values_inner_model_json2 == output_values_inner_model_json
 
-class TestResourceGroupResponse():
+class TestModel_ResourceGroupResponse():
     """
     Test Class for ResourceGroupResponse
     """
@@ -9492,7 +11368,7 @@ class TestResourceGroupResponse():
         resource_group_response_model_json2 = resource_group_response_model.to_dict()
         assert resource_group_response_model_json2 == resource_group_response_model_json
 
-class TestResourceQuery():
+class TestModel_ResourceQuery():
     """
     Test Class for ResourceQuery
     """
@@ -9530,7 +11406,7 @@ class TestResourceQuery():
         resource_query_model_json2 = resource_query_model.to_dict()
         assert resource_query_model_json2 == resource_query_model_json
 
-class TestResourceQueryParam():
+class TestModel_ResourceQueryParam():
     """
     Test Class for ResourceQueryParam
     """
@@ -9561,7 +11437,7 @@ class TestResourceQueryParam():
         resource_query_param_model_json2 = resource_query_param_model.to_dict()
         assert resource_query_param_model_json2 == resource_query_param_model_json
 
-class TestResourceQueryRecord():
+class TestModel_ResourceQueryRecord():
     """
     Test Class for ResourceQueryRecord
     """
@@ -9588,9 +11464,9 @@ class TestResourceQueryRecord():
         resource_query_record_model_json['type'] = 'vsi'
         resource_query_record_model_json['name'] = 'testString'
         resource_query_record_model_json['id'] = 'testString'
-        resource_query_record_model_json['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        resource_query_record_model_json['created_at'] = "2019-01-01T12:00:00Z"
         resource_query_record_model_json['created_by'] = 'testString'
-        resource_query_record_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        resource_query_record_model_json['updated_at'] = "2019-01-01T12:00:00Z"
         resource_query_record_model_json['updated_by'] = 'testString'
         resource_query_record_model_json['queries'] = [resource_query_model]
 
@@ -9609,7 +11485,7 @@ class TestResourceQueryRecord():
         resource_query_record_model_json2 = resource_query_record_model.to_dict()
         assert resource_query_record_model_json2 == resource_query_record_model_json
 
-class TestResourceQueryRecordList():
+class TestModel_ResourceQueryRecordList():
     """
     Test Class for ResourceQueryRecordList
     """
@@ -9635,9 +11511,9 @@ class TestResourceQueryRecordList():
         resource_query_record_model['type'] = 'vsi'
         resource_query_record_model['name'] = 'testString'
         resource_query_record_model['id'] = 'testString'
-        resource_query_record_model['created_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        resource_query_record_model['created_at'] = "2019-01-01T12:00:00Z"
         resource_query_record_model['created_by'] = 'testString'
-        resource_query_record_model['updated_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        resource_query_record_model['updated_at'] = "2019-01-01T12:00:00Z"
         resource_query_record_model['updated_by'] = 'testString'
         resource_query_record_model['queries'] = [resource_query_model]
 
@@ -9646,7 +11522,7 @@ class TestResourceQueryRecordList():
         resource_query_record_list_model_json['total_count'] = 26
         resource_query_record_list_model_json['limit'] = 26
         resource_query_record_list_model_json['offset'] = 26
-        resource_query_record_list_model_json['ResourceQueries'] = [resource_query_record_model]
+        resource_query_record_list_model_json['resource_queries'] = [resource_query_record_model]
 
         # Construct a model instance of ResourceQueryRecordList by calling from_dict on the json representation
         resource_query_record_list_model = ResourceQueryRecordList.from_dict(resource_query_record_list_model_json)
@@ -9663,7 +11539,7 @@ class TestResourceQueryRecordList():
         resource_query_record_list_model_json2 = resource_query_record_list_model.to_dict()
         assert resource_query_record_list_model_json2 == resource_query_record_list_model_json
 
-class TestResourceQueryResponseRecord():
+class TestModel_ResourceQueryResponseRecord():
     """
     Test Class for ResourceQueryResponseRecord
     """
@@ -9680,19 +11556,19 @@ class TestResourceQueryResponseRecord():
         resource_query_param_model['value'] = 'testString'
         resource_query_param_model['description'] = 'testString'
 
-        resource_query_response_record_response_item_query_output_item_model = {} # ResourceQueryResponseRecordResponseItemQueryOutputItem
-        resource_query_response_record_response_item_query_output_item_model['name'] = 'testString'
-        resource_query_response_record_response_item_query_output_item_model['value'] = 'testString'
+        resource_query_response_record_query_output_model = {} # ResourceQueryResponseRecordQueryOutput
+        resource_query_response_record_query_output_model['name'] = 'testString'
+        resource_query_response_record_query_output_model['value'] = 'testString'
 
-        resource_query_response_record_response_item_model = {} # ResourceQueryResponseRecordResponseItem
-        resource_query_response_record_response_item_model['query_type'] = 'workspaces'
-        resource_query_response_record_response_item_model['query_condition'] = [resource_query_param_model]
-        resource_query_response_record_response_item_model['query_select'] = ['testString']
-        resource_query_response_record_response_item_model['query_output'] = [resource_query_response_record_response_item_query_output_item_model]
+        resource_query_response_record_response_model = {} # ResourceQueryResponseRecordResponse
+        resource_query_response_record_response_model['query_type'] = 'workspaces'
+        resource_query_response_record_response_model['query_condition'] = [resource_query_param_model]
+        resource_query_response_record_response_model['query_select'] = ['testString']
+        resource_query_response_record_response_model['query_output'] = [resource_query_response_record_query_output_model]
 
         # Construct a json representation of a ResourceQueryResponseRecord model
         resource_query_response_record_model_json = {}
-        resource_query_response_record_model_json['response'] = [resource_query_response_record_response_item_model]
+        resource_query_response_record_model_json['response'] = [resource_query_response_record_response_model]
 
         # Construct a model instance of ResourceQueryResponseRecord by calling from_dict on the json representation
         resource_query_response_record_model = ResourceQueryResponseRecord.from_dict(resource_query_response_record_model_json)
@@ -9709,14 +11585,44 @@ class TestResourceQueryResponseRecord():
         resource_query_response_record_model_json2 = resource_query_response_record_model.to_dict()
         assert resource_query_response_record_model_json2 == resource_query_response_record_model_json
 
-class TestResourceQueryResponseRecordResponseItem():
+class TestModel_ResourceQueryResponseRecordQueryOutput():
     """
-    Test Class for ResourceQueryResponseRecordResponseItem
+    Test Class for ResourceQueryResponseRecordQueryOutput
     """
 
-    def test_resource_query_response_record_response_item_serialization(self):
+    def test_resource_query_response_record_query_output_serialization(self):
         """
-        Test serialization/deserialization for ResourceQueryResponseRecordResponseItem
+        Test serialization/deserialization for ResourceQueryResponseRecordQueryOutput
+        """
+
+        # Construct a json representation of a ResourceQueryResponseRecordQueryOutput model
+        resource_query_response_record_query_output_model_json = {}
+        resource_query_response_record_query_output_model_json['name'] = 'testString'
+        resource_query_response_record_query_output_model_json['value'] = 'testString'
+
+        # Construct a model instance of ResourceQueryResponseRecordQueryOutput by calling from_dict on the json representation
+        resource_query_response_record_query_output_model = ResourceQueryResponseRecordQueryOutput.from_dict(resource_query_response_record_query_output_model_json)
+        assert resource_query_response_record_query_output_model != False
+
+        # Construct a model instance of ResourceQueryResponseRecordQueryOutput by calling from_dict on the json representation
+        resource_query_response_record_query_output_model_dict = ResourceQueryResponseRecordQueryOutput.from_dict(resource_query_response_record_query_output_model_json).__dict__
+        resource_query_response_record_query_output_model2 = ResourceQueryResponseRecordQueryOutput(**resource_query_response_record_query_output_model_dict)
+
+        # Verify the model instances are equivalent
+        assert resource_query_response_record_query_output_model == resource_query_response_record_query_output_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        resource_query_response_record_query_output_model_json2 = resource_query_response_record_query_output_model.to_dict()
+        assert resource_query_response_record_query_output_model_json2 == resource_query_response_record_query_output_model_json
+
+class TestModel_ResourceQueryResponseRecordResponse():
+    """
+    Test Class for ResourceQueryResponseRecordResponse
+    """
+
+    def test_resource_query_response_record_response_serialization(self):
+        """
+        Test serialization/deserialization for ResourceQueryResponseRecordResponse
         """
 
         # Construct dict forms of any model objects needed in order to build this model.
@@ -9726,63 +11632,33 @@ class TestResourceQueryResponseRecordResponseItem():
         resource_query_param_model['value'] = 'testString'
         resource_query_param_model['description'] = 'testString'
 
-        resource_query_response_record_response_item_query_output_item_model = {} # ResourceQueryResponseRecordResponseItemQueryOutputItem
-        resource_query_response_record_response_item_query_output_item_model['name'] = 'testString'
-        resource_query_response_record_response_item_query_output_item_model['value'] = 'testString'
+        resource_query_response_record_query_output_model = {} # ResourceQueryResponseRecordQueryOutput
+        resource_query_response_record_query_output_model['name'] = 'testString'
+        resource_query_response_record_query_output_model['value'] = 'testString'
 
-        # Construct a json representation of a ResourceQueryResponseRecordResponseItem model
-        resource_query_response_record_response_item_model_json = {}
-        resource_query_response_record_response_item_model_json['query_type'] = 'workspaces'
-        resource_query_response_record_response_item_model_json['query_condition'] = [resource_query_param_model]
-        resource_query_response_record_response_item_model_json['query_select'] = ['testString']
-        resource_query_response_record_response_item_model_json['query_output'] = [resource_query_response_record_response_item_query_output_item_model]
+        # Construct a json representation of a ResourceQueryResponseRecordResponse model
+        resource_query_response_record_response_model_json = {}
+        resource_query_response_record_response_model_json['query_type'] = 'workspaces'
+        resource_query_response_record_response_model_json['query_condition'] = [resource_query_param_model]
+        resource_query_response_record_response_model_json['query_select'] = ['testString']
+        resource_query_response_record_response_model_json['query_output'] = [resource_query_response_record_query_output_model]
 
-        # Construct a model instance of ResourceQueryResponseRecordResponseItem by calling from_dict on the json representation
-        resource_query_response_record_response_item_model = ResourceQueryResponseRecordResponseItem.from_dict(resource_query_response_record_response_item_model_json)
-        assert resource_query_response_record_response_item_model != False
+        # Construct a model instance of ResourceQueryResponseRecordResponse by calling from_dict on the json representation
+        resource_query_response_record_response_model = ResourceQueryResponseRecordResponse.from_dict(resource_query_response_record_response_model_json)
+        assert resource_query_response_record_response_model != False
 
-        # Construct a model instance of ResourceQueryResponseRecordResponseItem by calling from_dict on the json representation
-        resource_query_response_record_response_item_model_dict = ResourceQueryResponseRecordResponseItem.from_dict(resource_query_response_record_response_item_model_json).__dict__
-        resource_query_response_record_response_item_model2 = ResourceQueryResponseRecordResponseItem(**resource_query_response_record_response_item_model_dict)
-
-        # Verify the model instances are equivalent
-        assert resource_query_response_record_response_item_model == resource_query_response_record_response_item_model2
-
-        # Convert model instance back to dict and verify no loss of data
-        resource_query_response_record_response_item_model_json2 = resource_query_response_record_response_item_model.to_dict()
-        assert resource_query_response_record_response_item_model_json2 == resource_query_response_record_response_item_model_json
-
-class TestResourceQueryResponseRecordResponseItemQueryOutputItem():
-    """
-    Test Class for ResourceQueryResponseRecordResponseItemQueryOutputItem
-    """
-
-    def test_resource_query_response_record_response_item_query_output_item_serialization(self):
-        """
-        Test serialization/deserialization for ResourceQueryResponseRecordResponseItemQueryOutputItem
-        """
-
-        # Construct a json representation of a ResourceQueryResponseRecordResponseItemQueryOutputItem model
-        resource_query_response_record_response_item_query_output_item_model_json = {}
-        resource_query_response_record_response_item_query_output_item_model_json['name'] = 'testString'
-        resource_query_response_record_response_item_query_output_item_model_json['value'] = 'testString'
-
-        # Construct a model instance of ResourceQueryResponseRecordResponseItemQueryOutputItem by calling from_dict on the json representation
-        resource_query_response_record_response_item_query_output_item_model = ResourceQueryResponseRecordResponseItemQueryOutputItem.from_dict(resource_query_response_record_response_item_query_output_item_model_json)
-        assert resource_query_response_record_response_item_query_output_item_model != False
-
-        # Construct a model instance of ResourceQueryResponseRecordResponseItemQueryOutputItem by calling from_dict on the json representation
-        resource_query_response_record_response_item_query_output_item_model_dict = ResourceQueryResponseRecordResponseItemQueryOutputItem.from_dict(resource_query_response_record_response_item_query_output_item_model_json).__dict__
-        resource_query_response_record_response_item_query_output_item_model2 = ResourceQueryResponseRecordResponseItemQueryOutputItem(**resource_query_response_record_response_item_query_output_item_model_dict)
+        # Construct a model instance of ResourceQueryResponseRecordResponse by calling from_dict on the json representation
+        resource_query_response_record_response_model_dict = ResourceQueryResponseRecordResponse.from_dict(resource_query_response_record_response_model_json).__dict__
+        resource_query_response_record_response_model2 = ResourceQueryResponseRecordResponse(**resource_query_response_record_response_model_dict)
 
         # Verify the model instances are equivalent
-        assert resource_query_response_record_response_item_query_output_item_model == resource_query_response_record_response_item_query_output_item_model2
+        assert resource_query_response_record_response_model == resource_query_response_record_response_model2
 
         # Convert model instance back to dict and verify no loss of data
-        resource_query_response_record_response_item_query_output_item_model_json2 = resource_query_response_record_response_item_query_output_item_model.to_dict()
-        assert resource_query_response_record_response_item_query_output_item_model_json2 == resource_query_response_record_response_item_query_output_item_model_json
+        resource_query_response_record_response_model_json2 = resource_query_response_record_response_model.to_dict()
+        assert resource_query_response_record_response_model_json2 == resource_query_response_record_response_model_json
 
-class TestSchematicsLocations():
+class TestModel_SchematicsLocations():
     """
     Test Class for SchematicsLocations
     """
@@ -9794,13 +11670,16 @@ class TestSchematicsLocations():
 
         # Construct a json representation of a SchematicsLocations model
         schematics_locations_model_json = {}
+        schematics_locations_model_json['name'] = 'testString'
+        schematics_locations_model_json['id'] = 'testString'
         schematics_locations_model_json['country'] = 'testString'
         schematics_locations_model_json['geography'] = 'testString'
-        schematics_locations_model_json['id'] = 'testString'
-        schematics_locations_model_json['kind'] = 'testString'
+        schematics_locations_model_json['geography_code'] = 'testString'
         schematics_locations_model_json['metro'] = 'testString'
         schematics_locations_model_json['multizone_metro'] = 'testString'
-        schematics_locations_model_json['name'] = 'testString'
+        schematics_locations_model_json['kind'] = 'testString'
+        schematics_locations_model_json['paired_region'] = ['testString']
+        schematics_locations_model_json['restricted'] = True
 
         # Construct a model instance of SchematicsLocations by calling from_dict on the json representation
         schematics_locations_model = SchematicsLocations.from_dict(schematics_locations_model_json)
@@ -9817,181 +11696,84 @@ class TestSchematicsLocations():
         schematics_locations_model_json2 = schematics_locations_model.to_dict()
         assert schematics_locations_model_json2 == schematics_locations_model_json
 
-class TestSharedDatasetData():
+class TestModel_SchematicsLocationsList():
     """
-    Test Class for SharedDatasetData
+    Test Class for SchematicsLocationsList
     """
 
-    def test_shared_dataset_data_serialization(self):
+    def test_schematics_locations_list_serialization(self):
         """
-        Test serialization/deserialization for SharedDatasetData
-        """
-
-        # Construct a json representation of a SharedDatasetData model
-        shared_dataset_data_model_json = {}
-        shared_dataset_data_model_json['default_value'] = 'testString'
-        shared_dataset_data_model_json['description'] = 'testString'
-        shared_dataset_data_model_json['hidden'] = True
-        shared_dataset_data_model_json['immutable'] = True
-        shared_dataset_data_model_json['matches'] = 'testString'
-        shared_dataset_data_model_json['max_value'] = 'testString'
-        shared_dataset_data_model_json['max_value_len'] = 'testString'
-        shared_dataset_data_model_json['min_value'] = 'testString'
-        shared_dataset_data_model_json['min_value_len'] = 'testString'
-        shared_dataset_data_model_json['options'] = ['testString']
-        shared_dataset_data_model_json['override_value'] = 'testString'
-        shared_dataset_data_model_json['secure'] = True
-        shared_dataset_data_model_json['var_aliases'] = ['testString']
-        shared_dataset_data_model_json['var_name'] = 'testString'
-        shared_dataset_data_model_json['var_ref'] = 'testString'
-        shared_dataset_data_model_json['var_type'] = 'testString'
-
-        # Construct a model instance of SharedDatasetData by calling from_dict on the json representation
-        shared_dataset_data_model = SharedDatasetData.from_dict(shared_dataset_data_model_json)
-        assert shared_dataset_data_model != False
-
-        # Construct a model instance of SharedDatasetData by calling from_dict on the json representation
-        shared_dataset_data_model_dict = SharedDatasetData.from_dict(shared_dataset_data_model_json).__dict__
-        shared_dataset_data_model2 = SharedDatasetData(**shared_dataset_data_model_dict)
-
-        # Verify the model instances are equivalent
-        assert shared_dataset_data_model == shared_dataset_data_model2
-
-        # Convert model instance back to dict and verify no loss of data
-        shared_dataset_data_model_json2 = shared_dataset_data_model.to_dict()
-        assert shared_dataset_data_model_json2 == shared_dataset_data_model_json
-
-class TestSharedDatasetResponse():
-    """
-    Test Class for SharedDatasetResponse
-    """
-
-    def test_shared_dataset_response_serialization(self):
-        """
-        Test serialization/deserialization for SharedDatasetResponse
+        Test serialization/deserialization for SchematicsLocationsList
         """
 
         # Construct dict forms of any model objects needed in order to build this model.
 
-        shared_dataset_data_model = {} # SharedDatasetData
-        shared_dataset_data_model['default_value'] = 'testString'
-        shared_dataset_data_model['description'] = 'testString'
-        shared_dataset_data_model['hidden'] = True
-        shared_dataset_data_model['immutable'] = True
-        shared_dataset_data_model['matches'] = 'testString'
-        shared_dataset_data_model['max_value'] = 'testString'
-        shared_dataset_data_model['max_value_len'] = 'testString'
-        shared_dataset_data_model['min_value'] = 'testString'
-        shared_dataset_data_model['min_value_len'] = 'testString'
-        shared_dataset_data_model['options'] = ['testString']
-        shared_dataset_data_model['override_value'] = 'testString'
-        shared_dataset_data_model['secure'] = True
-        shared_dataset_data_model['var_aliases'] = ['testString']
-        shared_dataset_data_model['var_name'] = 'testString'
-        shared_dataset_data_model['var_ref'] = 'testString'
-        shared_dataset_data_model['var_type'] = 'testString'
+        schematics_locations_lite_model = {} # SchematicsLocationsLite
+        schematics_locations_lite_model['region'] = 'testString'
+        schematics_locations_lite_model['metro'] = 'testString'
+        schematics_locations_lite_model['geography_code'] = 'testString'
+        schematics_locations_lite_model['geography'] = 'testString'
+        schematics_locations_lite_model['country'] = 'testString'
+        schematics_locations_lite_model['kind'] = 'testString'
+        schematics_locations_lite_model['paired_region'] = ['testString']
+        schematics_locations_lite_model['restricted'] = True
 
-        # Construct a json representation of a SharedDatasetResponse model
-        shared_dataset_response_model_json = {}
-        shared_dataset_response_model_json['account'] = 'testString'
-        shared_dataset_response_model_json['created_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
-        shared_dataset_response_model_json['created_by'] = 'testString'
-        shared_dataset_response_model_json['description'] = 'testString'
-        shared_dataset_response_model_json['effected_workspace_ids'] = ['testString']
-        shared_dataset_response_model_json['resource_group'] = 'testString'
-        shared_dataset_response_model_json['shared_dataset_data'] = [shared_dataset_data_model]
-        shared_dataset_response_model_json['shared_dataset_id'] = 'testString'
-        shared_dataset_response_model_json['shared_dataset_name'] = 'testString'
-        shared_dataset_response_model_json['shared_dataset_type'] = ['testString']
-        shared_dataset_response_model_json['state'] = 'testString'
-        shared_dataset_response_model_json['tags'] = ['testString']
-        shared_dataset_response_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
-        shared_dataset_response_model_json['updated_by'] = 'testString'
-        shared_dataset_response_model_json['version'] = 'testString'
+        # Construct a json representation of a SchematicsLocationsList model
+        schematics_locations_list_model_json = {}
+        schematics_locations_list_model_json['locations'] = [schematics_locations_lite_model]
 
-        # Construct a model instance of SharedDatasetResponse by calling from_dict on the json representation
-        shared_dataset_response_model = SharedDatasetResponse.from_dict(shared_dataset_response_model_json)
-        assert shared_dataset_response_model != False
+        # Construct a model instance of SchematicsLocationsList by calling from_dict on the json representation
+        schematics_locations_list_model = SchematicsLocationsList.from_dict(schematics_locations_list_model_json)
+        assert schematics_locations_list_model != False
 
-        # Construct a model instance of SharedDatasetResponse by calling from_dict on the json representation
-        shared_dataset_response_model_dict = SharedDatasetResponse.from_dict(shared_dataset_response_model_json).__dict__
-        shared_dataset_response_model2 = SharedDatasetResponse(**shared_dataset_response_model_dict)
+        # Construct a model instance of SchematicsLocationsList by calling from_dict on the json representation
+        schematics_locations_list_model_dict = SchematicsLocationsList.from_dict(schematics_locations_list_model_json).__dict__
+        schematics_locations_list_model2 = SchematicsLocationsList(**schematics_locations_list_model_dict)
 
         # Verify the model instances are equivalent
-        assert shared_dataset_response_model == shared_dataset_response_model2
+        assert schematics_locations_list_model == schematics_locations_list_model2
 
         # Convert model instance back to dict and verify no loss of data
-        shared_dataset_response_model_json2 = shared_dataset_response_model.to_dict()
-        assert shared_dataset_response_model_json2 == shared_dataset_response_model_json
+        schematics_locations_list_model_json2 = schematics_locations_list_model.to_dict()
+        assert schematics_locations_list_model_json2 == schematics_locations_list_model_json
 
-class TestSharedDatasetResponseList():
+class TestModel_SchematicsLocationsLite():
     """
-    Test Class for SharedDatasetResponseList
+    Test Class for SchematicsLocationsLite
     """
 
-    def test_shared_dataset_response_list_serialization(self):
+    def test_schematics_locations_lite_serialization(self):
         """
-        Test serialization/deserialization for SharedDatasetResponseList
+        Test serialization/deserialization for SchematicsLocationsLite
         """
 
-        # Construct dict forms of any model objects needed in order to build this model.
+        # Construct a json representation of a SchematicsLocationsLite model
+        schematics_locations_lite_model_json = {}
+        schematics_locations_lite_model_json['region'] = 'testString'
+        schematics_locations_lite_model_json['metro'] = 'testString'
+        schematics_locations_lite_model_json['geography_code'] = 'testString'
+        schematics_locations_lite_model_json['geography'] = 'testString'
+        schematics_locations_lite_model_json['country'] = 'testString'
+        schematics_locations_lite_model_json['kind'] = 'testString'
+        schematics_locations_lite_model_json['paired_region'] = ['testString']
+        schematics_locations_lite_model_json['restricted'] = True
 
-        shared_dataset_data_model = {} # SharedDatasetData
-        shared_dataset_data_model['default_value'] = 'testString'
-        shared_dataset_data_model['description'] = 'testString'
-        shared_dataset_data_model['hidden'] = True
-        shared_dataset_data_model['immutable'] = True
-        shared_dataset_data_model['matches'] = 'testString'
-        shared_dataset_data_model['max_value'] = 'testString'
-        shared_dataset_data_model['max_value_len'] = 'testString'
-        shared_dataset_data_model['min_value'] = 'testString'
-        shared_dataset_data_model['min_value_len'] = 'testString'
-        shared_dataset_data_model['options'] = ['testString']
-        shared_dataset_data_model['override_value'] = 'testString'
-        shared_dataset_data_model['secure'] = True
-        shared_dataset_data_model['var_aliases'] = ['testString']
-        shared_dataset_data_model['var_name'] = 'testString'
-        shared_dataset_data_model['var_ref'] = 'testString'
-        shared_dataset_data_model['var_type'] = 'testString'
+        # Construct a model instance of SchematicsLocationsLite by calling from_dict on the json representation
+        schematics_locations_lite_model = SchematicsLocationsLite.from_dict(schematics_locations_lite_model_json)
+        assert schematics_locations_lite_model != False
 
-        shared_dataset_response_model = {} # SharedDatasetResponse
-        shared_dataset_response_model['account'] = 'testString'
-        shared_dataset_response_model['created_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
-        shared_dataset_response_model['created_by'] = 'testString'
-        shared_dataset_response_model['description'] = 'testString'
-        shared_dataset_response_model['effected_workspace_ids'] = ['testString']
-        shared_dataset_response_model['resource_group'] = 'testString'
-        shared_dataset_response_model['shared_dataset_data'] = [shared_dataset_data_model]
-        shared_dataset_response_model['shared_dataset_id'] = 'testString'
-        shared_dataset_response_model['shared_dataset_name'] = 'testString'
-        shared_dataset_response_model['shared_dataset_type'] = ['testString']
-        shared_dataset_response_model['state'] = 'testString'
-        shared_dataset_response_model['tags'] = ['testString']
-        shared_dataset_response_model['updated_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
-        shared_dataset_response_model['updated_by'] = 'testString'
-        shared_dataset_response_model['version'] = 'testString'
-
-        # Construct a json representation of a SharedDatasetResponseList model
-        shared_dataset_response_list_model_json = {}
-        shared_dataset_response_list_model_json['count'] = 26
-        shared_dataset_response_list_model_json['shared_datasets'] = [shared_dataset_response_model]
-
-        # Construct a model instance of SharedDatasetResponseList by calling from_dict on the json representation
-        shared_dataset_response_list_model = SharedDatasetResponseList.from_dict(shared_dataset_response_list_model_json)
-        assert shared_dataset_response_list_model != False
-
-        # Construct a model instance of SharedDatasetResponseList by calling from_dict on the json representation
-        shared_dataset_response_list_model_dict = SharedDatasetResponseList.from_dict(shared_dataset_response_list_model_json).__dict__
-        shared_dataset_response_list_model2 = SharedDatasetResponseList(**shared_dataset_response_list_model_dict)
+        # Construct a model instance of SchematicsLocationsLite by calling from_dict on the json representation
+        schematics_locations_lite_model_dict = SchematicsLocationsLite.from_dict(schematics_locations_lite_model_json).__dict__
+        schematics_locations_lite_model2 = SchematicsLocationsLite(**schematics_locations_lite_model_dict)
 
         # Verify the model instances are equivalent
-        assert shared_dataset_response_list_model == shared_dataset_response_list_model2
+        assert schematics_locations_lite_model == schematics_locations_lite_model2
 
         # Convert model instance back to dict and verify no loss of data
-        shared_dataset_response_list_model_json2 = shared_dataset_response_list_model.to_dict()
-        assert shared_dataset_response_list_model_json2 == shared_dataset_response_list_model_json
+        schematics_locations_lite_model_json2 = schematics_locations_lite_model.to_dict()
+        assert schematics_locations_lite_model_json2 == schematics_locations_lite_model_json
 
-class TestSharedTargetData():
+class TestModel_SharedTargetData():
     """
     Test Class for SharedTargetData
     """
@@ -10029,7 +11811,7 @@ class TestSharedTargetData():
         shared_target_data_model_json2 = shared_target_data_model.to_dict()
         assert shared_target_data_model_json2 == shared_target_data_model_json
 
-class TestSharedTargetDataResponse():
+class TestModel_SharedTargetDataResponse():
     """
     Test Class for SharedTargetDataResponse
     """
@@ -10063,7 +11845,7 @@ class TestSharedTargetDataResponse():
         shared_target_data_response_model_json2 = shared_target_data_response_model.to_dict()
         assert shared_target_data_response_model_json2 == shared_target_data_response_model_json
 
-class TestStateStoreResponse():
+class TestModel_StateStoreResponse():
     """
     Test Class for StateStoreResponse
     """
@@ -10095,7 +11877,7 @@ class TestStateStoreResponse():
         state_store_response_model_json2 = state_store_response_model.to_dict()
         assert state_store_response_model_json2 == state_store_response_model_json
 
-class TestStateStoreResponseList():
+class TestModel_StateStoreResponseList():
     """
     Test Class for StateStoreResponseList
     """
@@ -10132,7 +11914,7 @@ class TestStateStoreResponseList():
         state_store_response_list_model_json2 = state_store_response_list_model.to_dict()
         assert state_store_response_list_model_json2 == state_store_response_list_model_json
 
-class TestSystemLock():
+class TestModel_SystemLock():
     """
     Test Class for SystemLock
     """
@@ -10146,7 +11928,7 @@ class TestSystemLock():
         system_lock_model_json = {}
         system_lock_model_json['sys_locked'] = True
         system_lock_model_json['sys_locked_by'] = 'testString'
-        system_lock_model_json['sys_locked_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        system_lock_model_json['sys_locked_at'] = "2019-01-01T12:00:00Z"
 
         # Construct a model instance of SystemLock by calling from_dict on the json representation
         system_lock_model = SystemLock.from_dict(system_lock_model_json)
@@ -10163,7 +11945,63 @@ class TestSystemLock():
         system_lock_model_json2 = system_lock_model.to_dict()
         assert system_lock_model_json2 == system_lock_model_json
 
-class TestTemplateReadme():
+class TestModel_TemplateMetaDataResponse():
+    """
+    Test Class for TemplateMetaDataResponse
+    """
+
+    def test_template_meta_data_response_serialization(self):
+        """
+        Test serialization/deserialization for TemplateMetaDataResponse
+        """
+
+        # Construct dict forms of any model objects needed in order to build this model.
+
+        variable_metadata_model = {} # VariableMetadata
+        variable_metadata_model['type'] = 'boolean'
+        variable_metadata_model['aliases'] = ['testString']
+        variable_metadata_model['description'] = 'testString'
+        variable_metadata_model['default_value'] = 'testString'
+        variable_metadata_model['secure'] = True
+        variable_metadata_model['immutable'] = True
+        variable_metadata_model['hidden'] = True
+        variable_metadata_model['options'] = ['testString']
+        variable_metadata_model['min_value'] = 38
+        variable_metadata_model['max_value'] = 38
+        variable_metadata_model['min_length'] = 38
+        variable_metadata_model['max_length'] = 38
+        variable_metadata_model['matches'] = 'testString'
+        variable_metadata_model['position'] = 38
+        variable_metadata_model['group_by'] = 'testString'
+        variable_metadata_model['source'] = 'testString'
+
+        variable_data_model = {} # VariableData
+        variable_data_model['name'] = 'testString'
+        variable_data_model['value'] = 'testString'
+        variable_data_model['metadata'] = variable_metadata_model
+        variable_data_model['link'] = 'testString'
+
+        # Construct a json representation of a TemplateMetaDataResponse model
+        template_meta_data_response_model_json = {}
+        template_meta_data_response_model_json['type'] = 'testString'
+        template_meta_data_response_model_json['variables'] = [variable_data_model]
+
+        # Construct a model instance of TemplateMetaDataResponse by calling from_dict on the json representation
+        template_meta_data_response_model = TemplateMetaDataResponse.from_dict(template_meta_data_response_model_json)
+        assert template_meta_data_response_model != False
+
+        # Construct a model instance of TemplateMetaDataResponse by calling from_dict on the json representation
+        template_meta_data_response_model_dict = TemplateMetaDataResponse.from_dict(template_meta_data_response_model_json).__dict__
+        template_meta_data_response_model2 = TemplateMetaDataResponse(**template_meta_data_response_model_dict)
+
+        # Verify the model instances are equivalent
+        assert template_meta_data_response_model == template_meta_data_response_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        template_meta_data_response_model_json2 = template_meta_data_response_model.to_dict()
+        assert template_meta_data_response_model_json2 == template_meta_data_response_model_json
+
+class TestModel_TemplateReadme():
     """
     Test Class for TemplateReadme
     """
@@ -10192,7 +12030,7 @@ class TestTemplateReadme():
         template_readme_model_json2 = template_readme_model.to_dict()
         assert template_readme_model_json2 == template_readme_model_json
 
-class TestTemplateRepoRequest():
+class TestModel_TemplateRepoRequest():
     """
     Test Class for TemplateRepoRequest
     """
@@ -10225,7 +12063,7 @@ class TestTemplateRepoRequest():
         template_repo_request_model_json2 = template_repo_request_model.to_dict()
         assert template_repo_request_model_json2 == template_repo_request_model_json
 
-class TestTemplateRepoResponse():
+class TestModel_TemplateRepoResponse():
     """
     Test Class for TemplateRepoResponse
     """
@@ -10260,7 +12098,7 @@ class TestTemplateRepoResponse():
         template_repo_response_model_json2 = template_repo_response_model.to_dict()
         assert template_repo_response_model_json2 == template_repo_response_model_json
 
-class TestTemplateRepoTarUploadResponse():
+class TestModel_TemplateRepoTarUploadResponse():
     """
     Test Class for TemplateRepoTarUploadResponse
     """
@@ -10291,7 +12129,7 @@ class TestTemplateRepoTarUploadResponse():
         template_repo_tar_upload_response_model_json2 = template_repo_tar_upload_response_model.to_dict()
         assert template_repo_tar_upload_response_model_json2 == template_repo_tar_upload_response_model_json
 
-class TestTemplateRepoUpdateRequest():
+class TestModel_TemplateRepoUpdateRequest():
     """
     Test Class for TemplateRepoUpdateRequest
     """
@@ -10324,7 +12162,7 @@ class TestTemplateRepoUpdateRequest():
         template_repo_update_request_model_json2 = template_repo_update_request_model.to_dict()
         assert template_repo_update_request_model_json2 == template_repo_update_request_model_json
 
-class TestTemplateResources():
+class TestModel_TemplateResources():
     """
     Test Class for TemplateResources
     """
@@ -10359,7 +12197,7 @@ class TestTemplateResources():
         template_resources_model_json2 = template_resources_model.to_dict()
         assert template_resources_model_json2 == template_resources_model_json
 
-class TestTemplateRunTimeDataResponse():
+class TestModel_TemplateRunTimeDataResponse():
     """
     Test Class for TemplateRunTimeDataResponse
     """
@@ -10395,7 +12233,7 @@ class TestTemplateRunTimeDataResponse():
         template_run_time_data_response_model_json2 = template_run_time_data_response_model.to_dict()
         assert template_run_time_data_response_model_json2 == template_run_time_data_response_model_json
 
-class TestTemplateSourceDataRequest():
+class TestModel_TemplateSourceDataRequest():
     """
     Test Class for TemplateSourceDataRequest
     """
@@ -10419,6 +12257,7 @@ class TestTemplateSourceDataRequest():
         template_source_data_request_model_json = {}
         template_source_data_request_model_json['env_values'] = [{ 'foo': 'bar' }]
         template_source_data_request_model_json['folder'] = 'testString'
+        template_source_data_request_model_json['compact'] = True
         template_source_data_request_model_json['init_state_file'] = 'testString'
         template_source_data_request_model_json['type'] = 'testString'
         template_source_data_request_model_json['uninstall_script_name'] = 'testString'
@@ -10441,7 +12280,7 @@ class TestTemplateSourceDataRequest():
         template_source_data_request_model_json2 = template_source_data_request_model.to_dict()
         assert template_source_data_request_model_json2 == template_source_data_request_model_json
 
-class TestTemplateSourceDataResponse():
+class TestModel_TemplateSourceDataResponse():
     """
     Test Class for TemplateSourceDataResponse
     """
@@ -10470,6 +12309,7 @@ class TestTemplateSourceDataResponse():
         template_source_data_response_model_json = {}
         template_source_data_response_model_json['env_values'] = [env_variable_response_model]
         template_source_data_response_model_json['folder'] = 'testString'
+        template_source_data_response_model_json['compact'] = True
         template_source_data_response_model_json['has_githubtoken'] = True
         template_source_data_response_model_json['id'] = 'testString'
         template_source_data_response_model_json['type'] = 'testString'
@@ -10494,40 +12334,7 @@ class TestTemplateSourceDataResponse():
         template_source_data_response_model_json2 = template_source_data_response_model.to_dict()
         assert template_source_data_response_model_json2 == template_source_data_response_model_json
 
-class TestTemplateStateStore():
-    """
-    Test Class for TemplateStateStore
-    """
-
-    def test_template_state_store_serialization(self):
-        """
-        Test serialization/deserialization for TemplateStateStore
-        """
-
-        # Construct a json representation of a TemplateStateStore model
-        template_state_store_model_json = {}
-        template_state_store_model_json['version'] = 72.5
-        template_state_store_model_json['terraform_version'] = 'testString'
-        template_state_store_model_json['serial'] = 72.5
-        template_state_store_model_json['lineage'] = 'testString'
-        template_state_store_model_json['modules'] = [{ 'foo': 'bar' }]
-
-        # Construct a model instance of TemplateStateStore by calling from_dict on the json representation
-        template_state_store_model = TemplateStateStore.from_dict(template_state_store_model_json)
-        assert template_state_store_model != False
-
-        # Construct a model instance of TemplateStateStore by calling from_dict on the json representation
-        template_state_store_model_dict = TemplateStateStore.from_dict(template_state_store_model_json).__dict__
-        template_state_store_model2 = TemplateStateStore(**template_state_store_model_dict)
-
-        # Verify the model instances are equivalent
-        assert template_state_store_model == template_state_store_model2
-
-        # Convert model instance back to dict and verify no loss of data
-        template_state_store_model_json2 = template_state_store_model.to_dict()
-        assert template_state_store_model_json2 == template_state_store_model_json
-
-class TestTemplateValues():
+class TestModel_TemplateValues():
     """
     Test Class for TemplateValues
     """
@@ -10556,7 +12363,7 @@ class TestTemplateValues():
         template_values_model_json2 = template_values_model.to_dict()
         assert template_values_model_json2 == template_values_model_json
 
-class TestTerraformCommand():
+class TestModel_TerraformCommand():
     """
     Test Class for TerraformCommand
     """
@@ -10572,8 +12379,8 @@ class TestTerraformCommand():
         terraform_command_model_json['command_params'] = 'testString'
         terraform_command_model_json['command_name'] = 'testString'
         terraform_command_model_json['command_desc'] = 'testString'
-        terraform_command_model_json['command_onError'] = 'testString'
-        terraform_command_model_json['command_dependsOn'] = 'testString'
+        terraform_command_model_json['command_on_error'] = 'testString'
+        terraform_command_model_json['command_depends_on'] = 'testString'
         terraform_command_model_json['command_status'] = 'testString'
 
         # Construct a model instance of TerraformCommand by calling from_dict on the json representation
@@ -10591,7 +12398,7 @@ class TestTerraformCommand():
         terraform_command_model_json2 = terraform_command_model.to_dict()
         assert terraform_command_model_json2 == terraform_command_model_json
 
-class TestUserState():
+class TestModel_UserState():
     """
     Test Class for UserState
     """
@@ -10605,7 +12412,7 @@ class TestUserState():
         user_state_model_json = {}
         user_state_model_json['state'] = 'draft'
         user_state_model_json['set_by'] = 'testString'
-        user_state_model_json['set_at'] = datetime_to_string(string_to_datetime("2019-11-06T16:19:32.000Z"))
+        user_state_model_json['set_at'] = "2019-01-01T12:00:00Z"
 
         # Construct a model instance of UserState by calling from_dict on the json representation
         user_state_model = UserState.from_dict(user_state_model_json)
@@ -10622,7 +12429,7 @@ class TestUserState():
         user_state_model_json2 = user_state_model.to_dict()
         assert user_state_model_json2 == user_state_model_json
 
-class TestUserValues():
+class TestModel_UserValues():
     """
     Test Class for UserValues
     """
@@ -10662,7 +12469,7 @@ class TestUserValues():
         user_values_model_json2 = user_values_model.to_dict()
         assert user_values_model_json2 == user_values_model_json
 
-class TestVariableData():
+class TestModel_VariableData():
     """
     Test Class for VariableData
     """
@@ -10714,7 +12521,7 @@ class TestVariableData():
         variable_data_model_json2 = variable_data_model.to_dict()
         assert variable_data_model_json2 == variable_data_model_json
 
-class TestVariableMetadata():
+class TestModel_VariableMetadata():
     """
     Test Class for VariableMetadata
     """
@@ -10758,7 +12565,7 @@ class TestVariableMetadata():
         variable_metadata_model_json2 = variable_metadata_model.to_dict()
         assert variable_metadata_model_json2 == variable_metadata_model_json
 
-class TestVersionResponse():
+class TestModel_VersionResponse():
     """
     Test Class for VersionResponse
     """
@@ -10794,7 +12601,7 @@ class TestVersionResponse():
         version_response_model_json2 = version_response_model.to_dict()
         assert version_response_model_json2 == version_response_model_json
 
-class TestWorkspaceActivities():
+class TestModel_WorkspaceActivities():
     """
     Test Class for WorkspaceActivities
     """
@@ -10819,11 +12626,11 @@ class TestWorkspaceActivities():
         log_summary_model['time_taken'] = 72.5
 
         workspace_activity_template_model = {} # WorkspaceActivityTemplate
-        workspace_activity_template_model['end_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_activity_template_model['end_time'] = "2019-01-01T12:00:00Z"
         workspace_activity_template_model['log_summary'] = log_summary_model
         workspace_activity_template_model['log_url'] = 'testString'
         workspace_activity_template_model['message'] = 'testString'
-        workspace_activity_template_model['start_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_activity_template_model['start_time'] = "2019-01-01T12:00:00Z"
         workspace_activity_template_model['status'] = 'testString'
         workspace_activity_template_model['template_id'] = 'testString'
         workspace_activity_template_model['template_type'] = 'testString'
@@ -10832,7 +12639,7 @@ class TestWorkspaceActivities():
         workspace_activity_model['action_id'] = 'testString'
         workspace_activity_model['message'] = ['testString']
         workspace_activity_model['name'] = 'testString'
-        workspace_activity_model['performed_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_activity_model['performed_at'] = "2019-01-01T12:00:00Z"
         workspace_activity_model['performed_by'] = 'testString'
         workspace_activity_model['status'] = 'testString'
         workspace_activity_model['templates'] = [workspace_activity_template_model]
@@ -10858,7 +12665,7 @@ class TestWorkspaceActivities():
         workspace_activities_model_json2 = workspace_activities_model.to_dict()
         assert workspace_activities_model_json2 == workspace_activities_model_json
 
-class TestWorkspaceActivity():
+class TestModel_WorkspaceActivity():
     """
     Test Class for WorkspaceActivity
     """
@@ -10883,11 +12690,11 @@ class TestWorkspaceActivity():
         log_summary_model['time_taken'] = 72.5
 
         workspace_activity_template_model = {} # WorkspaceActivityTemplate
-        workspace_activity_template_model['end_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_activity_template_model['end_time'] = "2019-01-01T12:00:00Z"
         workspace_activity_template_model['log_summary'] = log_summary_model
         workspace_activity_template_model['log_url'] = 'testString'
         workspace_activity_template_model['message'] = 'testString'
-        workspace_activity_template_model['start_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_activity_template_model['start_time'] = "2019-01-01T12:00:00Z"
         workspace_activity_template_model['status'] = 'testString'
         workspace_activity_template_model['template_id'] = 'testString'
         workspace_activity_template_model['template_type'] = 'testString'
@@ -10897,7 +12704,7 @@ class TestWorkspaceActivity():
         workspace_activity_model_json['action_id'] = 'testString'
         workspace_activity_model_json['message'] = ['testString']
         workspace_activity_model_json['name'] = 'testString'
-        workspace_activity_model_json['performed_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_activity_model_json['performed_at'] = "2019-01-01T12:00:00Z"
         workspace_activity_model_json['performed_by'] = 'testString'
         workspace_activity_model_json['status'] = 'testString'
         workspace_activity_model_json['templates'] = [workspace_activity_template_model]
@@ -10917,7 +12724,7 @@ class TestWorkspaceActivity():
         workspace_activity_model_json2 = workspace_activity_model.to_dict()
         assert workspace_activity_model_json2 == workspace_activity_model_json
 
-class TestWorkspaceActivityApplyResult():
+class TestModel_WorkspaceActivityApplyResult():
     """
     Test Class for WorkspaceActivityApplyResult
     """
@@ -10946,7 +12753,7 @@ class TestWorkspaceActivityApplyResult():
         workspace_activity_apply_result_model_json2 = workspace_activity_apply_result_model.to_dict()
         assert workspace_activity_apply_result_model_json2 == workspace_activity_apply_result_model_json
 
-class TestWorkspaceActivityCommandResult():
+class TestModel_WorkspaceActivityCommandResult():
     """
     Test Class for WorkspaceActivityCommandResult
     """
@@ -10975,7 +12782,7 @@ class TestWorkspaceActivityCommandResult():
         workspace_activity_command_result_model_json2 = workspace_activity_command_result_model.to_dict()
         assert workspace_activity_command_result_model_json2 == workspace_activity_command_result_model_json
 
-class TestWorkspaceActivityDestroyResult():
+class TestModel_WorkspaceActivityDestroyResult():
     """
     Test Class for WorkspaceActivityDestroyResult
     """
@@ -11004,7 +12811,7 @@ class TestWorkspaceActivityDestroyResult():
         workspace_activity_destroy_result_model_json2 = workspace_activity_destroy_result_model.to_dict()
         assert workspace_activity_destroy_result_model_json2 == workspace_activity_destroy_result_model_json
 
-class TestWorkspaceActivityLogs():
+class TestModel_WorkspaceActivityLogs():
     """
     Test Class for WorkspaceActivityLogs
     """
@@ -11042,7 +12849,7 @@ class TestWorkspaceActivityLogs():
         workspace_activity_logs_model_json2 = workspace_activity_logs_model.to_dict()
         assert workspace_activity_logs_model_json2 == workspace_activity_logs_model_json
 
-class TestWorkspaceActivityOptionsTemplate():
+class TestModel_WorkspaceActivityOptionsTemplate():
     """
     Test Class for WorkspaceActivityOptionsTemplate
     """
@@ -11072,7 +12879,7 @@ class TestWorkspaceActivityOptionsTemplate():
         workspace_activity_options_template_model_json2 = workspace_activity_options_template_model.to_dict()
         assert workspace_activity_options_template_model_json2 == workspace_activity_options_template_model_json
 
-class TestWorkspaceActivityPlanResult():
+class TestModel_WorkspaceActivityPlanResult():
     """
     Test Class for WorkspaceActivityPlanResult
     """
@@ -11101,7 +12908,7 @@ class TestWorkspaceActivityPlanResult():
         workspace_activity_plan_result_model_json2 = workspace_activity_plan_result_model.to_dict()
         assert workspace_activity_plan_result_model_json2 == workspace_activity_plan_result_model_json
 
-class TestWorkspaceActivityRefreshResult():
+class TestModel_WorkspaceActivityRefreshResult():
     """
     Test Class for WorkspaceActivityRefreshResult
     """
@@ -11130,7 +12937,7 @@ class TestWorkspaceActivityRefreshResult():
         workspace_activity_refresh_result_model_json2 = workspace_activity_refresh_result_model.to_dict()
         assert workspace_activity_refresh_result_model_json2 == workspace_activity_refresh_result_model_json
 
-class TestWorkspaceActivityTemplate():
+class TestModel_WorkspaceActivityTemplate():
     """
     Test Class for WorkspaceActivityTemplate
     """
@@ -11156,11 +12963,11 @@ class TestWorkspaceActivityTemplate():
 
         # Construct a json representation of a WorkspaceActivityTemplate model
         workspace_activity_template_model_json = {}
-        workspace_activity_template_model_json['end_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_activity_template_model_json['end_time'] = "2019-01-01T12:00:00Z"
         workspace_activity_template_model_json['log_summary'] = log_summary_model
         workspace_activity_template_model_json['log_url'] = 'testString'
         workspace_activity_template_model_json['message'] = 'testString'
-        workspace_activity_template_model_json['start_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_activity_template_model_json['start_time'] = "2019-01-01T12:00:00Z"
         workspace_activity_template_model_json['status'] = 'testString'
         workspace_activity_template_model_json['template_id'] = 'testString'
         workspace_activity_template_model_json['template_type'] = 'testString'
@@ -11180,7 +12987,7 @@ class TestWorkspaceActivityTemplate():
         workspace_activity_template_model_json2 = workspace_activity_template_model.to_dict()
         assert workspace_activity_template_model_json2 == workspace_activity_template_model_json
 
-class TestWorkspaceActivityTemplateLogs():
+class TestModel_WorkspaceActivityTemplateLogs():
     """
     Test Class for WorkspaceActivityTemplateLogs
     """
@@ -11211,7 +13018,7 @@ class TestWorkspaceActivityTemplateLogs():
         workspace_activity_template_logs_model_json2 = workspace_activity_template_logs_model.to_dict()
         assert workspace_activity_template_logs_model_json2 == workspace_activity_template_logs_model_json
 
-class TestWorkspaceBulkDeleteResponse():
+class TestModel_WorkspaceBulkDeleteResponse():
     """
     Test Class for WorkspaceBulkDeleteResponse
     """
@@ -11241,7 +13048,7 @@ class TestWorkspaceBulkDeleteResponse():
         workspace_bulk_delete_response_model_json2 = workspace_bulk_delete_response_model.to_dict()
         assert workspace_bulk_delete_response_model_json2 == workspace_bulk_delete_response_model_json
 
-class TestWorkspaceJobResponse():
+class TestModel_WorkspaceJobResponse():
     """
     Test Class for WorkspaceJobResponse
     """
@@ -11253,15 +13060,15 @@ class TestWorkspaceJobResponse():
 
         # Construct dict forms of any model objects needed in order to build this model.
 
-        job_status_type_model = {} # JobStatusType
-        job_status_type_model['failed'] = ['testString']
-        job_status_type_model['in_progress'] = ['testString']
-        job_status_type_model['success'] = ['testString']
-        job_status_type_model['last_updated_on'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_job_status_type_model = {} # WorkspaceJobStatusType
+        workspace_job_status_type_model['failed'] = ['testString']
+        workspace_job_status_type_model['in_progress'] = ['testString']
+        workspace_job_status_type_model['success'] = ['testString']
+        workspace_job_status_type_model['last_updated_on'] = "2019-01-01T12:00:00Z"
 
         # Construct a json representation of a WorkspaceJobResponse model
         workspace_job_response_model_json = {}
-        workspace_job_response_model_json['job_status'] = job_status_type_model
+        workspace_job_response_model_json['job_status'] = workspace_job_status_type_model
 
         # Construct a model instance of WorkspaceJobResponse by calling from_dict on the json representation
         workspace_job_response_model = WorkspaceJobResponse.from_dict(workspace_job_response_model_json)
@@ -11278,7 +13085,39 @@ class TestWorkspaceJobResponse():
         workspace_job_response_model_json2 = workspace_job_response_model.to_dict()
         assert workspace_job_response_model_json2 == workspace_job_response_model_json
 
-class TestWorkspaceResponse():
+class TestModel_WorkspaceJobStatusType():
+    """
+    Test Class for WorkspaceJobStatusType
+    """
+
+    def test_workspace_job_status_type_serialization(self):
+        """
+        Test serialization/deserialization for WorkspaceJobStatusType
+        """
+
+        # Construct a json representation of a WorkspaceJobStatusType model
+        workspace_job_status_type_model_json = {}
+        workspace_job_status_type_model_json['failed'] = ['testString']
+        workspace_job_status_type_model_json['in_progress'] = ['testString']
+        workspace_job_status_type_model_json['success'] = ['testString']
+        workspace_job_status_type_model_json['last_updated_on'] = "2019-01-01T12:00:00Z"
+
+        # Construct a model instance of WorkspaceJobStatusType by calling from_dict on the json representation
+        workspace_job_status_type_model = WorkspaceJobStatusType.from_dict(workspace_job_status_type_model_json)
+        assert workspace_job_status_type_model != False
+
+        # Construct a model instance of WorkspaceJobStatusType by calling from_dict on the json representation
+        workspace_job_status_type_model_dict = WorkspaceJobStatusType.from_dict(workspace_job_status_type_model_json).__dict__
+        workspace_job_status_type_model2 = WorkspaceJobStatusType(**workspace_job_status_type_model_dict)
+
+        # Verify the model instances are equivalent
+        assert workspace_job_status_type_model == workspace_job_status_type_model2
+
+        # Convert model instance back to dict and verify no loss of data
+        workspace_job_status_type_model_json2 = workspace_job_status_type_model.to_dict()
+        assert workspace_job_status_type_model_json2 == workspace_job_status_type_model_json
+
+class TestModel_WorkspaceResponse():
     """
     Test Class for WorkspaceResponse
     """
@@ -11292,6 +13131,7 @@ class TestWorkspaceResponse():
 
         catalog_ref_model = {} # CatalogRef
         catalog_ref_model['dry_run'] = True
+        catalog_ref_model['owning_account'] = 'testString'
         catalog_ref_model['item_icon_url'] = 'testString'
         catalog_ref_model['item_id'] = 'testString'
         catalog_ref_model['item_name'] = 'testString'
@@ -11334,6 +13174,7 @@ class TestWorkspaceResponse():
         template_source_data_response_model = {} # TemplateSourceDataResponse
         template_source_data_response_model['env_values'] = [env_variable_response_model]
         template_source_data_response_model['folder'] = 'testString'
+        template_source_data_response_model['compact'] = True
         template_source_data_response_model['has_githubtoken'] = True
         template_source_data_response_model['id'] = 'testString'
         template_source_data_response_model['type'] = 'testString'
@@ -11354,11 +13195,11 @@ class TestWorkspaceResponse():
 
         workspace_status_response_model = {} # WorkspaceStatusResponse
         workspace_status_response_model['frozen'] = True
-        workspace_status_response_model['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_response_model['frozen_at'] = "2019-01-01T12:00:00Z"
         workspace_status_response_model['frozen_by'] = 'testString'
         workspace_status_response_model['locked'] = True
         workspace_status_response_model['locked_by'] = 'testString'
-        workspace_status_response_model['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_response_model['locked_time'] = "2019-01-01T12:00:00Z"
 
         workspace_status_message_model = {} # WorkspaceStatusMessage
         workspace_status_message_model['status_code'] = 'testString'
@@ -11368,12 +13209,12 @@ class TestWorkspaceResponse():
         workspace_response_model_json = {}
         workspace_response_model_json['applied_shareddata_ids'] = ['testString']
         workspace_response_model_json['catalog_ref'] = catalog_ref_model
-        workspace_response_model_json['created_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_response_model_json['created_at'] = "2019-01-01T12:00:00Z"
         workspace_response_model_json['created_by'] = 'testString'
         workspace_response_model_json['crn'] = 'testString'
         workspace_response_model_json['description'] = 'testString'
         workspace_response_model_json['id'] = 'testString'
-        workspace_response_model_json['last_health_check_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_response_model_json['last_health_check_at'] = "2019-01-01T12:00:00Z"
         workspace_response_model_json['location'] = 'testString'
         workspace_response_model_json['name'] = 'testString'
         workspace_response_model_json['resource_group'] = 'testString'
@@ -11385,7 +13226,7 @@ class TestWorkspaceResponse():
         workspace_response_model_json['template_ref'] = 'testString'
         workspace_response_model_json['template_repo'] = template_repo_response_model
         workspace_response_model_json['type'] = ['testString']
-        workspace_response_model_json['updated_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_response_model_json['updated_at'] = "2019-01-01T12:00:00Z"
         workspace_response_model_json['updated_by'] = 'testString'
         workspace_response_model_json['workspace_status'] = workspace_status_response_model
         workspace_response_model_json['workspace_status_msg'] = workspace_status_message_model
@@ -11405,7 +13246,7 @@ class TestWorkspaceResponse():
         workspace_response_model_json2 = workspace_response_model.to_dict()
         assert workspace_response_model_json2 == workspace_response_model_json
 
-class TestWorkspaceResponseList():
+class TestModel_WorkspaceResponseList():
     """
     Test Class for WorkspaceResponseList
     """
@@ -11419,6 +13260,7 @@ class TestWorkspaceResponseList():
 
         catalog_ref_model = {} # CatalogRef
         catalog_ref_model['dry_run'] = True
+        catalog_ref_model['owning_account'] = 'testString'
         catalog_ref_model['item_icon_url'] = 'testString'
         catalog_ref_model['item_id'] = 'testString'
         catalog_ref_model['item_name'] = 'testString'
@@ -11461,6 +13303,7 @@ class TestWorkspaceResponseList():
         template_source_data_response_model = {} # TemplateSourceDataResponse
         template_source_data_response_model['env_values'] = [env_variable_response_model]
         template_source_data_response_model['folder'] = 'testString'
+        template_source_data_response_model['compact'] = True
         template_source_data_response_model['has_githubtoken'] = True
         template_source_data_response_model['id'] = 'testString'
         template_source_data_response_model['type'] = 'testString'
@@ -11481,11 +13324,11 @@ class TestWorkspaceResponseList():
 
         workspace_status_response_model = {} # WorkspaceStatusResponse
         workspace_status_response_model['frozen'] = True
-        workspace_status_response_model['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_response_model['frozen_at'] = "2019-01-01T12:00:00Z"
         workspace_status_response_model['frozen_by'] = 'testString'
         workspace_status_response_model['locked'] = True
         workspace_status_response_model['locked_by'] = 'testString'
-        workspace_status_response_model['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_response_model['locked_time'] = "2019-01-01T12:00:00Z"
 
         workspace_status_message_model = {} # WorkspaceStatusMessage
         workspace_status_message_model['status_code'] = 'testString'
@@ -11494,12 +13337,12 @@ class TestWorkspaceResponseList():
         workspace_response_model = {} # WorkspaceResponse
         workspace_response_model['applied_shareddata_ids'] = ['testString']
         workspace_response_model['catalog_ref'] = catalog_ref_model
-        workspace_response_model['created_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_response_model['created_at'] = "2019-01-01T12:00:00Z"
         workspace_response_model['created_by'] = 'testString'
         workspace_response_model['crn'] = 'testString'
         workspace_response_model['description'] = 'testString'
         workspace_response_model['id'] = 'testString'
-        workspace_response_model['last_health_check_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_response_model['last_health_check_at'] = "2019-01-01T12:00:00Z"
         workspace_response_model['location'] = 'testString'
         workspace_response_model['name'] = 'testString'
         workspace_response_model['resource_group'] = 'testString'
@@ -11511,7 +13354,7 @@ class TestWorkspaceResponseList():
         workspace_response_model['template_ref'] = 'testString'
         workspace_response_model['template_repo'] = template_repo_response_model
         workspace_response_model['type'] = ['testString']
-        workspace_response_model['updated_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_response_model['updated_at'] = "2019-01-01T12:00:00Z"
         workspace_response_model['updated_by'] = 'testString'
         workspace_response_model['workspace_status'] = workspace_status_response_model
         workspace_response_model['workspace_status_msg'] = workspace_status_message_model
@@ -11538,7 +13381,7 @@ class TestWorkspaceResponseList():
         workspace_response_list_model_json2 = workspace_response_list_model.to_dict()
         assert workspace_response_list_model_json2 == workspace_response_list_model_json
 
-class TestWorkspaceStatusMessage():
+class TestModel_WorkspaceStatusMessage():
     """
     Test Class for WorkspaceStatusMessage
     """
@@ -11568,7 +13411,7 @@ class TestWorkspaceStatusMessage():
         workspace_status_message_model_json2 = workspace_status_message_model.to_dict()
         assert workspace_status_message_model_json2 == workspace_status_message_model_json
 
-class TestWorkspaceStatusRequest():
+class TestModel_WorkspaceStatusRequest():
     """
     Test Class for WorkspaceStatusRequest
     """
@@ -11581,11 +13424,11 @@ class TestWorkspaceStatusRequest():
         # Construct a json representation of a WorkspaceStatusRequest model
         workspace_status_request_model_json = {}
         workspace_status_request_model_json['frozen'] = True
-        workspace_status_request_model_json['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_request_model_json['frozen_at'] = "2019-01-01T12:00:00Z"
         workspace_status_request_model_json['frozen_by'] = 'testString'
         workspace_status_request_model_json['locked'] = True
         workspace_status_request_model_json['locked_by'] = 'testString'
-        workspace_status_request_model_json['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_request_model_json['locked_time'] = "2019-01-01T12:00:00Z"
 
         # Construct a model instance of WorkspaceStatusRequest by calling from_dict on the json representation
         workspace_status_request_model = WorkspaceStatusRequest.from_dict(workspace_status_request_model_json)
@@ -11602,7 +13445,7 @@ class TestWorkspaceStatusRequest():
         workspace_status_request_model_json2 = workspace_status_request_model.to_dict()
         assert workspace_status_request_model_json2 == workspace_status_request_model_json
 
-class TestWorkspaceStatusResponse():
+class TestModel_WorkspaceStatusResponse():
     """
     Test Class for WorkspaceStatusResponse
     """
@@ -11615,11 +13458,11 @@ class TestWorkspaceStatusResponse():
         # Construct a json representation of a WorkspaceStatusResponse model
         workspace_status_response_model_json = {}
         workspace_status_response_model_json['frozen'] = True
-        workspace_status_response_model_json['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_response_model_json['frozen_at'] = "2019-01-01T12:00:00Z"
         workspace_status_response_model_json['frozen_by'] = 'testString'
         workspace_status_response_model_json['locked'] = True
         workspace_status_response_model_json['locked_by'] = 'testString'
-        workspace_status_response_model_json['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_response_model_json['locked_time'] = "2019-01-01T12:00:00Z"
 
         # Construct a model instance of WorkspaceStatusResponse by calling from_dict on the json representation
         workspace_status_response_model = WorkspaceStatusResponse.from_dict(workspace_status_response_model_json)
@@ -11636,7 +13479,7 @@ class TestWorkspaceStatusResponse():
         workspace_status_response_model_json2 = workspace_status_response_model.to_dict()
         assert workspace_status_response_model_json2 == workspace_status_response_model_json
 
-class TestWorkspaceStatusUpdateRequest():
+class TestModel_WorkspaceStatusUpdateRequest():
     """
     Test Class for WorkspaceStatusUpdateRequest
     """
@@ -11649,11 +13492,11 @@ class TestWorkspaceStatusUpdateRequest():
         # Construct a json representation of a WorkspaceStatusUpdateRequest model
         workspace_status_update_request_model_json = {}
         workspace_status_update_request_model_json['frozen'] = True
-        workspace_status_update_request_model_json['frozen_at'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_update_request_model_json['frozen_at'] = "2019-01-01T12:00:00Z"
         workspace_status_update_request_model_json['frozen_by'] = 'testString'
         workspace_status_update_request_model_json['locked'] = True
         workspace_status_update_request_model_json['locked_by'] = 'testString'
-        workspace_status_update_request_model_json['locked_time'] = datetime_to_string(string_to_datetime("2019-01-01T12:00:00.000Z"))
+        workspace_status_update_request_model_json['locked_time'] = "2019-01-01T12:00:00Z"
 
         # Construct a model instance of WorkspaceStatusUpdateRequest by calling from_dict on the json representation
         workspace_status_update_request_model = WorkspaceStatusUpdateRequest.from_dict(workspace_status_update_request_model_json)
@@ -11670,7 +13513,7 @@ class TestWorkspaceStatusUpdateRequest():
         workspace_status_update_request_model_json2 = workspace_status_update_request_model.to_dict()
         assert workspace_status_update_request_model_json2 == workspace_status_update_request_model_json
 
-class TestWorkspaceTemplateValuesResponse():
+class TestModel_WorkspaceTemplateValuesResponse():
     """
     Test Class for WorkspaceTemplateValuesResponse
     """
@@ -11720,6 +13563,7 @@ class TestWorkspaceTemplateValuesResponse():
         template_source_data_response_model = {} # TemplateSourceDataResponse
         template_source_data_response_model['env_values'] = [env_variable_response_model]
         template_source_data_response_model['folder'] = 'testString'
+        template_source_data_response_model['compact'] = True
         template_source_data_response_model['has_githubtoken'] = True
         template_source_data_response_model['id'] = 'testString'
         template_source_data_response_model['type'] = 'testString'
@@ -11750,7 +13594,7 @@ class TestWorkspaceTemplateValuesResponse():
         workspace_template_values_response_model_json2 = workspace_template_values_response_model.to_dict()
         assert workspace_template_values_response_model_json2 == workspace_template_values_response_model_json
 
-class TestWorkspaceVariableRequest():
+class TestModel_WorkspaceVariableRequest():
     """
     Test Class for WorkspaceVariableRequest
     """
@@ -11784,7 +13628,7 @@ class TestWorkspaceVariableRequest():
         workspace_variable_request_model_json2 = workspace_variable_request_model.to_dict()
         assert workspace_variable_request_model_json2 == workspace_variable_request_model_json
 
-class TestWorkspaceVariableResponse():
+class TestModel_WorkspaceVariableResponse():
     """
     Test Class for WorkspaceVariableResponse
     """

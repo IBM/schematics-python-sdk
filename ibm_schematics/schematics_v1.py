@@ -14,16 +14,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# IBM OpenAPI SDK Code Generator Version: 3.30.0-bd714324-20210406-200538
+# IBM OpenAPI SDK Code Generator Version: 3.37.0-a85661cd-20210802-190136
  
 """
-Schematics Service is to provide the capability to manage resources  of (cloud) provider
-infrastructure using file based configurations.  With the Schematics service the customer
-is able to specify the  required set of resources and their configuration in ''config
-files'',  and then pass these config files to the service to fulfill it by  calling the
-necessary actions on the infrastructure.  This principle is also known as Infrastructure
-as Code.  For more information refer to
-https://cloud.ibm.com/docs/schematics?topic=schematics-getting-started'
+IBM Cloud Schematics service is to provide the capability to manage resources  of cloud
+provider infrastructure by using file based configurations.  With the IBM Cloud Schematics
+service you can specify the  required set of resources and the configuration in `config
+files`,  and then pass the config files to the service to fulfill it by  calling the
+necessary actions on the infrastructure.  This principle is known as Infrastructure as
+Code.  For more information, refer to [Getting started with IBM Cloud Schematics]
+(https://cloud.ibm.com/docs/schematics?topic=schematics-getting-started).
 """
 
 from datetime import datetime
@@ -80,7 +80,7 @@ class SchematicsV1(BaseService):
 
 
     #########################
-    # schematics
+    # util
     #########################
 
 
@@ -90,7 +90,7 @@ class SchematicsV1(BaseService):
         """
         List supported schematics locations.
 
-        List supported schematics locations.
+        Retrieve a list of IBM Cloud locations where you can create Schematics workspaces.
 
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
@@ -112,7 +112,39 @@ class SchematicsV1(BaseService):
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
+        return response
+
+
+    def list_locations(self,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        List supported schematics locations.
+
+        Retrieve a list of IBM Cloud locations where you can work with Schematics objects.
+
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `SchematicsLocationsList` object
+        """
+
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='list_locations')
+        headers.update(sdk_headers)
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        url = '/v2/locations'
+        request = self.prepare_request(method='GET',
+                                       url=url,
+                                       headers=headers)
+
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -120,9 +152,9 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        List of resource groups in the Account.
+        List resource groups.
 
-        List of resource groups in the Account.
+        Retrieve a list of IBM Cloud resource groups that your account has access to.
 
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
@@ -144,7 +176,7 @@ class SchematicsV1(BaseService):
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -152,9 +184,15 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get schematics version.
+        Get Schematics API information.
 
-        Get schematics version.
+        Retrieve detailed information about the IBM Cloud Schematics API version and the
+        version of the provider plug-ins that the API uses.
+        <h3>Authorization</h3> Schematics support generic authorization such as service
+        access or platform access to the workspace ID and the resource group. For more
+        information, about Schematics access and permissions, see [Schematics service
+        access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
@@ -176,7 +214,72 @@ class SchematicsV1(BaseService):
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
+        return response
+
+
+    def process_template_meta_data(self,
+        template_type: str,
+        source: 'ExternalSource',
+        *,
+        region: str = None,
+        source_type: str = None,
+        x_github_token: str = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Create metadata by  processing the template.
+
+        Create a Template metadata definition.
+
+        :param str template_type: Template type (terraform, ansible, helm,
+               cloudpak, bash script).
+        :param ExternalSource source: Source of templates, playbooks, or controls.
+        :param str region: (optional) Region to which request should go. Applicable
+               only on global endpoint.
+        :param str source_type: (optional) Type of source for the Template.
+        :param str x_github_token: (optional) The personal access token to
+               authenticate with your private GitHub or GitLab repository and access your
+               Terraform template.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `TemplateMetaDataResponse` object
+        """
+
+        if template_type is None:
+            raise ValueError('template_type must be provided')
+        if source is None:
+            raise ValueError('source must be provided')
+        source = convert_model(source)
+        headers = {
+            'X-Github-token': x_github_token
+        }
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='process_template_meta_data')
+        headers.update(sdk_headers)
+
+        data = {
+            'template_type': template_type,
+            'source': source,
+            'region': region,
+            'source_type': source_type
+        }
+        data = {k: v for (k, v) in data.items() if v is not None}
+        data = json.dumps(data)
+        headers['content-type'] = 'application/json'
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        url = '/v2/template_metadata_processor'
+        request = self.prepare_request(method='POST',
+                                       url=url,
+                                       headers=headers,
+                                       data=data)
+
+        response = self.send(request, **kwargs)
         return response
 
     #########################
@@ -191,13 +294,30 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        List all workspace definitions.
+        List workspaces.
 
-        List all workspace definitions.
+        Retrieve a list of Schematics workspaces from your IBM Cloud account that you have
+        access to. The list of workspaces that is returned depends on the API endpoint
+        that you use. For example, if you use an API endpoint for a geography, such as
+        North America, only workspaces that are created in `us-south` or `us-east` are
+        returned. For more information about supported API endpoints, see [API
+        endpoints](/apidocs/schematics#api-endpoints).
+        <h3>Authorization</h3> Schematics support generic authorization such as service
+        access or platform access to the workspace ID and the resource group. For more
+        information, about Schematics access and permissions, see [Schematics service
+        access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
-        :param int offset: (optional) The number of items to skip before starting
-               to collect the result set.
-        :param int limit: (optional) The numbers of items to return.
+        :param int offset: (optional) The starting position of the item in the list
+               of items. For example, if you have three workspaces in your account, the
+               first workspace is assigned position number 0, the second workspace is
+               assigned position number 1, and so forth. If you have 6 workspaces and you
+               want to list the details for workspaces 2-6, enter 1. To limit the number
+               of workspaces that is returned, use the `limit` option in addition to the
+               `offset` option. Negative numbers are not supported and are ignored.
+        :param int limit: (optional) The maximum number of items that you want to
+               list. The number must be a positive integer between 1 and 2000. If no value
+               is provided, 100 is used by default.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `dict` result representing a `WorkspaceResponseList` object
@@ -224,7 +344,7 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        params=params)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -247,28 +367,86 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Create workspace definition.
+        Create a workspace.
 
-        Create workspace definition.
+        Create an IBM Cloud Schematics workspace that points to the source repository
+        where your Terraform template or the IBM Cloud software template is stored. You
+        can decide to create your workspace without connecting it to a GitHub or GitLab
+        repository. Your workspace is then created with a **Draft** state. To later
+        connect your workspace to a GitHub or GitLab repository, you must use the `PUT
+        /v1/workspaces/{id}` API to update the workspace or use the
+        `/v1/workspaces/{id}/templates/{template_id}/template_repo_upload` API to upload a
+        TAR file instead.
+         **Getting API endpoint**:-
+         * The Schematics API endpoint that you use to create the workspace determines
+        where your Schematics actions run and your data is stored. See [API
+        endpoints](/apidocs/schematics#api-endpoints) for more information.
+         * If you use the API endpoint for a geography and not a specific location, such
+        as North America, you can specify the location in your API request body.
+         * If you do not specify the location in the request body, Schematics determines
+        your workspace location based on availability.
+         * If you use an API endpoint for a specific location, such as Frankfurt, the
+        location that you enter in your API request body must match your API endpoint.
+         * You also have the option to not specify a location in your API request body if
+        you use a location-specific API endpoint.
+         **Getting IAM access token** :-
+         * Before you create Schematics workspace, you need to create the IAM access token
+        for your IBM Cloud Account.
+         * To create IAM access token, use `export IBMCLOUD_API_KEY=<ibmcloud_api_key>`
+        and execute `curl -X POST "https://iam.cloud.ibm.com/identity/token" -H
+        "Content-Type= application/x-www-form-urlencoded" -d
+        "grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IBMCLOUD_API_KEY" -u
+        bx:bx`. For more information, about creating IAM access token and API Docs, see
+        [IAM access token](/apidocs/iam-identity-token-api#gettoken-password) and [Create
+        API key](/apidocs/iam-identity-token-api#create-api-key).
+         * You can set the environment values  `export ACCESS_TOKEN=<access_token>` and
+        `export REFRESH_TOKEN=<refresh_token>`.
+         * You can use the obtained IAM access token in create workspace `curl` command.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or platform
+        access
+         to the workspace ID and the resource group.
+         For more information, about Schematics access and permissions,
+         see [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
         :param List[str] applied_shareddata_ids: (optional) List of applied shared
-               dataset id.
-        :param CatalogRef catalog_ref: (optional) CatalogRef -.
-        :param str description: (optional) Workspace description.
-        :param str location: (optional) Workspace location.
-        :param str name: (optional) Workspace name.
-        :param str resource_group: (optional) Workspace resource group.
-        :param SharedTargetData shared_data: (optional) SharedTargetData -.
-        :param List[str] tags: (optional) Workspace tags.
-        :param List[TemplateSourceDataRequest] template_data: (optional)
-               TemplateData -.
+               dataset ID.
+        :param CatalogRef catalog_ref: (optional) Information about the software
+               template that you chose from the IBM Cloud catalog. This information is
+               returned for IBM Cloud catalog offerings only.
+        :param str description: (optional) The description of the workspace.
+        :param str location: (optional) The location where you want to create your
+               Schematics workspace and run the Schematics jobs. The location that you
+               enter must match the API endpoint that you use. For example, if you use the
+               Frankfurt API endpoint, you must specify `eu-de` as your location. If you
+               use an API endpoint for a geography and you do not specify a location,
+               Schematics determines the location based on availability.
+        :param str name: (optional) The name of your workspace. The name can be up
+               to 128 characters long and can include alphanumeric characters, spaces,
+               dashes, and underscores. When you create a workspace for your own Terraform
+               template, consider including the microservice component that you set up
+               with your Terraform template and the IBM Cloud environment where you want
+               to deploy your resources in your name.
+        :param str resource_group: (optional) The ID of the resource group where
+               you want to provision the workspace.
+        :param SharedTargetData shared_data: (optional) Information about the
+               Target used by the templates originating from the  IBM Cloud catalog
+               offerings. This information is not relevant for workspace created using
+               your own Terraform template.
+        :param List[str] tags: (optional) A list of tags that are associated with
+               the workspace.
+        :param List[TemplateSourceDataRequest] template_data: (optional) Input data
+               for the Template.
         :param str template_ref: (optional) Workspace template ref.
-        :param TemplateRepoRequest template_repo: (optional) TemplateRepoRequest -.
+        :param TemplateRepoRequest template_repo: (optional) Input variables for
+               the Template repoository, while creating a workspace.
         :param List[str] type: (optional) List of Workspace type.
         :param WorkspaceStatusRequest workspace_status: (optional)
                WorkspaceStatusRequest -.
-        :param str x_github_token: (optional) The github token associated with the
-               GIT. Required for cloning of repo.
+        :param str x_github_token: (optional) The personal access token to
+               authenticate with your private GitHub or GitLab repository and access your
+               Terraform template.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `dict` result representing a `WorkspaceResponse` object
@@ -321,7 +499,7 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        data=data)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -330,13 +508,18 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get workspace definition.
+        Get workspace details.
 
-        Get workspace definition.
+        Retrieve detailed information for a workspace in your IBM Cloud account.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or platform
+         access to the workspace ID and the resource group. For more information,
+         about Schematics access and permissions, see [Schematics service access
+         roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
+        :param str w_id: The ID of the workspace.  To find the workspace ID, use
+               the `GET /v1/workspaces` API.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `dict` result representing a `WorkspaceResponse` object
@@ -362,7 +545,7 @@ class SchematicsV1(BaseService):
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -382,27 +565,44 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Replace the workspace definition.
+        Update workspace.
 
-        Replace the workspace definition.
+        Use this API to update or replace the entire workspace, including the Terraform
+        template (`template_repo`) or IBM Cloud catalog software template (`catalog_ref`)
+        that your workspace points to.
+         **Tip**:- If you want to update workspace metadata, use the `PATCH
+        /v1/workspaces/{id}` API.
+         To update workspace variables, use the `PUT
+        /v1/workspaces/{id}/template_data/{template_id}/values` API.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or
+         platform access to the workspace ID and the resource group.
+         For more information, about Schematics access and permissions,
+         see [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param CatalogRef catalog_ref: (optional) CatalogRef -.
-        :param str description: (optional) Workspace description.
-        :param str name: (optional) Workspace name.
-        :param SharedTargetData shared_data: (optional) SharedTargetData -.
-        :param List[str] tags: (optional) Tags -.
-        :param List[TemplateSourceDataRequest] template_data: (optional)
-               TemplateData -.
-        :param TemplateRepoUpdateRequest template_repo: (optional)
-               TemplateRepoUpdateRequest -.
+        :param str w_id: The ID of the workspace.  To find the workspace ID, use
+               the `GET /v1/workspaces` API.
+        :param CatalogRef catalog_ref: (optional) Information about the software
+               template that you chose from the IBM Cloud catalog. This information is
+               returned for IBM Cloud catalog offerings only.
+        :param str description: (optional) The description of the workspace.
+        :param str name: (optional) The name of the workspace.
+        :param SharedTargetData shared_data: (optional) Information about the
+               Target used by the templates originating from the  IBM Cloud catalog
+               offerings. This information is not relevant for workspace created using
+               your own Terraform template.
+        :param List[str] tags: (optional) A list of tags that you want to associate
+               with your workspace.
+        :param List[TemplateSourceDataRequest] template_data: (optional) Input data
+               for the Template.
+        :param TemplateRepoUpdateRequest template_repo: (optional) Input to update
+               the template repository data.
         :param List[str] type: (optional) List of Workspace type.
-        :param WorkspaceStatusUpdateRequest workspace_status: (optional)
-               WorkspaceStatusUpdateRequest -.
-        :param WorkspaceStatusMessage workspace_status_msg: (optional)
-               WorkspaceStatusMessage -.
+        :param WorkspaceStatusUpdateRequest workspace_status: (optional) Input to
+               update the workspace status.
+        :param WorkspaceStatusMessage workspace_status_msg: (optional) Information
+               about the last job that ran against the workspace. -.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `dict` result representing a `WorkspaceResponse` object
@@ -457,39 +657,73 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        data=data)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
     def delete_workspace(self,
-        w_id: str,
         refresh_token: str,
+        w_id: str,
         *,
         destroy_resources: str = None,
         **kwargs
     ) -> DetailedResponse:
         """
-        Delete a workspace definition.
+        Delete a workspace.
 
-        Delete a workspace definition.  Use destroy_resource='true' to destroy the related
-        cloud resource.
+        Deletes a workspace from IBM Cloud Schematics. Deleting a workspace does not
+        automatically remove the IBM Cloud resources that the workspace manages. To remove
+        all resources that are associated with the workspace, use the `DELETE
+        /v1/workspaces/{id}?destroy_resources=true` API.
+         **Note**: If you delete a workspace without deleting the resources,
+         you must manage your resources with the resource dashboard or CLI afterwards.
+         You cannot use IBM Cloud Schematics anymore to manage your resources.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or platform
+        access
+         to the workspace ID and the resource group.
+         For more information, about Schematics access and permissions,
+         see [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param str refresh_token: The IAM refresh token associated with the IBM
-               Cloud account.
-        :param str destroy_resources: (optional) true or 1 - to destroy resources
-               before deleting workspace;  If this is true, refresh_token is mandatory.
+        :param str refresh_token: The IAM refresh token for the user or service
+               identity. The IAM refresh token is required only if you want to destroy the
+               Terraform resources before deleting the Schematics workspace. If you want
+               to delete the workspace only and keep all your Terraform resources, refresh
+               token is not required.
+                 **Retrieving refresh token**:
+                 * Use `export IBMCLOUD_API_KEY=<ibmcloud_api_key>`, and execute `curl -X
+               POST "https://iam.cloud.ibm.com/identity/token" -H "Content-Type:
+               application/x-www-form-urlencoded" -d
+               "grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IBMCLOUD_API_KEY"
+               -u bx:bx`.
+                 * For more information, about creating IAM access token and API Docs,
+               refer, [IAM access
+               token](/apidocs/iam-identity-token-api#gettoken-password) and [Create API
+               key](/apidocs/iam-identity-token-api#create-api-key).
+                 **Limitation**:
+                 * If the token is expired, you can use `refresh token` to get a new IAM
+               access token.
+                 * The `refresh_token` parameter cannot be used to retrieve a new IAM
+               access token.
+                 * When the IAM access token is about to expire, use the API key to create
+               a new access token.
+        :param str w_id: The ID of the workspace.  To find the workspace ID, use
+               the `GET /v1/workspaces` API.
+        :param str destroy_resources: (optional) If set to `true`, refresh_token
+               header configuration is required to delete all the Terraform resources, and
+               the Schematics workspace. If set to `false`, you can remove only the
+               workspace. Your Terraform resources are still available and must be managed
+               with the resource dashboard or CLI.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `str` result
         """
 
-        if w_id is None:
-            raise ValueError('w_id must be provided')
         if refresh_token is None:
             raise ValueError('refresh_token must be provided')
+        if w_id is None:
+            raise ValueError('w_id must be provided')
         headers = {
             'refresh_token': refresh_token
         }
@@ -515,7 +749,7 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        params=params)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -535,27 +769,48 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Update the workspace definition.
+        Update workspace metadata.
 
-        Update the workspace definition.
+        Use this API to update the following workspace metadata:
+         * Workspace name (`name`) - **Note**: Updating the workspace name does not update
+        the ID of the workspace.
+         * Workspace description (`description`)
+         * Tags (`tags[]`)
+         * Resource group (`resource_group`)
+         * Workspace status (`workspace_status.frozen`)
+         **Tip**: If you want to update information about the Terraform template
+         or IBM Cloud catalog software template that your workspace points to,
+         use the `PUT /v1/workspaces/{id}` API. To update workspace variables,
+         use the `PUT /v1/workspaces/{id}/template_data/{template_id}/values` API.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or
+         platform access to the workspace ID and the resource group.
+         For more information, about Schematics access and permissions,
+         see [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param CatalogRef catalog_ref: (optional) CatalogRef -.
-        :param str description: (optional) Workspace description.
-        :param str name: (optional) Workspace name.
-        :param SharedTargetData shared_data: (optional) SharedTargetData -.
-        :param List[str] tags: (optional) Tags -.
-        :param List[TemplateSourceDataRequest] template_data: (optional)
-               TemplateData -.
-        :param TemplateRepoUpdateRequest template_repo: (optional)
-               TemplateRepoUpdateRequest -.
+        :param str w_id: The ID of the workspace.  To find the workspace ID, use
+               the `GET /v1/workspaces` API.
+        :param CatalogRef catalog_ref: (optional) Information about the software
+               template that you chose from the IBM Cloud catalog. This information is
+               returned for IBM Cloud catalog offerings only.
+        :param str description: (optional) The description of the workspace.
+        :param str name: (optional) The name of the workspace.
+        :param SharedTargetData shared_data: (optional) Information about the
+               Target used by the templates originating from the  IBM Cloud catalog
+               offerings. This information is not relevant for workspace created using
+               your own Terraform template.
+        :param List[str] tags: (optional) A list of tags that you want to associate
+               with your workspace.
+        :param List[TemplateSourceDataRequest] template_data: (optional) Input data
+               for the Template.
+        :param TemplateRepoUpdateRequest template_repo: (optional) Input to update
+               the template repository data.
         :param List[str] type: (optional) List of Workspace type.
-        :param WorkspaceStatusUpdateRequest workspace_status: (optional)
-               WorkspaceStatusUpdateRequest -.
-        :param WorkspaceStatusMessage workspace_status_msg: (optional)
-               WorkspaceStatusMessage -.
+        :param WorkspaceStatusUpdateRequest workspace_status: (optional) Input to
+               update the workspace status.
+        :param WorkspaceStatusMessage workspace_status_msg: (optional) Information
+               about the last job that ran against the workspace. -.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `dict` result representing a `WorkspaceResponse` object
@@ -610,64 +865,7 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        data=data)
 
-        response = self.send(request)
-        return response
-
-
-    def upload_template_tar(self,
-        w_id: str,
-        t_id: str,
-        *,
-        file: BinaryIO = None,
-        file_content_type: str = None,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Upload template tar file for the workspace.
-
-        Upload template tar file for the workspace.
-
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param str t_id: The Template ID for which you want to get the values.  Use
-               the GET /workspaces to look up the workspace IDs  or template IDs in your
-               IBM Cloud account.
-        :param BinaryIO file: (optional) Template tar file.
-        :param str file_content_type: (optional) The content type of file.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `TemplateRepoTarUploadResponse` object
-        """
-
-        if w_id is None:
-            raise ValueError('w_id must be provided')
-        if t_id is None:
-            raise ValueError('t_id must be provided')
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='upload_template_tar')
-        headers.update(sdk_headers)
-
-        form_data = []
-        if file:
-            form_data.append(('file', (None, file, file_content_type or 'application/octet-stream')))
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        path_param_keys = ['w_id', 't_id']
-        path_param_values = self.encode_path_vars(w_id, t_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v1/workspaces/{w_id}/template_data/{t_id}/template_repo_upload'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       files=form_data)
-
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -679,15 +877,18 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get the workspace readme.
+        Show workspace template readme.
 
-        Get the workspace readme.
+        Retrieve the `README.md` file of the Terraform of IBM Cloud catalog template that
+        your workspace points to.
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param str ref: (optional) The name of the commit/branch/tag.  Default, the
-               repository’s default branch (usually master).
+        :param str w_id: The ID of the workspace.  To find the workspace ID, use
+               the `GET /v1/workspaces` API.
+        :param str ref: (optional) The GitHub or GitLab branch where the
+               `README.md` file is stored,  or the commit ID or tag that references the
+               `README.md` file that you want to retrieve.  If you do not specify this
+               option, the `README.md` file is retrieved from the master branch by
+               default.
         :param str formatted: (optional) The format of the readme file.  Value
                ''markdown'' will give markdown, otherwise html.
         :param dict headers: A `dict` containing the request headers
@@ -721,450 +922,74 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        params=params)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
-    #########################
-    # workspace-activities
-    #########################
 
-
-    def list_workspace_activities(self,
+    def template_repo_upload(self,
         w_id: str,
+        t_id: str,
         *,
-        offset: int = None,
-        limit: int = None,
+        file: BinaryIO = None,
+        file_content_type: str = None,
         **kwargs
     ) -> DetailedResponse:
         """
-        List all workspace activities.
+        Upload a TAR file to your workspace.
 
-        List all workspace activities.
+        Provide your Terraform template by uploading a TAR file from your local machine.
+        Before you use this API, you must create a workspace without a link to a GitHub or
+        GitLab repository with the `POST /v1/workspaces` API.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or platform
+        access to the workspace ID and the resource group. For more information, about
+        Schematics access and permissions, see [Schematics service access roles and
+        required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param int offset: (optional) The number of items to skip before starting
-               to collect the result set.
-        :param int limit: (optional) The numbers of items to return.
+        :param str w_id: The ID of the workspace where you want to upload your
+               `.tar` file. To find the workspace ID, use the `GET /v1/workspaces` API.
+        :param str t_id: The ID of the Terraform template in your workspace. When
+               you create a workspace, a unique ID is assigned to your Terraform template,
+               even if no template was provided during workspace creation. To find this
+               ID, use the `GET /v1/workspaces` API and review the `template_data.id`
+               value.
+        :param BinaryIO file: (optional) Template tar file.
+        :param str file_content_type: (optional) The content type of file.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivities` object
+        :rtype: DetailedResponse with `dict` result representing a `TemplateRepoTarUploadResponse` object
         """
 
         if w_id is None:
             raise ValueError('w_id must be provided')
+        if t_id is None:
+            raise ValueError('t_id must be provided')
         headers = {}
         sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
                                       service_version='V1',
-                                      operation_id='list_workspace_activities')
+                                      operation_id='template_repo_upload')
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit
-        }
+        form_data = []
+        if file:
+            form_data.append(('file', (None, file, file_content_type or 'application/octet-stream')))
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
-        path_param_keys = ['w_id']
-        path_param_values = self.encode_path_vars(w_id)
+        path_param_keys = ['w_id', 't_id']
+        path_param_values = self.encode_path_vars(w_id, t_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v1/workspaces/{w_id}/actions'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
-
-        response = self.send(request)
-        return response
-
-
-    def get_workspace_activity(self,
-        w_id: str,
-        activity_id: str,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Get workspace activity details.
-
-        Get workspace activity details.
-
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param str activity_id: The activity ID that you want to see additional
-               details.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivity` object
-        """
-
-        if w_id is None:
-            raise ValueError('w_id must be provided')
-        if activity_id is None:
-            raise ValueError('activity_id must be provided')
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='get_workspace_activity')
-        headers.update(sdk_headers)
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        path_param_keys = ['w_id', 'activity_id']
-        path_param_values = self.encode_path_vars(w_id, activity_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v1/workspaces/{w_id}/actions/{activity_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
-
-        response = self.send(request)
-        return response
-
-
-    def delete_workspace_activity(self,
-        w_id: str,
-        activity_id: str,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Stop the workspace activity.
-
-        Stop the workspace activity.
-
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param str activity_id: The activity ID that you want to see additional
-               details.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivityApplyResult` object
-        """
-
-        if w_id is None:
-            raise ValueError('w_id must be provided')
-        if activity_id is None:
-            raise ValueError('activity_id must be provided')
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='delete_workspace_activity')
-        headers.update(sdk_headers)
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        path_param_keys = ['w_id', 'activity_id']
-        path_param_values = self.encode_path_vars(w_id, activity_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v1/workspaces/{w_id}/actions/{activity_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
-
-        response = self.send(request)
-        return response
-
-
-    def run_workspace_commands(self,
-        w_id: str,
-        refresh_token: str,
-        *,
-        commands: List['TerraformCommand'] = None,
-        operation_name: str = None,
-        description: str = None,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Run terraform Commands.
-
-        Run terraform Commands on workspaces.
-
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param str refresh_token: The IAM refresh token associated with the IBM
-               Cloud account.
-        :param List[TerraformCommand] commands: (optional) List of commands.
-        :param str operation_name: (optional) Command name.
-        :param str description: (optional) Command description.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivityCommandResult` object
-        """
-
-        if w_id is None:
-            raise ValueError('w_id must be provided')
-        if refresh_token is None:
-            raise ValueError('refresh_token must be provided')
-        if commands is not None:
-            commands = [convert_model(x) for x in commands]
-        headers = {
-            'refresh_token': refresh_token
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='run_workspace_commands')
-        headers.update(sdk_headers)
-
-        data = {
-            'commands': commands,
-            'operation_name': operation_name,
-            'description': description
-        }
-        data = {k: v for (k, v) in data.items() if v is not None}
-        data = json.dumps(data)
-        headers['content-type'] = 'application/json'
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        path_param_keys = ['w_id']
-        path_param_values = self.encode_path_vars(w_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v1/workspaces/{w_id}/commands'.format(**path_param_dict)
+        url = '/v1/workspaces/{w_id}/template_data/{t_id}/template_repo_upload'.format(**path_param_dict)
         request = self.prepare_request(method='PUT',
                                        url=url,
                                        headers=headers,
-                                       data=data)
+                                       files=form_data)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
-
-
-    def apply_workspace_command(self,
-        w_id: str,
-        refresh_token: str,
-        *,
-        action_options: 'WorkspaceActivityOptionsTemplate' = None,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Run schematics workspace 'apply' activity.
-
-        Run schematics workspace 'apply' activity.
-
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param str refresh_token: The IAM refresh token associated with the IBM
-               Cloud account.
-        :param WorkspaceActivityOptionsTemplate action_options: (optional)
-               Workspace Activity Options Template.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivityApplyResult` object
-        """
-
-        if w_id is None:
-            raise ValueError('w_id must be provided')
-        if refresh_token is None:
-            raise ValueError('refresh_token must be provided')
-        if action_options is not None:
-            action_options = convert_model(action_options)
-        headers = {
-            'refresh_token': refresh_token
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='apply_workspace_command')
-        headers.update(sdk_headers)
-
-        data = {
-            'action_options': action_options
-        }
-        data = {k: v for (k, v) in data.items() if v is not None}
-        data = json.dumps(data)
-        headers['content-type'] = 'application/json'
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        path_param_keys = ['w_id']
-        path_param_values = self.encode_path_vars(w_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v1/workspaces/{w_id}/apply'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
-
-        response = self.send(request)
-        return response
-
-
-    def destroy_workspace_command(self,
-        w_id: str,
-        refresh_token: str,
-        *,
-        action_options: 'WorkspaceActivityOptionsTemplate' = None,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Run workspace 'destroy' activity.
-
-        Run workspace 'destroy' activity,  to destroy all the resources associated with
-        the workspace.  WARNING: This action cannot be reversed.
-
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param str refresh_token: The IAM refresh token associated with the IBM
-               Cloud account.
-        :param WorkspaceActivityOptionsTemplate action_options: (optional)
-               Workspace Activity Options Template.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivityDestroyResult` object
-        """
-
-        if w_id is None:
-            raise ValueError('w_id must be provided')
-        if refresh_token is None:
-            raise ValueError('refresh_token must be provided')
-        if action_options is not None:
-            action_options = convert_model(action_options)
-        headers = {
-            'refresh_token': refresh_token
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='destroy_workspace_command')
-        headers.update(sdk_headers)
-
-        data = {
-            'action_options': action_options
-        }
-        data = {k: v for (k, v) in data.items() if v is not None}
-        data = json.dumps(data)
-        headers['content-type'] = 'application/json'
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        path_param_keys = ['w_id']
-        path_param_values = self.encode_path_vars(w_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v1/workspaces/{w_id}/destroy'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
-
-        response = self.send(request)
-        return response
-
-
-    def plan_workspace_command(self,
-        w_id: str,
-        refresh_token: str,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Run workspace 'plan' activity,.
-
-        Run schematics workspace 'plan' activity,  to preview the change before running an
-        'apply' activity.
-
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param str refresh_token: The IAM refresh token associated with the IBM
-               Cloud account.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivityPlanResult` object
-        """
-
-        if w_id is None:
-            raise ValueError('w_id must be provided')
-        if refresh_token is None:
-            raise ValueError('refresh_token must be provided')
-        headers = {
-            'refresh_token': refresh_token
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='plan_workspace_command')
-        headers.update(sdk_headers)
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        path_param_keys = ['w_id']
-        path_param_values = self.encode_path_vars(w_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v1/workspaces/{w_id}/plan'.format(**path_param_dict)
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers)
-
-        response = self.send(request)
-        return response
-
-
-    def refresh_workspace_command(self,
-        w_id: str,
-        refresh_token: str,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Run workspace 'refresh' activity.
-
-        Run workspace 'refresh' activity.
-
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param str refresh_token: The IAM refresh token associated with the IBM
-               Cloud account.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivityRefreshResult` object
-        """
-
-        if w_id is None:
-            raise ValueError('w_id must be provided')
-        if refresh_token is None:
-            raise ValueError('refresh_token must be provided')
-        headers = {
-            'refresh_token': refresh_token
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='refresh_workspace_command')
-        headers.update(sdk_headers)
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        path_param_keys = ['w_id']
-        path_param_values = self.encode_path_vars(w_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v1/workspaces/{w_id}/refresh'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers)
-
-        response = self.send(request)
-        return response
-
-    #########################
-    # workspace-inputs
-    #########################
 
 
     def get_workspace_inputs(self,
@@ -1173,16 +998,24 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get the input values of the workspace.
+        List workspace input variables.
 
-        Get the input values of the workspace.
+        Retrieve a list of input variables that are declared in your Terraform or IBM
+        Cloud catalog template.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or
+         platform access to the workspace ID and the resource group.
+         For more information, about Schematics access and permissions,
+         see [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param str t_id: The Template ID for which you want to get the values.  Use
-               the GET /workspaces to look up the workspace IDs  or template IDs in your
-               IBM Cloud account.
+        :param str w_id: The ID of the workspace.  To find the workspace ID, use
+               the `GET /v1/workspaces` API.
+        :param str t_id: The ID of the Terraform template in your workspace.  When
+               you create a workspace, the Terraform template that  your workspace points
+               to is assigned a unique ID. Use the `GET /v1/workspaces` to look up the
+               workspace IDs  and template IDs or `template_data.id` in your IBM Cloud
+               account.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `dict` result representing a `TemplateValues` object
@@ -1210,7 +1043,7 @@ class SchematicsV1(BaseService):
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -1224,17 +1057,27 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Replace the input values for the workspace.
+        Replace workspace input variables.
 
-        Replace the input values for the workspace.
+        Replace or Update the input variables for the template that your workspace points
+        to.
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param str t_id: The Template ID for which you want to get the values.  Use
-               the GET /workspaces to look up the workspace IDs  or template IDs in your
-               IBM Cloud account.
-        :param List[object] env_values: (optional) EnvVariableRequest ..
+        :param str w_id: The ID of the workspace.  To find the workspace ID, use
+               the `GET /v1/workspaces` API.
+        :param str t_id: The ID of the Terraform template in your workspace.  When
+               you create a workspace, the Terraform template that  your workspace points
+               to is assigned a unique ID. Use the `GET /v1/workspaces` to look up the
+               workspace IDs  and template IDs or `template_data.id` in your IBM Cloud
+               account.
+        :param List[object] env_values: (optional) A list of environment variables
+               that you want to apply during the execution of a bash script or Terraform
+               job. This field must be provided as a list of key-value pairs, for example,
+               **TF_LOG=debug**. Each entry will be a map with one entry where `key is the
+               environment variable name and value is value`. You can define environment
+               variables for IBM Cloud catalog offerings that are provisioned by using a
+               bash script. See [example to use special environment
+               variable](https://cloud.ibm.com/docs/schematics?topic=schematics-set-parallelism#parallelism-example)
+                that are supported by Schematics.
         :param str values: (optional) User values.
         :param List[WorkspaceVariableRequest] variablestore: (optional)
                VariablesRequest -.
@@ -1277,7 +1120,7 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        data=data)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -1286,13 +1129,20 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get all the input values of the workspace.
+        Get workspace template details.
 
-        Get all the input values of the workspace.
+        Retrieve detailed information about the Terraform template that your workspace
+        points to.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or platform
+         access to the workspace ID and the resource group.
+         For more information, about Schematics access and permissions,
+         see [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
+        :param str w_id: The ID of the workspace for which you want to retrieve
+               input parameters and  values. To find the workspace ID, use the `GET
+               /workspaces` API.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `dict` result representing a `WorkspaceTemplateValuesResponse` object
@@ -1318,7 +1168,7 @@ class SchematicsV1(BaseService):
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -1328,16 +1178,19 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get the input metadata of the workspace.
+        List workspace variable metadata.
 
-        Get the input metadata of the workspace.
+        Retrieve the metadata for all the workspace input variables that are declared in
+        the template that your workspace points to.
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param str t_id: The Template ID for which you want to get the values.  Use
-               the GET /workspaces to look up the workspace IDs  or template IDs in your
-               IBM Cloud account.
+        :param str w_id: The ID of the workspace for which you want to retrieve the
+               metadata of the input variables that are declared in the template. To find
+               the workspace ID, use the `GET /v1/workspaces` API.
+        :param str t_id: The ID of the Terraform template for which you want to
+               retrieve the metadata of your input variables. When you create a workspace,
+               the Terraform template that your workspace points to is assigned a unique
+               ID. To find this ID, use the `GET /v1/workspaces` API and review the
+               `template_data.id` value.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `List[object]` result
@@ -1365,12 +1218,8 @@ class SchematicsV1(BaseService):
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
-
-    #########################
-    # workspace-outputs
-    #########################
 
 
     def get_workspace_outputs(self,
@@ -1378,17 +1227,18 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get all the output values of the workspace.
+        List workspace output values.
 
-        Get all the output values from your workspace; (ex. result of terraform output
-        command).
+        Retrieve a list of Terraform output variables. You define output values in your
+        Terraform template to include information that you want to make accessible for
+        other Terraform templates.
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
+        :param str w_id: The ID of the workspace for which you want to retrieve
+               output parameters and  values. To find the workspace ID, use the `GET
+               /workspaces` API.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `List[OutputValuesItem]` result
+        :rtype: DetailedResponse with `List[OutputValuesInner]` result
         """
 
         if w_id is None:
@@ -1411,7 +1261,7 @@ class SchematicsV1(BaseService):
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -1420,13 +1270,12 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get all the resources created by the workspace.
+        List workspace resources.
 
-        Get all the resources created by the workspace.
+        Retrieve a list of IBM Cloud resources that you created with your workspace.
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
+        :param str w_id: The ID of the workspace.  To find the workspace ID, use
+               the `GET /v1/workspaces` API.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `List[TemplateResources]` result
@@ -1452,7 +1301,7 @@ class SchematicsV1(BaseService):
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -1461,13 +1310,25 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get the workspace state.
+        Get Terraform statefile URL.
 
-        Get the workspace state.
+        Retrieve the URL to the Terraform statefile (`terraform.tfstate`). You use the URL
+        to access the Terraform statefile. The Terraform statefile includes detailed
+        information about the IBM Cloud resources that you provisioned with IBM Cloud
+        Schematics and Schematics uses the file to determine future create, modify, or
+        delete actions for your resources. To show the content of the Terraform statefile,
+        use the `GET /v1/workspaces/{id}/runtime_data/{template_id}/state_store` API.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or platform
+        access
+         to the workspace ID and the resource group.
+         For more information, about Schematics access and permissions,
+         see [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
+        :param str w_id: The ID of the workspace for which you want to retrieve the
+               Terraform statefile.  To find the workspace ID, use the `GET
+               /v1/workspaces` API.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `dict` result representing a `StateStoreResponseList` object
@@ -1493,7 +1354,7 @@ class SchematicsV1(BaseService):
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -1503,19 +1364,25 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get the template state.
+        Show Terraform statefile content.
 
-        Get the template state.
+        Show the content of the Terraform statefile (`terraform.tfstate`) that was created
+        when your Terraform template was applied in IBM Cloud. The statefile holds
+        detailed information about the IBM Cloud resources that were created by IBM Cloud
+        Schematics and Schematics uses the file to determine future create, modify, or
+        delete actions for your resources.
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param str t_id: The Template ID for which you want to get the values.  Use
-               the GET /workspaces to look up the workspace IDs  or template IDs in your
-               IBM Cloud account.
+        :param str w_id: The ID of the workspace for which you want to retrieve the
+               Terraform statefile.  To find the workspace ID, use the `GET
+               /v1/workspaces` API.
+        :param str t_id: The ID of the Terraform template for which you want to
+               retrieve the Terraform statefile.  When you create a workspace, the
+               Terraform template that your workspace points to is assigned a unique ID.
+               To find this ID, use the `GET /v1/workspaces` API and review the
+               template_data.id value.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `TemplateStateStore` object
+        :rtype: DetailedResponse with `List[object]` result
         """
 
         if w_id is None:
@@ -1540,12 +1407,8 @@ class SchematicsV1(BaseService):
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
-
-    #########################
-    # workspace-logs
-    #########################
 
 
     def get_workspace_activity_logs(self,
@@ -1554,17 +1417,25 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get the workspace activity log urls.
+        Get workspace job log URL.
 
-        View an activity log for Terraform actions that ran against your workspace.  You
-        can view logs for plan, apply, and destroy actions.      operationId:
-        get_activity_log_urls.
+        Get the Terraform log file URL for a workspace job. You can retrieve the log URL
+        for jobs that were created with the `PUT /v1/workspaces/{id}/apply`, `POST
+        /v1/workspaces/{id}/plan`, or `DELETE /v1/workspaces/{id}/destroy` API.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or platform
+        access
+         to the workspace ID and the resource group.
+         For more information, about Schematics access and permissions,
+         see [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param str activity_id: The activity ID that you want to see additional
-               details.
+        :param str w_id: The ID of the workspace for which you want to retrieve the
+               Terraform statefile.  To find the workspace ID, use the `GET
+               /v1/workspaces` API.
+        :param str activity_id: The ID of the activity or job, for which you want
+               to retrieve details.  To find the job ID, use the `GET
+               /v1/workspaces/{id}/actions` API.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivityLogs` object
@@ -1592,7 +1463,7 @@ class SchematicsV1(BaseService):
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -1601,13 +1472,13 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get all workspace log urls.
+        Get latest workspace job log URL for all workspace templates.
 
-        Get all workspace log urls.
+        Retrieve the log file URL for the latest job of a template that ran against your
+        workspace. You use this URL to retrieve detailed logs for the latest job.
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
+        :param str w_id: The ID of the workspace.  To find the workspace ID, use
+               the `GET /v1/workspaces` API.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `dict` result representing a `LogStoreResponseList` object
@@ -1633,7 +1504,7 @@ class SchematicsV1(BaseService):
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -1648,18 +1519,30 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get all template logs.
+        Show logs for the latest action for a workspace template.
 
-        Get all template logs.
+        Show the Terraform logs for the most recent job of a template that ran against
+        your workspace.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or platform
+        access to the workspace ID and the resource group. For more information, about
+        Schematics access and permissions, see [Schematics service access roles and
+        required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param str t_id: The Template ID for which you want to get the values.  Use
-               the GET /workspaces to look up the workspace IDs  or template IDs in your
-               IBM Cloud account.
-        :param bool log_tf_cmd: (optional) `false` will hide the terraform command
-               header in the logs.
+        :param str w_id: The ID of the workspace.  To find the workspace ID, use
+               the `GET /v1/workspaces` API.
+        :param str t_id: The ID of the Terraform template or IBM Cloud catalog
+               software template in the workspace.  Use the `GET /v1/workspaces` to look
+               up the workspace IDs and template IDs or `template_data.id`.
+        :param bool log_tf_cmd: (optional) Enter false to replace the first line in
+               each Terraform command section, such as Terraform INIT or Terraform PLAN,
+               with Schematics INIT (Schematics PLAN) in your log output.  In addition,
+               the log lines Starting command: terraform init -input=false -no-color and
+               Starting command: terraform apply -state=terraform.tfstate
+               -var-file=schematics.tfvars -auto-approve -no-color are suppressed.  All
+               subsequent command lines still use the Terraform command prefix. To remove
+               this prefix, use the log_tf_prefix option.
         :param bool log_tf_prefix: (optional) `false` will hide all the terraform
                command prefix in the log statements.
         :param bool log_tf_null_resource: (optional) `false` will hide all the null
@@ -1701,7 +1584,7 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        params=params)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -1717,21 +1600,26 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get the template activity logs.
+        Show logs for a workspace job.
 
-        View an activity log for Terraform actions that ran for a template against your
-        workspace.  You can view logs for plan, apply, and destroy actions.
+        Show the Terraform logs for an job that ran against your workspace.
 
-        :param str w_id: The workspace ID for the workspace that you want to query.
-                You can run the GET /workspaces call if you need to look up the  workspace
-               IDs in your IBM Cloud account.
-        :param str t_id: The Template ID for which you want to get the values.  Use
-               the GET /workspaces to look up the workspace IDs  or template IDs in your
-               IBM Cloud account.
-        :param str activity_id: The activity ID that you want to see additional
-               details.
-        :param bool log_tf_cmd: (optional) `false` will hide the terraform command
-               header in the logs.
+        :param str w_id: The ID of the workspace.  To find the workspace ID, use
+               the `GET /v1/workspaces` API.
+        :param str t_id: The ID of the Terraform template or IBM Cloud catalog
+               software template in the workspace.  Use the `GET /v1/workspaces` to look
+               up the workspace IDs and template IDs or `template_data.id`.
+        :param str activity_id: The ID of the activity or job, for which you want
+               to retrieve details.  To find the job ID, use the `GET
+               /v1/workspaces/{id}/actions` API.
+        :param bool log_tf_cmd: (optional) Enter false to replace the first line in
+               each Terraform command section, such as Terraform INIT or Terraform PLAN,
+               with Schematics INIT (Schematics PLAN) in your log output.  In addition,
+               the log lines Starting command: terraform init -input=false -no-color and
+               Starting command: terraform apply -state=terraform.tfstate
+               -var-file=schematics.tfvars -auto-approve -no-color are suppressed.  All
+               subsequent command lines still use the Terraform command prefix. To remove
+               this prefix, use the log_tf_prefix option.
         :param bool log_tf_prefix: (optional) `false` will hide all the terraform
                command prefix in the log statements.
         :param bool log_tf_null_resource: (optional) `false` will hide all the null
@@ -1775,263 +1663,12 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        params=params)
 
-        response = self.send(request)
-        return response
-
-    #########################
-    # workspace-bulk-jobs
-    #########################
-
-
-    def create_workspace_deletion_job(self,
-        refresh_token: str,
-        *,
-        new_delete_workspaces: bool = None,
-        new_destroy_resources: bool = None,
-        new_job: str = None,
-        new_version: str = None,
-        new_workspaces: List[str] = None,
-        destroy_resources: str = None,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Delete multiple workspaces.
-
-        Delete multiple workspaces.  Use ?destroy_resource="true" to destroy the related
-        cloud resources,  otherwise the resources must be managed outside of Schematics.
-
-        :param str refresh_token: The IAM refresh token associated with the IBM
-               Cloud account.
-        :param bool new_delete_workspaces: (optional) True to delete workspace.
-        :param bool new_destroy_resources: (optional) True to destroy the resources
-               managed by this workspace.
-        :param str new_job: (optional) Workspace deletion job name.
-        :param str new_version: (optional) Version.
-        :param List[str] new_workspaces: (optional) List of workspaces to be
-               deleted.
-        :param str destroy_resources: (optional) true or 1 - to destroy resources
-               before deleting workspace;  If this is true, refresh_token is mandatory.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `WorkspaceBulkDeleteResponse` object
-        """
-
-        if refresh_token is None:
-            raise ValueError('refresh_token must be provided')
-        headers = {
-            'refresh_token': refresh_token
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='create_workspace_deletion_job')
-        headers.update(sdk_headers)
-
-        params = {
-            'destroy_resources': destroy_resources
-        }
-
-        data = {
-            'delete_workspaces': new_delete_workspaces,
-            'destroy_resources': new_destroy_resources,
-            'job': new_job,
-            'version': new_version,
-            'workspaces': new_workspaces
-        }
-        data = {k: v for (k, v) in data.items() if v is not None}
-        data = json.dumps(data)
-        headers['content-type'] = 'application/json'
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        url = '/v1/workspace_jobs'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       params=params,
-                                       data=data)
-
-        response = self.send(request)
-        return response
-
-
-    def get_workspace_deletion_job_status(self,
-        wj_id: str,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Get the workspace deletion job status.
-
-        Get the workspace deletion job status.
-
-        :param str wj_id: The workspace job deletion ID.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `WorkspaceJobResponse` object
-        """
-
-        if wj_id is None:
-            raise ValueError('wj_id must be provided')
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='get_workspace_deletion_job_status')
-        headers.update(sdk_headers)
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        path_param_keys = ['wj_id']
-        path_param_values = self.encode_path_vars(wj_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v1/workspace_jobs/{wj_id}/status'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
-
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
     #########################
     # actions
     #########################
-
-
-    def create_action(self,
-        *,
-        name: str = None,
-        description: str = None,
-        location: str = None,
-        resource_group: str = None,
-        tags: List[str] = None,
-        user_state: 'UserState' = None,
-        source_readme_url: str = None,
-        source: 'ExternalSource' = None,
-        source_type: str = None,
-        command_parameter: str = None,
-        bastion: 'BastionResourceDefinition' = None,
-        inventory: str = None,
-        bastion_credential: 'VariableData' = None,
-        credentials: List['VariableData'] = None,
-        inputs: List['VariableData'] = None,
-        outputs: List['VariableData'] = None,
-        settings: List['VariableData'] = None,
-        state: 'ActionState' = None,
-        sys_lock: 'SystemLock' = None,
-        x_github_token: str = None,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Create an Action definition.
-
-        Create a new Action definition.
-
-        :param str name: (optional) Action name (unique for an account).
-        :param str description: (optional) Action description.
-        :param str location: (optional) List of workspace locations supported by
-               IBM Cloud Schematics service.  Note, this does not limit the location of
-               the resources provisioned using Schematics.
-        :param str resource_group: (optional) Resource-group name for the Action.
-               By default, Action will be created in Default Resource Group.
-        :param List[str] tags: (optional) Action tags.
-        :param UserState user_state: (optional) User defined status of the
-               Schematics object.
-        :param str source_readme_url: (optional) URL of the README file, for the
-               source.
-        :param ExternalSource source: (optional) Source of templates, playbooks, or
-               controls.
-        :param str source_type: (optional) Type of source for the Template.
-        :param str command_parameter: (optional) Schematics job command parameter
-               (playbook-name).
-        :param BastionResourceDefinition bastion: (optional) Describes a bastion
-               resource.
-        :param str inventory: (optional) Inventory ID.
-        :param VariableData bastion_credential: (optional) User editable variable
-               data & system generated reference to value.
-        :param List[VariableData] credentials: (optional) credentials of the
-               Action.
-        :param List[VariableData] inputs: (optional) Input variables for the
-               Action.
-        :param List[VariableData] outputs: (optional) Output variables for the
-               Action.
-        :param List[VariableData] settings: (optional) Environment variables for
-               the Action.
-        :param ActionState state: (optional) Computed state of the Action.
-        :param SystemLock sys_lock: (optional) System lock status.
-        :param str x_github_token: (optional) The github token associated with the
-               GIT. Required for cloning of repo.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `Action` object
-        """
-
-        if user_state is not None:
-            user_state = convert_model(user_state)
-        if source is not None:
-            source = convert_model(source)
-        if bastion is not None:
-            bastion = convert_model(bastion)
-        if bastion_credential is not None:
-            bastion_credential = convert_model(bastion_credential)
-        if credentials is not None:
-            credentials = [convert_model(x) for x in credentials]
-        if inputs is not None:
-            inputs = [convert_model(x) for x in inputs]
-        if outputs is not None:
-            outputs = [convert_model(x) for x in outputs]
-        if settings is not None:
-            settings = [convert_model(x) for x in settings]
-        if state is not None:
-            state = convert_model(state)
-        if sys_lock is not None:
-            sys_lock = convert_model(sys_lock)
-        headers = {
-            'X-Github-token': x_github_token
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='create_action')
-        headers.update(sdk_headers)
-
-        data = {
-            'name': name,
-            'description': description,
-            'location': location,
-            'resource_group': resource_group,
-            'tags': tags,
-            'user_state': user_state,
-            'source_readme_url': source_readme_url,
-            'source': source,
-            'source_type': source_type,
-            'command_parameter': command_parameter,
-            'bastion': bastion,
-            'inventory': inventory,
-            'bastion_credential': bastion_credential,
-            'credentials': credentials,
-            'inputs': inputs,
-            'outputs': outputs,
-            'settings': settings,
-            'state': state,
-            'sys_lock': sys_lock
-        }
-        data = {k: v for (k, v) in data.items() if v is not None}
-        data = json.dumps(data)
-        headers['content-type'] = 'application/json'
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        url = '/v2/actions'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
-
-        response = self.send(request)
-        return response
 
 
     def list_actions(self,
@@ -2043,13 +1680,31 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get all the Action definitions.
+        List actions.
 
-        Get all the Action definitions.
+        Retrieve a list of all Schematics actions that depends on the API endpoint that
+        you have access. For example, if you use an API endpoint for a geography, such as
+        North America, only actions that are created in `us-south` or `us-east` are
+        retrieved.
+         For more information, about supported API endpoints, see
+        [API endpoints](/apidocs/schematics#api-endpoints).
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or
+         platform access to an action ID and the resource group.
+         For more information, about Schematics access and permissions, see
+         [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
-        :param int offset: (optional) The number of items to skip before starting
-               to collect the result set.
-        :param int limit: (optional) The numbers of items to return.
+        :param int offset: (optional) The starting position of the item in the list
+               of items. For example, if you have three workspaces in your account, the
+               first workspace is assigned position number 0, the second workspace is
+               assigned position number 1, and so forth. If you have 6 workspaces and you
+               want to list the details for workspaces 2-6, enter 1. To limit the number
+               of workspaces that is returned, use the `limit` option in addition to the
+               `offset` option. Negative numbers are not supported and are ignored.
+        :param int limit: (optional) The maximum number of items that you want to
+               list. The number must be a positive integer between 1 and 2000. If no value
+               is provided, 100 is used by default.
         :param str sort: (optional) Name of the field to sort-by;  Use the '.'
                character to delineate sub-resources and sub-fields (eg. owner.last_name).
                Prepend the field with '+' or '-', indicating 'ascending' or 'descending'
@@ -2083,7 +1738,175 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        params=params)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
+        return response
+
+
+    def create_action(self,
+        *,
+        name: str = None,
+        description: str = None,
+        location: str = None,
+        resource_group: str = None,
+        tags: List[str] = None,
+        user_state: 'UserState' = None,
+        source_readme_url: str = None,
+        source: 'ExternalSource' = None,
+        source_type: str = None,
+        command_parameter: str = None,
+        inventory: str = None,
+        credentials: List['VariableData'] = None,
+        bastion: 'BastionResourceDefinition' = None,
+        bastion_credential: 'VariableData' = None,
+        targets_ini: str = None,
+        inputs: List['VariableData'] = None,
+        outputs: List['VariableData'] = None,
+        settings: List['VariableData'] = None,
+        state: 'ActionState' = None,
+        sys_lock: 'SystemLock' = None,
+        x_github_token: str = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Create an action.
+
+        Create an IBM Cloud Schematics action to run on a single target or groups of
+        target hosts, roles, policies, or steps to deploy your resources in the target
+        hosts. You can run the IBM Cloud resources the order in which you want to execute
+        them. **Note** If your Git repository already contains a host file. Schematics
+        does not overwrite the host file already present in your Git repository. For
+        sample templates, see IBM Cloud Automation
+        [templates](https://github.com/Cloud-Schematics).
+         For more information, about the Schematics create action,
+         see [ibmcloud schematics action
+        create](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#schematics-create-action).
+         **Note** you cannot update the location and region once an action is created.
+         Also, make sure your IP addresses are in the
+        [allowlist](https://cloud.ibm.com/docs/schematics?topic=schematics-allowed-ipaddresses).
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or
+         platform access to an action ID and the resource group.
+         For more information, about Schematics access and permissions, see
+         [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#action-permissions.
+
+        :param str name: (optional) The unique name of your action. The name can be
+               up to 128 characters long and can include alphanumeric characters, spaces,
+               dashes, and underscores. **Example** you can use the name to stop action.
+        :param str description: (optional) Action description.
+        :param str location: (optional) List of locations supported by IBM Cloud
+               Schematics service.  While creating your workspace or action, choose the
+               right region, since it cannot be changed.  Note, this does not limit the
+               location of the IBM Cloud resources, provisioned using Schematics.
+        :param str resource_group: (optional) Resource-group name for an action.
+               By default, action is created in default resource group.
+        :param List[str] tags: (optional) Action tags.
+        :param UserState user_state: (optional) User defined status of the
+               Schematics object.
+        :param str source_readme_url: (optional) URL of the `README` file, for the
+               source URL.
+        :param ExternalSource source: (optional) Source of templates, playbooks, or
+               controls.
+        :param str source_type: (optional) Type of source for the Template.
+        :param str command_parameter: (optional) Schematics job command parameter
+               (playbook-name).
+        :param str inventory: (optional) Target inventory record ID, used by the
+               action or ansible playbook.
+        :param List[VariableData] credentials: (optional) credentials of the
+               Action.
+        :param BastionResourceDefinition bastion: (optional) Describes a bastion
+               resource.
+        :param VariableData bastion_credential: (optional) User editable variable
+               data & system generated reference to value.
+        :param str targets_ini: (optional) Inventory of host and host group for the
+               playbook in `INI` file format. For example, `"targets_ini":
+               "[webserverhost]
+                172.22.192.6
+                [dbhost]
+                172.22.192.5"`. For more information, about an inventory host group
+               syntax, see [Inventory host
+               groups](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#schematics-inventory-host-grps).
+        :param List[VariableData] inputs: (optional) Input variables for the
+               Action.
+        :param List[VariableData] outputs: (optional) Output variables for the
+               Action.
+        :param List[VariableData] settings: (optional) Environment variables for
+               the Action.
+        :param ActionState state: (optional) Computed state of the Action.
+        :param SystemLock sys_lock: (optional) System lock status.
+        :param str x_github_token: (optional) The personal access token to
+               authenticate with your private GitHub or GitLab repository and access your
+               Terraform template.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `Action` object
+        """
+
+        if user_state is not None:
+            user_state = convert_model(user_state)
+        if source is not None:
+            source = convert_model(source)
+        if credentials is not None:
+            credentials = [convert_model(x) for x in credentials]
+        if bastion is not None:
+            bastion = convert_model(bastion)
+        if bastion_credential is not None:
+            bastion_credential = convert_model(bastion_credential)
+        if inputs is not None:
+            inputs = [convert_model(x) for x in inputs]
+        if outputs is not None:
+            outputs = [convert_model(x) for x in outputs]
+        if settings is not None:
+            settings = [convert_model(x) for x in settings]
+        if state is not None:
+            state = convert_model(state)
+        if sys_lock is not None:
+            sys_lock = convert_model(sys_lock)
+        headers = {
+            'X-Github-token': x_github_token
+        }
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='create_action')
+        headers.update(sdk_headers)
+
+        data = {
+            'name': name,
+            'description': description,
+            'location': location,
+            'resource_group': resource_group,
+            'tags': tags,
+            'user_state': user_state,
+            'source_readme_url': source_readme_url,
+            'source': source,
+            'source_type': source_type,
+            'command_parameter': command_parameter,
+            'inventory': inventory,
+            'credentials': credentials,
+            'bastion': bastion,
+            'bastion_credential': bastion_credential,
+            'targets_ini': targets_ini,
+            'inputs': inputs,
+            'outputs': outputs,
+            'settings': settings,
+            'state': state,
+            'sys_lock': sys_lock
+        }
+        data = {k: v for (k, v) in data.items() if v is not None}
+        data = json.dumps(data)
+        headers['content-type'] = 'application/json'
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        url = '/v2/actions'
+        request = self.prepare_request(method='POST',
+                                       url=url,
+                                       headers=headers,
+                                       data=data)
+
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -2094,9 +1917,17 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get the Action definition.
+        Get action details.
 
-        Get the Action definition.
+        Retrieve the detailed information of an actions from your IBM Cloud account.  This
+        API returns a URL to the log file that you can retrieve by using  the `GET
+        /v2/actions/{action_id}/logs` API.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or
+         platform access to an action ID and the resource group.
+         For more information, about Schematics access and permissions, see
+         [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#action-permissions).
 
         :param str action_id: Action Id.  Use GET /actions API to look up the
                Action Ids in your IBM Cloud account.
@@ -2131,7 +1962,7 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        params=params)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -2143,9 +1974,20 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Delete the Action.
+        Delete an action.
 
-        Delete the Action definition.
+        Delete a Schematics action and specify the Ansible playbook that you want to run
+        against your IBM Cloud resources. **Note** you cannot delete or stop the job
+        activity from an ongoing execution of an action defined in the playbook. You can
+        repeat the execution of same job, whenever you patch the actions. For more
+        information, about the Schematics action state, see  [Schematics action state
+        diagram](https://cloud.ibm.com/docs/schematics?topic=schematics-action-setup#action-state-diagram).
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or
+         platform access to an action ID and the resource group.
+         For more information, about Schematics access and permissions, see
+         [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#action-permissions.
 
         :param str action_id: Action Id.  Use GET /actions API to look up the
                Action Ids in your IBM Cloud account.
@@ -2180,7 +2022,7 @@ class SchematicsV1(BaseService):
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -2197,10 +2039,11 @@ class SchematicsV1(BaseService):
         source: 'ExternalSource' = None,
         source_type: str = None,
         command_parameter: str = None,
-        bastion: 'BastionResourceDefinition' = None,
         inventory: str = None,
-        bastion_credential: 'VariableData' = None,
         credentials: List['VariableData'] = None,
+        bastion: 'BastionResourceDefinition' = None,
+        bastion_credential: 'VariableData' = None,
+        targets_ini: str = None,
         inputs: List['VariableData'] = None,
         outputs: List['VariableData'] = None,
         settings: List['VariableData'] = None,
@@ -2210,36 +2053,61 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Update the Action definition.
+        Update an action.
 
-        Update the Action definition.
+        Update or replace an action to change the action state from the critical state to
+        normal state, or pending state to the normal state for a successful execution.
+        For more information, about the Schematics action state, see [Schematics action
+        state
+        diagram](https://cloud.ibm.com/docs/schematics?topic=schematics-action-setup#action-state-diagram).
+         **Note** you cannot update the location and region once an action is created.
+         Also, make sure your IP addresses are in the
+        [allowlist](https://cloud.ibm.com/docs/schematics?topic=schematics-allowed-ipaddresses].
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or
+         platform access to an action ID and the resource group.
+         For more information, about Schematics access and permissions, see
+         [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#action-permissions.
 
         :param str action_id: Action Id.  Use GET /actions API to look up the
                Action Ids in your IBM Cloud account.
-        :param str name: (optional) Action name (unique for an account).
+        :param str name: (optional) The unique name of your action. The name can be
+               up to 128 characters long and can include alphanumeric characters, spaces,
+               dashes, and underscores. **Example** you can use the name to stop action.
         :param str description: (optional) Action description.
-        :param str location: (optional) List of workspace locations supported by
-               IBM Cloud Schematics service.  Note, this does not limit the location of
-               the resources provisioned using Schematics.
-        :param str resource_group: (optional) Resource-group name for the Action.
-               By default, Action will be created in Default Resource Group.
+        :param str location: (optional) List of locations supported by IBM Cloud
+               Schematics service.  While creating your workspace or action, choose the
+               right region, since it cannot be changed.  Note, this does not limit the
+               location of the IBM Cloud resources, provisioned using Schematics.
+        :param str resource_group: (optional) Resource-group name for an action.
+               By default, action is created in default resource group.
         :param List[str] tags: (optional) Action tags.
         :param UserState user_state: (optional) User defined status of the
                Schematics object.
-        :param str source_readme_url: (optional) URL of the README file, for the
-               source.
+        :param str source_readme_url: (optional) URL of the `README` file, for the
+               source URL.
         :param ExternalSource source: (optional) Source of templates, playbooks, or
                controls.
         :param str source_type: (optional) Type of source for the Template.
         :param str command_parameter: (optional) Schematics job command parameter
                (playbook-name).
-        :param BastionResourceDefinition bastion: (optional) Describes a bastion
-               resource.
-        :param str inventory: (optional) Inventory ID.
-        :param VariableData bastion_credential: (optional) User editable variable
-               data & system generated reference to value.
+        :param str inventory: (optional) Target inventory record ID, used by the
+               action or ansible playbook.
         :param List[VariableData] credentials: (optional) credentials of the
                Action.
+        :param BastionResourceDefinition bastion: (optional) Describes a bastion
+               resource.
+        :param VariableData bastion_credential: (optional) User editable variable
+               data & system generated reference to value.
+        :param str targets_ini: (optional) Inventory of host and host group for the
+               playbook in `INI` file format. For example, `"targets_ini":
+               "[webserverhost]
+                172.22.192.6
+                [dbhost]
+                172.22.192.5"`. For more information, about an inventory host group
+               syntax, see [Inventory host
+               groups](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#schematics-inventory-host-grps).
         :param List[VariableData] inputs: (optional) Input variables for the
                Action.
         :param List[VariableData] outputs: (optional) Output variables for the
@@ -2248,8 +2116,9 @@ class SchematicsV1(BaseService):
                the Action.
         :param ActionState state: (optional) Computed state of the Action.
         :param SystemLock sys_lock: (optional) System lock status.
-        :param str x_github_token: (optional) The github token associated with the
-               GIT. Required for cloning of repo.
+        :param str x_github_token: (optional) The personal access token to
+               authenticate with your private GitHub or GitLab repository and access your
+               Terraform template.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `dict` result representing a `Action` object
@@ -2261,12 +2130,12 @@ class SchematicsV1(BaseService):
             user_state = convert_model(user_state)
         if source is not None:
             source = convert_model(source)
+        if credentials is not None:
+            credentials = [convert_model(x) for x in credentials]
         if bastion is not None:
             bastion = convert_model(bastion)
         if bastion_credential is not None:
             bastion_credential = convert_model(bastion_credential)
-        if credentials is not None:
-            credentials = [convert_model(x) for x in credentials]
         if inputs is not None:
             inputs = [convert_model(x) for x in inputs]
         if outputs is not None:
@@ -2296,10 +2165,11 @@ class SchematicsV1(BaseService):
             'source': source,
             'source_type': source_type,
             'command_parameter': command_parameter,
-            'bastion': bastion,
             'inventory': inventory,
-            'bastion_credential': bastion_credential,
             'credentials': credentials,
+            'bastion': bastion,
+            'bastion_credential': bastion_credential,
+            'targets_ini': targets_ini,
             'inputs': inputs,
             'outputs': outputs,
             'settings': settings,
@@ -2323,7 +2193,7 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        data=data)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -2335,9 +2205,17 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Upload template tar file for the action.
+        Upload a TAR file to an action.
 
-        Upload template tar file for the action.
+        Update your template by uploading tape archive file (.tar) file from  your local
+        machine. Before you use this API, you must create an action  without a link to a
+        GitHub or GitLab repository with the `POST /v2/actions` API.
+        <h3>Authorization</h3>
+          Schematics support generic authorization such as service access or  platform
+        access to an action ID and the resource group.  For more information, about
+        Schematics access and permissions, see  [Schematics service access roles and
+        required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#action-permissions.
 
         :param str action_id: Action Id.  Use GET /actions API to look up the
                Action Ids in your IBM Cloud account.
@@ -2373,12 +2251,736 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        files=form_data)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
     #########################
     # jobs
     #########################
+
+
+    def list_workspace_activities(self,
+        w_id: str,
+        *,
+        offset: int = None,
+        limit: int = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        List all workspace jobs.
+
+        Retrieve a list of all jobs that ran against a workspace. Jobs are generated when
+        you use the `apply`, `plan`, `destroy`, and `refresh`,   command API.
+
+        :param str w_id: The ID of the workspace.  To find the workspace ID, use
+               the `GET /v1/workspaces` API.
+        :param int offset: (optional) The starting position of the item in the list
+               of items. For example, if you have three workspaces in your account, the
+               first workspace is assigned position number 0, the second workspace is
+               assigned position number 1, and so forth. If you have 6 workspaces and you
+               want to list the details for workspaces 2-6, enter 1. To limit the number
+               of workspaces that is returned, use the `limit` option in addition to the
+               `offset` option. Negative numbers are not supported and are ignored.
+        :param int limit: (optional) The maximum number of items that you want to
+               list. The number must be a positive integer between 1 and 2000. If no value
+               is provided, 100 is used by default.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivities` object
+        """
+
+        if w_id is None:
+            raise ValueError('w_id must be provided')
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='list_workspace_activities')
+        headers.update(sdk_headers)
+
+        params = {
+            'offset': offset,
+            'limit': limit
+        }
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['w_id']
+        path_param_values = self.encode_path_vars(w_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v1/workspaces/{w_id}/actions'.format(**path_param_dict)
+        request = self.prepare_request(method='GET',
+                                       url=url,
+                                       headers=headers,
+                                       params=params)
+
+        response = self.send(request, **kwargs)
+        return response
+
+
+    def get_workspace_activity(self,
+        w_id: str,
+        activity_id: str,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Get workspace job details.
+
+        Get the details for a workspace job that ran against the workspace. This API
+        returns the job status and a URL to the log file that you can  retrieve by using
+        the `GET /v1/workspaces/{id}/actions/{action_id}/logs` API.
+
+        :param str w_id: The ID of the workspace.  To find the workspace ID, use
+               the `GET /v1/workspaces` API.
+        :param str activity_id: The ID of the activity or job, for which you want
+               to retrieve details.  To find the job ID, use the `GET
+               /v1/workspaces/{id}/actions` API.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivity` object
+        """
+
+        if w_id is None:
+            raise ValueError('w_id must be provided')
+        if activity_id is None:
+            raise ValueError('activity_id must be provided')
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='get_workspace_activity')
+        headers.update(sdk_headers)
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['w_id', 'activity_id']
+        path_param_values = self.encode_path_vars(w_id, activity_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v1/workspaces/{w_id}/actions/{activity_id}'.format(**path_param_dict)
+        request = self.prepare_request(method='GET',
+                                       url=url,
+                                       headers=headers)
+
+        response = self.send(request, **kwargs)
+        return response
+
+
+    def delete_workspace_activity(self,
+        w_id: str,
+        activity_id: str,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Stop the workspace job.
+
+        Stop an ongoing schematics job that runs against your workspace.
+        **Note**: If you remove the Schematics apply job that runs against your workspace,
+         any changes to your IBM Cloud resources that are already applied are not
+        reverted.  If a creation, update, or deletion is currently in progress, Schematics
+        waits for  the job to be completed first. Then, any other resource creations,
+        updates, or  deletions that are included in your Terraform template file are
+        ignored.
+        <h3>Authorization</h3>  Schematics supports generic authorization such as service
+        access or platform access  to the workspace ID and the resource group. For more
+        information, about Schematics  access and permissions, see [Schematics service
+        access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
+
+        :param str w_id: The ID of the workspace.  To find the workspace ID, use
+               the `GET /v1/workspaces` API.
+        :param str activity_id: The ID of the activity or job, for which you want
+               to retrieve details.  To find the job ID, use the `GET
+               /v1/workspaces/{id}/actions` API.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivityApplyResult` object
+        """
+
+        if w_id is None:
+            raise ValueError('w_id must be provided')
+        if activity_id is None:
+            raise ValueError('activity_id must be provided')
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='delete_workspace_activity')
+        headers.update(sdk_headers)
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['w_id', 'activity_id']
+        path_param_values = self.encode_path_vars(w_id, activity_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v1/workspaces/{w_id}/actions/{activity_id}'.format(**path_param_dict)
+        request = self.prepare_request(method='DELETE',
+                                       url=url,
+                                       headers=headers)
+
+        response = self.send(request, **kwargs)
+        return response
+
+
+    def run_workspace_commands(self,
+        w_id: str,
+        refresh_token: str,
+        *,
+        commands: List['TerraformCommand'] = None,
+        operation_name: str = None,
+        description: str = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Run Terraform Commands.
+
+        Run Terraform state commands to modify the workspace state file, by using the IBM
+        Cloud Schematics API.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or platform
+        access
+         to the workspace ID and the resource group. For more information, about
+        Schematics
+         access and permissions,
+         see [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
+
+        :param str w_id: The ID of the workspace.  To find the workspace ID, use
+               the `GET /v1/workspaces` API.
+        :param str refresh_token: The IAM refresh token for the user or service
+               identity.
+                 **Retrieving refresh token**:
+                 * Use `export IBMCLOUD_API_KEY=<ibmcloud_api_key>`, and execute `curl -X
+               POST "https://iam.cloud.ibm.com/identity/token" -H "Content-Type:
+               application/x-www-form-urlencoded" -d
+               "grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IBMCLOUD_API_KEY"
+               -u bx:bx`.
+                 * For more information, about creating IAM access token and API Docs,
+               refer, [IAM access
+               token](/apidocs/iam-identity-token-api#gettoken-password) and [Create API
+               key](/apidocs/iam-identity-token-api#create-api-key).
+                 **Limitation**:
+                 * If the token is expired, you can use `refresh token` to get a new IAM
+               access token.
+                 * The `refresh_token` parameter cannot be used to retrieve a new IAM
+               access token.
+                 * When the IAM access token is about to expire, use the API key to create
+               a new access token.
+        :param List[TerraformCommand] commands: (optional) List of commands.  You
+               can execute single set of commands or multiple commands.  For more
+               information, about the payload of the multiple commands,  refer to
+               [Commands](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#commands).
+        :param str operation_name: (optional) Command name.
+        :param str description: (optional) Command description.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivityCommandResult` object
+        """
+
+        if w_id is None:
+            raise ValueError('w_id must be provided')
+        if refresh_token is None:
+            raise ValueError('refresh_token must be provided')
+        if commands is not None:
+            commands = [convert_model(x) for x in commands]
+        headers = {
+            'refresh_token': refresh_token
+        }
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='run_workspace_commands')
+        headers.update(sdk_headers)
+
+        data = {
+            'commands': commands,
+            'operation_name': operation_name,
+            'description': description
+        }
+        data = {k: v for (k, v) in data.items() if v is not None}
+        data = json.dumps(data)
+        headers['content-type'] = 'application/json'
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['w_id']
+        path_param_values = self.encode_path_vars(w_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v1/workspaces/{w_id}/commands'.format(**path_param_dict)
+        request = self.prepare_request(method='PUT',
+                                       url=url,
+                                       headers=headers,
+                                       data=data)
+
+        response = self.send(request, **kwargs)
+        return response
+
+
+    def apply_workspace_command(self,
+        w_id: str,
+        refresh_token: str,
+        *,
+        action_options: 'WorkspaceActivityOptionsTemplate' = None,
+        delegated_token: str = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Perform a Schematics `apply` job.
+
+        Run a Schematics `apply` job against your workspace. An `apply` job provisions,
+        modifies, or removes the IBM Cloud resources that you described in the Terraform
+        template that your workspace points to. Depending on the type and number of
+        resources that you want to provision or modify, this process might take a few
+        minutes, or even up to hours to complete. During this time, you cannot make
+        changes to your workspace. After all updates are applied, the state of the files
+        is
+        [persisted](https://cloud.ibm.com/docs/schematics?topic=schematics-persist-files)
+        to determine what resources exist in your IBM Cloud account.
+         **Important**: Your workspace must be in an `Inactive`, `Active`, `Failed`, or
+         `Stopped` state to perform a Schematics `apply` job. After all updates are
+        applied,
+         the state of the files is
+        [persisted](https://cloud.ibm.com/docs/schematics?topic=schematics-persist-files)
+         to determine what resources exist in your IBM Cloud account.
+         **Note**: This API returns an activity or job ID that you use to retrieve the
+         log URL with the `GET /v1/workspaces/{id}/actions/{action_id}/logs` API.
+         **Important:** Applying a template might incur costs. Make sure to review
+         the pricing information for the resources that you specified in your
+         templates before you apply the template in IBM Cloud.
+         To find a summary of job that Schematics is about to perform,
+         create a Terraform execution plan with the `POST /v1/workspaces/{id}/plan` API.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or
+         platform access to the workspace ID and the resource group.
+         For more information, about Schematics access and permissions,
+         see [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
+
+        :param str w_id: The ID of the workspace for which you want to run a
+               Schematics `apply` job.  To find the workspace ID, use the `GET
+               /workspaces` API.
+        :param str refresh_token: The IAM refresh token for the user or service
+               identity.
+                 **Retrieving refresh token**:
+                 * Use `export IBMCLOUD_API_KEY=<ibmcloud_api_key>`, and execute `curl -X
+               POST "https://iam.cloud.ibm.com/identity/token" -H "Content-Type:
+               application/x-www-form-urlencoded" -d
+               "grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IBMCLOUD_API_KEY"
+               -u bx:bx`.
+                 * For more information, about creating IAM access token and API Docs,
+               refer, [IAM access
+               token](/apidocs/iam-identity-token-api#gettoken-password) and [Create API
+               key](/apidocs/iam-identity-token-api#create-api-key).
+                 **Limitation**:
+                 * If the token is expired, you can use `refresh token` to get a new IAM
+               access token.
+                 * The `refresh_token` parameter cannot be used to retrieve a new IAM
+               access token.
+                 * When the IAM access token is about to expire, use the API key to create
+               a new access token.
+        :param WorkspaceActivityOptionsTemplate action_options: (optional)
+               Workspace job options template.
+        :param str delegated_token: (optional) The IAM delegated token for your IBM
+               Cloud account.  This token is required for requests that are sent via the
+               UI only.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivityApplyResult` object
+        """
+
+        if w_id is None:
+            raise ValueError('w_id must be provided')
+        if refresh_token is None:
+            raise ValueError('refresh_token must be provided')
+        if action_options is not None:
+            action_options = convert_model(action_options)
+        headers = {
+            'refresh_token': refresh_token,
+            'delegated_token': delegated_token
+        }
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='apply_workspace_command')
+        headers.update(sdk_headers)
+
+        data = {
+            'action_options': action_options
+        }
+        data = {k: v for (k, v) in data.items() if v is not None}
+        data = json.dumps(data)
+        headers['content-type'] = 'application/json'
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['w_id']
+        path_param_values = self.encode_path_vars(w_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v1/workspaces/{w_id}/apply'.format(**path_param_dict)
+        request = self.prepare_request(method='PUT',
+                                       url=url,
+                                       headers=headers,
+                                       data=data)
+
+        response = self.send(request, **kwargs)
+        return response
+
+
+    def destroy_workspace_command(self,
+        w_id: str,
+        refresh_token: str,
+        *,
+        action_options: 'WorkspaceActivityOptionsTemplate' = None,
+        delegated_token: str = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Perform a Schematics `destroy` job.
+
+        Run a Schematics `destroy` job against your workspace. A `destroy` job removes all
+        IBM Cloud resources that are associated with your workspace. Removing your
+        resources does not delete the Schematics workspace. To delete the workspace, use
+        the `DELETE /v1/workspaces/{id}` API. This API returns an activity or job ID that
+        you use to retrieve the URL to the log file with the `GET
+        /v1/workspaces/{id}/actions/{action_id}/logs` API.
+         **Important**: Your workspace must be in an `Active`, `Failed`, or `Stopped`
+        state to perform a Schematics `destroy` job.
+         **Note**: Deleting IBM Cloud resources cannot be undone. Make sure that you back
+        up any required data before you remove your resources.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or platform
+        access
+          to the workspace ID and the resource group.
+          For more information, about Schematics access and permissions,
+          see [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
+
+        :param str w_id: The ID of the workspace for which you want to perform a
+               Schematics `destroy` job.  To find the workspace ID, use the `GET
+               /workspaces` API.
+        :param str refresh_token: The IAM refresh token for the user or service
+               identity.
+                 **Retrieving refresh token**:
+                 * Use `export IBMCLOUD_API_KEY=<ibmcloud_api_key>`, and execute `curl -X
+               POST "https://iam.cloud.ibm.com/identity/token" -H "Content-Type:
+               application/x-www-form-urlencoded" -d
+               "grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IBMCLOUD_API_KEY"
+               -u bx:bx`.
+                 * For more information, about creating IAM access token and API Docs,
+               refer, [IAM access
+               token](/apidocs/iam-identity-token-api#gettoken-password) and [Create API
+               key](/apidocs/iam-identity-token-api#create-api-key).
+                 **Limitation**:
+                 * If the token is expired, you can use `refresh token` to get a new IAM
+               access token.
+                 * The `refresh_token` parameter cannot be used to retrieve a new IAM
+               access token.
+                 * When the IAM access token is about to expire, use the API key to create
+               a new access token.
+        :param WorkspaceActivityOptionsTemplate action_options: (optional)
+               Workspace job options template.
+        :param str delegated_token: (optional) The IAM delegated token for your IBM
+               Cloud account.  This token is required for requests that are sent via the
+               UI only.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivityDestroyResult` object
+        """
+
+        if w_id is None:
+            raise ValueError('w_id must be provided')
+        if refresh_token is None:
+            raise ValueError('refresh_token must be provided')
+        if action_options is not None:
+            action_options = convert_model(action_options)
+        headers = {
+            'refresh_token': refresh_token,
+            'delegated_token': delegated_token
+        }
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='destroy_workspace_command')
+        headers.update(sdk_headers)
+
+        data = {
+            'action_options': action_options
+        }
+        data = {k: v for (k, v) in data.items() if v is not None}
+        data = json.dumps(data)
+        headers['content-type'] = 'application/json'
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['w_id']
+        path_param_values = self.encode_path_vars(w_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v1/workspaces/{w_id}/destroy'.format(**path_param_dict)
+        request = self.prepare_request(method='PUT',
+                                       url=url,
+                                       headers=headers,
+                                       data=data)
+
+        response = self.send(request, **kwargs)
+        return response
+
+
+    def plan_workspace_command(self,
+        w_id: str,
+        refresh_token: str,
+        *,
+        delegated_token: str = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Perform a Schematics `plan` job.
+
+        Run a Schematics `plan` job against your workspace. The `plan` job creates a
+        summary of IBM Cloud resources that must be created, modified, or deleted to
+        achieve the state that is described in the Terraform or IBM Cloud catalog template
+        that your workspace points to. During this time, you cannot make changes to your
+        workspace. You can use the summary to verify your changes before you apply the
+        template in IBM Cloud.
+         **Important**: Your workspace must be in an `Inactive`, `Active`, `Failed`, or
+        `Stopped` state to perform a Schematics `plan` job.
+         **Note**: This API returns an activity or job ID that you use to retrieve the URL
+        to the log file with the `GET /v1/workspaces/{id}/actions/{action_id}/logs` API.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or platform
+        access
+         to the workspace ID and the resource group.
+         For more information, about Schematics access and permissions,
+         see [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
+
+        :param str w_id: The ID of the workspace, for which you want to run a
+               Schematics `plan` job.  To find the ID of your workspace, use the `GET
+               /v1/workspaces` API.
+        :param str refresh_token: The IAM refresh token for the user or service
+               identity.
+                 **Retrieving refresh token**:
+                 * Use `export IBMCLOUD_API_KEY=<ibmcloud_api_key>`, and execute `curl -X
+               POST "https://iam.cloud.ibm.com/identity/token" -H "Content-Type:
+               application/x-www-form-urlencoded" -d
+               "grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IBMCLOUD_API_KEY"
+               -u bx:bx`.
+                 * For more information, about creating IAM access token and API Docs,
+               refer, [IAM access
+               token](/apidocs/iam-identity-token-api#gettoken-password) and [Create API
+               key](/apidocs/iam-identity-token-api#create-api-key).
+                 **Limitation**:
+                 * If the token is expired, you can use `refresh token` to get a new IAM
+               access token.
+                 * The `refresh_token` parameter cannot be used to retrieve a new IAM
+               access token.
+                 * When the IAM access token is about to expire, use the API key to create
+               a new access token.
+        :param str delegated_token: (optional) The IAM delegated token for your IBM
+               Cloud account.  This token is required for requests that are sent via the
+               UI only.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivityPlanResult` object
+        """
+
+        if w_id is None:
+            raise ValueError('w_id must be provided')
+        if refresh_token is None:
+            raise ValueError('refresh_token must be provided')
+        headers = {
+            'refresh_token': refresh_token,
+            'delegated_token': delegated_token
+        }
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='plan_workspace_command')
+        headers.update(sdk_headers)
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['w_id']
+        path_param_values = self.encode_path_vars(w_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v1/workspaces/{w_id}/plan'.format(**path_param_dict)
+        request = self.prepare_request(method='POST',
+                                       url=url,
+                                       headers=headers)
+
+        response = self.send(request, **kwargs)
+        return response
+
+
+    def refresh_workspace_command(self,
+        w_id: str,
+        refresh_token: str,
+        *,
+        delegated_token: str = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Perform a Schematics `refresh` job.
+
+        Run a Schematics `refresh` job against your workspace. A `refresh` job validates
+        the IBM Cloud resources in your account against the state that is stored in the
+        Terraform statefile of your workspace. If differences are found, the Terraform
+        statefile is updated accordingly. This API returns an activity or job ID that you
+        use to retrieve the URL to the log file with the `GET
+        /v1/workspaces/{id}/actions/{action_id}/logs` API.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or platform
+        access
+         to the workspace ID and the resource group.
+         For more information, about Schematics access and permissions,
+         see [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
+
+        :param str w_id: The ID of the workspace, for which you want to run a
+               Schematics `refresh` job.  To find the ID of your workspace, use the `GET
+               /v1/workspaces` API.
+        :param str refresh_token: The IAM refresh token for the user or service
+               identity.
+                 **Retrieving refresh token**:
+                 * Use `export IBMCLOUD_API_KEY=<ibmcloud_api_key>`, and execute `curl -X
+               POST "https://iam.cloud.ibm.com/identity/token" -H "Content-Type:
+               application/x-www-form-urlencoded" -d
+               "grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IBMCLOUD_API_KEY"
+               -u bx:bx`.
+                 * For more information, about creating IAM access token and API Docs,
+               refer, [IAM access
+               token](/apidocs/iam-identity-token-api#gettoken-password) and [Create API
+               key](/apidocs/iam-identity-token-api#create-api-key).
+                 **Limitation**:
+                 * If the token is expired, you can use `refresh token` to get a new IAM
+               access token.
+                 * The `refresh_token` parameter cannot be used to retrieve a new IAM
+               access token.
+                 * When the IAM access token is about to expire, use the API key to create
+               a new access token.
+        :param str delegated_token: (optional) The IAM delegated token for your IBM
+               Cloud account.  This token is required for requests that are sent via the
+               UI only.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `WorkspaceActivityRefreshResult` object
+        """
+
+        if w_id is None:
+            raise ValueError('w_id must be provided')
+        if refresh_token is None:
+            raise ValueError('refresh_token must be provided')
+        headers = {
+            'refresh_token': refresh_token,
+            'delegated_token': delegated_token
+        }
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='refresh_workspace_command')
+        headers.update(sdk_headers)
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['w_id']
+        path_param_values = self.encode_path_vars(w_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v1/workspaces/{w_id}/refresh'.format(**path_param_dict)
+        request = self.prepare_request(method='PUT',
+                                       url=url,
+                                       headers=headers)
+
+        response = self.send(request, **kwargs)
+        return response
+
+
+    def list_jobs(self,
+        *,
+        offset: int = None,
+        limit: int = None,
+        sort: str = None,
+        profile: str = None,
+        resource: str = None,
+        resource_id: str = None,
+        action_id: str = None,
+        list: str = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        List jobs.
+
+        Retrieve a list of all Schematics jobs.  The job displays a list of jobs with the
+        status as `pending`, `in_progess`,  `success`, or `failed`. Jobs are generated
+        when you use the  `POST /v2/jobs`, `PUT /v2/jobs/{job_id}`, or `DELETE
+        /v2/jobs/{job_id}`.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or
+         platform access to the job ID and the resource group.
+         For more information, about Schematics access and permissions, see
+         [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
+
+        :param int offset: (optional) The starting position of the item in the list
+               of items. For example, if you have three workspaces in your account, the
+               first workspace is assigned position number 0, the second workspace is
+               assigned position number 1, and so forth. If you have 6 workspaces and you
+               want to list the details for workspaces 2-6, enter 1. To limit the number
+               of workspaces that is returned, use the `limit` option in addition to the
+               `offset` option. Negative numbers are not supported and are ignored.
+        :param int limit: (optional) The maximum number of items that you want to
+               list. The number must be a positive integer between 1 and 2000. If no value
+               is provided, 100 is used by default.
+        :param str sort: (optional) Name of the field to sort-by;  Use the '.'
+               character to delineate sub-resources and sub-fields (eg. owner.last_name).
+               Prepend the field with '+' or '-', indicating 'ascending' or 'descending'
+               (default is ascending)   Ignore unrecognized or unsupported sort field.
+        :param str profile: (optional) Level of details returned by the get method.
+        :param str resource: (optional) Name of the resource (workspace, actions or
+               controls).
+        :param str resource_id: (optional) The Resource Id. It could be an
+               Action-id or Workspace-id.
+        :param str action_id: (optional) Action Id.
+        :param str list: (optional) list jobs.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `JobList` object
+        """
+
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='list_jobs')
+        headers.update(sdk_headers)
+
+        params = {
+            'offset': offset,
+            'limit': limit,
+            'sort': sort,
+            'profile': profile,
+            'resource': resource,
+            'resource_id': resource_id,
+            'action_id': action_id,
+            'list': list
+        }
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        url = '/v2/jobs'
+        request = self.prepare_request(method='GET',
+                                       url=url,
+                                       headers=headers,
+                                       params=params)
+
+        response = self.send(request, **kwargs)
+        return response
 
 
     def create_job(self,
@@ -2400,28 +3002,49 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Create a Job record and launch the Job.
+        Create a job.
 
-        Creare a Job record and launch the Job.
+        Create & launch the Schematics job. It can be used to launch an Ansible playbook
+        against a target hosts.  The job displays a list of jobs with the status as
+        `pending`, `in_progess`, `success`, or `failed`.
 
-        :param str refresh_token: The IAM refresh token associated with the IBM
-               Cloud account.
+        :param str refresh_token: The IAM refresh token for the user or service
+               identity.
+                 **Retrieving refresh token**:
+                 * Use `export IBMCLOUD_API_KEY=<ibmcloud_api_key>`, and execute `curl -X
+               POST "https://iam.cloud.ibm.com/identity/token" -H "Content-Type:
+               application/x-www-form-urlencoded" -d
+               "grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IBMCLOUD_API_KEY"
+               -u bx:bx`.
+                 * For more information, about creating IAM access token and API Docs,
+               refer, [IAM access
+               token](/apidocs/iam-identity-token-api#gettoken-password) and [Create API
+               key](/apidocs/iam-identity-token-api#create-api-key).
+                 **Limitation**:
+                 * If the token is expired, you can use `refresh token` to get a new IAM
+               access token.
+                 * The `refresh_token` parameter cannot be used to retrieve a new IAM
+               access token.
+                 * When the IAM access token is about to expire, use the API key to create
+               a new access token.
         :param str command_object: (optional) Name of the Schematics automation
                resource.
         :param str command_object_id: (optional) Job command object id
                (workspace-id, action-id).
         :param str command_name: (optional) Schematics job command name.
         :param str command_parameter: (optional) Schematics job command parameter
-               (playbook-name, capsule-name or flow-name).
+               (playbook-name).
         :param List[str] command_options: (optional) Command line options for the
                command.
-        :param List[VariableData] inputs: (optional) Job inputs used by Action.
+        :param List[VariableData] inputs: (optional) Job inputs used by Action or
+               Workspace.
         :param List[VariableData] settings: (optional) Environment variables used
-               by the Job while performing Action.
+               by the Job while performing Action or Workspace.
         :param List[str] tags: (optional) User defined tags, while running the job.
-        :param str location: (optional) List of workspace locations supported by
-               IBM Cloud Schematics service.  Note, this does not limit the location of
-               the resources provisioned using Schematics.
+        :param str location: (optional) List of locations supported by IBM Cloud
+               Schematics service.  While creating your workspace or action, choose the
+               right region, since it cannot be changed.  Note, this does not limit the
+               location of the IBM Cloud resources, provisioned using Schematics.
         :param JobStatus status: (optional) Job Status.
         :param JobData data: (optional) Job data.
         :param BastionResourceDefinition bastion: (optional) Describes a bastion
@@ -2483,74 +3106,65 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        data=data)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
-    def list_jobs(self,
+    def get_job(self,
+        job_id: str,
         *,
-        offset: int = None,
-        limit: int = None,
-        sort: str = None,
         profile: str = None,
-        resource: str = None,
-        action_id: str = None,
-        list: str = None,
         **kwargs
     ) -> DetailedResponse:
         """
-        Get all the Job records.
+        Get a job.
 
-        Get all the Job records.
+        Retrieve the detailed information of Job
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or
+         platform access to the job ID and the resource group.
+         For more information, about Schematics access and permissions, see
+         [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
-        :param int offset: (optional) The number of items to skip before starting
-               to collect the result set.
-        :param int limit: (optional) The numbers of items to return.
-        :param str sort: (optional) Name of the field to sort-by;  Use the '.'
-               character to delineate sub-resources and sub-fields (eg. owner.last_name).
-               Prepend the field with '+' or '-', indicating 'ascending' or 'descending'
-               (default is ascending)   Ignore unrecognized or unsupported sort field.
+        :param str job_id: Job Id. Use `GET /v2/jobs` API to look up the Job Ids in
+               your IBM Cloud account.
         :param str profile: (optional) Level of details returned by the get method.
-        :param str resource: (optional) Name of the resource (workspace, actions or
-               controls).
-        :param str action_id: (optional) Action Id.
-        :param str list: (optional) list jobs.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `JobList` object
+        :rtype: DetailedResponse with `dict` result representing a `Job` object
         """
 
+        if job_id is None:
+            raise ValueError('job_id must be provided')
         headers = {}
         sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
                                       service_version='V1',
-                                      operation_id='list_jobs')
+                                      operation_id='get_job')
         headers.update(sdk_headers)
 
         params = {
-            'offset': offset,
-            'limit': limit,
-            'sort': sort,
-            'profile': profile,
-            'resource': resource,
-            'action_id': action_id,
-            'list': list
+            'profile': profile
         }
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
-        url = '/v2/jobs'
+        path_param_keys = ['job_id']
+        path_param_values = self.encode_path_vars(job_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v2/jobs/{job_id}'.format(**path_param_dict)
         request = self.prepare_request(method='GET',
                                        url=url,
                                        headers=headers,
                                        params=params)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
-    def replace_job(self,
+    def update_job(self,
         job_id: str,
         refresh_token: str,
         *,
@@ -2570,30 +3184,56 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Clone the Job-record, and relaunch the Job.
+        Update a job.
 
-        Clone the Job-record, and relaunch the Job.
+        Creates a copy of the Schematics job and relaunches an existing job  by updating
+        the information of an existing Schematics job.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or
+         platform access to the job ID and the resource group.
+         For more information, about Schematics access and permissions, see
+         [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
-        :param str job_id: Job Id. Use GET /jobs API to look up the Job Ids in your
-               IBM Cloud account.
-        :param str refresh_token: The IAM refresh token associated with the IBM
-               Cloud account.
+        :param str job_id: Job Id. Use `GET /v2/jobs` API to look up the Job Ids in
+               your IBM Cloud account.
+        :param str refresh_token: The IAM refresh token for the user or service
+               identity.
+                 **Retrieving refresh token**:
+                 * Use `export IBMCLOUD_API_KEY=<ibmcloud_api_key>`, and execute `curl -X
+               POST "https://iam.cloud.ibm.com/identity/token" -H "Content-Type:
+               application/x-www-form-urlencoded" -d
+               "grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IBMCLOUD_API_KEY"
+               -u bx:bx`.
+                 * For more information, about creating IAM access token and API Docs,
+               refer, [IAM access
+               token](/apidocs/iam-identity-token-api#gettoken-password) and [Create API
+               key](/apidocs/iam-identity-token-api#create-api-key).
+                 **Limitation**:
+                 * If the token is expired, you can use `refresh token` to get a new IAM
+               access token.
+                 * The `refresh_token` parameter cannot be used to retrieve a new IAM
+               access token.
+                 * When the IAM access token is about to expire, use the API key to create
+               a new access token.
         :param str command_object: (optional) Name of the Schematics automation
                resource.
         :param str command_object_id: (optional) Job command object id
                (workspace-id, action-id).
         :param str command_name: (optional) Schematics job command name.
         :param str command_parameter: (optional) Schematics job command parameter
-               (playbook-name, capsule-name or flow-name).
+               (playbook-name).
         :param List[str] command_options: (optional) Command line options for the
                command.
-        :param List[VariableData] inputs: (optional) Job inputs used by Action.
+        :param List[VariableData] inputs: (optional) Job inputs used by Action or
+               Workspace.
         :param List[VariableData] settings: (optional) Environment variables used
-               by the Job while performing Action.
+               by the Job while performing Action or Workspace.
         :param List[str] tags: (optional) User defined tags, while running the job.
-        :param str location: (optional) List of workspace locations supported by
-               IBM Cloud Schematics service.  Note, this does not limit the location of
-               the resources provisioned using Schematics.
+        :param str location: (optional) List of locations supported by IBM Cloud
+               Schematics service.  While creating your workspace or action, choose the
+               right region, since it cannot be changed.  Note, this does not limit the
+               location of the IBM Cloud resources, provisioned using Schematics.
         :param JobStatus status: (optional) Job Status.
         :param JobData data: (optional) Job data.
         :param BastionResourceDefinition bastion: (optional) Describes a bastion
@@ -2625,7 +3265,7 @@ class SchematicsV1(BaseService):
         }
         sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
                                       service_version='V1',
-                                      operation_id='replace_job')
+                                      operation_id='update_job')
         headers.update(sdk_headers)
 
         data = {
@@ -2660,7 +3300,7 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        data=data)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -2673,14 +3313,40 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Stop the running Job, and delete the Job-record.
+        Stop the running Job, and delete the Job.
 
-        Stop the running Job, and delete the Job-record.
+        Stop the running Job, and delete the Job.  **Note** You cannot delete or stop the
+        job activity from an ongoing  execution of an action defined in the playbook.  You
+        can repeat the execution of same job, whenever you patch or update the action or
+        workspace.
+         <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or
+         platform access to the job ID and the resource group.
+         For more information, about Schematics access and permissions, see
+         [Schematics service access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
-        :param str job_id: Job Id. Use GET /jobs API to look up the Job Ids in your
-               IBM Cloud account.
-        :param str refresh_token: The IAM refresh token associated with the IBM
-               Cloud account.
+        :param str job_id: Job Id. Use `GET /v2/jobs` API to look up the Job Ids in
+               your IBM Cloud account.
+        :param str refresh_token: The IAM refresh token for the user or service
+               identity.
+                 **Retrieving refresh token**:
+                 * Use `export IBMCLOUD_API_KEY=<ibmcloud_api_key>`, and execute `curl -X
+               POST "https://iam.cloud.ibm.com/identity/token" -H "Content-Type:
+               application/x-www-form-urlencoded" -d
+               "grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IBMCLOUD_API_KEY"
+               -u bx:bx`.
+                 * For more information, about creating IAM access token and API Docs,
+               refer, [IAM access
+               token](/apidocs/iam-identity-token-api#gettoken-password) and [Create API
+               key](/apidocs/iam-identity-token-api#create-api-key).
+                 **Limitation**:
+                 * If the token is expired, you can use `refresh token` to get a new IAM
+               access token.
+                 * The `refresh_token` parameter cannot be used to retrieve a new IAM
+               access token.
+                 * When the IAM access token is about to expire, use the API key to create
+               a new access token.
         :param bool force: (optional) Equivalent to -force options in the command
                line.
         :param bool propagate: (optional) Auto propagate the chaange or deletion to
@@ -2715,55 +3381,7 @@ class SchematicsV1(BaseService):
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
-        return response
-
-
-    def get_job(self,
-        job_id: str,
-        *,
-        profile: str = None,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Get the Job record.
-
-        Get the Job record.
-
-        :param str job_id: Job Id. Use GET /jobs API to look up the Job Ids in your
-               IBM Cloud account.
-        :param str profile: (optional) Level of details returned by the get method.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `Job` object
-        """
-
-        if job_id is None:
-            raise ValueError('job_id must be provided')
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='get_job')
-        headers.update(sdk_headers)
-
-        params = {
-            'profile': profile
-        }
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        path_param_keys = ['job_id']
-        path_param_values = self.encode_path_vars(job_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v2/jobs/{job_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
-
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -2772,12 +3390,17 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get log-file from the Job record.
+        Get job logs.
 
-        Get log-file from the Job record.
+        Retrieve the job logs
+        <h3>Authorization</h3> Schematics support generic authorization such as service
+        access or  platform access to the action ID and the resource group.  For more
+        information, about Schematics access and permissions, see  [Schematics service
+        access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
-        :param str job_id: Job Id. Use GET /jobs API to look up the Job Ids in your
-               IBM Cloud account.
+        :param str job_id: Job Id. Use `GET /v2/jobs` API to look up the Job Ids in
+               your IBM Cloud account.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `dict` result representing a `JobLog` object
@@ -2803,370 +3426,87 @@ class SchematicsV1(BaseService):
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
     #########################
-    # datasets
+    # bulk-jobs
     #########################
 
 
-    def list_shared_datasets(self,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        List all shared datasets.
-
-        List all shared datasets.
-
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `SharedDatasetResponseList` object
-        """
-
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='list_shared_datasets')
-        headers.update(sdk_headers)
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        url = '/v2/shared_datasets'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
-
-        response = self.send(request)
-        return response
-
-
-    def create_shared_dataset(self,
+    def create_workspace_deletion_job(self,
+        refresh_token: str,
         *,
-        auto_propagate_change: bool = None,
-        description: str = None,
-        effected_workspace_ids: List[str] = None,
-        resource_group: str = None,
-        shared_dataset_data: List['SharedDatasetData'] = None,
-        shared_dataset_name: str = None,
-        shared_dataset_source_name: str = None,
-        shared_dataset_type: List[str] = None,
-        tags: List[str] = None,
-        version: str = None,
+        new_delete_workspaces: bool = None,
+        new_destroy_resources: bool = None,
+        new_job: str = None,
+        new_version: str = None,
+        new_workspaces: List[str] = None,
+        destroy_resources: str = None,
         **kwargs
     ) -> DetailedResponse:
         """
-        Create a shared dataset definition.
+        Delete multiple workspaces.
 
-        Create a shared dataset definition.
+        Delete multiple workspaces.  Use ?destroy_resource="true" to destroy the related
+        cloud resources,  otherwise the resources must be managed outside of Schematics.
 
-        :param bool auto_propagate_change: (optional) Automatically propagate
-               changes to consumers.
-        :param str description: (optional) Dataset description.
-        :param List[str] effected_workspace_ids: (optional) Affected workspaces.
-        :param str resource_group: (optional) Resource group name.
-        :param List[SharedDatasetData] shared_dataset_data: (optional) Shared
-               dataset data.
-        :param str shared_dataset_name: (optional) Shared dataset name.
-        :param str shared_dataset_source_name: (optional) Shared dataset source
-               name.
-        :param List[str] shared_dataset_type: (optional) Shared dataset type.
-        :param List[str] tags: (optional) Shared dataset tags.
-        :param str version: (optional) Shared dataset version.
+        :param str refresh_token: The IAM refresh token for the user or service
+               identity.
+                 **Retrieving refresh token**:
+                 * Use `export IBMCLOUD_API_KEY=<ibmcloud_api_key>`, and execute `curl -X
+               POST "https://iam.cloud.ibm.com/identity/token" -H "Content-Type:
+               application/x-www-form-urlencoded" -d
+               "grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=$IBMCLOUD_API_KEY"
+               -u bx:bx`.
+                 * For more information, about creating IAM access token and API Docs,
+               refer, [IAM access
+               token](/apidocs/iam-identity-token-api#gettoken-password) and [Create API
+               key](/apidocs/iam-identity-token-api#create-api-key).
+                 **Limitation**:
+                 * If the token is expired, you can use `refresh token` to get a new IAM
+               access token.
+                 * The `refresh_token` parameter cannot be used to retrieve a new IAM
+               access token.
+                 * When the IAM access token is about to expire, use the API key to create
+               a new access token.
+        :param bool new_delete_workspaces: (optional) True to delete workspace.
+        :param bool new_destroy_resources: (optional) True to destroy the resources
+               managed by this workspace.
+        :param str new_job: (optional) Workspace deletion job name.
+        :param str new_version: (optional) Version of the terraform template.
+        :param List[str] new_workspaces: (optional) List of workspaces to be
+               deleted.
+        :param str destroy_resources: (optional) If set to `true`, refresh_token
+               header configuration is required to delete all the Terraform resources, and
+               the Schematics workspace. If set to `false`, you can remove only the
+               workspace. Your Terraform resources are still available and must be managed
+               with the resource dashboard or CLI.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `SharedDatasetResponse` object
+        :rtype: DetailedResponse with `dict` result representing a `WorkspaceBulkDeleteResponse` object
         """
 
-        if shared_dataset_data is not None:
-            shared_dataset_data = [convert_model(x) for x in shared_dataset_data]
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='create_shared_dataset')
-        headers.update(sdk_headers)
-
-        data = {
-            'auto_propagate_change': auto_propagate_change,
-            'description': description,
-            'effected_workspace_ids': effected_workspace_ids,
-            'resource_group': resource_group,
-            'shared_dataset_data': shared_dataset_data,
-            'shared_dataset_name': shared_dataset_name,
-            'shared_dataset_source_name': shared_dataset_source_name,
-            'shared_dataset_type': shared_dataset_type,
-            'tags': tags,
-            'version': version
+        if refresh_token is None:
+            raise ValueError('refresh_token must be provided')
+        headers = {
+            'refresh_token': refresh_token
         }
-        data = {k: v for (k, v) in data.items() if v is not None}
-        data = json.dumps(data)
-        headers['content-type'] = 'application/json'
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        url = '/v2/shared_datasets'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
-
-        response = self.send(request)
-        return response
-
-
-    def get_shared_dataset(self,
-        sd_id: str,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Get the shared dataset.
-
-        Get the shared dataset.
-
-        :param str sd_id: The shared dataset ID Use the GET /shared_datasets to
-               look up the shared dataset IDs  in your IBM Cloud account.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `SharedDatasetResponse` object
-        """
-
-        if sd_id is None:
-            raise ValueError('sd_id must be provided')
-        headers = {}
         sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
                                       service_version='V1',
-                                      operation_id='get_shared_dataset')
-        headers.update(sdk_headers)
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        path_param_keys = ['sd_id']
-        path_param_values = self.encode_path_vars(sd_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v2/shared_datasets/{sd_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
-
-        response = self.send(request)
-        return response
-
-
-    def replace_shared_dataset(self,
-        sd_id: str,
-        *,
-        auto_propagate_change: bool = None,
-        description: str = None,
-        effected_workspace_ids: List[str] = None,
-        resource_group: str = None,
-        shared_dataset_data: List['SharedDatasetData'] = None,
-        shared_dataset_name: str = None,
-        shared_dataset_source_name: str = None,
-        shared_dataset_type: List[str] = None,
-        tags: List[str] = None,
-        version: str = None,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Replace the shared dataset.
-
-        Replace the shared dataset.
-
-        :param str sd_id: The shared dataset ID Use the GET /shared_datasets to
-               look up the shared dataset IDs  in your IBM Cloud account.
-        :param bool auto_propagate_change: (optional) Automatically propagate
-               changes to consumers.
-        :param str description: (optional) Dataset description.
-        :param List[str] effected_workspace_ids: (optional) Affected workspaces.
-        :param str resource_group: (optional) Resource group name.
-        :param List[SharedDatasetData] shared_dataset_data: (optional) Shared
-               dataset data.
-        :param str shared_dataset_name: (optional) Shared dataset name.
-        :param str shared_dataset_source_name: (optional) Shared dataset source
-               name.
-        :param List[str] shared_dataset_type: (optional) Shared dataset type.
-        :param List[str] tags: (optional) Shared dataset tags.
-        :param str version: (optional) Shared dataset version.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `SharedDatasetResponse` object
-        """
-
-        if sd_id is None:
-            raise ValueError('sd_id must be provided')
-        if shared_dataset_data is not None:
-            shared_dataset_data = [convert_model(x) for x in shared_dataset_data]
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='replace_shared_dataset')
-        headers.update(sdk_headers)
-
-        data = {
-            'auto_propagate_change': auto_propagate_change,
-            'description': description,
-            'effected_workspace_ids': effected_workspace_ids,
-            'resource_group': resource_group,
-            'shared_dataset_data': shared_dataset_data,
-            'shared_dataset_name': shared_dataset_name,
-            'shared_dataset_source_name': shared_dataset_source_name,
-            'shared_dataset_type': shared_dataset_type,
-            'tags': tags,
-            'version': version
-        }
-        data = {k: v for (k, v) in data.items() if v is not None}
-        data = json.dumps(data)
-        headers['content-type'] = 'application/json'
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        path_param_keys = ['sd_id']
-        path_param_values = self.encode_path_vars(sd_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v2/shared_datasets/{sd_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
-
-        response = self.send(request)
-        return response
-
-
-    def delete_shared_dataset(self,
-        sd_id: str,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Delete the shared dataset.
-
-        Replace the shared dataset.
-
-        :param str sd_id: The shared dataset ID Use the GET /shared_datasets to
-               look up the shared dataset IDs  in your IBM Cloud account.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `SharedDatasetResponse` object
-        """
-
-        if sd_id is None:
-            raise ValueError('sd_id must be provided')
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='delete_shared_dataset')
-        headers.update(sdk_headers)
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        path_param_keys = ['sd_id']
-        path_param_values = self.encode_path_vars(sd_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v2/shared_datasets/{sd_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
-
-        response = self.send(request)
-        return response
-
-    #########################
-    # settings-kms
-    #########################
-
-
-    def get_kms_settings(self,
-        location: str,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Get the KMS settings for customer account.
-
-        Get the KMS settings for customer account.
-
-        :param str location: The location of the Resource.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `KMSSettings` object
-        """
-
-        if location is None:
-            raise ValueError('location must be provided')
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='get_kms_settings')
+                                      operation_id='create_workspace_deletion_job')
         headers.update(sdk_headers)
 
         params = {
-            'location': location
+            'destroy_resources': destroy_resources
         }
 
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        url = '/v2/settings/kms'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
-
-        response = self.send(request)
-        return response
-
-
-    def replace_kms_settings(self,
-        *,
-        location: str = None,
-        encryption_scheme: str = None,
-        resource_group: str = None,
-        primary_crk: 'KMSSettingsPrimaryCrk' = None,
-        secondary_crk: 'KMSSettingsSecondaryCrk' = None,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Set the KMS settings for customer account.
-
-        Set the KMS settings for customer account.
-
-        :param str location: (optional) Location.
-        :param str encryption_scheme: (optional) Encryption scheme.
-        :param str resource_group: (optional) Resource group.
-        :param KMSSettingsPrimaryCrk primary_crk: (optional) Primary CRK details.
-        :param KMSSettingsSecondaryCrk secondary_crk: (optional) Secondary CRK
-               details.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `KMSSettings` object
-        """
-
-        if primary_crk is not None:
-            primary_crk = convert_model(primary_crk)
-        if secondary_crk is not None:
-            secondary_crk = convert_model(secondary_crk)
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='replace_kms_settings')
-        headers.update(sdk_headers)
-
         data = {
-            'location': location,
-            'encryption_scheme': encryption_scheme,
-            'resource_group': resource_group,
-            'primary_crk': primary_crk,
-            'secondary_crk': secondary_crk
+            'delete_workspaces': new_delete_workspaces,
+            'destroy_resources': new_destroy_resources,
+            'job': new_job,
+            'version': new_version,
+            'workspaces': new_workspaces
         }
         data = {k: v for (k, v) in data.items() if v is not None}
         data = json.dumps(data)
@@ -3176,142 +3516,58 @@ class SchematicsV1(BaseService):
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
-        url = '/v2/settings/kms'
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
-
-        response = self.send(request)
-        return response
-
-
-    def get_discovered_kms_instances(self,
-        encryption_scheme: str,
-        location: str,
-        *,
-        resource_group: str = None,
-        limit: int = None,
-        sort: str = None,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Discover the KMS instances in the account.
-
-        Discover the KMS instances in the account.
-
-        :param str encryption_scheme: The encryption scheme to be used.
-        :param str location: The location of the Resource.
-        :param str resource_group: (optional) The resource group (by default, fetch
-               from all resource groups).
-        :param int limit: (optional) The numbers of items to return.
-        :param str sort: (optional) Name of the field to sort-by;  Use the '.'
-               character to delineate sub-resources and sub-fields (eg. owner.last_name).
-               Prepend the field with '+' or '-', indicating 'ascending' or 'descending'
-               (default is ascending)   Ignore unrecognized or unsupported sort field.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `KMSDiscovery` object
-        """
-
-        if encryption_scheme is None:
-            raise ValueError('encryption_scheme must be provided')
-        if location is None:
-            raise ValueError('location must be provided')
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='get_discovered_kms_instances')
-        headers.update(sdk_headers)
-
-        params = {
-            'encryption_scheme': encryption_scheme,
-            'location': location,
-            'resource_group': resource_group,
-            'limit': limit,
-            'sort': sort
-        }
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        url = '/v2/settings/kms_instances'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
-
-        response = self.send(request)
-        return response
-
-    #########################
-    # settingsInventory
-    #########################
-
-
-    def create_inventory(self,
-        *,
-        name: str = None,
-        description: str = None,
-        location: str = None,
-        resource_group: str = None,
-        inventories_ini: str = None,
-        resource_queries: List[str] = None,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Create a resource inventory definition, used to target Actions or Controls.
-
-        Create a resource inventory definition.
-
-        :param str name: (optional) Inventory name.
-        :param str description: (optional) Inventory description.
-        :param str location: (optional) List of workspace locations supported by
-               IBM Cloud Schematics service.  Note, this does not limit the location of
-               the resources provisioned using Schematics.
-        :param str resource_group: (optional) Resource-group name for the Inventory
-               definition.  By default, Action will be created in Default Resource Group.
-        :param str inventories_ini: (optional) Input inventory of host and host
-               group for the playbook,  in the .ini file format.
-        :param List[str] resource_queries: (optional) Input resource queries that
-               is used to dynamically generate  the inventory of host and host group for
-               the playbook.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `InventoryResourceRecord` object
-        """
-
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='create_inventory')
-        headers.update(sdk_headers)
-
-        data = {
-            'name': name,
-            'description': description,
-            'location': location,
-            'resource_group': resource_group,
-            'inventories_ini': inventories_ini,
-            'resource_queries': resource_queries
-        }
-        data = {k: v for (k, v) in data.items() if v is not None}
-        data = json.dumps(data)
-        headers['content-type'] = 'application/json'
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        url = '/v2/inventories'
+        url = '/v1/workspace_jobs'
         request = self.prepare_request(method='POST',
                                        url=url,
                                        headers=headers,
+                                       params=params,
                                        data=data)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
+
+
+    def get_workspace_deletion_job_status(self,
+        wj_id: str,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Get the workspace deletion job status.
+
+        Get the workspace deletion job status.
+
+        :param str wj_id: The workspace job ID.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `WorkspaceJobResponse` object
+        """
+
+        if wj_id is None:
+            raise ValueError('wj_id must be provided')
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='get_workspace_deletion_job_status')
+        headers.update(sdk_headers)
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['wj_id']
+        path_param_values = self.encode_path_vars(wj_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v1/workspace_jobs/{wj_id}/status'.format(**path_param_dict)
+        request = self.prepare_request(method='GET',
+                                       url=url,
+                                       headers=headers)
+
+        response = self.send(request, **kwargs)
+        return response
+
+    #########################
+    # inventory
+    #########################
 
 
     def list_inventories(self,
@@ -3323,13 +3579,29 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Get all resource inventory definitions.
+        List all inventory definitions.
 
-        Get all resource inventory definition.
+        Retrieve a list of all Schematics inventories that depends on the API endpoint
+        that you have access. For example, if you use an API endpoint for a geography,
+        such as North America, only inventories that are created in `us-south` or
+        `us-east` are retrieved. For more information, about supported API endpoints, see
+        [APIendpoints](/apidocs/schematics#api-endpoints).
+        <h3>Authorization</h3> Schematics support generic authorization such as service
+        access or platform access to an action ID and the resource group. For more
+        information, about Schematics access and permissions, see  [Schematics service
+        access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#action-permissions).
 
-        :param int offset: (optional) The number of items to skip before starting
-               to collect the result set.
-        :param int limit: (optional) The numbers of items to return.
+        :param int offset: (optional) The starting position of the item in the list
+               of items. For example, if you have three workspaces in your account, the
+               first workspace is assigned position number 0, the second workspace is
+               assigned position number 1, and so forth. If you have 6 workspaces and you
+               want to list the details for workspaces 2-6, enter 1. To limit the number
+               of workspaces that is returned, use the `limit` option in addition to the
+               `offset` option. Negative numbers are not supported and are ignored.
+        :param int limit: (optional) The maximum number of items that you want to
+               list. The number must be a positive integer between 1 and 2000. If no value
+               is provided, 100 is used by default.
         :param str sort: (optional) Name of the field to sort-by;  Use the '.'
                character to delineate sub-resources and sub-fields (eg. owner.last_name).
                Prepend the field with '+' or '-', indicating 'ascending' or 'descending'
@@ -3363,7 +3635,143 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        params=params)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
+        return response
+
+
+    def create_inventory(self,
+        *,
+        name: str = None,
+        description: str = None,
+        location: str = None,
+        resource_group: str = None,
+        inventories_ini: str = None,
+        resource_queries: List[str] = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Create an inventory definition.
+
+        Create an IBM Cloud Schematics inventory as a single IBM Cloud resource where you
+        want to run Ansible playbook by using Schematics actions. For more information,
+        about inventory host groups, refer to [creating static and dynamic inventory for
+        Schematics
+        actions](https://cloud.ibm.com/docs/schematics?topic=schematics-inventories-setup).
+        **Note** you cannot update the location and region, resource group once an action
+        is created.  Also, make sure your IP addresses are in the
+        [allowlist](https://cloud.ibm.com/docs/schematics?topic=schematics-allowed-ipaddresses).
+         If your Git repository already contains a host file. Schematics does not
+        overwrite the host file already present in your Git repository.
+        <h3>Authorization</h3> Schematics support generic authorization such as service
+        access or platform access to an action ID and the resource group. For more
+        information, about Schematics access and permissions, see  [Schematics service
+        access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#action-permissions).
+
+        :param str name: (optional) The unique name of your Inventory definition.
+               The name can be up to 128 characters long and can include alphanumeric
+               characters, spaces, dashes, and underscores.
+        :param str description: (optional) The description of your Inventory
+               definition. The description can be up to 2048 characters long in size.
+        :param str location: (optional) List of locations supported by IBM Cloud
+               Schematics service.  While creating your workspace or action, choose the
+               right region, since it cannot be changed.  Note, this does not limit the
+               location of the IBM Cloud resources, provisioned using Schematics.
+        :param str resource_group: (optional) Resource-group name for the Inventory
+               definition.   By default, Inventory definition will be created in Default
+               Resource Group.
+        :param str inventories_ini: (optional) Input inventory of host and host
+               group for the playbook, in the `.ini` file format.
+        :param List[str] resource_queries: (optional) Input resource query
+               definitions that is used to dynamically generate the inventory of host and
+               host group for the playbook.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `InventoryResourceRecord` object
+        """
+
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='create_inventory')
+        headers.update(sdk_headers)
+
+        data = {
+            'name': name,
+            'description': description,
+            'location': location,
+            'resource_group': resource_group,
+            'inventories_ini': inventories_ini,
+            'resource_queries': resource_queries
+        }
+        data = {k: v for (k, v) in data.items() if v is not None}
+        data = json.dumps(data)
+        headers['content-type'] = 'application/json'
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        url = '/v2/inventories'
+        request = self.prepare_request(method='POST',
+                                       url=url,
+                                       headers=headers,
+                                       data=data)
+
+        response = self.send(request, **kwargs)
+        return response
+
+
+    def get_inventory(self,
+        inventory_id: str,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Get the inventory definition.
+
+        Use this API to retrieve the detailed information for a resource inventory
+        definition used to target an action in your IBM Cloud account. For more
+        information, about inventory get, refer to [ibmcloud schematics inventory
+        get](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#schematics-get-inv).
+         **Note** you can fetch only the location and region, resource group from where
+        your inventory is created.
+         Also, make sure your IP addresses are in the
+        [allowlist](https://cloud.ibm.com/docs/schematics?topic=schematics-allowed-ipaddresses).
+        <h3>Authorization</h3> Schematics support generic authorization such as service
+        access or platform access to an action ID and the resource group. For more
+        information, about Schematics access and permissions, see [Schematics service
+        access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#action-permissions).
+
+        :param str inventory_id: Resource Inventory Id.  Use `GET /v2/inventories`
+               API to look up the Resource Inventory definition Ids  in your IBM Cloud
+               account.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `InventoryResourceRecord` object
+        """
+
+        if inventory_id is None:
+            raise ValueError('inventory_id must be provided')
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='get_inventory')
+        headers.update(sdk_headers)
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['inventory_id']
+        path_param_values = self.encode_path_vars(inventory_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v2/inventories/{inventory_id}'.format(**path_param_dict)
+        request = self.prepare_request(method='GET',
+                                       url=url,
+                                       headers=headers)
+
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -3379,25 +3787,42 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Replace the resource inventory definition, used to target Actions or Controls.
+        Replace an inventory definition.
 
-        Replace the resource inventory definition.
+        Use this API to update the inventory definition resource used to target an action.
+        For more information, about inventory update, refer to [ibmcloud schematics
+        inventory
+        update](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#schematics-update-inv).
+         **Note** you cannot update the location and region, resource group once an action
+        is created.
+         Also, make sure your IP addresses are in the
+        [allowlist](https://cloud.ibm.com/docs/schematics?topic=schematics-allowed-ipaddresses).
+        <h3>Authorization</h3> Schematics support generic authorization such as service
+        access or platform access to an action ID and the resource group. For more
+        information, about Schematics access and permissions, see  [Schematics service
+        access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#action-permissions).
 
-        :param str inventory_id: Resource Inventory Id.  Use GET /inventories API
-               to look up the Resource Inventory definition Ids  in your IBM Cloud
+        :param str inventory_id: Resource Inventory Id.  Use `GET /v2/inventories`
+               API to look up the Resource Inventory definition Ids  in your IBM Cloud
                account.
-        :param str name: (optional) Inventory name.
-        :param str description: (optional) Inventory description.
-        :param str location: (optional) List of workspace locations supported by
-               IBM Cloud Schematics service.  Note, this does not limit the location of
-               the resources provisioned using Schematics.
+        :param str name: (optional) The unique name of your Inventory definition.
+               The name can be up to 128 characters long and can include alphanumeric
+               characters, spaces, dashes, and underscores.
+        :param str description: (optional) The description of your Inventory
+               definition. The description can be up to 2048 characters long in size.
+        :param str location: (optional) List of locations supported by IBM Cloud
+               Schematics service.  While creating your workspace or action, choose the
+               right region, since it cannot be changed.  Note, this does not limit the
+               location of the IBM Cloud resources, provisioned using Schematics.
         :param str resource_group: (optional) Resource-group name for the Inventory
-               definition.  By default, Action will be created in Default Resource Group.
+               definition.   By default, Inventory definition will be created in Default
+               Resource Group.
         :param str inventories_ini: (optional) Input inventory of host and host
-               group for the playbook,  in the .ini file format.
-        :param List[str] resource_queries: (optional) Input resource queries that
-               is used to dynamically generate  the inventory of host and host group for
-               the playbook.
+               group for the playbook, in the `.ini` file format.
+        :param List[str] resource_queries: (optional) Input resource query
+               definitions that is used to dynamically generate the inventory of host and
+               host group for the playbook.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `dict` result representing a `InventoryResourceRecord` object
@@ -3436,7 +3861,69 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        data=data)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
+        return response
+
+
+    def delete_inventory(self,
+        inventory_id: str,
+        *,
+        force: bool = None,
+        propagate: bool = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Delete inventory definition.
+
+        Use this API to delete the resource inventory definition by using the inventory ID
+        that you want to run against. For more information, about inventory delete, refer
+        to [ibmcloud schematics inventory
+        delete](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#schematics-delete-inventory).
+         **Note** you cannot delete the location and region, resource group from where
+        your inventory is created.
+         Also, make sure your IP addresses are in the
+        [allowlist](https://cloud.ibm.com/docs/schematics?topic=schematics-allowed-ipaddresses).
+        <h3>Authorization</h3> Schematics support generic authorization such as service
+        access or platform access to an action ID and the resource group. For more
+        information, about Schematics access and permissions, see  [Schematics service
+        access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#action-permissions).
+
+        :param str inventory_id: Resource Inventory Id.  Use `GET /v2/inventories`
+               API to look up the Resource Inventory definition Ids  in your IBM Cloud
+               account.
+        :param bool force: (optional) Equivalent to -force options in the command
+               line.
+        :param bool propagate: (optional) Auto propagate the chaange or deletion to
+               the dependent resources.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse
+        """
+
+        if inventory_id is None:
+            raise ValueError('inventory_id must be provided')
+        headers = {
+            'force': force,
+            'propagate': propagate
+        }
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='delete_inventory')
+        headers.update(sdk_headers)
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+
+        path_param_keys = ['inventory_id']
+        path_param_values = self.encode_path_vars(inventory_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v2/inventories/{inventory_id}'.format(**path_param_dict)
+        request = self.prepare_request(method='DELETE',
+                                       url=url,
+                                       headers=headers)
+
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -3452,25 +3939,30 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Update the resource inventory definition, used to target Actions or Controls.
+        Update the inventory definition.
 
         Update the resource inventory definition.
 
-        :param str inventory_id: Resource Inventory Id.  Use GET /inventories API
-               to look up the Resource Inventory definition Ids  in your IBM Cloud
+        :param str inventory_id: Resource Inventory Id.  Use `GET /v2/inventories`
+               API to look up the Resource Inventory definition Ids  in your IBM Cloud
                account.
-        :param str name: (optional) Inventory name.
-        :param str description: (optional) Inventory description.
-        :param str location: (optional) List of workspace locations supported by
-               IBM Cloud Schematics service.  Note, this does not limit the location of
-               the resources provisioned using Schematics.
+        :param str name: (optional) The unique name of your Inventory definition.
+               The name can be up to 128 characters long and can include alphanumeric
+               characters, spaces, dashes, and underscores.
+        :param str description: (optional) The description of your Inventory
+               definition. The description can be up to 2048 characters long in size.
+        :param str location: (optional) List of locations supported by IBM Cloud
+               Schematics service.  While creating your workspace or action, choose the
+               right region, since it cannot be changed.  Note, this does not limit the
+               location of the IBM Cloud resources, provisioned using Schematics.
         :param str resource_group: (optional) Resource-group name for the Inventory
-               definition.  By default, Action will be created in Default Resource Group.
+               definition.   By default, Inventory definition will be created in Default
+               Resource Group.
         :param str inventories_ini: (optional) Input inventory of host and host
-               group for the playbook,  in the .ini file format.
-        :param List[str] resource_queries: (optional) Input resource queries that
-               is used to dynamically generate  the inventory of host and host group for
-               the playbook.
+               group for the playbook, in the `.ini` file format.
+        :param List[str] resource_queries: (optional) Input resource query
+               definitions that is used to dynamically generate the inventory of host and
+               host group for the playbook.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `dict` result representing a `InventoryResourceRecord` object
@@ -3509,189 +4001,82 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        data=data)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
+    #########################
+    # resource-query
+    #########################
 
-    def delete_inventory(self,
-        inventory_id: str,
+
+    def list_resource_query(self,
         *,
-        force: bool = None,
-        propagate: bool = None,
+        offset: int = None,
+        limit: int = None,
+        sort: str = None,
+        profile: str = None,
         **kwargs
     ) -> DetailedResponse:
         """
-        Delete the resource inventory definition.
+        List resource queries.
 
-        Delete the resource inventory definition.
+        Retrieve the list of resource query definitions that you have access to.  The list
+        of resource queries that is returned depends on the API  endpoint that you use.
+        For example, if you use an API endpoint for a geography, such as North America,
+        only resource query definitions that are created in `us-south` or `us-east` are
+        retrieved. For more information, about supported API endpoints, see [API
+        endpoints](/apidocs/schematics#api-endpoints).
+        <h3>Authorization</h3> Schematics support generic authorization such as service
+        access or platform access to an action ID and the resource group. For more
+        information, about Schematics access and permissions,  see [Schematics service
+        access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#action-permissions).
 
-        :param str inventory_id: Resource Inventory Id.  Use GET /inventories API
-               to look up the Resource Inventory definition Ids  in your IBM Cloud
-               account.
-        :param bool force: (optional) Equivalent to -force options in the command
-               line.
-        :param bool propagate: (optional) Auto propagate the chaange or deletion to
-               the dependent resources.
+        :param int offset: (optional) The starting position of the item in the list
+               of items. For example, if you have three workspaces in your account, the
+               first workspace is assigned position number 0, the second workspace is
+               assigned position number 1, and so forth. If you have 6 workspaces and you
+               want to list the details for workspaces 2-6, enter 1. To limit the number
+               of workspaces that is returned, use the `limit` option in addition to the
+               `offset` option. Negative numbers are not supported and are ignored.
+        :param int limit: (optional) The maximum number of items that you want to
+               list. The number must be a positive integer between 1 and 2000. If no value
+               is provided, 100 is used by default.
+        :param str sort: (optional) Name of the field to sort-by;  Use the '.'
+               character to delineate sub-resources and sub-fields (eg. owner.last_name).
+               Prepend the field with '+' or '-', indicating 'ascending' or 'descending'
+               (default is ascending)   Ignore unrecognized or unsupported sort field.
+        :param str profile: (optional) Level of details returned by the get method.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse
+        :rtype: DetailedResponse with `dict` result representing a `ResourceQueryRecordList` object
         """
 
-        if inventory_id is None:
-            raise ValueError('inventory_id must be provided')
-        headers = {
-            'force': force,
-            'propagate': propagate
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='list_resource_query')
+        headers.update(sdk_headers)
+
+        params = {
+            'offset': offset,
+            'limit': limit,
+            'sort': sort,
+            'profile': profile
         }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='delete_inventory')
-        headers.update(sdk_headers)
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-
-        path_param_keys = ['inventory_id']
-        path_param_values = self.encode_path_vars(inventory_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v2/inventories/{inventory_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
-
-        response = self.send(request)
-        return response
-
-
-    def get_inventory(self,
-        inventory_id: str,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Get the resource inventory definition, used to target Actions or Controls.
-
-        Get the resource inventory definition.
-
-        :param str inventory_id: Resource Inventory Id.  Use GET /inventories API
-               to look up the Resource Inventory definition Ids  in your IBM Cloud
-               account.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `InventoryResourceRecord` object
-        """
-
-        if inventory_id is None:
-            raise ValueError('inventory_id must be provided')
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='get_inventory')
-        headers.update(sdk_headers)
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
-        path_param_keys = ['inventory_id']
-        path_param_values = self.encode_path_vars(inventory_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v2/inventories/{inventory_id}'.format(**path_param_dict)
+        url = '/v2/resources_query'
         request = self.prepare_request(method='GET',
                                        url=url,
-                                       headers=headers)
+                                       headers=headers,
+                                       params=params)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
-
-
-    def list_inventory_values(self,
-        inventory_id: str,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Get all the resource inventory values.
-
-        Get all the resource inventory values.
-
-        :param str inventory_id: Resource Inventory Id.  Use GET /inventories API
-               to look up the Resource Inventory definition Ids  in your IBM Cloud
-               account.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `InventoryResourceRecordList` object
-        """
-
-        if inventory_id is None:
-            raise ValueError('inventory_id must be provided')
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='list_inventory_values')
-        headers.update(sdk_headers)
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        path_param_keys = ['inventory_id']
-        path_param_values = self.encode_path_vars(inventory_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v2/inventories/{inventory_id}/variables'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
-
-        response = self.send(request)
-        return response
-
-
-    def get_inventory_value(self,
-        inventory_id: str,
-        var_name: str,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Get the resource inventory value.
-
-        Get the resource inventory value.
-
-        :param str inventory_id: Resource Inventory Id.  Use GET /inventories API
-               to look up the Resource Inventory definition Ids  in your IBM Cloud
-               account.
-        :param str var_name: Name of the variable.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `InventoryResourceRecord` object
-        """
-
-        if inventory_id is None:
-            raise ValueError('inventory_id must be provided')
-        if var_name is None:
-            raise ValueError('var_name must be provided')
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='get_inventory_value')
-        headers.update(sdk_headers)
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        path_param_keys = ['inventory_id', 'var_name']
-        path_param_values = self.encode_path_vars(inventory_id, var_name)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v2/inventories/{inventory_id}/variables/{var_name}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
-
-        response = self.send(request)
-        return response
-
-    #########################
-    # settingsResources
-    #########################
 
 
     def create_resource_query(self,
@@ -3702,9 +4087,23 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Create a resource query definition.
+        Create resource query.
 
-        Create a resource query definition.
+        Use this API to create a resource query definition that will be used to select an
+        IBM Cloud resource or a group of resources as the dynamic inventory for the
+        Schematics Actions.  For more information, about resource query commands, refer to
+         [ibmcloud schematics resource query
+        create](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#schematics-create-rq).
+         **Note** you cannot update the location and region, resource group  once an
+        action is created. Also, make sure your IP addresses are  in the
+        [allowlist](https://cloud.ibm.com/docs/schematics?topic=schematics-allowed-ipaddresses).
+         If your Git repository already contains a host file.  Schematics does not
+        overwrite the host file already present in your Git repository.
+        <h3>Authorization</h3> Schematics support generic authorization such as service
+        access or platform access to an action ID and the resource group. For more
+        information, about Schematics access and permissions,  see [Schematics service
+        access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#action-permissions).
 
         :param str type: (optional) Resource type (cluster, vsi, icd, vpc).
         :param str name: (optional) Resource query name.
@@ -3741,77 +4140,32 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        data=data)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
-    def list_resource_query(self,
-        *,
-        offset: int = None,
-        limit: int = None,
-        sort: str = None,
-        profile: str = None,
-        **kwargs
-    ) -> DetailedResponse:
-        """
-        Get all resource query definitions.
-
-        Get all resource query definition.
-
-        :param int offset: (optional) The number of items to skip before starting
-               to collect the result set.
-        :param int limit: (optional) The numbers of items to return.
-        :param str sort: (optional) Name of the field to sort-by;  Use the '.'
-               character to delineate sub-resources and sub-fields (eg. owner.last_name).
-               Prepend the field with '+' or '-', indicating 'ascending' or 'descending'
-               (default is ascending)   Ignore unrecognized or unsupported sort field.
-        :param str profile: (optional) Level of details returned by the get method.
-        :param dict headers: A `dict` containing the request headers
-        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `ResourceQueryRecordList` object
-        """
-
-        headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V1',
-                                      operation_id='list_resource_query')
-        headers.update(sdk_headers)
-
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'sort': sort,
-            'profile': profile
-        }
-
-        if 'headers' in kwargs:
-            headers.update(kwargs.get('headers'))
-        headers['Accept'] = 'application/json'
-
-        url = '/v2/resources_query'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
-
-        response = self.send(request)
-        return response
-
-
-    def execute_resource_query(self,
+    def get_resources_query(self,
         query_id: str,
         **kwargs
     ) -> DetailedResponse:
         """
-        Run the resource query.
+        Get resources query.
 
-        Execute a resource query definition.
+        Use this API to retrieve the information resource query by Id.  For more
+        information, about resource query commands, refer to  [ibmcloud schematics
+        resource query
+        get](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#schematics-get-rq).
+        <h3>Authorization</h3> Schematics support generic authorization such as service
+        access or platform access to an action ID and the resource group. For more
+        information, about Schematics access and permissions,  see [Schematics service
+        access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#action-permissions).
 
-        :param str query_id: Resource query Id.  Use GET /resource_query API to
-               look up the Resource query definition Ids  in your IBM Cloud account.
+        :param str query_id: Resource query Id.  Use `GET /v2/resource_query` API
+               to look up the Resource query definition Ids  in your IBM Cloud account.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `ResourceQueryResponseRecord` object
+        :rtype: DetailedResponse with `dict` result representing a `ResourceQueryRecord` object
         """
 
         if query_id is None:
@@ -3819,7 +4173,7 @@ class SchematicsV1(BaseService):
         headers = {}
         sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
                                       service_version='V1',
-                                      operation_id='execute_resource_query')
+                                      operation_id='get_resources_query')
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -3830,11 +4184,11 @@ class SchematicsV1(BaseService):
         path_param_values = self.encode_path_vars(query_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/resources_query/{query_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='POST',
+        request = self.prepare_request(method='GET',
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -3847,12 +4201,23 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Replace the resources query definition.
+        Replace resources query definition.
 
-        Replace the resources query definition.
+        Use this API to replace the resource query definition used to build  the dynamic
+        inventory for the Schematics Action.  For more information, about resource query
+        commands, refer to [ibmcloud schematics resource query
+        update](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#schematics-update-rq).
+        **Note** you cannot update the location and region, resource group  once a
+        resource query is created. Also, make sure your IP addresses  are in the
+        [allowlist](https://cloud.ibm.com/docs/schematics?topic=schematics-allowed-ipaddresses).
+        <h3>Authorization</h3> Schematics support generic authorization such as service
+        access or platform access to an action ID and the resource group. For more
+        information, about Schematics access and permissions,  see [Schematics service
+        access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#action-permissions).
 
-        :param str query_id: Resource query Id.  Use GET /resource_query API to
-               look up the Resource query definition Ids  in your IBM Cloud account.
+        :param str query_id: Resource query Id.  Use `GET /v2/resource_query` API
+               to look up the Resource query definition Ids  in your IBM Cloud account.
         :param str type: (optional) Resource type (cluster, vsi, icd, vpc).
         :param str name: (optional) Resource query name.
         :param List[ResourceQuery] queries: (optional)
@@ -3893,7 +4258,47 @@ class SchematicsV1(BaseService):
                                        headers=headers,
                                        data=data)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
+        return response
+
+
+    def execute_resource_query(self,
+        query_id: str,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Run the resource query.
+
+        Run the resource query.
+
+        :param str query_id: Resource query Id.  Use `GET /v2/resource_query` API
+               to look up the Resource query definition Ids  in your IBM Cloud account.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `ResourceQueryResponseRecord` object
+        """
+
+        if query_id is None:
+            raise ValueError('query_id must be provided')
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='execute_resource_query')
+        headers.update(sdk_headers)
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        path_param_keys = ['query_id']
+        path_param_values = self.encode_path_vars(query_id)
+        path_param_dict = dict(zip(path_param_keys, path_param_values))
+        url = '/v2/resources_query/{query_id}'.format(**path_param_dict)
+        request = self.prepare_request(method='POST',
+                                       url=url,
+                                       headers=headers)
+
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -3905,12 +4310,19 @@ class SchematicsV1(BaseService):
         **kwargs
     ) -> DetailedResponse:
         """
-        Delete the resources query definition.
+        Delete resources query.
 
-        Delete the resources query definition.
+        Use this API to delete the resource query definition by Id.  For more information,
+        about resource query commands, refer to  [ibmcloud schematics resource query
+        delete](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#schematics-delete-resource-query).
+        <h3>Authorization</h3> Schematics support generic authorization such as service
+        access or platform access to an action ID and the resource group. For more
+        information, about Schematics access and permissions,  see [Schematics service
+        access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#action-permissions).
 
-        :param str query_id: Resource query Id.  Use GET /resource_query API to
-               look up the Resource query definition Ids  in your IBM Cloud account.
+        :param str query_id: Resource query Id.  Use `GET /v2/resource_query` API
+               to look up the Resource query definition Ids  in your IBM Cloud account.
         :param bool force: (optional) Equivalent to -force options in the command
                line.
         :param bool propagate: (optional) Auto propagate the chaange or deletion to
@@ -3942,47 +4354,198 @@ class SchematicsV1(BaseService):
                                        url=url,
                                        headers=headers)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
         return response
 
+    #########################
+    # settings-kms
+    #########################
 
-    def get_resources_query(self,
-        query_id: str,
+
+    def get_kms_settings(self,
+        location: str,
         **kwargs
     ) -> DetailedResponse:
         """
-        Get the resources query definition.
+        Get KMS settings.
 
-        Get the resources query definition.
+        Retrieve the KMS on the API endpoint that you have access. For example, if you use
+        an API endpoint for a geography, such as North America, only Schematics resource
+        that are created in `us-south` or `us-east` are retrieved.
+        <h3>Authorization</h3>
+         Schematics support generic authorization such as service access or platform
+        access to the action ID and the resource group. For more information, about
+        Schematics access and permissions, see [Schematics service access roles and
+        required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
-        :param str query_id: Resource query Id.  Use GET /resource_query API to
-               look up the Resource query definition Ids  in your IBM Cloud account.
+        :param str location: The location of the Resource.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
-        :rtype: DetailedResponse with `dict` result representing a `ResourceQueryRecord` object
+        :rtype: DetailedResponse with `dict` result representing a `KMSSettings` object
         """
 
-        if query_id is None:
-            raise ValueError('query_id must be provided')
+        if location is None:
+            raise ValueError('location must be provided')
         headers = {}
         sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
                                       service_version='V1',
-                                      operation_id='get_resources_query')
+                                      operation_id='get_kms_settings')
         headers.update(sdk_headers)
+
+        params = {
+            'location': location
+        }
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
-        path_param_keys = ['query_id']
-        path_param_values = self.encode_path_vars(query_id)
-        path_param_dict = dict(zip(path_param_keys, path_param_values))
-        url = '/v2/resources_query/{query_id}'.format(**path_param_dict)
+        url = '/v2/settings/kms'
         request = self.prepare_request(method='GET',
                                        url=url,
-                                       headers=headers)
+                                       headers=headers,
+                                       params=params)
 
-        response = self.send(request)
+        response = self.send(request, **kwargs)
+        return response
+
+
+    def update_kms_settings(self,
+        *,
+        location: str = None,
+        encryption_scheme: str = None,
+        resource_group: str = None,
+        primary_crk: 'KMSSettingsPrimaryCrk' = None,
+        secondary_crk: 'KMSSettingsSecondaryCrk' = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        Replace KMS settings.
+
+        Replace or Update the KMS setting for your location, by using your private
+        endpoint, `CRN`, primary `CRK`, and secondary `CRK`. **Note** you can update the
+        KMS settings only once. For example, if you use an API endpoint for a geography,
+        such as North America, only Schematics resource that are created in `us-south` or
+        `us-east` are retrieved.
+        <h3>Authorization</h3> Schematics support generic authorization such as service
+        access or platform access to the action ID and the resource group. For more
+        information, about Schematics access and permissions, see  [Schematics service
+        access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
+
+        :param str location: (optional) Location.
+        :param str encryption_scheme: (optional) Encryption scheme.
+        :param str resource_group: (optional) Resource group.
+        :param KMSSettingsPrimaryCrk primary_crk: (optional) Primary CRK details.
+        :param KMSSettingsSecondaryCrk secondary_crk: (optional) Secondary CRK
+               details.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `KMSSettings` object
+        """
+
+        if primary_crk is not None:
+            primary_crk = convert_model(primary_crk)
+        if secondary_crk is not None:
+            secondary_crk = convert_model(secondary_crk)
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='update_kms_settings')
+        headers.update(sdk_headers)
+
+        data = {
+            'location': location,
+            'encryption_scheme': encryption_scheme,
+            'resource_group': resource_group,
+            'primary_crk': primary_crk,
+            'secondary_crk': secondary_crk
+        }
+        data = {k: v for (k, v) in data.items() if v is not None}
+        data = json.dumps(data)
+        headers['content-type'] = 'application/json'
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        url = '/v2/settings/kms'
+        request = self.prepare_request(method='PUT',
+                                       url=url,
+                                       headers=headers,
+                                       data=data)
+
+        response = self.send(request, **kwargs)
+        return response
+
+
+    def list_kms(self,
+        encryption_scheme: str,
+        location: str,
+        *,
+        resource_group: str = None,
+        limit: int = None,
+        sort: str = None,
+        **kwargs
+    ) -> DetailedResponse:
+        """
+        List KMS instances.
+
+        Lists the KMS instances of your IBM Cloud account to find your Key Protect or
+        Hyper Protect Crypto Services by using the location and encrypted scheme such as
+        KYOK or BYOK.
+        <h3>Authorization</h3> Schematics support generic authorization such as service
+        access or platform access to the action ID and the resource group. For more
+        information, about Schematics access and permissions, see  [Schematics service
+        access roles and required
+        permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
+
+        :param str encryption_scheme: The encryption scheme to be used.
+        :param str location: The location of the Resource.
+        :param str resource_group: (optional) The resource group (by default, fetch
+               from all resource groups).
+        :param int limit: (optional) The maximum number of items that you want to
+               list. The number must be a positive integer between 1 and 2000. If no value
+               is provided, 100 is used by default.
+        :param str sort: (optional) Name of the field to sort-by;  Use the '.'
+               character to delineate sub-resources and sub-fields (eg. owner.last_name).
+               Prepend the field with '+' or '-', indicating 'ascending' or 'descending'
+               (default is ascending)   Ignore unrecognized or unsupported sort field.
+        :param dict headers: A `dict` containing the request headers
+        :return: A `DetailedResponse` containing the result, headers and HTTP status code.
+        :rtype: DetailedResponse with `dict` result representing a `KMSDiscovery` object
+        """
+
+        if encryption_scheme is None:
+            raise ValueError('encryption_scheme must be provided')
+        if location is None:
+            raise ValueError('location must be provided')
+        headers = {}
+        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
+                                      service_version='V1',
+                                      operation_id='list_kms')
+        headers.update(sdk_headers)
+
+        params = {
+            'encryption_scheme': encryption_scheme,
+            'location': location,
+            'resource_group': resource_group,
+            'limit': limit,
+            'sort': sort
+        }
+
+        if 'headers' in kwargs:
+            headers.update(kwargs.get('headers'))
+        headers['Accept'] = 'application/json'
+
+        url = '/v2/settings/kms_instances'
+        request = self.prepare_request(method='GET',
+                                       url=url,
+                                       headers=headers,
+                                       params=params)
+
+        response = self.send(request, **kwargs)
         return response
 
 
@@ -4098,48 +4661,63 @@ class Action():
     """
     Complete Action details with user inputs and system generated data.
 
-    :attr str name: (optional) Action name (unique for an account).
+    :attr str name: (optional) The unique name of your action. The name can be up to
+          128 characters long and can include alphanumeric characters, spaces, dashes, and
+          underscores. **Example** you can use the name to stop action.
     :attr str description: (optional) Action description.
-    :attr str location: (optional) List of workspace locations supported by IBM
-          Cloud Schematics service.  Note, this does not limit the location of the
-          resources provisioned using Schematics.
-    :attr str resource_group: (optional) Resource-group name for the Action.  By
-          default, Action will be created in Default Resource Group.
+    :attr str location: (optional) List of locations supported by IBM Cloud
+          Schematics service.  While creating your workspace or action, choose the right
+          region, since it cannot be changed.  Note, this does not limit the location of
+          the IBM Cloud resources, provisioned using Schematics.
+    :attr str resource_group: (optional) Resource-group name for an action.  By
+          default, action is created in default resource group.
     :attr List[str] tags: (optional) Action tags.
     :attr UserState user_state: (optional) User defined status of the Schematics
           object.
-    :attr str source_readme_url: (optional) URL of the README file, for the source.
+    :attr str source_readme_url: (optional) URL of the `README` file, for the source
+          URL.
     :attr ExternalSource source: (optional) Source of templates, playbooks, or
           controls.
     :attr str source_type: (optional) Type of source for the Template.
     :attr str command_parameter: (optional) Schematics job command parameter
           (playbook-name).
+    :attr str inventory: (optional) Target inventory record ID, used by the action
+          or ansible playbook.
+    :attr List[VariableData] credentials: (optional) credentials of the Action.
     :attr BastionResourceDefinition bastion: (optional) Describes a bastion
           resource.
-    :attr str inventory: (optional) Inventory ID.
     :attr VariableData bastion_credential: (optional) User editable variable data &
           system generated reference to value.
-    :attr List[VariableData] credentials: (optional) credentials of the Action.
+    :attr str targets_ini: (optional) Inventory of host and host group for the
+          playbook in `INI` file format. For example, `"targets_ini": "[webserverhost]
+           172.22.192.6
+           [dbhost]
+           172.22.192.5"`. For more information, about an inventory host group syntax, see
+          [Inventory host
+          groups](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#schematics-inventory-host-grps).
     :attr List[VariableData] inputs: (optional) Input variables for the Action.
     :attr List[VariableData] outputs: (optional) Output variables for the Action.
     :attr List[VariableData] settings: (optional) Environment variables for the
           Action.
-    :attr str id: (optional) Action Id.
+    :attr str id: (optional) Action ID.
     :attr str crn: (optional) Action Cloud Resource Name.
-    :attr str account: (optional) Action account id.
+    :attr str account: (optional) Action account ID.
     :attr datetime source_created_at: (optional) Action Playbook Source creation
           time.
-    :attr str source_created_by: (optional) Email address of user who created the
+    :attr str source_created_by: (optional) E-mail address of user who created the
           Action Playbook Source.
-    :attr datetime source_updated_at: (optional) Action Playbook updation time.
-    :attr str source_updated_by: (optional) Email address of user who updated the
-          Action Playbook Source.
+    :attr datetime source_updated_at: (optional) The action playbook updation time.
+    :attr str source_updated_by: (optional) E-mail address of user who updated the
+          action playbook source.
     :attr datetime created_at: (optional) Action creation time.
-    :attr str created_by: (optional) Email address of user who created the action.
+    :attr str created_by: (optional) E-mail address of the user who created an
+          action.
     :attr datetime updated_at: (optional) Action updation time.
-    :attr str updated_by: (optional) Email address of user who updated the action.
+    :attr str updated_by: (optional) E-mail address of the user who updated an
+          action.
     :attr ActionState state: (optional) Computed state of the Action.
-    :attr List[str] playbook_names: (optional) Playbook names retrieved from repo.
+    :attr List[str] playbook_names: (optional) Playbook names retrieved from the
+          respository.
     :attr SystemLock sys_lock: (optional) System lock status.
     """
 
@@ -4155,10 +4733,11 @@ class Action():
                  source: 'ExternalSource' = None,
                  source_type: str = None,
                  command_parameter: str = None,
-                 bastion: 'BastionResourceDefinition' = None,
                  inventory: str = None,
-                 bastion_credential: 'VariableData' = None,
                  credentials: List['VariableData'] = None,
+                 bastion: 'BastionResourceDefinition' = None,
+                 bastion_credential: 'VariableData' = None,
+                 targets_ini: str = None,
                  inputs: List['VariableData'] = None,
                  outputs: List['VariableData'] = None,
                  settings: List['VariableData'] = None,
@@ -4179,30 +4758,42 @@ class Action():
         """
         Initialize a Action object.
 
-        :param str name: (optional) Action name (unique for an account).
+        :param str name: (optional) The unique name of your action. The name can be
+               up to 128 characters long and can include alphanumeric characters, spaces,
+               dashes, and underscores. **Example** you can use the name to stop action.
         :param str description: (optional) Action description.
-        :param str location: (optional) List of workspace locations supported by
-               IBM Cloud Schematics service.  Note, this does not limit the location of
-               the resources provisioned using Schematics.
-        :param str resource_group: (optional) Resource-group name for the Action.
-               By default, Action will be created in Default Resource Group.
+        :param str location: (optional) List of locations supported by IBM Cloud
+               Schematics service.  While creating your workspace or action, choose the
+               right region, since it cannot be changed.  Note, this does not limit the
+               location of the IBM Cloud resources, provisioned using Schematics.
+        :param str resource_group: (optional) Resource-group name for an action.
+               By default, action is created in default resource group.
         :param List[str] tags: (optional) Action tags.
         :param UserState user_state: (optional) User defined status of the
                Schematics object.
-        :param str source_readme_url: (optional) URL of the README file, for the
-               source.
+        :param str source_readme_url: (optional) URL of the `README` file, for the
+               source URL.
         :param ExternalSource source: (optional) Source of templates, playbooks, or
                controls.
         :param str source_type: (optional) Type of source for the Template.
         :param str command_parameter: (optional) Schematics job command parameter
                (playbook-name).
-        :param BastionResourceDefinition bastion: (optional) Describes a bastion
-               resource.
-        :param str inventory: (optional) Inventory ID.
-        :param VariableData bastion_credential: (optional) User editable variable
-               data & system generated reference to value.
+        :param str inventory: (optional) Target inventory record ID, used by the
+               action or ansible playbook.
         :param List[VariableData] credentials: (optional) credentials of the
                Action.
+        :param BastionResourceDefinition bastion: (optional) Describes a bastion
+               resource.
+        :param VariableData bastion_credential: (optional) User editable variable
+               data & system generated reference to value.
+        :param str targets_ini: (optional) Inventory of host and host group for the
+               playbook in `INI` file format. For example, `"targets_ini":
+               "[webserverhost]
+                172.22.192.6
+                [dbhost]
+                172.22.192.5"`. For more information, about an inventory host group
+               syntax, see [Inventory host
+               groups](https://cloud.ibm.com/docs/schematics?topic=schematics-schematics-cli-reference#schematics-inventory-host-grps).
         :param List[VariableData] inputs: (optional) Input variables for the
                Action.
         :param List[VariableData] outputs: (optional) Output variables for the
@@ -4222,10 +4813,11 @@ class Action():
         self.source = source
         self.source_type = source_type
         self.command_parameter = command_parameter
-        self.bastion = bastion
         self.inventory = inventory
-        self.bastion_credential = bastion_credential
         self.credentials = credentials
+        self.bastion = bastion
+        self.bastion_credential = bastion_credential
+        self.targets_ini = targets_ini
         self.inputs = inputs
         self.outputs = outputs
         self.settings = settings
@@ -4268,14 +4860,16 @@ class Action():
             args['source_type'] = _dict.get('source_type')
         if 'command_parameter' in _dict:
             args['command_parameter'] = _dict.get('command_parameter')
-        if 'bastion' in _dict:
-            args['bastion'] = BastionResourceDefinition.from_dict(_dict.get('bastion'))
         if 'inventory' in _dict:
             args['inventory'] = _dict.get('inventory')
-        if 'bastion_credential' in _dict:
-            args['bastion_credential'] = VariableData.from_dict(_dict.get('bastion_credential'))
         if 'credentials' in _dict:
             args['credentials'] = [VariableData.from_dict(x) for x in _dict.get('credentials')]
+        if 'bastion' in _dict:
+            args['bastion'] = BastionResourceDefinition.from_dict(_dict.get('bastion'))
+        if 'bastion_credential' in _dict:
+            args['bastion_credential'] = VariableData.from_dict(_dict.get('bastion_credential'))
+        if 'targets_ini' in _dict:
+            args['targets_ini'] = _dict.get('targets_ini')
         if 'inputs' in _dict:
             args['inputs'] = [VariableData.from_dict(x) for x in _dict.get('inputs')]
         if 'outputs' in _dict:
@@ -4340,14 +4934,16 @@ class Action():
             _dict['source_type'] = self.source_type
         if hasattr(self, 'command_parameter') and self.command_parameter is not None:
             _dict['command_parameter'] = self.command_parameter
-        if hasattr(self, 'bastion') and self.bastion is not None:
-            _dict['bastion'] = self.bastion.to_dict()
         if hasattr(self, 'inventory') and self.inventory is not None:
             _dict['inventory'] = self.inventory
-        if hasattr(self, 'bastion_credential') and self.bastion_credential is not None:
-            _dict['bastion_credential'] = self.bastion_credential.to_dict()
         if hasattr(self, 'credentials') and self.credentials is not None:
             _dict['credentials'] = [x.to_dict() for x in self.credentials]
+        if hasattr(self, 'bastion') and self.bastion is not None:
+            _dict['bastion'] = self.bastion.to_dict()
+        if hasattr(self, 'bastion_credential') and self.bastion_credential is not None:
+            _dict['bastion_credential'] = self.bastion_credential.to_dict()
+        if hasattr(self, 'targets_ini') and self.targets_ini is not None:
+            _dict['targets_ini'] = self.targets_ini
         if hasattr(self, 'inputs') and self.inputs is not None:
             _dict['inputs'] = [x.to_dict() for x in self.inputs]
         if hasattr(self, 'outputs') and self.outputs is not None:
@@ -4404,8 +5000,10 @@ class Action():
 
     class LocationEnum(str, Enum):
         """
-        List of workspace locations supported by IBM Cloud Schematics service.  Note, this
-        does not limit the location of the resources provisioned using Schematics.
+        List of locations supported by IBM Cloud Schematics service.  While creating your
+        workspace or action, choose the right region, since it cannot be changed.  Note,
+        this does not limit the location of the IBM Cloud resources, provisioned using
+        Schematics.
         """
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
@@ -4424,6 +5022,7 @@ class Action():
         IBM_GIT_LAB = 'ibm_git_lab'
         IBM_CLOUD_CATALOG = 'ibm_cloud_catalog'
         EXTERNAL_SCM = 'external_scm'
+        COS_BUCKET = 'cos_bucket'
 
 
 class ActionList():
@@ -4517,9 +5116,10 @@ class ActionLite():
     :attr str description: (optional) Action description.
     :attr str id: (optional) Action Id.
     :attr str crn: (optional) Action Cloud Resource Name.
-    :attr str location: (optional) List of workspace locations supported by IBM
-          Cloud Schematics service.  Note, this does not limit the location of the
-          resources provisioned using Schematics.
+    :attr str location: (optional) List of locations supported by IBM Cloud
+          Schematics service.  While creating your workspace or action, choose the right
+          region, since it cannot be changed.  Note, this does not limit the location of
+          the IBM Cloud resources, provisioned using Schematics.
     :attr str resource_group: (optional) Resource-group name for the Action.  By
           default, Action will be created in Default Resource Group.
     :attr str namespace: (optional) name of the namespace.
@@ -4560,9 +5160,10 @@ class ActionLite():
         :param str description: (optional) Action description.
         :param str id: (optional) Action Id.
         :param str crn: (optional) Action Cloud Resource Name.
-        :param str location: (optional) List of workspace locations supported by
-               IBM Cloud Schematics service.  Note, this does not limit the location of
-               the resources provisioned using Schematics.
+        :param str location: (optional) List of locations supported by IBM Cloud
+               Schematics service.  While creating your workspace or action, choose the
+               right region, since it cannot be changed.  Note, this does not limit the
+               location of the IBM Cloud resources, provisioned using Schematics.
         :param str resource_group: (optional) Resource-group name for the Action.
                By default, Action will be created in Default Resource Group.
         :param str namespace: (optional) name of the namespace.
@@ -4696,8 +5297,10 @@ class ActionLite():
 
     class LocationEnum(str, Enum):
         """
-        List of workspace locations supported by IBM Cloud Schematics service.  Note, this
-        does not limit the location of the resources provisioned using Schematics.
+        List of locations supported by IBM Cloud Schematics service.  While creating your
+        workspace or action, choose the right region, since it cannot be changed.  Note,
+        this does not limit the location of the IBM Cloud resources, provisioned using
+        Schematics.
         """
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
@@ -4930,21 +5533,32 @@ class BastionResourceDefinition():
 
 class CatalogRef():
     """
-    CatalogRef -.
+    Information about the software template that you chose from the IBM Cloud catalog.
+    This information is returned for IBM Cloud catalog offerings only.
 
     :attr bool dry_run: (optional) Dry run.
-    :attr str item_icon_url: (optional) Catalog item icon url.
-    :attr str item_id: (optional) Catalog item id.
-    :attr str item_name: (optional) Catalog item name.
-    :attr str item_readme_url: (optional) Catalog item readme url.
-    :attr str item_url: (optional) Catalog item url.
-    :attr str launch_url: (optional) Catalog item launch url.
-    :attr str offering_version: (optional) Catalog item offering version.
+    :attr str owning_account: (optional) Owning account ID of the catalog.
+    :attr str item_icon_url: (optional) The URL to the icon of the software template
+          in the IBM Cloud catalog.
+    :attr str item_id: (optional) The ID of the software template that you chose to
+          install from the IBM Cloud catalog. This software is provisioned with
+          Schematics.
+    :attr str item_name: (optional) The name of the software that you chose to
+          install from the IBM Cloud catalog.
+    :attr str item_readme_url: (optional) The URL to the readme file of the software
+          template in the IBM Cloud catalog.
+    :attr str item_url: (optional) The URL to the software template in the IBM Cloud
+          catalog.
+    :attr str launch_url: (optional) The URL to the dashboard to access your
+          software.
+    :attr str offering_version: (optional) The version of the software template that
+          you chose to install from the IBM Cloud catalog.
     """
 
     def __init__(self,
                  *,
                  dry_run: bool = None,
+                 owning_account: str = None,
                  item_icon_url: str = None,
                  item_id: str = None,
                  item_name: str = None,
@@ -4956,15 +5570,25 @@ class CatalogRef():
         Initialize a CatalogRef object.
 
         :param bool dry_run: (optional) Dry run.
-        :param str item_icon_url: (optional) Catalog item icon url.
-        :param str item_id: (optional) Catalog item id.
-        :param str item_name: (optional) Catalog item name.
-        :param str item_readme_url: (optional) Catalog item readme url.
-        :param str item_url: (optional) Catalog item url.
-        :param str launch_url: (optional) Catalog item launch url.
-        :param str offering_version: (optional) Catalog item offering version.
+        :param str owning_account: (optional) Owning account ID of the catalog.
+        :param str item_icon_url: (optional) The URL to the icon of the software
+               template in the IBM Cloud catalog.
+        :param str item_id: (optional) The ID of the software template that you
+               chose to install from the IBM Cloud catalog. This software is provisioned
+               with Schematics.
+        :param str item_name: (optional) The name of the software that you chose to
+               install from the IBM Cloud catalog.
+        :param str item_readme_url: (optional) The URL to the readme file of the
+               software template in the IBM Cloud catalog.
+        :param str item_url: (optional) The URL to the software template in the IBM
+               Cloud catalog.
+        :param str launch_url: (optional) The URL to the dashboard to access your
+               software.
+        :param str offering_version: (optional) The version of the software
+               template that you chose to install from the IBM Cloud catalog.
         """
         self.dry_run = dry_run
+        self.owning_account = owning_account
         self.item_icon_url = item_icon_url
         self.item_id = item_id
         self.item_name = item_name
@@ -4979,6 +5603,8 @@ class CatalogRef():
         args = {}
         if 'dry_run' in _dict:
             args['dry_run'] = _dict.get('dry_run')
+        if 'owning_account' in _dict:
+            args['owning_account'] = _dict.get('owning_account')
         if 'item_icon_url' in _dict:
             args['item_icon_url'] = _dict.get('item_icon_url')
         if 'item_id' in _dict:
@@ -5005,6 +5631,8 @@ class CatalogRef():
         _dict = {}
         if hasattr(self, 'dry_run') and self.dry_run is not None:
             _dict['dry_run'] = self.dry_run
+        if hasattr(self, 'owning_account') and self.owning_account is not None:
+            _dict['owning_account'] = self.owning_account
         if hasattr(self, 'item_icon_url') and self.item_icon_url is not None:
             _dict['item_icon_url'] = self.item_icon_url
         if hasattr(self, 'item_id') and self.item_id is not None:
@@ -5041,12 +5669,12 @@ class CatalogRef():
 
 class EnvVariableResponse():
     """
-    EnvVariableResponse -.
+    List of environment values.
 
-    :attr bool hidden: (optional) Env variable is hidden.
-    :attr str name: (optional) Env variable name.
-    :attr bool secure: (optional) Env variable is secure.
-    :attr str value: (optional) Value for env variable.
+    :attr bool hidden: (optional) Environment variable is hidden.
+    :attr str name: (optional) Environment variable name.
+    :attr bool secure: (optional) Environment variable is secure.
+    :attr str value: (optional) Value for environment variable.
     """
 
     def __init__(self,
@@ -5058,10 +5686,10 @@ class EnvVariableResponse():
         """
         Initialize a EnvVariableResponse object.
 
-        :param bool hidden: (optional) Env variable is hidden.
-        :param str name: (optional) Env variable name.
-        :param bool secure: (optional) Env variable is secure.
-        :param str value: (optional) Value for env variable.
+        :param bool hidden: (optional) Environment variable is hidden.
+        :param str name: (optional) Environment variable name.
+        :param bool secure: (optional) Environment variable is secure.
+        :param str value: (optional) Value for environment variable.
         """
         self.hidden = hidden
         self.name = name
@@ -5124,20 +5752,32 @@ class ExternalSource():
 
     :attr str source_type: Type of source for the Template.
     :attr ExternalSourceGit git: (optional) Connection details to Git source.
+    :attr ExternalSourceCatalog catalog: (optional) Connection details to IBM Cloud
+          Catalog source.
+    :attr ExternalSourceCosBucket cos_bucket: (optional) Connection details to a IBM
+          Cloud Object Storage bucket.
     """
 
     def __init__(self,
                  source_type: str,
                  *,
-                 git: 'ExternalSourceGit' = None) -> None:
+                 git: 'ExternalSourceGit' = None,
+                 catalog: 'ExternalSourceCatalog' = None,
+                 cos_bucket: 'ExternalSourceCosBucket' = None) -> None:
         """
         Initialize a ExternalSource object.
 
         :param str source_type: Type of source for the Template.
         :param ExternalSourceGit git: (optional) Connection details to Git source.
+        :param ExternalSourceCatalog catalog: (optional) Connection details to IBM
+               Cloud Catalog source.
+        :param ExternalSourceCosBucket cos_bucket: (optional) Connection details to
+               a IBM Cloud Object Storage bucket.
         """
         self.source_type = source_type
         self.git = git
+        self.catalog = catalog
+        self.cos_bucket = cos_bucket
 
     @classmethod
     def from_dict(cls, _dict: Dict) -> 'ExternalSource':
@@ -5149,6 +5789,10 @@ class ExternalSource():
             raise ValueError('Required property \'source_type\' not present in ExternalSource JSON')
         if 'git' in _dict:
             args['git'] = ExternalSourceGit.from_dict(_dict.get('git'))
+        if 'catalog' in _dict:
+            args['catalog'] = ExternalSourceCatalog.from_dict(_dict.get('catalog'))
+        if 'cos_bucket' in _dict:
+            args['cos_bucket'] = ExternalSourceCosBucket.from_dict(_dict.get('cos_bucket'))
         return cls(**args)
 
     @classmethod
@@ -5163,6 +5807,10 @@ class ExternalSource():
             _dict['source_type'] = self.source_type
         if hasattr(self, 'git') and self.git is not None:
             _dict['git'] = self.git.to_dict()
+        if hasattr(self, 'catalog') and self.catalog is not None:
+            _dict['catalog'] = self.catalog.to_dict()
+        if hasattr(self, 'cos_bucket') and self.cos_bucket is not None:
+            _dict['cos_bucket'] = self.cos_bucket.to_dict()
         return _dict
 
     def _to_dict(self):
@@ -5194,12 +5842,181 @@ class ExternalSource():
         IBM_GIT_LAB = 'ibm_git_lab'
         IBM_CLOUD_CATALOG = 'ibm_cloud_catalog'
         EXTERNAL_SCM = 'external_scm'
+        COS_BUCKET = 'cos_bucket'
 
+
+class ExternalSourceCatalog():
+    """
+    Connection details to IBM Cloud Catalog source.
+
+    :attr str catalog_name: (optional) name of the private catalog.
+    :attr str offering_name: (optional) Name of the offering in the IBM Catalog.
+    :attr str offering_version: (optional) Version string of the offering in the IBM
+          Catalog.
+    :attr str offering_kind: (optional) Type of the offering, in the IBM Catalog.
+    :attr str offering_id: (optional) Id of the offering the IBM Catalog.
+    :attr str offering_version_id: (optional) Id of the offering version the IBM
+          Catalog.
+    :attr str offering_repo_url: (optional) Repo Url of the offering, in the IBM
+          Catalog.
+    """
+
+    def __init__(self,
+                 *,
+                 catalog_name: str = None,
+                 offering_name: str = None,
+                 offering_version: str = None,
+                 offering_kind: str = None,
+                 offering_id: str = None,
+                 offering_version_id: str = None,
+                 offering_repo_url: str = None) -> None:
+        """
+        Initialize a ExternalSourceCatalog object.
+
+        :param str catalog_name: (optional) name of the private catalog.
+        :param str offering_name: (optional) Name of the offering in the IBM
+               Catalog.
+        :param str offering_version: (optional) Version string of the offering in
+               the IBM Catalog.
+        :param str offering_kind: (optional) Type of the offering, in the IBM
+               Catalog.
+        :param str offering_id: (optional) Id of the offering the IBM Catalog.
+        :param str offering_version_id: (optional) Id of the offering version the
+               IBM Catalog.
+        :param str offering_repo_url: (optional) Repo Url of the offering, in the
+               IBM Catalog.
+        """
+        self.catalog_name = catalog_name
+        self.offering_name = offering_name
+        self.offering_version = offering_version
+        self.offering_kind = offering_kind
+        self.offering_id = offering_id
+        self.offering_version_id = offering_version_id
+        self.offering_repo_url = offering_repo_url
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'ExternalSourceCatalog':
+        """Initialize a ExternalSourceCatalog object from a json dictionary."""
+        args = {}
+        if 'catalog_name' in _dict:
+            args['catalog_name'] = _dict.get('catalog_name')
+        if 'offering_name' in _dict:
+            args['offering_name'] = _dict.get('offering_name')
+        if 'offering_version' in _dict:
+            args['offering_version'] = _dict.get('offering_version')
+        if 'offering_kind' in _dict:
+            args['offering_kind'] = _dict.get('offering_kind')
+        if 'offering_id' in _dict:
+            args['offering_id'] = _dict.get('offering_id')
+        if 'offering_version_id' in _dict:
+            args['offering_version_id'] = _dict.get('offering_version_id')
+        if 'offering_repo_url' in _dict:
+            args['offering_repo_url'] = _dict.get('offering_repo_url')
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a ExternalSourceCatalog object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'catalog_name') and self.catalog_name is not None:
+            _dict['catalog_name'] = self.catalog_name
+        if hasattr(self, 'offering_name') and self.offering_name is not None:
+            _dict['offering_name'] = self.offering_name
+        if hasattr(self, 'offering_version') and self.offering_version is not None:
+            _dict['offering_version'] = self.offering_version
+        if hasattr(self, 'offering_kind') and self.offering_kind is not None:
+            _dict['offering_kind'] = self.offering_kind
+        if hasattr(self, 'offering_id') and self.offering_id is not None:
+            _dict['offering_id'] = self.offering_id
+        if hasattr(self, 'offering_version_id') and self.offering_version_id is not None:
+            _dict['offering_version_id'] = self.offering_version_id
+        if hasattr(self, 'offering_repo_url') and self.offering_repo_url is not None:
+            _dict['offering_repo_url'] = self.offering_repo_url
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this ExternalSourceCatalog object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'ExternalSourceCatalog') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'ExternalSourceCatalog') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+class ExternalSourceCosBucket():
+    """
+    Connection details to a IBM Cloud Object Storage bucket.
+
+    :attr str cos_bucket_url: (optional) COS Bucket Url.
+    """
+
+    def __init__(self,
+                 *,
+                 cos_bucket_url: str = None) -> None:
+        """
+        Initialize a ExternalSourceCosBucket object.
+
+        :param str cos_bucket_url: (optional) COS Bucket Url.
+        """
+        self.cos_bucket_url = cos_bucket_url
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'ExternalSourceCosBucket':
+        """Initialize a ExternalSourceCosBucket object from a json dictionary."""
+        args = {}
+        if 'cos_bucket_url' in _dict:
+            args['cos_bucket_url'] = _dict.get('cos_bucket_url')
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a ExternalSourceCosBucket object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'cos_bucket_url') and self.cos_bucket_url is not None:
+            _dict['cos_bucket_url'] = self.cos_bucket_url
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this ExternalSourceCosBucket object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'ExternalSourceCosBucket') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'ExternalSourceCosBucket') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
 
 class ExternalSourceGit():
     """
     Connection details to Git source.
 
+    :attr str computed_git_repo_url: (optional) The Complete URL which is computed
+          by git_repo_url, git_repo_folder and branch.
     :attr str git_repo_url: (optional) URL to the GIT Repo that can be used to clone
           the template.
     :attr str git_token: (optional) Personal Access Token to connect to Git URLs.
@@ -5212,6 +6029,7 @@ class ExternalSourceGit():
 
     def __init__(self,
                  *,
+                 computed_git_repo_url: str = None,
                  git_repo_url: str = None,
                  git_token: str = None,
                  git_repo_folder: str = None,
@@ -5220,6 +6038,8 @@ class ExternalSourceGit():
         """
         Initialize a ExternalSourceGit object.
 
+        :param str computed_git_repo_url: (optional) The Complete URL which is
+               computed by git_repo_url, git_repo_folder and branch.
         :param str git_repo_url: (optional) URL to the GIT Repo that can be used to
                clone the template.
         :param str git_token: (optional) Personal Access Token to connect to Git
@@ -5231,6 +6051,7 @@ class ExternalSourceGit():
         :param str git_branch: (optional) Name of the branch, used to fetch the Git
                Repo.
         """
+        self.computed_git_repo_url = computed_git_repo_url
         self.git_repo_url = git_repo_url
         self.git_token = git_token
         self.git_repo_folder = git_repo_folder
@@ -5241,6 +6062,8 @@ class ExternalSourceGit():
     def from_dict(cls, _dict: Dict) -> 'ExternalSourceGit':
         """Initialize a ExternalSourceGit object from a json dictionary."""
         args = {}
+        if 'computed_git_repo_url' in _dict:
+            args['computed_git_repo_url'] = _dict.get('computed_git_repo_url')
         if 'git_repo_url' in _dict:
             args['git_repo_url'] = _dict.get('git_repo_url')
         if 'git_token' in _dict:
@@ -5261,6 +6084,8 @@ class ExternalSourceGit():
     def to_dict(self) -> Dict:
         """Return a json dictionary representing this model."""
         _dict = {}
+        if hasattr(self, 'computed_git_repo_url') and self.computed_git_repo_url is not None:
+            _dict['computed_git_repo_url'] = self.computed_git_repo_url
         if hasattr(self, 'git_repo_url') and self.git_repo_url is not None:
             _dict['git_repo_url'] = self.git_repo_url
         if hasattr(self, 'git_token') and self.git_token is not None:
@@ -5295,14 +6120,18 @@ class InventoryResourceRecord():
     """
     Complete inventory resource details with user inputs and system generated data.
 
-    :attr str name: (optional) Inventory name.
+    :attr str name: (optional) The unique name of your Inventory.  The name can be
+          up to 128 characters long and can include alphanumeric  characters, spaces,
+          dashes, and underscores.
     :attr str id: (optional) Inventory id.
-    :attr str description: (optional) Inventory description.
-    :attr str location: (optional) List of workspace locations supported by IBM
-          Cloud Schematics service.  Note, this does not limit the location of the
-          resources provisioned using Schematics.
+    :attr str description: (optional) The description of your Inventory.  The
+          description can be up to 2048 characters long in size.
+    :attr str location: (optional) List of locations supported by IBM Cloud
+          Schematics service.  While creating your workspace or action, choose the right
+          region, since it cannot be changed.  Note, this does not limit the location of
+          the IBM Cloud resources, provisioned using Schematics.
     :attr str resource_group: (optional) Resource-group name for the Inventory
-          definition.  By default, Action will be created in Default Resource Group.
+          definition.  By default, Inventory will be created in Default Resource Group.
     :attr datetime created_at: (optional) Inventory creation time.
     :attr str created_by: (optional) Email address of user who created the
           Inventory.
@@ -5331,13 +6160,18 @@ class InventoryResourceRecord():
         """
         Initialize a InventoryResourceRecord object.
 
-        :param str name: (optional) Inventory name.
-        :param str description: (optional) Inventory description.
-        :param str location: (optional) List of workspace locations supported by
-               IBM Cloud Schematics service.  Note, this does not limit the location of
-               the resources provisioned using Schematics.
+        :param str name: (optional) The unique name of your Inventory.  The name
+               can be up to 128 characters long and can include alphanumeric  characters,
+               spaces, dashes, and underscores.
+        :param str description: (optional) The description of your Inventory.  The
+               description can be up to 2048 characters long in size.
+        :param str location: (optional) List of locations supported by IBM Cloud
+               Schematics service.  While creating your workspace or action, choose the
+               right region, since it cannot be changed.  Note, this does not limit the
+               location of the IBM Cloud resources, provisioned using Schematics.
         :param str resource_group: (optional) Resource-group name for the Inventory
-               definition.  By default, Action will be created in Default Resource Group.
+               definition.  By default, Inventory will be created in Default Resource
+               Group.
         :param str inventories_ini: (optional) Input inventory of host and host
                group for the playbook,  in the .ini file format.
         :param List[str] resource_queries: (optional) Input resource queries that
@@ -5436,8 +6270,10 @@ class InventoryResourceRecord():
 
     class LocationEnum(str, Enum):
         """
-        List of workspace locations supported by IBM Cloud Schematics service.  Note, this
-        does not limit the location of the resources provisioned using Schematics.
+        List of locations supported by IBM Cloud Schematics service.  While creating your
+        workspace or action, choose the right region, since it cannot be changed.  Note,
+        this does not limit the location of the IBM Cloud resources, provisioned using
+        Schematics.
         """
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
@@ -5447,13 +6283,13 @@ class InventoryResourceRecord():
 
 class InventoryResourceRecordList():
     """
-    List of Inventory resource records.
+    List of Inventory definition records.
 
     :attr int total_count: (optional) Total number of records.
     :attr int limit: Number of records returned.
     :attr int offset: Skipped number of records.
     :attr List[InventoryResourceRecord] inventories: (optional) List of inventory
-          resource records.
+          definition records.
     """
 
     def __init__(self,
@@ -5469,7 +6305,7 @@ class InventoryResourceRecordList():
         :param int offset: Skipped number of records.
         :param int total_count: (optional) Total number of records.
         :param List[InventoryResourceRecord] inventories: (optional) List of
-               inventory resource records.
+               inventory definition records.
         """
         self.total_count = total_count
         self.limit = limit
@@ -5539,22 +6375,26 @@ class Job():
           action-id).
     :attr str command_name: (optional) Schematics job command name.
     :attr str command_parameter: (optional) Schematics job command parameter
-          (playbook-name, capsule-name or flow-name).
+          (playbook-name).
     :attr List[str] command_options: (optional) Command line options for the
           command.
-    :attr List[VariableData] inputs: (optional) Job inputs used by Action.
+    :attr List[VariableData] inputs: (optional) Job inputs used by Action or
+          Workspace.
     :attr List[VariableData] settings: (optional) Environment variables used by the
-          Job while performing Action.
+          Job while performing Action or Workspace.
     :attr List[str] tags: (optional) User defined tags, while running the job.
     :attr str id: (optional) Job ID.
-    :attr str name: (optional) Job name, uniquely derived from the related Action.
-    :attr str description: (optional) Job description derived from the related
-          Action.
-    :attr str location: (optional) List of workspace locations supported by IBM
-          Cloud Schematics service.  Note, this does not limit the location of the
-          resources provisioned using Schematics.
+    :attr str name: (optional) Job name, uniquely derived from the related Workspace
+          or Action.
+    :attr str description: (optional) The description of your job is derived from
+          the related action or workspace.  The description can be up to 2048 characters
+          long in size.
+    :attr str location: (optional) List of locations supported by IBM Cloud
+          Schematics service.  While creating your workspace or action, choose the right
+          region, since it cannot be changed.  Note, this does not limit the location of
+          the IBM Cloud resources, provisioned using Schematics.
     :attr str resource_group: (optional) Resource-group name derived from the
-          related Action.
+          related Workspace or Action.
     :attr datetime submitted_at: (optional) Job submission time.
     :attr str submitted_by: (optional) Email address of user who submitted the job.
     :attr datetime start_at: (optional) Job start time.
@@ -5608,16 +6448,18 @@ class Job():
                (workspace-id, action-id).
         :param str command_name: (optional) Schematics job command name.
         :param str command_parameter: (optional) Schematics job command parameter
-               (playbook-name, capsule-name or flow-name).
+               (playbook-name).
         :param List[str] command_options: (optional) Command line options for the
                command.
-        :param List[VariableData] inputs: (optional) Job inputs used by Action.
+        :param List[VariableData] inputs: (optional) Job inputs used by Action or
+               Workspace.
         :param List[VariableData] settings: (optional) Environment variables used
-               by the Job while performing Action.
+               by the Job while performing Action or Workspace.
         :param List[str] tags: (optional) User defined tags, while running the job.
-        :param str location: (optional) List of workspace locations supported by
-               IBM Cloud Schematics service.  Note, this does not limit the location of
-               the resources provisioned using Schematics.
+        :param str location: (optional) List of locations supported by IBM Cloud
+               Schematics service.  While creating your workspace or action, choose the
+               right region, since it cannot be changed.  Note, this does not limit the
+               location of the IBM Cloud resources, provisioned using Schematics.
         :param JobStatus status: (optional) Job Status.
         :param JobData data: (optional) Job data.
         :param BastionResourceDefinition bastion: (optional) Describes a bastion
@@ -5796,25 +6638,48 @@ class Job():
         WORKSPACE = 'workspace'
         ACTION = 'action'
         SYSTEM = 'system'
+        ENVIRONMENT = 'environment'
 
 
     class CommandNameEnum(str, Enum):
         """
         Schematics job command name.
         """
+        WORKSPACE_PLAN = 'workspace_plan'
+        WORKSPACE_APPLY = 'workspace_apply'
+        WORKSPACE_DESTROY = 'workspace_destroy'
+        WORKSPACE_REFRESH = 'workspace_refresh'
         ANSIBLE_PLAYBOOK_RUN = 'ansible_playbook_run'
         ANSIBLE_PLAYBOOK_CHECK = 'ansible_playbook_check'
+        CREATE_ACTION = 'create_action'
+        PUT_ACTION = 'put_action'
+        PATCH_ACTION = 'patch_action'
+        DELETE_ACTION = 'delete_action'
         SYSTEM_KEY_ENABLE = 'system_key_enable'
-        SYTEM_KEY_DELETE = 'sytem_key_delete'
+        SYSTEM_KEY_DELETE = 'system_key_delete'
         SYSTEM_KEY_DISABLE = 'system_key_disable'
         SYSTEM_KEY_ROTATE = 'system_key_rotate'
         SYSTEM_KEY_RESTORE = 'system_key_restore'
+        CREATE_WORKSPACE = 'create_workspace'
+        PUT_WORKSPACE = 'put_workspace'
+        PATCH_WORKSPACE = 'patch_workspace'
+        DELETE_WORKSPACE = 'delete_workspace'
+        CREATE_CART = 'create_cart'
+        CREATE_ENVIRONMENT = 'create_environment'
+        PUT_ENVIRONMENT = 'put_environment'
+        DELETE_ENVIRONMENT = 'delete_environment'
+        ENVIRONMENT_INIT = 'environment_init'
+        ENVIRONMENT_INSTALL = 'environment_install'
+        ENVIRONMENT_UNINSTALL = 'environment_uninstall'
+        REPOSITORY_PROCESS = 'repository_process'
 
 
     class LocationEnum(str, Enum):
         """
-        List of workspace locations supported by IBM Cloud Schematics service.  Note, this
-        does not limit the location of the resources provisioned using Schematics.
+        List of locations supported by IBM Cloud Schematics service.  While creating your
+        workspace or action, choose the right region, since it cannot be changed.  Note,
+        this does not limit the location of the IBM Cloud resources, provisioned using
+        Schematics.
         """
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
@@ -5827,25 +6692,33 @@ class JobData():
     Job data.
 
     :attr str job_type: Type of Job.
+    :attr JobDataWorkspace workspace_job_data: (optional) Workspace Job data.
     :attr JobDataAction action_job_data: (optional) Action Job data.
     :attr JobDataSystem system_job_data: (optional) Controls Job data.
+    :attr JobDataFlow flow_job_data: (optional) Flow Job data.
     """
 
     def __init__(self,
                  job_type: str,
                  *,
+                 workspace_job_data: 'JobDataWorkspace' = None,
                  action_job_data: 'JobDataAction' = None,
-                 system_job_data: 'JobDataSystem' = None) -> None:
+                 system_job_data: 'JobDataSystem' = None,
+                 flow_job_data: 'JobDataFlow' = None) -> None:
         """
         Initialize a JobData object.
 
         :param str job_type: Type of Job.
+        :param JobDataWorkspace workspace_job_data: (optional) Workspace Job data.
         :param JobDataAction action_job_data: (optional) Action Job data.
         :param JobDataSystem system_job_data: (optional) Controls Job data.
+        :param JobDataFlow flow_job_data: (optional) Flow Job data.
         """
         self.job_type = job_type
+        self.workspace_job_data = workspace_job_data
         self.action_job_data = action_job_data
         self.system_job_data = system_job_data
+        self.flow_job_data = flow_job_data
 
     @classmethod
     def from_dict(cls, _dict: Dict) -> 'JobData':
@@ -5855,10 +6728,14 @@ class JobData():
             args['job_type'] = _dict.get('job_type')
         else:
             raise ValueError('Required property \'job_type\' not present in JobData JSON')
+        if 'workspace_job_data' in _dict:
+            args['workspace_job_data'] = JobDataWorkspace.from_dict(_dict.get('workspace_job_data'))
         if 'action_job_data' in _dict:
             args['action_job_data'] = JobDataAction.from_dict(_dict.get('action_job_data'))
         if 'system_job_data' in _dict:
             args['system_job_data'] = JobDataSystem.from_dict(_dict.get('system_job_data'))
+        if 'flow_job_data' in _dict:
+            args['flow_job_data'] = JobDataFlow.from_dict(_dict.get('flow_job_data'))
         return cls(**args)
 
     @classmethod
@@ -5871,10 +6748,14 @@ class JobData():
         _dict = {}
         if hasattr(self, 'job_type') and self.job_type is not None:
             _dict['job_type'] = self.job_type
+        if hasattr(self, 'workspace_job_data') and self.workspace_job_data is not None:
+            _dict['workspace_job_data'] = self.workspace_job_data.to_dict()
         if hasattr(self, 'action_job_data') and self.action_job_data is not None:
             _dict['action_job_data'] = self.action_job_data.to_dict()
         if hasattr(self, 'system_job_data') and self.system_job_data is not None:
             _dict['system_job_data'] = self.system_job_data.to_dict()
+        if hasattr(self, 'flow_job_data') and self.flow_job_data is not None:
+            _dict['flow_job_data'] = self.flow_job_data.to_dict()
         return _dict
 
     def _to_dict(self):
@@ -5900,8 +6781,10 @@ class JobData():
         Type of Job.
         """
         REPO_DOWNLOAD_JOB = 'repo_download_job'
+        WORKSPACE_JOB = 'workspace_job'
         ACTION_JOB = 'action_job'
         SYSTEM_JOB = 'system_job'
+        FLOW_JOB = 'flow-job'
 
 
 class JobDataAction():
@@ -6017,6 +6900,87 @@ class JobDataAction():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
+class JobDataFlow():
+    """
+    Flow Job data.
+
+    :attr str flow_id: (optional) Flow ID.
+    :attr str flow_name: (optional) Flow Name.
+    :attr List[JobDataWorkItem] workitems: (optional) Job data used by each workitem
+          Job.
+    :attr datetime updated_at: (optional) Job status updation timestamp.
+    """
+
+    def __init__(self,
+                 *,
+                 flow_id: str = None,
+                 flow_name: str = None,
+                 workitems: List['JobDataWorkItem'] = None,
+                 updated_at: datetime = None) -> None:
+        """
+        Initialize a JobDataFlow object.
+
+        :param str flow_id: (optional) Flow ID.
+        :param str flow_name: (optional) Flow Name.
+        :param List[JobDataWorkItem] workitems: (optional) Job data used by each
+               workitem Job.
+        :param datetime updated_at: (optional) Job status updation timestamp.
+        """
+        self.flow_id = flow_id
+        self.flow_name = flow_name
+        self.workitems = workitems
+        self.updated_at = updated_at
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'JobDataFlow':
+        """Initialize a JobDataFlow object from a json dictionary."""
+        args = {}
+        if 'flow_id' in _dict:
+            args['flow_id'] = _dict.get('flow_id')
+        if 'flow_name' in _dict:
+            args['flow_name'] = _dict.get('flow_name')
+        if 'workitems' in _dict:
+            args['workitems'] = [JobDataWorkItem.from_dict(x) for x in _dict.get('workitems')]
+        if 'updated_at' in _dict:
+            args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a JobDataFlow object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'flow_id') and self.flow_id is not None:
+            _dict['flow_id'] = self.flow_id
+        if hasattr(self, 'flow_name') and self.flow_name is not None:
+            _dict['flow_name'] = self.flow_name
+        if hasattr(self, 'workitems') and self.workitems is not None:
+            _dict['workitems'] = [x.to_dict() for x in self.workitems]
+        if hasattr(self, 'updated_at') and self.updated_at is not None:
+            _dict['updated_at'] = datetime_to_string(self.updated_at)
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this JobDataFlow object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'JobDataFlow') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'JobDataFlow') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
 class JobDataSystem():
     """
     Controls Job data.
@@ -6087,6 +7051,536 @@ class JobDataSystem():
         return self.__dict__ == other.__dict__
 
     def __ne__(self, other: 'JobDataSystem') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+class JobDataTemplate():
+    """
+    Template Job data.
+
+    :attr str template_id: (optional) Template Id.
+    :attr str template_name: (optional) Template name.
+    :attr int flow_index: (optional) Index of the template in the Flow.
+    :attr List[VariableData] inputs: (optional) Job inputs used by the Templates.
+    :attr List[VariableData] outputs: (optional) Job output from the Templates.
+    :attr List[VariableData] settings: (optional) Environment variables used by the
+          template.
+    :attr datetime updated_at: (optional) Job status updation timestamp.
+    """
+
+    def __init__(self,
+                 *,
+                 template_id: str = None,
+                 template_name: str = None,
+                 flow_index: int = None,
+                 inputs: List['VariableData'] = None,
+                 outputs: List['VariableData'] = None,
+                 settings: List['VariableData'] = None,
+                 updated_at: datetime = None) -> None:
+        """
+        Initialize a JobDataTemplate object.
+
+        :param str template_id: (optional) Template Id.
+        :param str template_name: (optional) Template name.
+        :param int flow_index: (optional) Index of the template in the Flow.
+        :param List[VariableData] inputs: (optional) Job inputs used by the
+               Templates.
+        :param List[VariableData] outputs: (optional) Job output from the
+               Templates.
+        :param List[VariableData] settings: (optional) Environment variables used
+               by the template.
+        :param datetime updated_at: (optional) Job status updation timestamp.
+        """
+        self.template_id = template_id
+        self.template_name = template_name
+        self.flow_index = flow_index
+        self.inputs = inputs
+        self.outputs = outputs
+        self.settings = settings
+        self.updated_at = updated_at
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'JobDataTemplate':
+        """Initialize a JobDataTemplate object from a json dictionary."""
+        args = {}
+        if 'template_id' in _dict:
+            args['template_id'] = _dict.get('template_id')
+        if 'template_name' in _dict:
+            args['template_name'] = _dict.get('template_name')
+        if 'flow_index' in _dict:
+            args['flow_index'] = _dict.get('flow_index')
+        if 'inputs' in _dict:
+            args['inputs'] = [VariableData.from_dict(x) for x in _dict.get('inputs')]
+        if 'outputs' in _dict:
+            args['outputs'] = [VariableData.from_dict(x) for x in _dict.get('outputs')]
+        if 'settings' in _dict:
+            args['settings'] = [VariableData.from_dict(x) for x in _dict.get('settings')]
+        if 'updated_at' in _dict:
+            args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a JobDataTemplate object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'template_id') and self.template_id is not None:
+            _dict['template_id'] = self.template_id
+        if hasattr(self, 'template_name') and self.template_name is not None:
+            _dict['template_name'] = self.template_name
+        if hasattr(self, 'flow_index') and self.flow_index is not None:
+            _dict['flow_index'] = self.flow_index
+        if hasattr(self, 'inputs') and self.inputs is not None:
+            _dict['inputs'] = [x.to_dict() for x in self.inputs]
+        if hasattr(self, 'outputs') and self.outputs is not None:
+            _dict['outputs'] = [x.to_dict() for x in self.outputs]
+        if hasattr(self, 'settings') and self.settings is not None:
+            _dict['settings'] = [x.to_dict() for x in self.settings]
+        if hasattr(self, 'updated_at') and self.updated_at is not None:
+            _dict['updated_at'] = datetime_to_string(self.updated_at)
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this JobDataTemplate object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'JobDataTemplate') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'JobDataTemplate') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+class JobDataWorkItem():
+    """
+    Environment work items.
+
+    :attr str command_object_id: (optional) command object id.
+    :attr str command_object_name: (optional) command object name.
+    :attr str layers: (optional) layer name.
+    :attr str source_type: (optional) Type of source for the Template.
+    :attr ExternalSource source: (optional) Source of templates, playbooks, or
+          controls.
+    :attr List[VariableData] inputs: (optional) Input variables data for the
+          workItem used in FlowJob.
+    :attr List[VariableData] outputs: (optional) Output variables for the workItem.
+    :attr List[VariableData] settings: (optional) Environment variables for the
+          workItem.
+    :attr JobDataWorkItemLastJob last_job: (optional) Status of the last job
+          executed by the workitem.
+    :attr datetime updated_at: (optional) Job status updation timestamp.
+    """
+
+    def __init__(self,
+                 *,
+                 command_object_id: str = None,
+                 command_object_name: str = None,
+                 layers: str = None,
+                 source_type: str = None,
+                 source: 'ExternalSource' = None,
+                 inputs: List['VariableData'] = None,
+                 outputs: List['VariableData'] = None,
+                 settings: List['VariableData'] = None,
+                 last_job: 'JobDataWorkItemLastJob' = None,
+                 updated_at: datetime = None) -> None:
+        """
+        Initialize a JobDataWorkItem object.
+
+        :param str command_object_id: (optional) command object id.
+        :param str command_object_name: (optional) command object name.
+        :param str layers: (optional) layer name.
+        :param str source_type: (optional) Type of source for the Template.
+        :param ExternalSource source: (optional) Source of templates, playbooks, or
+               controls.
+        :param List[VariableData] inputs: (optional) Input variables data for the
+               workItem used in FlowJob.
+        :param List[VariableData] outputs: (optional) Output variables for the
+               workItem.
+        :param List[VariableData] settings: (optional) Environment variables for
+               the workItem.
+        :param JobDataWorkItemLastJob last_job: (optional) Status of the last job
+               executed by the workitem.
+        :param datetime updated_at: (optional) Job status updation timestamp.
+        """
+        self.command_object_id = command_object_id
+        self.command_object_name = command_object_name
+        self.layers = layers
+        self.source_type = source_type
+        self.source = source
+        self.inputs = inputs
+        self.outputs = outputs
+        self.settings = settings
+        self.last_job = last_job
+        self.updated_at = updated_at
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'JobDataWorkItem':
+        """Initialize a JobDataWorkItem object from a json dictionary."""
+        args = {}
+        if 'command_object_id' in _dict:
+            args['command_object_id'] = _dict.get('command_object_id')
+        if 'command_object_name' in _dict:
+            args['command_object_name'] = _dict.get('command_object_name')
+        if 'layers' in _dict:
+            args['layers'] = _dict.get('layers')
+        if 'source_type' in _dict:
+            args['source_type'] = _dict.get('source_type')
+        if 'source' in _dict:
+            args['source'] = ExternalSource.from_dict(_dict.get('source'))
+        if 'inputs' in _dict:
+            args['inputs'] = [VariableData.from_dict(x) for x in _dict.get('inputs')]
+        if 'outputs' in _dict:
+            args['outputs'] = [VariableData.from_dict(x) for x in _dict.get('outputs')]
+        if 'settings' in _dict:
+            args['settings'] = [VariableData.from_dict(x) for x in _dict.get('settings')]
+        if 'last_job' in _dict:
+            args['last_job'] = JobDataWorkItemLastJob.from_dict(_dict.get('last_job'))
+        if 'updated_at' in _dict:
+            args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a JobDataWorkItem object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'command_object_id') and self.command_object_id is not None:
+            _dict['command_object_id'] = self.command_object_id
+        if hasattr(self, 'command_object_name') and self.command_object_name is not None:
+            _dict['command_object_name'] = self.command_object_name
+        if hasattr(self, 'layers') and self.layers is not None:
+            _dict['layers'] = self.layers
+        if hasattr(self, 'source_type') and self.source_type is not None:
+            _dict['source_type'] = self.source_type
+        if hasattr(self, 'source') and self.source is not None:
+            _dict['source'] = self.source.to_dict()
+        if hasattr(self, 'inputs') and self.inputs is not None:
+            _dict['inputs'] = [x.to_dict() for x in self.inputs]
+        if hasattr(self, 'outputs') and self.outputs is not None:
+            _dict['outputs'] = [x.to_dict() for x in self.outputs]
+        if hasattr(self, 'settings') and self.settings is not None:
+            _dict['settings'] = [x.to_dict() for x in self.settings]
+        if hasattr(self, 'last_job') and self.last_job is not None:
+            _dict['last_job'] = self.last_job.to_dict()
+        if hasattr(self, 'updated_at') and self.updated_at is not None:
+            _dict['updated_at'] = datetime_to_string(self.updated_at)
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this JobDataWorkItem object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'JobDataWorkItem') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'JobDataWorkItem') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+    class SourceTypeEnum(str, Enum):
+        """
+        Type of source for the Template.
+        """
+        LOCAL = 'local'
+        GIT_HUB = 'git_hub'
+        GIT_HUB_ENTERPRISE = 'git_hub_enterprise'
+        GIT_LAB = 'git_lab'
+        IBM_GIT_LAB = 'ibm_git_lab'
+        IBM_CLOUD_CATALOG = 'ibm_cloud_catalog'
+        EXTERNAL_SCM = 'external_scm'
+        COS_BUCKET = 'cos_bucket'
+
+
+class JobDataWorkItemLastJob():
+    """
+    Status of the last job executed by the workitem.
+
+    :attr str command_object: (optional) Name of the Schematics automation resource.
+    :attr str command_object_name: (optional) command object name
+          (workspace_name/action_name).
+    :attr str command_object_id: (optional) Workitem command object id, maps to
+          workspace_id or action_id.
+    :attr str command_name: (optional) Schematics job command name.
+    :attr str job_id: (optional) Workspace job id.
+    :attr str job_status: (optional) Status of Jobs.
+    """
+
+    def __init__(self,
+                 *,
+                 command_object: str = None,
+                 command_object_name: str = None,
+                 command_object_id: str = None,
+                 command_name: str = None,
+                 job_id: str = None,
+                 job_status: str = None) -> None:
+        """
+        Initialize a JobDataWorkItemLastJob object.
+
+        :param str command_object: (optional) Name of the Schematics automation
+               resource.
+        :param str command_object_name: (optional) command object name
+               (workspace_name/action_name).
+        :param str command_object_id: (optional) Workitem command object id, maps
+               to workspace_id or action_id.
+        :param str command_name: (optional) Schematics job command name.
+        :param str job_id: (optional) Workspace job id.
+        :param str job_status: (optional) Status of Jobs.
+        """
+        self.command_object = command_object
+        self.command_object_name = command_object_name
+        self.command_object_id = command_object_id
+        self.command_name = command_name
+        self.job_id = job_id
+        self.job_status = job_status
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'JobDataWorkItemLastJob':
+        """Initialize a JobDataWorkItemLastJob object from a json dictionary."""
+        args = {}
+        if 'command_object' in _dict:
+            args['command_object'] = _dict.get('command_object')
+        if 'command_object_name' in _dict:
+            args['command_object_name'] = _dict.get('command_object_name')
+        if 'command_object_id' in _dict:
+            args['command_object_id'] = _dict.get('command_object_id')
+        if 'command_name' in _dict:
+            args['command_name'] = _dict.get('command_name')
+        if 'job_id' in _dict:
+            args['job_id'] = _dict.get('job_id')
+        if 'job_status' in _dict:
+            args['job_status'] = _dict.get('job_status')
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a JobDataWorkItemLastJob object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'command_object') and self.command_object is not None:
+            _dict['command_object'] = self.command_object
+        if hasattr(self, 'command_object_name') and self.command_object_name is not None:
+            _dict['command_object_name'] = self.command_object_name
+        if hasattr(self, 'command_object_id') and self.command_object_id is not None:
+            _dict['command_object_id'] = self.command_object_id
+        if hasattr(self, 'command_name') and self.command_name is not None:
+            _dict['command_name'] = self.command_name
+        if hasattr(self, 'job_id') and self.job_id is not None:
+            _dict['job_id'] = self.job_id
+        if hasattr(self, 'job_status') and self.job_status is not None:
+            _dict['job_status'] = self.job_status
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this JobDataWorkItemLastJob object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'JobDataWorkItemLastJob') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'JobDataWorkItemLastJob') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+    class CommandObjectEnum(str, Enum):
+        """
+        Name of the Schematics automation resource.
+        """
+        WORKSPACE = 'workspace'
+        ACTION = 'action'
+        SYSTEM = 'system'
+        ENVIRONMENT = 'environment'
+
+
+    class CommandNameEnum(str, Enum):
+        """
+        Schematics job command name.
+        """
+        WORKSPACE_PLAN = 'workspace_plan'
+        WORKSPACE_APPLY = 'workspace_apply'
+        WORKSPACE_DESTROY = 'workspace_destroy'
+        WORKSPACE_REFRESH = 'workspace_refresh'
+        ANSIBLE_PLAYBOOK_RUN = 'ansible_playbook_run'
+        ANSIBLE_PLAYBOOK_CHECK = 'ansible_playbook_check'
+        CREATE_ACTION = 'create_action'
+        PUT_ACTION = 'put_action'
+        PATCH_ACTION = 'patch_action'
+        DELETE_ACTION = 'delete_action'
+        SYSTEM_KEY_ENABLE = 'system_key_enable'
+        SYSTEM_KEY_DELETE = 'system_key_delete'
+        SYSTEM_KEY_DISABLE = 'system_key_disable'
+        SYSTEM_KEY_ROTATE = 'system_key_rotate'
+        SYSTEM_KEY_RESTORE = 'system_key_restore'
+        CREATE_WORKSPACE = 'create_workspace'
+        PUT_WORKSPACE = 'put_workspace'
+        PATCH_WORKSPACE = 'patch_workspace'
+        DELETE_WORKSPACE = 'delete_workspace'
+        CREATE_CART = 'create_cart'
+        CREATE_ENVIRONMENT = 'create_environment'
+        PUT_ENVIRONMENT = 'put_environment'
+        DELETE_ENVIRONMENT = 'delete_environment'
+        ENVIRONMENT_INIT = 'environment_init'
+        ENVIRONMENT_INSTALL = 'environment_install'
+        ENVIRONMENT_UNINSTALL = 'environment_uninstall'
+        REPOSITORY_PROCESS = 'repository_process'
+
+
+    class JobStatusEnum(str, Enum):
+        """
+        Status of Jobs.
+        """
+        JOB_PENDING = 'job_pending'
+        JOB_IN_PROGRESS = 'job_in_progress'
+        JOB_FINISHED = 'job_finished'
+        JOB_FAILED = 'job_failed'
+        JOB_CANCELLED = 'job_cancelled'
+
+
+class JobDataWorkspace():
+    """
+    Workspace Job data.
+
+    :attr str workspace_name: (optional) Workspace name.
+    :attr str flow_id: (optional) Flow Id.
+    :attr str flow_name: (optional) Flow name.
+    :attr List[VariableData] inputs: (optional) Input variables data used by the
+          Workspace Job.
+    :attr List[VariableData] outputs: (optional) Output variables data from the
+          Workspace Job.
+    :attr List[VariableData] settings: (optional) Environment variables used by all
+          the templates in the Workspace.
+    :attr List[JobDataTemplate] template_data: (optional) Input / output data of the
+          Template in the Workspace Job.
+    :attr datetime updated_at: (optional) Job status updation timestamp.
+    """
+
+    def __init__(self,
+                 *,
+                 workspace_name: str = None,
+                 flow_id: str = None,
+                 flow_name: str = None,
+                 inputs: List['VariableData'] = None,
+                 outputs: List['VariableData'] = None,
+                 settings: List['VariableData'] = None,
+                 template_data: List['JobDataTemplate'] = None,
+                 updated_at: datetime = None) -> None:
+        """
+        Initialize a JobDataWorkspace object.
+
+        :param str workspace_name: (optional) Workspace name.
+        :param str flow_id: (optional) Flow Id.
+        :param str flow_name: (optional) Flow name.
+        :param List[VariableData] inputs: (optional) Input variables data used by
+               the Workspace Job.
+        :param List[VariableData] outputs: (optional) Output variables data from
+               the Workspace Job.
+        :param List[VariableData] settings: (optional) Environment variables used
+               by all the templates in the Workspace.
+        :param List[JobDataTemplate] template_data: (optional) Input / output data
+               of the Template in the Workspace Job.
+        :param datetime updated_at: (optional) Job status updation timestamp.
+        """
+        self.workspace_name = workspace_name
+        self.flow_id = flow_id
+        self.flow_name = flow_name
+        self.inputs = inputs
+        self.outputs = outputs
+        self.settings = settings
+        self.template_data = template_data
+        self.updated_at = updated_at
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'JobDataWorkspace':
+        """Initialize a JobDataWorkspace object from a json dictionary."""
+        args = {}
+        if 'workspace_name' in _dict:
+            args['workspace_name'] = _dict.get('workspace_name')
+        if 'flow_id' in _dict:
+            args['flow_id'] = _dict.get('flow_id')
+        if 'flow_name' in _dict:
+            args['flow_name'] = _dict.get('flow_name')
+        if 'inputs' in _dict:
+            args['inputs'] = [VariableData.from_dict(x) for x in _dict.get('inputs')]
+        if 'outputs' in _dict:
+            args['outputs'] = [VariableData.from_dict(x) for x in _dict.get('outputs')]
+        if 'settings' in _dict:
+            args['settings'] = [VariableData.from_dict(x) for x in _dict.get('settings')]
+        if 'template_data' in _dict:
+            args['template_data'] = [JobDataTemplate.from_dict(x) for x in _dict.get('template_data')]
+        if 'updated_at' in _dict:
+            args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a JobDataWorkspace object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'workspace_name') and self.workspace_name is not None:
+            _dict['workspace_name'] = self.workspace_name
+        if hasattr(self, 'flow_id') and self.flow_id is not None:
+            _dict['flow_id'] = self.flow_id
+        if hasattr(self, 'flow_name') and self.flow_name is not None:
+            _dict['flow_name'] = self.flow_name
+        if hasattr(self, 'inputs') and self.inputs is not None:
+            _dict['inputs'] = [x.to_dict() for x in self.inputs]
+        if hasattr(self, 'outputs') and self.outputs is not None:
+            _dict['outputs'] = [x.to_dict() for x in self.outputs]
+        if hasattr(self, 'settings') and self.settings is not None:
+            _dict['settings'] = [x.to_dict() for x in self.settings]
+        if hasattr(self, 'template_data') and self.template_data is not None:
+            _dict['template_data'] = [x.to_dict() for x in self.template_data]
+        if hasattr(self, 'updated_at') and self.updated_at is not None:
+            _dict['updated_at'] = datetime_to_string(self.updated_at)
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this JobDataWorkspace object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'JobDataWorkspace') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'JobDataWorkspace') -> bool:
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
@@ -6178,18 +7672,21 @@ class JobLite():
     Job summary profile with system generated data.
 
     :attr str id: (optional) Job ID.
-    :attr str name: (optional) Job name, uniquely derived from the related Action.
+    :attr str name: (optional) Job name, uniquely derived from the related Workspace
+          or Action.
     :attr str description: (optional) Job description derived from the related
-          Action.
+          Workspace or Action.
     :attr str command_object: (optional) Name of the Schematics automation resource.
-    :attr str command_object_id: (optional) Job command object id (action-id).
+    :attr str command_object_id: (optional) Job command object id (workspace-id,
+          action-id).
     :attr str command_name: (optional) Schematics job command name.
     :attr List[str] tags: (optional) User defined tags, while running the job.
-    :attr str location: (optional) List of workspace locations supported by IBM
-          Cloud Schematics service.  Note, this does not limit the location of the
-          resources provisioned using Schematics.
+    :attr str location: (optional) List of locations supported by IBM Cloud
+          Schematics service.  While creating your workspace or action, choose the right
+          region, since it cannot be changed.  Note, this does not limit the location of
+          the IBM Cloud resources, provisioned using Schematics.
     :attr str resource_group: (optional) Resource-group name derived from the
-          related Action,.
+          related Workspace or Action.
     :attr datetime submitted_at: (optional) Job submission time.
     :attr str submitted_by: (optional) Email address of user who submitted the job.
     :attr str duration: (optional) Duration of job execution; example 40 sec.
@@ -6224,19 +7721,21 @@ class JobLite():
 
         :param str id: (optional) Job ID.
         :param str name: (optional) Job name, uniquely derived from the related
-               Action.
+               Workspace or Action.
         :param str description: (optional) Job description derived from the related
-               Action.
+               Workspace or Action.
         :param str command_object: (optional) Name of the Schematics automation
                resource.
-        :param str command_object_id: (optional) Job command object id (action-id).
+        :param str command_object_id: (optional) Job command object id
+               (workspace-id, action-id).
         :param str command_name: (optional) Schematics job command name.
         :param List[str] tags: (optional) User defined tags, while running the job.
-        :param str location: (optional) List of workspace locations supported by
-               IBM Cloud Schematics service.  Note, this does not limit the location of
-               the resources provisioned using Schematics.
+        :param str location: (optional) List of locations supported by IBM Cloud
+               Schematics service.  While creating your workspace or action, choose the
+               right region, since it cannot be changed.  Note, this does not limit the
+               location of the IBM Cloud resources, provisioned using Schematics.
         :param str resource_group: (optional) Resource-group name derived from the
-               related Action,.
+               related Workspace or Action.
         :param datetime submitted_at: (optional) Job submission time.
         :param str submitted_by: (optional) Email address of user who submitted the
                job.
@@ -6374,25 +7873,48 @@ class JobLite():
         WORKSPACE = 'workspace'
         ACTION = 'action'
         SYSTEM = 'system'
+        ENVIRONMENT = 'environment'
 
 
     class CommandNameEnum(str, Enum):
         """
         Schematics job command name.
         """
+        WORKSPACE_PLAN = 'workspace_plan'
+        WORKSPACE_APPLY = 'workspace_apply'
+        WORKSPACE_DESTROY = 'workspace_destroy'
+        WORKSPACE_REFRESH = 'workspace_refresh'
         ANSIBLE_PLAYBOOK_RUN = 'ansible_playbook_run'
         ANSIBLE_PLAYBOOK_CHECK = 'ansible_playbook_check'
+        CREATE_ACTION = 'create_action'
+        PUT_ACTION = 'put_action'
+        PATCH_ACTION = 'patch_action'
+        DELETE_ACTION = 'delete_action'
         SYSTEM_KEY_ENABLE = 'system_key_enable'
-        SYTEM_KEY_DELETE = 'sytem_key_delete'
+        SYSTEM_KEY_DELETE = 'system_key_delete'
         SYSTEM_KEY_DISABLE = 'system_key_disable'
         SYSTEM_KEY_ROTATE = 'system_key_rotate'
         SYSTEM_KEY_RESTORE = 'system_key_restore'
+        CREATE_WORKSPACE = 'create_workspace'
+        PUT_WORKSPACE = 'put_workspace'
+        PATCH_WORKSPACE = 'patch_workspace'
+        DELETE_WORKSPACE = 'delete_workspace'
+        CREATE_CART = 'create_cart'
+        CREATE_ENVIRONMENT = 'create_environment'
+        PUT_ENVIRONMENT = 'put_environment'
+        DELETE_ENVIRONMENT = 'delete_environment'
+        ENVIRONMENT_INIT = 'environment_init'
+        ENVIRONMENT_INSTALL = 'environment_install'
+        ENVIRONMENT_UNINSTALL = 'environment_uninstall'
+        REPOSITORY_PROCESS = 'repository_process'
 
 
     class LocationEnum(str, Enum):
         """
-        List of workspace locations supported by IBM Cloud Schematics service.  Note, this
-        does not limit the location of the resources provisioned using Schematics.
+        List of locations supported by IBM Cloud Schematics service.  While creating your
+        workspace or action, choose the right region, since it cannot be changed.  Note,
+        this does not limit the location of the IBM Cloud resources, provisioned using
+        Schematics.
         """
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
@@ -6406,7 +7928,7 @@ class JobLog():
 
     :attr str job_id: (optional) Job Id.
     :attr str job_name: (optional) Job name, uniquely derived from the related
-          Action.
+          Workspace, Action or Controls.
     :attr JobLogSummary log_summary: (optional) Job log summary record.
     :attr str format: (optional) Format of the Log text.
     :attr bytes details: (optional) Log text, generated by the Job.
@@ -6426,7 +7948,7 @@ class JobLog():
 
         :param str job_id: (optional) Job Id.
         :param str job_name: (optional) Job name, uniquely derived from the related
-               Action.
+               Workspace, Action or Controls.
         :param JobLogSummary log_summary: (optional) Job log summary record.
         :param str format: (optional) Format of the Log text.
         :param bytes details: (optional) Log text, generated by the Job.
@@ -6517,10 +8039,13 @@ class JobLogSummary():
     :attr datetime log_analyzed_till: (optional) Job log update timestamp.
     :attr float elapsed_time: (optional) Job log elapsed time (log_analyzed_till -
           log_start_at).
-    :attr List[JobLogSummaryLogErrorsItem] log_errors: (optional) Job log errors.
+    :attr List[JobLogSummaryLogErrors] log_errors: (optional) Job log errors.
     :attr JobLogSummaryRepoDownloadJob repo_download_job: (optional) Repo download
           Job log summary.
-    :attr JobLogSummaryActionJob action_job: (optional) Action Job.
+    :attr JobLogSummaryWorkspaceJob workspace_job: (optional) Workspace Job log
+          summary.
+    :attr JobLogSummaryFlowJob flow_job: (optional) Flow Job log summary.
+    :attr JobLogSummaryActionJob action_job: (optional) Flow Job log summary.
     :attr JobLogSummarySystemJob system_job: (optional) System Job log summary.
     """
 
@@ -6531,8 +8056,10 @@ class JobLogSummary():
                  log_start_at: datetime = None,
                  log_analyzed_till: datetime = None,
                  elapsed_time: float = None,
-                 log_errors: List['JobLogSummaryLogErrorsItem'] = None,
+                 log_errors: List['JobLogSummaryLogErrors'] = None,
                  repo_download_job: 'JobLogSummaryRepoDownloadJob' = None,
+                 workspace_job: 'JobLogSummaryWorkspaceJob' = None,
+                 flow_job: 'JobLogSummaryFlowJob' = None,
                  action_job: 'JobLogSummaryActionJob' = None,
                  system_job: 'JobLogSummarySystemJob' = None) -> None:
         """
@@ -6541,7 +8068,10 @@ class JobLogSummary():
         :param str job_type: (optional) Type of Job.
         :param JobLogSummaryRepoDownloadJob repo_download_job: (optional) Repo
                download Job log summary.
-        :param JobLogSummaryActionJob action_job: (optional) Action Job.
+        :param JobLogSummaryWorkspaceJob workspace_job: (optional) Workspace Job
+               log summary.
+        :param JobLogSummaryFlowJob flow_job: (optional) Flow Job log summary.
+        :param JobLogSummaryActionJob action_job: (optional) Flow Job log summary.
         :param JobLogSummarySystemJob system_job: (optional) System Job log
                summary.
         """
@@ -6552,6 +8082,8 @@ class JobLogSummary():
         self.elapsed_time = elapsed_time
         self.log_errors = log_errors
         self.repo_download_job = repo_download_job
+        self.workspace_job = workspace_job
+        self.flow_job = flow_job
         self.action_job = action_job
         self.system_job = system_job
 
@@ -6570,9 +8102,13 @@ class JobLogSummary():
         if 'elapsed_time' in _dict:
             args['elapsed_time'] = _dict.get('elapsed_time')
         if 'log_errors' in _dict:
-            args['log_errors'] = [JobLogSummaryLogErrorsItem.from_dict(x) for x in _dict.get('log_errors')]
+            args['log_errors'] = [JobLogSummaryLogErrors.from_dict(x) for x in _dict.get('log_errors')]
         if 'repo_download_job' in _dict:
             args['repo_download_job'] = JobLogSummaryRepoDownloadJob.from_dict(_dict.get('repo_download_job'))
+        if 'workspace_job' in _dict:
+            args['workspace_job'] = JobLogSummaryWorkspaceJob.from_dict(_dict.get('workspace_job'))
+        if 'flow_job' in _dict:
+            args['flow_job'] = JobLogSummaryFlowJob.from_dict(_dict.get('flow_job'))
         if 'action_job' in _dict:
             args['action_job'] = JobLogSummaryActionJob.from_dict(_dict.get('action_job'))
         if 'system_job' in _dict:
@@ -6601,6 +8137,10 @@ class JobLogSummary():
             _dict['log_errors'] = [x.to_dict() for x in getattr(self, 'log_errors')]
         if hasattr(self, 'repo_download_job') and self.repo_download_job is not None:
             _dict['repo_download_job'] = self.repo_download_job.to_dict()
+        if hasattr(self, 'workspace_job') and self.workspace_job is not None:
+            _dict['workspace_job'] = self.workspace_job.to_dict()
+        if hasattr(self, 'flow_job') and self.flow_job is not None:
+            _dict['flow_job'] = self.flow_job.to_dict()
         if hasattr(self, 'action_job') and self.action_job is not None:
             _dict['action_job'] = self.action_job.to_dict()
         if hasattr(self, 'system_job') and self.system_job is not None:
@@ -6633,13 +8173,106 @@ class JobLogSummary():
         WORKSPACE_JOB = 'workspace_job'
         ACTION_JOB = 'action_job'
         SYSTEM_JOB = 'system_job'
+        FLOW_JOB = 'flow_job'
 
+
+class JobLogSummaryWorkitems():
+    """
+    Job log summary of the flow workitem.
+
+    :attr str workspace_id: (optional) workspace ID.
+    :attr str job_id: (optional) workspace JOB ID.
+    :attr float resources_add: (optional) Number of resources add.
+    :attr float resources_modify: (optional) Number of resources modify.
+    :attr float resources_destroy: (optional) Number of resources destroy.
+    :attr str log_url: (optional) Log url for job.
+    """
+
+    def __init__(self,
+                 *,
+                 workspace_id: str = None,
+                 job_id: str = None,
+                 resources_add: float = None,
+                 resources_modify: float = None,
+                 resources_destroy: float = None,
+                 log_url: str = None) -> None:
+        """
+        Initialize a JobLogSummaryWorkitems object.
+
+        :param str workspace_id: (optional) workspace ID.
+        :param str job_id: (optional) workspace JOB ID.
+        :param str log_url: (optional) Log url for job.
+        """
+        self.workspace_id = workspace_id
+        self.job_id = job_id
+        self.resources_add = resources_add
+        self.resources_modify = resources_modify
+        self.resources_destroy = resources_destroy
+        self.log_url = log_url
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'JobLogSummaryWorkitems':
+        """Initialize a JobLogSummaryWorkitems object from a json dictionary."""
+        args = {}
+        if 'workspace_id' in _dict:
+            args['workspace_id'] = _dict.get('workspace_id')
+        if 'job_id' in _dict:
+            args['job_id'] = _dict.get('job_id')
+        if 'resources_add' in _dict:
+            args['resources_add'] = _dict.get('resources_add')
+        if 'resources_modify' in _dict:
+            args['resources_modify'] = _dict.get('resources_modify')
+        if 'resources_destroy' in _dict:
+            args['resources_destroy'] = _dict.get('resources_destroy')
+        if 'log_url' in _dict:
+            args['log_url'] = _dict.get('log_url')
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a JobLogSummaryWorkitems object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'workspace_id') and self.workspace_id is not None:
+            _dict['workspace_id'] = self.workspace_id
+        if hasattr(self, 'job_id') and self.job_id is not None:
+            _dict['job_id'] = self.job_id
+        if hasattr(self, 'resources_add') and getattr(self, 'resources_add') is not None:
+            _dict['resources_add'] = getattr(self, 'resources_add')
+        if hasattr(self, 'resources_modify') and getattr(self, 'resources_modify') is not None:
+            _dict['resources_modify'] = getattr(self, 'resources_modify')
+        if hasattr(self, 'resources_destroy') and getattr(self, 'resources_destroy') is not None:
+            _dict['resources_destroy'] = getattr(self, 'resources_destroy')
+        if hasattr(self, 'log_url') and self.log_url is not None:
+            _dict['log_url'] = self.log_url
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this JobLogSummaryWorkitems object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'JobLogSummaryWorkitems') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'JobLogSummaryWorkitems') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
 
 class JobLogSummaryActionJob():
     """
-    Action Job.
+    Flow Job log summary.
 
-    :attr float host_count: (optional) number of hosts.
+    :attr float target_count: (optional) number of targets or hosts.
     :attr float task_count: (optional) number of tasks in playbook.
     :attr float play_count: (optional) number of plays in playbook.
     :attr JobLogSummaryActionJobRecap recap: (optional) Recap records.
@@ -6647,7 +8280,7 @@ class JobLogSummaryActionJob():
 
     def __init__(self,
                  *,
-                 host_count: float = None,
+                 target_count: float = None,
                  task_count: float = None,
                  play_count: float = None,
                  recap: 'JobLogSummaryActionJobRecap' = None) -> None:
@@ -6656,7 +8289,7 @@ class JobLogSummaryActionJob():
 
         :param JobLogSummaryActionJobRecap recap: (optional) Recap records.
         """
-        self.host_count = host_count
+        self.target_count = target_count
         self.task_count = task_count
         self.play_count = play_count
         self.recap = recap
@@ -6665,8 +8298,8 @@ class JobLogSummaryActionJob():
     def from_dict(cls, _dict: Dict) -> 'JobLogSummaryActionJob':
         """Initialize a JobLogSummaryActionJob object from a json dictionary."""
         args = {}
-        if 'host_count' in _dict:
-            args['host_count'] = _dict.get('host_count')
+        if 'target_count' in _dict:
+            args['target_count'] = _dict.get('target_count')
         if 'task_count' in _dict:
             args['task_count'] = _dict.get('task_count')
         if 'play_count' in _dict:
@@ -6683,8 +8316,8 @@ class JobLogSummaryActionJob():
     def to_dict(self) -> Dict:
         """Return a json dictionary representing this model."""
         _dict = {}
-        if hasattr(self, 'host_count') and getattr(self, 'host_count') is not None:
-            _dict['host_count'] = getattr(self, 'host_count')
+        if hasattr(self, 'target_count') and getattr(self, 'target_count') is not None:
+            _dict['target_count'] = getattr(self, 'target_count')
         if hasattr(self, 'task_count') and getattr(self, 'task_count') is not None:
             _dict['task_count'] = getattr(self, 'task_count')
         if hasattr(self, 'play_count') and getattr(self, 'play_count') is not None:
@@ -6715,7 +8348,7 @@ class JobLogSummaryActionJobRecap():
     """
     Recap records.
 
-    :attr List[str] hosts: (optional) List of host name.
+    :attr List[str] target: (optional) List of target or host name.
     :attr float ok: (optional) Number of OK.
     :attr float changed: (optional) Number of changed.
     :attr float failed: (optional) Number of failed.
@@ -6725,7 +8358,7 @@ class JobLogSummaryActionJobRecap():
 
     def __init__(self,
                  *,
-                 hosts: List[str] = None,
+                 target: List[str] = None,
                  ok: float = None,
                  changed: float = None,
                  failed: float = None,
@@ -6734,14 +8367,14 @@ class JobLogSummaryActionJobRecap():
         """
         Initialize a JobLogSummaryActionJobRecap object.
 
-        :param List[str] hosts: (optional) List of host name.
+        :param List[str] target: (optional) List of target or host name.
         :param float ok: (optional) Number of OK.
         :param float changed: (optional) Number of changed.
         :param float failed: (optional) Number of failed.
         :param float skipped: (optional) Number of skipped.
         :param float unreachable: (optional) Number of unreachable.
         """
-        self.hosts = hosts
+        self.target = target
         self.ok = ok
         self.changed = changed
         self.failed = failed
@@ -6752,8 +8385,8 @@ class JobLogSummaryActionJobRecap():
     def from_dict(cls, _dict: Dict) -> 'JobLogSummaryActionJobRecap':
         """Initialize a JobLogSummaryActionJobRecap object from a json dictionary."""
         args = {}
-        if 'hosts' in _dict:
-            args['hosts'] = _dict.get('hosts')
+        if 'target' in _dict:
+            args['target'] = _dict.get('target')
         if 'ok' in _dict:
             args['ok'] = _dict.get('ok')
         if 'changed' in _dict:
@@ -6774,8 +8407,8 @@ class JobLogSummaryActionJobRecap():
     def to_dict(self) -> Dict:
         """Return a json dictionary representing this model."""
         _dict = {}
-        if hasattr(self, 'hosts') and self.hosts is not None:
-            _dict['hosts'] = self.hosts
+        if hasattr(self, 'target') and self.target is not None:
+            _dict['target'] = self.target
         if hasattr(self, 'ok') and self.ok is not None:
             _dict['ok'] = self.ok
         if hasattr(self, 'changed') and self.changed is not None:
@@ -6806,9 +8439,87 @@ class JobLogSummaryActionJobRecap():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobLogSummaryLogErrorsItem():
+class JobLogSummaryFlowJob():
     """
-    JobLogSummaryLogErrorsItem.
+    Flow Job log summary.
+
+    :attr float workitems_completed: (optional) Number of workitems completed
+          successfully.
+    :attr float workitems_pending: (optional) Number of workitems pending in the
+          flow.
+    :attr float workitems_failed: (optional) Number of workitems failed.
+    :attr List[JobLogSummaryWorkitems] workitems: (optional)
+    """
+
+    def __init__(self,
+                 *,
+                 workitems_completed: float = None,
+                 workitems_pending: float = None,
+                 workitems_failed: float = None,
+                 workitems: List['JobLogSummaryWorkitems'] = None) -> None:
+        """
+        Initialize a JobLogSummaryFlowJob object.
+
+        :param List[JobLogSummaryWorkitems] workitems: (optional)
+        """
+        self.workitems_completed = workitems_completed
+        self.workitems_pending = workitems_pending
+        self.workitems_failed = workitems_failed
+        self.workitems = workitems
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'JobLogSummaryFlowJob':
+        """Initialize a JobLogSummaryFlowJob object from a json dictionary."""
+        args = {}
+        if 'workitems_completed' in _dict:
+            args['workitems_completed'] = _dict.get('workitems_completed')
+        if 'workitems_pending' in _dict:
+            args['workitems_pending'] = _dict.get('workitems_pending')
+        if 'workitems_failed' in _dict:
+            args['workitems_failed'] = _dict.get('workitems_failed')
+        if 'workitems' in _dict:
+            args['workitems'] = [JobLogSummaryWorkitems.from_dict(x) for x in _dict.get('workitems')]
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a JobLogSummaryFlowJob object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'workitems_completed') and getattr(self, 'workitems_completed') is not None:
+            _dict['workitems_completed'] = getattr(self, 'workitems_completed')
+        if hasattr(self, 'workitems_pending') and getattr(self, 'workitems_pending') is not None:
+            _dict['workitems_pending'] = getattr(self, 'workitems_pending')
+        if hasattr(self, 'workitems_failed') and getattr(self, 'workitems_failed') is not None:
+            _dict['workitems_failed'] = getattr(self, 'workitems_failed')
+        if hasattr(self, 'workitems') and self.workitems is not None:
+            _dict['workitems'] = [x.to_dict() for x in self.workitems]
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this JobLogSummaryFlowJob object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'JobLogSummaryFlowJob') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'JobLogSummaryFlowJob') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+class JobLogSummaryLogErrors():
+    """
+    JobLogSummaryLogErrors.
 
     :attr str error_code: (optional) Error code in the Log.
     :attr str error_msg: (optional) Summary error message in the log.
@@ -6821,7 +8532,7 @@ class JobLogSummaryLogErrorsItem():
                  error_msg: str = None,
                  error_count: float = None) -> None:
         """
-        Initialize a JobLogSummaryLogErrorsItem object.
+        Initialize a JobLogSummaryLogErrors object.
 
         :param str error_code: (optional) Error code in the Log.
         :param str error_msg: (optional) Summary error message in the log.
@@ -6832,8 +8543,8 @@ class JobLogSummaryLogErrorsItem():
         self.error_count = error_count
 
     @classmethod
-    def from_dict(cls, _dict: Dict) -> 'JobLogSummaryLogErrorsItem':
-        """Initialize a JobLogSummaryLogErrorsItem object from a json dictionary."""
+    def from_dict(cls, _dict: Dict) -> 'JobLogSummaryLogErrors':
+        """Initialize a JobLogSummaryLogErrors object from a json dictionary."""
         args = {}
         if 'error_code' in _dict:
             args['error_code'] = _dict.get('error_code')
@@ -6845,7 +8556,7 @@ class JobLogSummaryLogErrorsItem():
 
     @classmethod
     def _from_dict(cls, _dict):
-        """Initialize a JobLogSummaryLogErrorsItem object from a json dictionary."""
+        """Initialize a JobLogSummaryLogErrors object from a json dictionary."""
         return cls.from_dict(_dict)
 
     def to_dict(self) -> Dict:
@@ -6864,16 +8575,16 @@ class JobLogSummaryLogErrorsItem():
         return self.to_dict()
 
     def __str__(self) -> str:
-        """Return a `str` version of this JobLogSummaryLogErrorsItem object."""
+        """Return a `str` version of this JobLogSummaryLogErrors object."""
         return json.dumps(self.to_dict(), indent=2)
 
-    def __eq__(self, other: 'JobLogSummaryLogErrorsItem') -> bool:
+    def __eq__(self, other: 'JobLogSummaryLogErrors') -> bool:
         """Return `true` when self and other are equal, false otherwise."""
         if not isinstance(other, self.__class__):
             return False
         return self.__dict__ == other.__dict__
 
-    def __ne__(self, other: 'JobLogSummaryLogErrorsItem') -> bool:
+    def __ne__(self, other: 'JobLogSummaryLogErrors') -> bool:
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
@@ -7029,35 +8740,117 @@ class JobLogSummarySystemJob():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobStatus():
+class JobLogSummaryWorkspaceJob():
     """
-    Job Status.
+    Workspace Job log summary.
 
-    :attr JobStatusAction action_job_status: (optional) Action Job Status.
-    :attr JobStatusSystem system_job_status: (optional) System Job Status.
+    :attr float resources_add: (optional) Number of resources add.
+    :attr float resources_modify: (optional) Number of resources modify.
+    :attr float resources_destroy: (optional) Number of resources destroy.
     """
 
     def __init__(self,
                  *,
+                 resources_add: float = None,
+                 resources_modify: float = None,
+                 resources_destroy: float = None) -> None:
+        """
+        Initialize a JobLogSummaryWorkspaceJob object.
+
+        """
+        self.resources_add = resources_add
+        self.resources_modify = resources_modify
+        self.resources_destroy = resources_destroy
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'JobLogSummaryWorkspaceJob':
+        """Initialize a JobLogSummaryWorkspaceJob object from a json dictionary."""
+        args = {}
+        if 'resources_add' in _dict:
+            args['resources_add'] = _dict.get('resources_add')
+        if 'resources_modify' in _dict:
+            args['resources_modify'] = _dict.get('resources_modify')
+        if 'resources_destroy' in _dict:
+            args['resources_destroy'] = _dict.get('resources_destroy')
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a JobLogSummaryWorkspaceJob object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'resources_add') and getattr(self, 'resources_add') is not None:
+            _dict['resources_add'] = getattr(self, 'resources_add')
+        if hasattr(self, 'resources_modify') and getattr(self, 'resources_modify') is not None:
+            _dict['resources_modify'] = getattr(self, 'resources_modify')
+        if hasattr(self, 'resources_destroy') and getattr(self, 'resources_destroy') is not None:
+            _dict['resources_destroy'] = getattr(self, 'resources_destroy')
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this JobLogSummaryWorkspaceJob object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'JobLogSummaryWorkspaceJob') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'JobLogSummaryWorkspaceJob') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+class JobStatus():
+    """
+    Job Status.
+
+    :attr JobStatusWorkspace workspace_job_status: (optional) Workspace Job Status.
+    :attr JobStatusAction action_job_status: (optional) Action Job Status.
+    :attr JobStatusSystem system_job_status: (optional) System Job Status.
+    :attr JobStatusFlow flow_job_status: (optional) Environment Flow JOB Status.
+    """
+
+    def __init__(self,
+                 *,
+                 workspace_job_status: 'JobStatusWorkspace' = None,
                  action_job_status: 'JobStatusAction' = None,
-                 system_job_status: 'JobStatusSystem' = None) -> None:
+                 system_job_status: 'JobStatusSystem' = None,
+                 flow_job_status: 'JobStatusFlow' = None) -> None:
         """
         Initialize a JobStatus object.
 
+        :param JobStatusWorkspace workspace_job_status: (optional) Workspace Job
+               Status.
         :param JobStatusAction action_job_status: (optional) Action Job Status.
         :param JobStatusSystem system_job_status: (optional) System Job Status.
+        :param JobStatusFlow flow_job_status: (optional) Environment Flow JOB
+               Status.
         """
+        self.workspace_job_status = workspace_job_status
         self.action_job_status = action_job_status
         self.system_job_status = system_job_status
+        self.flow_job_status = flow_job_status
 
     @classmethod
     def from_dict(cls, _dict: Dict) -> 'JobStatus':
         """Initialize a JobStatus object from a json dictionary."""
         args = {}
+        if 'workspace_job_status' in _dict:
+            args['workspace_job_status'] = JobStatusWorkspace.from_dict(_dict.get('workspace_job_status'))
         if 'action_job_status' in _dict:
             args['action_job_status'] = JobStatusAction.from_dict(_dict.get('action_job_status'))
         if 'system_job_status' in _dict:
             args['system_job_status'] = JobStatusSystem.from_dict(_dict.get('system_job_status'))
+        if 'flow_job_status' in _dict:
+            args['flow_job_status'] = JobStatusFlow.from_dict(_dict.get('flow_job_status'))
         return cls(**args)
 
     @classmethod
@@ -7068,10 +8861,14 @@ class JobStatus():
     def to_dict(self) -> Dict:
         """Return a json dictionary representing this model."""
         _dict = {}
+        if hasattr(self, 'workspace_job_status') and self.workspace_job_status is not None:
+            _dict['workspace_job_status'] = self.workspace_job_status.to_dict()
         if hasattr(self, 'action_job_status') and self.action_job_status is not None:
             _dict['action_job_status'] = self.action_job_status.to_dict()
         if hasattr(self, 'system_job_status') and self.system_job_status is not None:
             _dict['system_job_status'] = self.system_job_status.to_dict()
+        if hasattr(self, 'flow_job_status') and self.flow_job_status is not None:
+            _dict['flow_job_status'] = self.flow_job_status.to_dict()
         return _dict
 
     def _to_dict(self):
@@ -7103,9 +8900,9 @@ class JobStatusAction():
     :attr str bastion_status_code: (optional) Status of Resources.
     :attr str bastion_status_message: (optional) Bastion status message - to be
           displayed along with the bastion_status_code;.
-    :attr str inventory_status_code: (optional) Status of Resources.
-    :attr str inventory_status_message: (optional) Aggregated status message for all
-          inventory resources,  to be displayed along with the inventory_status_code;.
+    :attr str targets_status_code: (optional) Status of Resources.
+    :attr str targets_status_message: (optional) Aggregated status message for all
+          target resources,  to be displayed along with the targets_status_code;.
     :attr datetime updated_at: (optional) Job status updation timestamp.
     """
 
@@ -7116,8 +8913,8 @@ class JobStatusAction():
                  status_message: str = None,
                  bastion_status_code: str = None,
                  bastion_status_message: str = None,
-                 inventory_status_code: str = None,
-                 inventory_status_message: str = None,
+                 targets_status_code: str = None,
+                 targets_status_message: str = None,
                  updated_at: datetime = None) -> None:
         """
         Initialize a JobStatusAction object.
@@ -7129,10 +8926,9 @@ class JobStatusAction():
         :param str bastion_status_code: (optional) Status of Resources.
         :param str bastion_status_message: (optional) Bastion status message - to
                be displayed along with the bastion_status_code;.
-        :param str inventory_status_code: (optional) Status of Resources.
-        :param str inventory_status_message: (optional) Aggregated status message
-               for all inventory resources,  to be displayed along with the
-               inventory_status_code;.
+        :param str targets_status_code: (optional) Status of Resources.
+        :param str targets_status_message: (optional) Aggregated status message for
+               all target resources,  to be displayed along with the targets_status_code;.
         :param datetime updated_at: (optional) Job status updation timestamp.
         """
         self.action_name = action_name
@@ -7140,8 +8936,8 @@ class JobStatusAction():
         self.status_message = status_message
         self.bastion_status_code = bastion_status_code
         self.bastion_status_message = bastion_status_message
-        self.inventory_status_code = inventory_status_code
-        self.inventory_status_message = inventory_status_message
+        self.targets_status_code = targets_status_code
+        self.targets_status_message = targets_status_message
         self.updated_at = updated_at
 
     @classmethod
@@ -7158,10 +8954,10 @@ class JobStatusAction():
             args['bastion_status_code'] = _dict.get('bastion_status_code')
         if 'bastion_status_message' in _dict:
             args['bastion_status_message'] = _dict.get('bastion_status_message')
-        if 'inventory_status_code' in _dict:
-            args['inventory_status_code'] = _dict.get('inventory_status_code')
-        if 'inventory_status_message' in _dict:
-            args['inventory_status_message'] = _dict.get('inventory_status_message')
+        if 'targets_status_code' in _dict:
+            args['targets_status_code'] = _dict.get('targets_status_code')
+        if 'targets_status_message' in _dict:
+            args['targets_status_message'] = _dict.get('targets_status_message')
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         return cls(**args)
@@ -7184,10 +8980,10 @@ class JobStatusAction():
             _dict['bastion_status_code'] = self.bastion_status_code
         if hasattr(self, 'bastion_status_message') and self.bastion_status_message is not None:
             _dict['bastion_status_message'] = self.bastion_status_message
-        if hasattr(self, 'inventory_status_code') and self.inventory_status_code is not None:
-            _dict['inventory_status_code'] = self.inventory_status_code
-        if hasattr(self, 'inventory_status_message') and self.inventory_status_message is not None:
-            _dict['inventory_status_message'] = self.inventory_status_message
+        if hasattr(self, 'targets_status_code') and self.targets_status_code is not None:
+            _dict['targets_status_code'] = self.targets_status_code
+        if hasattr(self, 'targets_status_message') and self.targets_status_message is not None:
+            _dict['targets_status_message'] = self.targets_status_message
         if hasattr(self, 'updated_at') and self.updated_at is not None:
             _dict['updated_at'] = datetime_to_string(self.updated_at)
         return _dict
@@ -7216,7 +9012,7 @@ class JobStatusAction():
         """
         JOB_PENDING = 'job_pending'
         JOB_IN_PROGRESS = 'job_in_progress'
-        IOB_FINISHED = 'iob_finished'
+        JOB_FINISHED = 'job_finished'
         JOB_FAILED = 'job_failed'
         JOB_CANCELLED = 'job_cancelled'
 
@@ -7231,7 +9027,7 @@ class JobStatusAction():
         ERROR = 'error'
 
 
-    class InventoryStatusCodeEnum(str, Enum):
+    class TargetsStatusCodeEnum(str, Enum):
         """
         Status of Resources.
         """
@@ -7239,6 +9035,116 @@ class JobStatusAction():
         READY = 'ready'
         PROCESSING = 'processing'
         ERROR = 'error'
+
+
+class JobStatusFlow():
+    """
+    Environment Flow JOB Status.
+
+    :attr str flow_id: (optional) flow id.
+    :attr str flow_name: (optional) flow name.
+    :attr str status_code: (optional) Status of Jobs.
+    :attr str status_message: (optional) Flow Job status message - to be displayed
+          along with the status_code;.
+    :attr List[JobStatusWorkitem] workitems: (optional) Environment's individual
+          workItem status details;.
+    :attr datetime updated_at: (optional) Job status updation timestamp.
+    """
+
+    def __init__(self,
+                 *,
+                 flow_id: str = None,
+                 flow_name: str = None,
+                 status_code: str = None,
+                 status_message: str = None,
+                 workitems: List['JobStatusWorkitem'] = None,
+                 updated_at: datetime = None) -> None:
+        """
+        Initialize a JobStatusFlow object.
+
+        :param str flow_id: (optional) flow id.
+        :param str flow_name: (optional) flow name.
+        :param str status_code: (optional) Status of Jobs.
+        :param str status_message: (optional) Flow Job status message - to be
+               displayed along with the status_code;.
+        :param List[JobStatusWorkitem] workitems: (optional) Environment's
+               individual workItem status details;.
+        :param datetime updated_at: (optional) Job status updation timestamp.
+        """
+        self.flow_id = flow_id
+        self.flow_name = flow_name
+        self.status_code = status_code
+        self.status_message = status_message
+        self.workitems = workitems
+        self.updated_at = updated_at
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'JobStatusFlow':
+        """Initialize a JobStatusFlow object from a json dictionary."""
+        args = {}
+        if 'flow_id' in _dict:
+            args['flow_id'] = _dict.get('flow_id')
+        if 'flow_name' in _dict:
+            args['flow_name'] = _dict.get('flow_name')
+        if 'status_code' in _dict:
+            args['status_code'] = _dict.get('status_code')
+        if 'status_message' in _dict:
+            args['status_message'] = _dict.get('status_message')
+        if 'workitems' in _dict:
+            args['workitems'] = [JobStatusWorkitem.from_dict(x) for x in _dict.get('workitems')]
+        if 'updated_at' in _dict:
+            args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a JobStatusFlow object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'flow_id') and self.flow_id is not None:
+            _dict['flow_id'] = self.flow_id
+        if hasattr(self, 'flow_name') and self.flow_name is not None:
+            _dict['flow_name'] = self.flow_name
+        if hasattr(self, 'status_code') and self.status_code is not None:
+            _dict['status_code'] = self.status_code
+        if hasattr(self, 'status_message') and self.status_message is not None:
+            _dict['status_message'] = self.status_message
+        if hasattr(self, 'workitems') and self.workitems is not None:
+            _dict['workitems'] = [x.to_dict() for x in self.workitems]
+        if hasattr(self, 'updated_at') and self.updated_at is not None:
+            _dict['updated_at'] = datetime_to_string(self.updated_at)
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this JobStatusFlow object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'JobStatusFlow') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'JobStatusFlow') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+    class StatusCodeEnum(str, Enum):
+        """
+        Status of Jobs.
+        """
+        JOB_PENDING = 'job_pending'
+        JOB_IN_PROGRESS = 'job_in_progress'
+        JOB_FINISHED = 'job_finished'
+        JOB_FAILED = 'job_failed'
+        JOB_CANCELLED = 'job_cancelled'
 
 
 class JobStatusSchematicsResources():
@@ -7328,7 +9234,7 @@ class JobStatusSchematicsResources():
         """
         JOB_PENDING = 'job_pending'
         JOB_IN_PROGRESS = 'job_in_progress'
-        IOB_FINISHED = 'iob_finished'
+        JOB_FINISHED = 'job_finished'
         JOB_FAILED = 'job_failed'
         JOB_CANCELLED = 'job_cancelled'
 
@@ -7341,7 +9247,7 @@ class JobStatusSystem():
     :attr str system_status_code: (optional) Status of Jobs.
     :attr List[JobStatusSchematicsResources] schematics_resource_status: (optional)
           job staus for each schematics resource.
-    :attr datetime updated_at: (optional) Job status updation timestamp urces'.
+    :attr datetime updated_at: (optional) Job status updation timestamp.
     """
 
     def __init__(self,
@@ -7357,8 +9263,7 @@ class JobStatusSystem():
         :param str system_status_code: (optional) Status of Jobs.
         :param List[JobStatusSchematicsResources] schematics_resource_status:
                (optional) job staus for each schematics resource.
-        :param datetime updated_at: (optional) Job status updation timestamp
-               urces'.
+        :param datetime updated_at: (optional) Job status updation timestamp.
         """
         self.system_status_message = system_status_message
         self.system_status_code = system_status_code
@@ -7421,72 +9326,88 @@ class JobStatusSystem():
         """
         JOB_PENDING = 'job_pending'
         JOB_IN_PROGRESS = 'job_in_progress'
-        IOB_FINISHED = 'iob_finished'
+        JOB_FINISHED = 'job_finished'
         JOB_FAILED = 'job_failed'
         JOB_CANCELLED = 'job_cancelled'
 
 
-class JobStatusType():
+class JobStatusTemplate():
     """
-    JobStatusType -.
+    Template Job Status.
 
-    :attr List[str] failed: (optional) List of failed workspace jobs.
-    :attr List[str] in_progress: (optional) List of in_progress workspace jobs.
-    :attr List[str] success: (optional) List of successful workspace jobs.
-    :attr datetime last_updated_on: (optional) Workspace job status updated at.
+    :attr str template_id: (optional) Template Id.
+    :attr str template_name: (optional) Template name.
+    :attr int flow_index: (optional) Index of the template in the Flow.
+    :attr str status_code: (optional) Status of Jobs.
+    :attr str status_message: (optional) Template job status message (eg.
+          VPCt1_Apply_Pending, for a 'VPCt1' Template).
+    :attr datetime updated_at: (optional) Job status updation timestamp.
     """
 
     def __init__(self,
                  *,
-                 failed: List[str] = None,
-                 in_progress: List[str] = None,
-                 success: List[str] = None,
-                 last_updated_on: datetime = None) -> None:
+                 template_id: str = None,
+                 template_name: str = None,
+                 flow_index: int = None,
+                 status_code: str = None,
+                 status_message: str = None,
+                 updated_at: datetime = None) -> None:
         """
-        Initialize a JobStatusType object.
+        Initialize a JobStatusTemplate object.
 
-        :param List[str] failed: (optional) List of failed workspace jobs.
-        :param List[str] in_progress: (optional) List of in_progress workspace
-               jobs.
-        :param List[str] success: (optional) List of successful workspace jobs.
-        :param datetime last_updated_on: (optional) Workspace job status updated
-               at.
+        :param str template_id: (optional) Template Id.
+        :param str template_name: (optional) Template name.
+        :param int flow_index: (optional) Index of the template in the Flow.
+        :param str status_code: (optional) Status of Jobs.
+        :param str status_message: (optional) Template job status message (eg.
+               VPCt1_Apply_Pending, for a 'VPCt1' Template).
+        :param datetime updated_at: (optional) Job status updation timestamp.
         """
-        self.failed = failed
-        self.in_progress = in_progress
-        self.success = success
-        self.last_updated_on = last_updated_on
+        self.template_id = template_id
+        self.template_name = template_name
+        self.flow_index = flow_index
+        self.status_code = status_code
+        self.status_message = status_message
+        self.updated_at = updated_at
 
     @classmethod
-    def from_dict(cls, _dict: Dict) -> 'JobStatusType':
-        """Initialize a JobStatusType object from a json dictionary."""
+    def from_dict(cls, _dict: Dict) -> 'JobStatusTemplate':
+        """Initialize a JobStatusTemplate object from a json dictionary."""
         args = {}
-        if 'failed' in _dict:
-            args['failed'] = _dict.get('failed')
-        if 'in_progress' in _dict:
-            args['in_progress'] = _dict.get('in_progress')
-        if 'success' in _dict:
-            args['success'] = _dict.get('success')
-        if 'last_updated_on' in _dict:
-            args['last_updated_on'] = string_to_datetime(_dict.get('last_updated_on'))
+        if 'template_id' in _dict:
+            args['template_id'] = _dict.get('template_id')
+        if 'template_name' in _dict:
+            args['template_name'] = _dict.get('template_name')
+        if 'flow_index' in _dict:
+            args['flow_index'] = _dict.get('flow_index')
+        if 'status_code' in _dict:
+            args['status_code'] = _dict.get('status_code')
+        if 'status_message' in _dict:
+            args['status_message'] = _dict.get('status_message')
+        if 'updated_at' in _dict:
+            args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         return cls(**args)
 
     @classmethod
     def _from_dict(cls, _dict):
-        """Initialize a JobStatusType object from a json dictionary."""
+        """Initialize a JobStatusTemplate object from a json dictionary."""
         return cls.from_dict(_dict)
 
     def to_dict(self) -> Dict:
         """Return a json dictionary representing this model."""
         _dict = {}
-        if hasattr(self, 'failed') and self.failed is not None:
-            _dict['failed'] = self.failed
-        if hasattr(self, 'in_progress') and self.in_progress is not None:
-            _dict['in_progress'] = self.in_progress
-        if hasattr(self, 'success') and self.success is not None:
-            _dict['success'] = self.success
-        if hasattr(self, 'last_updated_on') and self.last_updated_on is not None:
-            _dict['last_updated_on'] = datetime_to_string(self.last_updated_on)
+        if hasattr(self, 'template_id') and self.template_id is not None:
+            _dict['template_id'] = self.template_id
+        if hasattr(self, 'template_name') and self.template_name is not None:
+            _dict['template_name'] = self.template_name
+        if hasattr(self, 'flow_index') and self.flow_index is not None:
+            _dict['flow_index'] = self.flow_index
+        if hasattr(self, 'status_code') and self.status_code is not None:
+            _dict['status_code'] = self.status_code
+        if hasattr(self, 'status_message') and self.status_message is not None:
+            _dict['status_message'] = self.status_message
+        if hasattr(self, 'updated_at') and self.updated_at is not None:
+            _dict['updated_at'] = datetime_to_string(self.updated_at)
         return _dict
 
     def _to_dict(self):
@@ -7494,18 +9415,246 @@ class JobStatusType():
         return self.to_dict()
 
     def __str__(self) -> str:
-        """Return a `str` version of this JobStatusType object."""
+        """Return a `str` version of this JobStatusTemplate object."""
         return json.dumps(self.to_dict(), indent=2)
 
-    def __eq__(self, other: 'JobStatusType') -> bool:
+    def __eq__(self, other: 'JobStatusTemplate') -> bool:
         """Return `true` when self and other are equal, false otherwise."""
         if not isinstance(other, self.__class__):
             return False
         return self.__dict__ == other.__dict__
 
-    def __ne__(self, other: 'JobStatusType') -> bool:
+    def __ne__(self, other: 'JobStatusTemplate') -> bool:
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
+
+    class StatusCodeEnum(str, Enum):
+        """
+        Status of Jobs.
+        """
+        JOB_PENDING = 'job_pending'
+        JOB_IN_PROGRESS = 'job_in_progress'
+        JOB_FINISHED = 'job_finished'
+        JOB_FAILED = 'job_failed'
+        JOB_CANCELLED = 'job_cancelled'
+
+
+class JobStatusWorkitem():
+    """
+    Individual workitem status info.
+
+    :attr str workspace_id: (optional) Workspace id.
+    :attr str workspace_name: (optional) workspace name.
+    :attr str job_id: (optional) workspace job id.
+    :attr str status_code: (optional) Status of Jobs.
+    :attr str status_message: (optional) workitem job status message;.
+    :attr datetime updated_at: (optional) workitem job status updation timestamp.
+    """
+
+    def __init__(self,
+                 *,
+                 workspace_id: str = None,
+                 workspace_name: str = None,
+                 job_id: str = None,
+                 status_code: str = None,
+                 status_message: str = None,
+                 updated_at: datetime = None) -> None:
+        """
+        Initialize a JobStatusWorkitem object.
+
+        :param str workspace_id: (optional) Workspace id.
+        :param str workspace_name: (optional) workspace name.
+        :param str job_id: (optional) workspace job id.
+        :param str status_code: (optional) Status of Jobs.
+        :param str status_message: (optional) workitem job status message;.
+        :param datetime updated_at: (optional) workitem job status updation
+               timestamp.
+        """
+        self.workspace_id = workspace_id
+        self.workspace_name = workspace_name
+        self.job_id = job_id
+        self.status_code = status_code
+        self.status_message = status_message
+        self.updated_at = updated_at
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'JobStatusWorkitem':
+        """Initialize a JobStatusWorkitem object from a json dictionary."""
+        args = {}
+        if 'workspace_id' in _dict:
+            args['workspace_id'] = _dict.get('workspace_id')
+        if 'workspace_name' in _dict:
+            args['workspace_name'] = _dict.get('workspace_name')
+        if 'job_id' in _dict:
+            args['job_id'] = _dict.get('job_id')
+        if 'status_code' in _dict:
+            args['status_code'] = _dict.get('status_code')
+        if 'status_message' in _dict:
+            args['status_message'] = _dict.get('status_message')
+        if 'updated_at' in _dict:
+            args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a JobStatusWorkitem object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'workspace_id') and self.workspace_id is not None:
+            _dict['workspace_id'] = self.workspace_id
+        if hasattr(self, 'workspace_name') and self.workspace_name is not None:
+            _dict['workspace_name'] = self.workspace_name
+        if hasattr(self, 'job_id') and self.job_id is not None:
+            _dict['job_id'] = self.job_id
+        if hasattr(self, 'status_code') and self.status_code is not None:
+            _dict['status_code'] = self.status_code
+        if hasattr(self, 'status_message') and self.status_message is not None:
+            _dict['status_message'] = self.status_message
+        if hasattr(self, 'updated_at') and self.updated_at is not None:
+            _dict['updated_at'] = datetime_to_string(self.updated_at)
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this JobStatusWorkitem object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'JobStatusWorkitem') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'JobStatusWorkitem') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+    class StatusCodeEnum(str, Enum):
+        """
+        Status of Jobs.
+        """
+        JOB_PENDING = 'job_pending'
+        JOB_IN_PROGRESS = 'job_in_progress'
+        JOB_FINISHED = 'job_finished'
+        JOB_FAILED = 'job_failed'
+        JOB_CANCELLED = 'job_cancelled'
+
+
+class JobStatusWorkspace():
+    """
+    Workspace Job Status.
+
+    :attr str workspace_name: (optional) Workspace name.
+    :attr str status_code: (optional) Status of Jobs.
+    :attr str status_message: (optional) Workspace job status message (eg.
+          App1_Setup_Pending, for a 'Setup' flow in the 'App1' Workspace).
+    :attr JobStatusFlow flow_status: (optional) Environment Flow JOB Status.
+    :attr List[JobStatusTemplate] template_status: (optional) Workspace Flow
+          Template job status.
+    :attr datetime updated_at: (optional) Job status updation timestamp.
+    """
+
+    def __init__(self,
+                 *,
+                 workspace_name: str = None,
+                 status_code: str = None,
+                 status_message: str = None,
+                 flow_status: 'JobStatusFlow' = None,
+                 template_status: List['JobStatusTemplate'] = None,
+                 updated_at: datetime = None) -> None:
+        """
+        Initialize a JobStatusWorkspace object.
+
+        :param str workspace_name: (optional) Workspace name.
+        :param str status_code: (optional) Status of Jobs.
+        :param str status_message: (optional) Workspace job status message (eg.
+               App1_Setup_Pending, for a 'Setup' flow in the 'App1' Workspace).
+        :param JobStatusFlow flow_status: (optional) Environment Flow JOB Status.
+        :param List[JobStatusTemplate] template_status: (optional) Workspace Flow
+               Template job status.
+        :param datetime updated_at: (optional) Job status updation timestamp.
+        """
+        self.workspace_name = workspace_name
+        self.status_code = status_code
+        self.status_message = status_message
+        self.flow_status = flow_status
+        self.template_status = template_status
+        self.updated_at = updated_at
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'JobStatusWorkspace':
+        """Initialize a JobStatusWorkspace object from a json dictionary."""
+        args = {}
+        if 'workspace_name' in _dict:
+            args['workspace_name'] = _dict.get('workspace_name')
+        if 'status_code' in _dict:
+            args['status_code'] = _dict.get('status_code')
+        if 'status_message' in _dict:
+            args['status_message'] = _dict.get('status_message')
+        if 'flow_status' in _dict:
+            args['flow_status'] = JobStatusFlow.from_dict(_dict.get('flow_status'))
+        if 'template_status' in _dict:
+            args['template_status'] = [JobStatusTemplate.from_dict(x) for x in _dict.get('template_status')]
+        if 'updated_at' in _dict:
+            args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a JobStatusWorkspace object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'workspace_name') and self.workspace_name is not None:
+            _dict['workspace_name'] = self.workspace_name
+        if hasattr(self, 'status_code') and self.status_code is not None:
+            _dict['status_code'] = self.status_code
+        if hasattr(self, 'status_message') and self.status_message is not None:
+            _dict['status_message'] = self.status_message
+        if hasattr(self, 'flow_status') and self.flow_status is not None:
+            _dict['flow_status'] = self.flow_status.to_dict()
+        if hasattr(self, 'template_status') and self.template_status is not None:
+            _dict['template_status'] = [x.to_dict() for x in self.template_status]
+        if hasattr(self, 'updated_at') and self.updated_at is not None:
+            _dict['updated_at'] = datetime_to_string(self.updated_at)
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this JobStatusWorkspace object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'JobStatusWorkspace') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'JobStatusWorkspace') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+    class StatusCodeEnum(str, Enum):
+        """
+        Status of Jobs.
+        """
+        JOB_PENDING = 'job_pending'
+        JOB_IN_PROGRESS = 'job_in_progress'
+        JOB_FINISHED = 'job_finished'
+        JOB_FAILED = 'job_failed'
+        JOB_CANCELLED = 'job_cancelled'
+
 
 class KMSDiscovery():
     """
@@ -7601,7 +9750,7 @@ class KMSInstances():
     :attr str kms_name: (optional) KMS Name.
     :attr str kms_private_endpoint: (optional) KMS private endpoint.
     :attr str kms_public_endpoint: (optional) KMS public endpoint.
-    :attr List[KMSInstancesKeysItem] keys: (optional) List of keys.
+    :attr List[KMSInstancesKeys] keys: (optional) List of keys.
     """
 
     def __init__(self,
@@ -7613,7 +9762,7 @@ class KMSInstances():
                  kms_name: str = None,
                  kms_private_endpoint: str = None,
                  kms_public_endpoint: str = None,
-                 keys: List['KMSInstancesKeysItem'] = None) -> None:
+                 keys: List['KMSInstancesKeys'] = None) -> None:
         """
         Initialize a KMSInstances object.
 
@@ -7624,7 +9773,7 @@ class KMSInstances():
         :param str kms_name: (optional) KMS Name.
         :param str kms_private_endpoint: (optional) KMS private endpoint.
         :param str kms_public_endpoint: (optional) KMS public endpoint.
-        :param List[KMSInstancesKeysItem] keys: (optional) List of keys.
+        :param List[KMSInstancesKeys] keys: (optional) List of keys.
         """
         self.location = location
         self.encryption_scheme = encryption_scheme
@@ -7654,7 +9803,7 @@ class KMSInstances():
         if 'kms_public_endpoint' in _dict:
             args['kms_public_endpoint'] = _dict.get('kms_public_endpoint')
         if 'keys' in _dict:
-            args['keys'] = [KMSInstancesKeysItem.from_dict(x) for x in _dict.get('keys')]
+            args['keys'] = [KMSInstancesKeys.from_dict(x) for x in _dict.get('keys')]
         return cls(**args)
 
     @classmethod
@@ -7701,9 +9850,9 @@ class KMSInstances():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class KMSInstancesKeysItem():
+class KMSInstancesKeys():
     """
-    KMSInstancesKeysItem.
+    KMSInstancesKeys.
 
     :attr str name: (optional) Key name.
     :attr str crn: (optional) CRN of the Key.
@@ -7716,7 +9865,7 @@ class KMSInstancesKeysItem():
                  crn: str = None,
                  error: str = None) -> None:
         """
-        Initialize a KMSInstancesKeysItem object.
+        Initialize a KMSInstancesKeys object.
 
         :param str name: (optional) Key name.
         :param str crn: (optional) CRN of the Key.
@@ -7727,8 +9876,8 @@ class KMSInstancesKeysItem():
         self.error = error
 
     @classmethod
-    def from_dict(cls, _dict: Dict) -> 'KMSInstancesKeysItem':
-        """Initialize a KMSInstancesKeysItem object from a json dictionary."""
+    def from_dict(cls, _dict: Dict) -> 'KMSInstancesKeys':
+        """Initialize a KMSInstancesKeys object from a json dictionary."""
         args = {}
         if 'name' in _dict:
             args['name'] = _dict.get('name')
@@ -7740,7 +9889,7 @@ class KMSInstancesKeysItem():
 
     @classmethod
     def _from_dict(cls, _dict):
-        """Initialize a KMSInstancesKeysItem object from a json dictionary."""
+        """Initialize a KMSInstancesKeys object from a json dictionary."""
         return cls.from_dict(_dict)
 
     def to_dict(self) -> Dict:
@@ -7759,16 +9908,16 @@ class KMSInstancesKeysItem():
         return self.to_dict()
 
     def __str__(self) -> str:
-        """Return a `str` version of this KMSInstancesKeysItem object."""
+        """Return a `str` version of this KMSInstancesKeys object."""
         return json.dumps(self.to_dict(), indent=2)
 
-    def __eq__(self, other: 'KMSInstancesKeysItem') -> bool:
+    def __eq__(self, other: 'KMSInstancesKeys') -> bool:
         """Return `true` when self and other are equal, false otherwise."""
         if not isinstance(other, self.__class__):
             return False
         return self.__dict__ == other.__dict__
 
-    def __ne__(self, other: 'KMSInstancesKeysItem') -> bool:
+    def __ne__(self, other: 'KMSInstancesKeys') -> bool:
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
@@ -8004,12 +10153,16 @@ class KMSSettingsSecondaryCrk():
 
 class LogStoreResponse():
     """
-    LogStoreResponse -.
+    Log file URL for job that ran against your workspace.
 
-    :attr str engine_name: (optional) Engine name.
-    :attr str engine_version: (optional) Engine version.
-    :attr str id: (optional) Engine id.
-    :attr str log_store_url: (optional) Log store url.
+    :attr str engine_name: (optional) The provisioning engine that was used for the
+          job.
+    :attr str engine_version: (optional) The version of the provisioning engine that
+          was used for the job.
+    :attr str id: (optional) The ID that was assigned to your Terraform template of
+          IBM Cloud catalog software template.
+    :attr str log_store_url: (optional) The URL to access the logs that were created
+          during the plan, apply, or destroy job.
     """
 
     def __init__(self,
@@ -8021,10 +10174,14 @@ class LogStoreResponse():
         """
         Initialize a LogStoreResponse object.
 
-        :param str engine_name: (optional) Engine name.
-        :param str engine_version: (optional) Engine version.
-        :param str id: (optional) Engine id.
-        :param str log_store_url: (optional) Log store url.
+        :param str engine_name: (optional) The provisioning engine that was used
+               for the job.
+        :param str engine_version: (optional) The version of the provisioning
+               engine that was used for the job.
+        :param str id: (optional) The ID that was assigned to your Terraform
+               template of IBM Cloud catalog software template.
+        :param str log_store_url: (optional) The URL to access the logs that were
+               created during the plan, apply, or destroy job.
         """
         self.engine_name = engine_name
         self.engine_version = engine_version
@@ -8083,7 +10240,7 @@ class LogStoreResponse():
 
 class LogStoreResponseList():
     """
-    LogStoreResponseList -.
+    List of log file URL that ran against your workspace.
 
     :attr List[LogStoreResponse] runtime_data: (optional) Runtime data.
     """
@@ -8138,10 +10295,18 @@ class LogStoreResponseList():
 
 class LogSummary():
     """
-    LogSummary ...
+    Summary information extracted from the job logs.
 
-    :attr str activity_status: (optional) WorkspaceActivityStatus activity status
-          type.
+    :attr str activity_status: (optional) The status of your activity or job. To
+          retrieve the URL to your job logs, use the GET
+          /v1/workspaces/{id}/actions/{action_id}/logs API.
+          * **COMPLETED**: The job completed successfully.
+          * **CREATED**: The job was created, but the provisioning, modification, or
+          removal of IBM Cloud resources has not started yet.
+          * **FAILED**: An error occurred during the plan, apply, or destroy job. Use the
+          job ID to retrieve the URL to the log files for your job.
+          * **IN PROGRESS**: The job is in progress. You can use the log_url to access the
+          logs.
     :attr str detected_template_type: (optional) Template detected type.
     :attr int discarded_files: (optional) Numner of discarded files.
     :attr str error: (optional) Numner of errors in log.
@@ -8150,7 +10315,7 @@ class LogSummary():
     :attr int resources_modified: (optional) Numner of resources modified.
     :attr int scanned_files: (optional) Numner of filed scanned.
     :attr int template_variable_count: (optional) Numner of template variables.
-    :attr float time_taken: (optional) Time takemn to perform activity.
+    :attr float time_taken: (optional) Elapsed time to run the job.
     """
 
     def __init__(self,
@@ -8168,8 +10333,16 @@ class LogSummary():
         """
         Initialize a LogSummary object.
 
-        :param str activity_status: (optional) WorkspaceActivityStatus activity
-               status type.
+        :param str activity_status: (optional) The status of your activity or job.
+               To retrieve the URL to your job logs, use the GET
+               /v1/workspaces/{id}/actions/{action_id}/logs API.
+               * **COMPLETED**: The job completed successfully.
+               * **CREATED**: The job was created, but the provisioning, modification, or
+               removal of IBM Cloud resources has not started yet.
+               * **FAILED**: An error occurred during the plan, apply, or destroy job. Use
+               the job ID to retrieve the URL to the log files for your job.
+               * **IN PROGRESS**: The job is in progress. You can use the log_url to
+               access the logs.
         :param str detected_template_type: (optional) Template detected type.
         :param int discarded_files: (optional) Numner of discarded files.
         :param str error: (optional) Numner of errors in log.
@@ -8179,7 +10352,7 @@ class LogSummary():
         :param int scanned_files: (optional) Numner of filed scanned.
         :param int template_variable_count: (optional) Numner of template
                variables.
-        :param float time_taken: (optional) Time takemn to perform activity.
+        :param float time_taken: (optional) Elapsed time to run the job.
         """
         self.activity_status = activity_status
         self.detected_template_type = detected_template_type
@@ -8266,14 +10439,18 @@ class LogSummary():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class OutputValuesItem():
+class OutputValuesInner():
     """
-    OutputValuesItem.
+    OutputValuesInner.
 
-    :attr str folder: (optional) Output variable name.
-    :attr str id: (optional) Output variable id.
-    :attr List[object] output_values: (optional) List of Output values.
-    :attr str value_type: (optional) Output variable type.
+    :attr str folder: (optional) The subfolder in the GitHub or GitLab repository
+          where your Terraform template is stored. If the template is stored in the root
+          directory, `.` is returned.
+    :attr str id: (optional) The ID that was assigned to your Terraform template or
+          IBM Cloud catalog software template.
+    :attr List[object] output_values: (optional) A list of Terraform output values.
+    :attr str value_type: (optional) The Terraform version that was used to apply
+          your template.
     """
 
     def __init__(self,
@@ -8283,12 +10460,17 @@ class OutputValuesItem():
                  output_values: List[object] = None,
                  value_type: str = None) -> None:
         """
-        Initialize a OutputValuesItem object.
+        Initialize a OutputValuesInner object.
 
-        :param str folder: (optional) Output variable name.
-        :param str id: (optional) Output variable id.
-        :param List[object] output_values: (optional) List of Output values.
-        :param str value_type: (optional) Output variable type.
+        :param str folder: (optional) The subfolder in the GitHub or GitLab
+               repository where your Terraform template is stored. If the template is
+               stored in the root directory, `.` is returned.
+        :param str id: (optional) The ID that was assigned to your Terraform
+               template or IBM Cloud catalog software template.
+        :param List[object] output_values: (optional) A list of Terraform output
+               values.
+        :param str value_type: (optional) The Terraform version that was used to
+               apply your template.
         """
         self.folder = folder
         self.id = id
@@ -8296,8 +10478,8 @@ class OutputValuesItem():
         self.value_type = value_type
 
     @classmethod
-    def from_dict(cls, _dict: Dict) -> 'OutputValuesItem':
-        """Initialize a OutputValuesItem object from a json dictionary."""
+    def from_dict(cls, _dict: Dict) -> 'OutputValuesInner':
+        """Initialize a OutputValuesInner object from a json dictionary."""
         args = {}
         if 'folder' in _dict:
             args['folder'] = _dict.get('folder')
@@ -8311,7 +10493,7 @@ class OutputValuesItem():
 
     @classmethod
     def _from_dict(cls, _dict):
-        """Initialize a OutputValuesItem object from a json dictionary."""
+        """Initialize a OutputValuesInner object from a json dictionary."""
         return cls.from_dict(_dict)
 
     def to_dict(self) -> Dict:
@@ -8332,29 +10514,32 @@ class OutputValuesItem():
         return self.to_dict()
 
     def __str__(self) -> str:
-        """Return a `str` version of this OutputValuesItem object."""
+        """Return a `str` version of this OutputValuesInner object."""
         return json.dumps(self.to_dict(), indent=2)
 
-    def __eq__(self, other: 'OutputValuesItem') -> bool:
+    def __eq__(self, other: 'OutputValuesInner') -> bool:
         """Return `true` when self and other are equal, false otherwise."""
         if not isinstance(other, self.__class__):
             return False
         return self.__dict__ == other.__dict__
 
-    def __ne__(self, other: 'OutputValuesItem') -> bool:
+    def __ne__(self, other: 'OutputValuesInner') -> bool:
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
 class ResourceGroupResponse():
     """
-    ResourceGroupResponse -.
+    A list of resource groups that your account has access to.
 
-    :attr str account_id: (optional) Account id.
-    :attr str crn: (optional) CRN.
-    :attr bool default: (optional) default.
-    :attr str name: (optional) Resource group name.
-    :attr str resource_group_id: (optional) Resource group id.
-    :attr str state: (optional) Resource group state.
+    :attr str account_id: (optional) The ID of the account for which you listed the
+          resource groups.
+    :attr str crn: (optional) The CRN of the resource group.
+    :attr bool default: (optional) If set to **true**, the resource group is used as
+          the default resource group for your account. If set to **false**, the resource
+          group is not used as the default resource group in your account.
+    :attr str name: (optional) The name of the resource group.
+    :attr str resource_group_id: (optional) The ID of the resource group.
+    :attr str state: (optional) The state of the resource group.
     """
 
     def __init__(self,
@@ -8368,12 +10553,16 @@ class ResourceGroupResponse():
         """
         Initialize a ResourceGroupResponse object.
 
-        :param str account_id: (optional) Account id.
-        :param str crn: (optional) CRN.
-        :param bool default: (optional) default.
-        :param str name: (optional) Resource group name.
-        :param str resource_group_id: (optional) Resource group id.
-        :param str state: (optional) Resource group state.
+        :param str account_id: (optional) The ID of the account for which you
+               listed the resource groups.
+        :param str crn: (optional) The CRN of the resource group.
+        :param bool default: (optional) If set to **true**, the resource group is
+               used as the default resource group for your account. If set to **false**,
+               the resource group is not used as the default resource group in your
+               account.
+        :param str name: (optional) The name of the resource group.
+        :param str resource_group_id: (optional) The ID of the resource group.
+        :param str state: (optional) The state of the resource group.
         """
         self.account_id = account_id
         self.crn = crn
@@ -8751,8 +10940,8 @@ class ResourceQueryRecordList():
             args['offset'] = _dict.get('offset')
         else:
             raise ValueError('Required property \'offset\' not present in ResourceQueryRecordList JSON')
-        if 'ResourceQueries' in _dict:
-            args['resource_queries'] = [ResourceQueryRecord.from_dict(x) for x in _dict.get('ResourceQueries')]
+        if 'resource_queries' in _dict:
+            args['resource_queries'] = [ResourceQueryRecord.from_dict(x) for x in _dict.get('resource_queries')]
         return cls(**args)
 
     @classmethod
@@ -8770,7 +10959,7 @@ class ResourceQueryRecordList():
         if hasattr(self, 'offset') and self.offset is not None:
             _dict['offset'] = self.offset
         if hasattr(self, 'resource_queries') and self.resource_queries is not None:
-            _dict['ResourceQueries'] = [x.to_dict() for x in self.resource_queries]
+            _dict['resource_queries'] = [x.to_dict() for x in self.resource_queries]
         return _dict
 
     def _to_dict(self):
@@ -8795,16 +10984,16 @@ class ResourceQueryResponseRecord():
     """
     Describe resource query.
 
-    :attr List[ResourceQueryResponseRecordResponseItem] response: (optional)
+    :attr List[ResourceQueryResponseRecordResponse] response: (optional)
     """
 
     def __init__(self,
                  *,
-                 response: List['ResourceQueryResponseRecordResponseItem'] = None) -> None:
+                 response: List['ResourceQueryResponseRecordResponse'] = None) -> None:
         """
         Initialize a ResourceQueryResponseRecord object.
 
-        :param List[ResourceQueryResponseRecordResponseItem] response: (optional)
+        :param List[ResourceQueryResponseRecordResponse] response: (optional)
         """
         self.response = response
 
@@ -8813,7 +11002,7 @@ class ResourceQueryResponseRecord():
         """Initialize a ResourceQueryResponseRecord object from a json dictionary."""
         args = {}
         if 'response' in _dict:
-            args['response'] = [ResourceQueryResponseRecordResponseItem.from_dict(x) for x in _dict.get('response')]
+            args['response'] = [ResourceQueryResponseRecordResponse.from_dict(x) for x in _dict.get('response')]
         return cls(**args)
 
     @classmethod
@@ -8846,15 +11035,77 @@ class ResourceQueryResponseRecord():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class ResourceQueryResponseRecordResponseItem():
+class ResourceQueryResponseRecordQueryOutput():
     """
-    ResourceQueryResponseRecordResponseItem.
+    List of query output values.
+
+    :attr str name: (optional) Name of the output param.
+    :attr str value: (optional) value of the output param.
+    """
+
+    def __init__(self,
+                 *,
+                 name: str = None,
+                 value: str = None) -> None:
+        """
+        Initialize a ResourceQueryResponseRecordQueryOutput object.
+
+        :param str name: (optional) Name of the output param.
+        :param str value: (optional) value of the output param.
+        """
+        self.name = name
+        self.value = value
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'ResourceQueryResponseRecordQueryOutput':
+        """Initialize a ResourceQueryResponseRecordQueryOutput object from a json dictionary."""
+        args = {}
+        if 'name' in _dict:
+            args['name'] = _dict.get('name')
+        if 'value' in _dict:
+            args['value'] = _dict.get('value')
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a ResourceQueryResponseRecordQueryOutput object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'name') and self.name is not None:
+            _dict['name'] = self.name
+        if hasattr(self, 'value') and self.value is not None:
+            _dict['value'] = self.value
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this ResourceQueryResponseRecordQueryOutput object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'ResourceQueryResponseRecordQueryOutput') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'ResourceQueryResponseRecordQueryOutput') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+class ResourceQueryResponseRecordResponse():
+    """
+    ResourceQueryResponseRecordResponse.
 
     :attr str query_type: (optional) Type of the query(workspaces).
     :attr List[ResourceQueryParam] query_condition: (optional)
     :attr List[str] query_select: (optional) List of query selection parameters.
-    :attr List[ResourceQueryResponseRecordResponseItemQueryOutputItem] query_output:
-          (optional)
+    :attr List[ResourceQueryResponseRecordQueryOutput] query_output: (optional)
     """
 
     def __init__(self,
@@ -8862,16 +11113,16 @@ class ResourceQueryResponseRecordResponseItem():
                  query_type: str = None,
                  query_condition: List['ResourceQueryParam'] = None,
                  query_select: List[str] = None,
-                 query_output: List['ResourceQueryResponseRecordResponseItemQueryOutputItem'] = None) -> None:
+                 query_output: List['ResourceQueryResponseRecordQueryOutput'] = None) -> None:
         """
-        Initialize a ResourceQueryResponseRecordResponseItem object.
+        Initialize a ResourceQueryResponseRecordResponse object.
 
         :param str query_type: (optional) Type of the query(workspaces).
         :param List[ResourceQueryParam] query_condition: (optional)
         :param List[str] query_select: (optional) List of query selection
                parameters.
-        :param List[ResourceQueryResponseRecordResponseItemQueryOutputItem]
-               query_output: (optional)
+        :param List[ResourceQueryResponseRecordQueryOutput] query_output:
+               (optional)
         """
         self.query_type = query_type
         self.query_condition = query_condition
@@ -8879,8 +11130,8 @@ class ResourceQueryResponseRecordResponseItem():
         self.query_output = query_output
 
     @classmethod
-    def from_dict(cls, _dict: Dict) -> 'ResourceQueryResponseRecordResponseItem':
-        """Initialize a ResourceQueryResponseRecordResponseItem object from a json dictionary."""
+    def from_dict(cls, _dict: Dict) -> 'ResourceQueryResponseRecordResponse':
+        """Initialize a ResourceQueryResponseRecordResponse object from a json dictionary."""
         args = {}
         if 'query_type' in _dict:
             args['query_type'] = _dict.get('query_type')
@@ -8889,12 +11140,12 @@ class ResourceQueryResponseRecordResponseItem():
         if 'query_select' in _dict:
             args['query_select'] = _dict.get('query_select')
         if 'query_output' in _dict:
-            args['query_output'] = [ResourceQueryResponseRecordResponseItemQueryOutputItem.from_dict(x) for x in _dict.get('query_output')]
+            args['query_output'] = [ResourceQueryResponseRecordQueryOutput.from_dict(x) for x in _dict.get('query_output')]
         return cls(**args)
 
     @classmethod
     def _from_dict(cls, _dict):
-        """Initialize a ResourceQueryResponseRecordResponseItem object from a json dictionary."""
+        """Initialize a ResourceQueryResponseRecordResponse object from a json dictionary."""
         return cls.from_dict(_dict)
 
     def to_dict(self) -> Dict:
@@ -8915,16 +11166,16 @@ class ResourceQueryResponseRecordResponseItem():
         return self.to_dict()
 
     def __str__(self) -> str:
-        """Return a `str` version of this ResourceQueryResponseRecordResponseItem object."""
+        """Return a `str` version of this ResourceQueryResponseRecordResponse object."""
         return json.dumps(self.to_dict(), indent=2)
 
-    def __eq__(self, other: 'ResourceQueryResponseRecordResponseItem') -> bool:
+    def __eq__(self, other: 'ResourceQueryResponseRecordResponse') -> bool:
         """Return `true` when self and other are equal, false otherwise."""
         if not isinstance(other, self.__class__):
             return False
         return self.__dict__ == other.__dict__
 
-    def __ne__(self, other: 'ResourceQueryResponseRecordResponseItem') -> bool:
+    def __ne__(self, other: 'ResourceQueryResponseRecordResponse') -> bool:
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
@@ -8935,128 +11186,90 @@ class ResourceQueryResponseRecordResponseItem():
         WORKSPACES = 'workspaces'
 
 
-class ResourceQueryResponseRecordResponseItemQueryOutputItem():
+class SchematicsLocations():
     """
-    List of query output values.
+    Information about the location.
 
-    :attr str name: (optional) Name of the output param.
-    :attr str value: (optional) value of the output param.
+    :attr str name: (optional) The name of the location.
+    :attr str id: (optional) The ID of the location.
+    :attr str country: (optional) The country where the location is located.
+    :attr str geography: (optional) The geography that the location belongs to.
+    :attr str geography_code: (optional) Geographical continent locations code
+          having the data centres of IBM Cloud Schematics service.
+    :attr str metro: (optional) The metro area that the location belongs to.
+    :attr str multizone_metro: (optional) The multizone metro area that the location
+          belongs to.
+    :attr str kind: (optional) The kind of location.
+    :attr List[str] paired_region: (optional) List of paired regions used by
+          Schematics.
+    :attr bool restricted: (optional) Restricted Region.
     """
 
     def __init__(self,
                  *,
                  name: str = None,
-                 value: str = None) -> None:
-        """
-        Initialize a ResourceQueryResponseRecordResponseItemQueryOutputItem object.
-
-        :param str name: (optional) Name of the output param.
-        :param str value: (optional) value of the output param.
-        """
-        self.name = name
-        self.value = value
-
-    @classmethod
-    def from_dict(cls, _dict: Dict) -> 'ResourceQueryResponseRecordResponseItemQueryOutputItem':
-        """Initialize a ResourceQueryResponseRecordResponseItemQueryOutputItem object from a json dictionary."""
-        args = {}
-        if 'name' in _dict:
-            args['name'] = _dict.get('name')
-        if 'value' in _dict:
-            args['value'] = _dict.get('value')
-        return cls(**args)
-
-    @classmethod
-    def _from_dict(cls, _dict):
-        """Initialize a ResourceQueryResponseRecordResponseItemQueryOutputItem object from a json dictionary."""
-        return cls.from_dict(_dict)
-
-    def to_dict(self) -> Dict:
-        """Return a json dictionary representing this model."""
-        _dict = {}
-        if hasattr(self, 'name') and self.name is not None:
-            _dict['name'] = self.name
-        if hasattr(self, 'value') and self.value is not None:
-            _dict['value'] = self.value
-        return _dict
-
-    def _to_dict(self):
-        """Return a json dictionary representing this model."""
-        return self.to_dict()
-
-    def __str__(self) -> str:
-        """Return a `str` version of this ResourceQueryResponseRecordResponseItemQueryOutputItem object."""
-        return json.dumps(self.to_dict(), indent=2)
-
-    def __eq__(self, other: 'ResourceQueryResponseRecordResponseItemQueryOutputItem') -> bool:
-        """Return `true` when self and other are equal, false otherwise."""
-        if not isinstance(other, self.__class__):
-            return False
-        return self.__dict__ == other.__dict__
-
-    def __ne__(self, other: 'ResourceQueryResponseRecordResponseItemQueryOutputItem') -> bool:
-        """Return `true` when self and other are not equal, false otherwise."""
-        return not self == other
-
-class SchematicsLocations():
-    """
-    Schematics locations.
-
-    :attr str country: (optional) Country.
-    :attr str geography: (optional) Geography.
-    :attr str id: (optional) Location id.
-    :attr str kind: (optional) Kind.
-    :attr str metro: (optional) Metro.
-    :attr str multizone_metro: (optional) Multizone metro.
-    :attr str name: (optional) Location name.
-    """
-
-    def __init__(self,
-                 *,
+                 id: str = None,
                  country: str = None,
                  geography: str = None,
-                 id: str = None,
-                 kind: str = None,
+                 geography_code: str = None,
                  metro: str = None,
                  multizone_metro: str = None,
-                 name: str = None) -> None:
+                 kind: str = None,
+                 paired_region: List[str] = None,
+                 restricted: bool = None) -> None:
         """
         Initialize a SchematicsLocations object.
 
-        :param str country: (optional) Country.
-        :param str geography: (optional) Geography.
-        :param str id: (optional) Location id.
-        :param str kind: (optional) Kind.
-        :param str metro: (optional) Metro.
-        :param str multizone_metro: (optional) Multizone metro.
-        :param str name: (optional) Location name.
+        :param str name: (optional) The name of the location.
+        :param str id: (optional) The ID of the location.
+        :param str country: (optional) The country where the location is located.
+        :param str geography: (optional) The geography that the location belongs
+               to.
+        :param str geography_code: (optional) Geographical continent locations code
+               having the data centres of IBM Cloud Schematics service.
+        :param str metro: (optional) The metro area that the location belongs to.
+        :param str multizone_metro: (optional) The multizone metro area that the
+               location belongs to.
+        :param str kind: (optional) The kind of location.
+        :param List[str] paired_region: (optional) List of paired regions used by
+               Schematics.
+        :param bool restricted: (optional) Restricted Region.
         """
+        self.name = name
+        self.id = id
         self.country = country
         self.geography = geography
-        self.id = id
-        self.kind = kind
+        self.geography_code = geography_code
         self.metro = metro
         self.multizone_metro = multizone_metro
-        self.name = name
+        self.kind = kind
+        self.paired_region = paired_region
+        self.restricted = restricted
 
     @classmethod
     def from_dict(cls, _dict: Dict) -> 'SchematicsLocations':
         """Initialize a SchematicsLocations object from a json dictionary."""
         args = {}
+        if 'name' in _dict:
+            args['name'] = _dict.get('name')
+        if 'id' in _dict:
+            args['id'] = _dict.get('id')
         if 'country' in _dict:
             args['country'] = _dict.get('country')
         if 'geography' in _dict:
             args['geography'] = _dict.get('geography')
-        if 'id' in _dict:
-            args['id'] = _dict.get('id')
-        if 'kind' in _dict:
-            args['kind'] = _dict.get('kind')
+        if 'geography_code' in _dict:
+            args['geography_code'] = _dict.get('geography_code')
         if 'metro' in _dict:
             args['metro'] = _dict.get('metro')
         if 'multizone_metro' in _dict:
             args['multizone_metro'] = _dict.get('multizone_metro')
-        if 'name' in _dict:
-            args['name'] = _dict.get('name')
+        if 'kind' in _dict:
+            args['kind'] = _dict.get('kind')
+        if 'paired_region' in _dict:
+            args['paired_region'] = _dict.get('paired_region')
+        if 'restricted' in _dict:
+            args['restricted'] = _dict.get('restricted')
         return cls(**args)
 
     @classmethod
@@ -9067,20 +11280,26 @@ class SchematicsLocations():
     def to_dict(self) -> Dict:
         """Return a json dictionary representing this model."""
         _dict = {}
+        if hasattr(self, 'name') and self.name is not None:
+            _dict['name'] = self.name
+        if hasattr(self, 'id') and self.id is not None:
+            _dict['id'] = self.id
         if hasattr(self, 'country') and self.country is not None:
             _dict['country'] = self.country
         if hasattr(self, 'geography') and self.geography is not None:
             _dict['geography'] = self.geography
-        if hasattr(self, 'id') and self.id is not None:
-            _dict['id'] = self.id
-        if hasattr(self, 'kind') and self.kind is not None:
-            _dict['kind'] = self.kind
+        if hasattr(self, 'geography_code') and self.geography_code is not None:
+            _dict['geography_code'] = self.geography_code
         if hasattr(self, 'metro') and self.metro is not None:
             _dict['metro'] = self.metro
         if hasattr(self, 'multizone_metro') and self.multizone_metro is not None:
             _dict['multizone_metro'] = self.multizone_metro
-        if hasattr(self, 'name') and self.name is not None:
-            _dict['name'] = self.name
+        if hasattr(self, 'kind') and self.kind is not None:
+            _dict['kind'] = self.kind
+        if hasattr(self, 'paired_region') and self.paired_region is not None:
+            _dict['paired_region'] = self.paired_region
+        if hasattr(self, 'restricted') and self.restricted is not None:
+            _dict['restricted'] = self.restricted
         return _dict
 
     def _to_dict(self):
@@ -9101,162 +11320,42 @@ class SchematicsLocations():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class SharedDatasetData():
+class SchematicsLocationsList():
     """
-    SharedDatasetData ...
+    List of Locations details.
 
-    :attr str default_value: (optional) Default values.
-    :attr str description: (optional) Data description.
-    :attr bool hidden: (optional) Data is hidden.
-    :attr bool immutable: (optional) Data is readonly.
-    :attr str matches: (optional) Data is matches regular expression.
-    :attr str max_value: (optional) Max value of the data.
-    :attr str max_value_len: (optional) Max string length of the data.
-    :attr str min_value: (optional) Min value of the data.
-    :attr str min_value_len: (optional) Min string length of the data.
-    :attr List[str] options: (optional) Possible options for the Data.
-    :attr str override_value: (optional) Override value for the Data.
-    :attr bool secure: (optional) Data is secure.
-    :attr List[str] var_aliases: (optional) Alias strings for the variable names.
-    :attr str var_name: (optional) Variable name.
-    :attr str var_ref: (optional) Variable reference.
-    :attr str var_type: (optional) Variable type.
+    :attr List[SchematicsLocationsLite] locations: (optional) List of Locations.
     """
 
     def __init__(self,
                  *,
-                 default_value: str = None,
-                 description: str = None,
-                 hidden: bool = None,
-                 immutable: bool = None,
-                 matches: str = None,
-                 max_value: str = None,
-                 max_value_len: str = None,
-                 min_value: str = None,
-                 min_value_len: str = None,
-                 options: List[str] = None,
-                 override_value: str = None,
-                 secure: bool = None,
-                 var_aliases: List[str] = None,
-                 var_name: str = None,
-                 var_ref: str = None,
-                 var_type: str = None) -> None:
+                 locations: List['SchematicsLocationsLite'] = None) -> None:
         """
-        Initialize a SharedDatasetData object.
+        Initialize a SchematicsLocationsList object.
 
-        :param str default_value: (optional) Default values.
-        :param str description: (optional) Data description.
-        :param bool hidden: (optional) Data is hidden.
-        :param bool immutable: (optional) Data is readonly.
-        :param str matches: (optional) Data is matches regular expression.
-        :param str max_value: (optional) Max value of the data.
-        :param str max_value_len: (optional) Max string length of the data.
-        :param str min_value: (optional) Min value of the data.
-        :param str min_value_len: (optional) Min string length of the data.
-        :param List[str] options: (optional) Possible options for the Data.
-        :param str override_value: (optional) Override value for the Data.
-        :param bool secure: (optional) Data is secure.
-        :param List[str] var_aliases: (optional) Alias strings for the variable
-               names.
-        :param str var_name: (optional) Variable name.
-        :param str var_ref: (optional) Variable reference.
-        :param str var_type: (optional) Variable type.
+        :param List[SchematicsLocationsLite] locations: (optional) List of
+               Locations.
         """
-        self.default_value = default_value
-        self.description = description
-        self.hidden = hidden
-        self.immutable = immutable
-        self.matches = matches
-        self.max_value = max_value
-        self.max_value_len = max_value_len
-        self.min_value = min_value
-        self.min_value_len = min_value_len
-        self.options = options
-        self.override_value = override_value
-        self.secure = secure
-        self.var_aliases = var_aliases
-        self.var_name = var_name
-        self.var_ref = var_ref
-        self.var_type = var_type
+        self.locations = locations
 
     @classmethod
-    def from_dict(cls, _dict: Dict) -> 'SharedDatasetData':
-        """Initialize a SharedDatasetData object from a json dictionary."""
+    def from_dict(cls, _dict: Dict) -> 'SchematicsLocationsList':
+        """Initialize a SchematicsLocationsList object from a json dictionary."""
         args = {}
-        if 'default_value' in _dict:
-            args['default_value'] = _dict.get('default_value')
-        if 'description' in _dict:
-            args['description'] = _dict.get('description')
-        if 'hidden' in _dict:
-            args['hidden'] = _dict.get('hidden')
-        if 'immutable' in _dict:
-            args['immutable'] = _dict.get('immutable')
-        if 'matches' in _dict:
-            args['matches'] = _dict.get('matches')
-        if 'max_value' in _dict:
-            args['max_value'] = _dict.get('max_value')
-        if 'max_value_len' in _dict:
-            args['max_value_len'] = _dict.get('max_value_len')
-        if 'min_value' in _dict:
-            args['min_value'] = _dict.get('min_value')
-        if 'min_value_len' in _dict:
-            args['min_value_len'] = _dict.get('min_value_len')
-        if 'options' in _dict:
-            args['options'] = _dict.get('options')
-        if 'override_value' in _dict:
-            args['override_value'] = _dict.get('override_value')
-        if 'secure' in _dict:
-            args['secure'] = _dict.get('secure')
-        if 'var_aliases' in _dict:
-            args['var_aliases'] = _dict.get('var_aliases')
-        if 'var_name' in _dict:
-            args['var_name'] = _dict.get('var_name')
-        if 'var_ref' in _dict:
-            args['var_ref'] = _dict.get('var_ref')
-        if 'var_type' in _dict:
-            args['var_type'] = _dict.get('var_type')
+        if 'locations' in _dict:
+            args['locations'] = [SchematicsLocationsLite.from_dict(x) for x in _dict.get('locations')]
         return cls(**args)
 
     @classmethod
     def _from_dict(cls, _dict):
-        """Initialize a SharedDatasetData object from a json dictionary."""
+        """Initialize a SchematicsLocationsList object from a json dictionary."""
         return cls.from_dict(_dict)
 
     def to_dict(self) -> Dict:
         """Return a json dictionary representing this model."""
         _dict = {}
-        if hasattr(self, 'default_value') and self.default_value is not None:
-            _dict['default_value'] = self.default_value
-        if hasattr(self, 'description') and self.description is not None:
-            _dict['description'] = self.description
-        if hasattr(self, 'hidden') and self.hidden is not None:
-            _dict['hidden'] = self.hidden
-        if hasattr(self, 'immutable') and self.immutable is not None:
-            _dict['immutable'] = self.immutable
-        if hasattr(self, 'matches') and self.matches is not None:
-            _dict['matches'] = self.matches
-        if hasattr(self, 'max_value') and self.max_value is not None:
-            _dict['max_value'] = self.max_value
-        if hasattr(self, 'max_value_len') and self.max_value_len is not None:
-            _dict['max_value_len'] = self.max_value_len
-        if hasattr(self, 'min_value') and self.min_value is not None:
-            _dict['min_value'] = self.min_value
-        if hasattr(self, 'min_value_len') and self.min_value_len is not None:
-            _dict['min_value_len'] = self.min_value_len
-        if hasattr(self, 'options') and self.options is not None:
-            _dict['options'] = self.options
-        if hasattr(self, 'override_value') and self.override_value is not None:
-            _dict['override_value'] = self.override_value
-        if hasattr(self, 'secure') and self.secure is not None:
-            _dict['secure'] = self.secure
-        if hasattr(self, 'var_aliases') and self.var_aliases is not None:
-            _dict['var_aliases'] = self.var_aliases
-        if hasattr(self, 'var_name') and self.var_name is not None:
-            _dict['var_name'] = self.var_name
-        if hasattr(self, 'var_ref') and self.var_ref is not None:
-            _dict['var_ref'] = self.var_ref
-        if hasattr(self, 'var_type') and self.var_type is not None:
-            _dict['var_type'] = self.var_type
+        if hasattr(self, 'locations') and self.locations is not None:
+            _dict['locations'] = [x.to_dict() for x in self.locations]
         return _dict
 
     def _to_dict(self):
@@ -9264,168 +11363,122 @@ class SharedDatasetData():
         return self.to_dict()
 
     def __str__(self) -> str:
-        """Return a `str` version of this SharedDatasetData object."""
+        """Return a `str` version of this SchematicsLocationsList object."""
         return json.dumps(self.to_dict(), indent=2)
 
-    def __eq__(self, other: 'SharedDatasetData') -> bool:
+    def __eq__(self, other: 'SchematicsLocationsList') -> bool:
         """Return `true` when self and other are equal, false otherwise."""
         if not isinstance(other, self.__class__):
             return False
         return self.__dict__ == other.__dict__
 
-    def __ne__(self, other: 'SharedDatasetData') -> bool:
+    def __ne__(self, other: 'SchematicsLocationsList') -> bool:
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class SharedDatasetResponse():
+class SchematicsLocationsLite():
     """
-    SharedDatasetResponse - request returned by create.
+    individual location details.
 
-    :attr str account: (optional) Account id.
-    :attr datetime created_at: (optional) Dataset created at.
-    :attr str created_by: (optional) Dataset created by.
-    :attr str description: (optional) Dataset description.
-    :attr List[str] effected_workspace_ids: (optional) Affected workspace id.
-    :attr str resource_group: (optional) Resource group name.
-    :attr List[SharedDatasetData] shared_dataset_data: (optional) Shared dataset
-          data.
-    :attr str shared_dataset_id: (optional) Shared dataset id.
-    :attr str shared_dataset_name: (optional) Shared dataset name.
-    :attr List[str] shared_dataset_type: (optional) Shared dataset type.
-    :attr str state: (optional) shareddata variable status type.
-    :attr List[str] tags: (optional) Shared dataset tags.
-    :attr datetime updated_at: (optional) Shared dataset updated at.
-    :attr str updated_by: (optional) Shared dataset updated by.
-    :attr str version: (optional) Shared dataset version.
+    :attr str region: (optional) Geographical Region code having the data centres of
+          IBM Cloud Schematics service.
+    :attr str metro: (optional) Geographical city locations having the data centres
+          of IBM Cloud Schematics service.
+    :attr str geography_code: (optional) Geographical continent locations code
+          having the data centres of IBM Cloud Schematics service.
+    :attr str geography: (optional) Geographical continent locations having the data
+          centres of IBM Cloud Schematics service.
+    :attr str country: (optional) Country locations having the data centres of IBM
+          Cloud Schematics service.
+    :attr str kind: (optional) The kind of location.
+    :attr List[str] paired_region: (optional) List of paired regions used by
+          Schematics.
+    :attr bool restricted: (optional) Restricted Region.
     """
 
     def __init__(self,
                  *,
-                 account: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 description: str = None,
-                 effected_workspace_ids: List[str] = None,
-                 resource_group: str = None,
-                 shared_dataset_data: List['SharedDatasetData'] = None,
-                 shared_dataset_id: str = None,
-                 shared_dataset_name: str = None,
-                 shared_dataset_type: List[str] = None,
-                 state: str = None,
-                 tags: List[str] = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 version: str = None) -> None:
+                 region: str = None,
+                 metro: str = None,
+                 geography_code: str = None,
+                 geography: str = None,
+                 country: str = None,
+                 kind: str = None,
+                 paired_region: List[str] = None,
+                 restricted: bool = None) -> None:
         """
-        Initialize a SharedDatasetResponse object.
+        Initialize a SchematicsLocationsLite object.
 
-        :param str account: (optional) Account id.
-        :param datetime created_at: (optional) Dataset created at.
-        :param str created_by: (optional) Dataset created by.
-        :param str description: (optional) Dataset description.
-        :param List[str] effected_workspace_ids: (optional) Affected workspace id.
-        :param str resource_group: (optional) Resource group name.
-        :param List[SharedDatasetData] shared_dataset_data: (optional) Shared
-               dataset data.
-        :param str shared_dataset_id: (optional) Shared dataset id.
-        :param str shared_dataset_name: (optional) Shared dataset name.
-        :param List[str] shared_dataset_type: (optional) Shared dataset type.
-        :param str state: (optional) shareddata variable status type.
-        :param List[str] tags: (optional) Shared dataset tags.
-        :param datetime updated_at: (optional) Shared dataset updated at.
-        :param str updated_by: (optional) Shared dataset updated by.
-        :param str version: (optional) Shared dataset version.
+        :param str region: (optional) Geographical Region code having the data
+               centres of IBM Cloud Schematics service.
+        :param str metro: (optional) Geographical city locations having the data
+               centres of IBM Cloud Schematics service.
+        :param str geography_code: (optional) Geographical continent locations code
+               having the data centres of IBM Cloud Schematics service.
+        :param str geography: (optional) Geographical continent locations having
+               the data centres of IBM Cloud Schematics service.
+        :param str country: (optional) Country locations having the data centres of
+               IBM Cloud Schematics service.
+        :param str kind: (optional) The kind of location.
+        :param List[str] paired_region: (optional) List of paired regions used by
+               Schematics.
+        :param bool restricted: (optional) Restricted Region.
         """
-        self.account = account
-        self.created_at = created_at
-        self.created_by = created_by
-        self.description = description
-        self.effected_workspace_ids = effected_workspace_ids
-        self.resource_group = resource_group
-        self.shared_dataset_data = shared_dataset_data
-        self.shared_dataset_id = shared_dataset_id
-        self.shared_dataset_name = shared_dataset_name
-        self.shared_dataset_type = shared_dataset_type
-        self.state = state
-        self.tags = tags
-        self.updated_at = updated_at
-        self.updated_by = updated_by
-        self.version = version
+        self.region = region
+        self.metro = metro
+        self.geography_code = geography_code
+        self.geography = geography
+        self.country = country
+        self.kind = kind
+        self.paired_region = paired_region
+        self.restricted = restricted
 
     @classmethod
-    def from_dict(cls, _dict: Dict) -> 'SharedDatasetResponse':
-        """Initialize a SharedDatasetResponse object from a json dictionary."""
+    def from_dict(cls, _dict: Dict) -> 'SchematicsLocationsLite':
+        """Initialize a SchematicsLocationsLite object from a json dictionary."""
         args = {}
-        if 'account' in _dict:
-            args['account'] = _dict.get('account')
-        if 'created_at' in _dict:
-            args['created_at'] = string_to_datetime(_dict.get('created_at'))
-        if 'created_by' in _dict:
-            args['created_by'] = _dict.get('created_by')
-        if 'description' in _dict:
-            args['description'] = _dict.get('description')
-        if 'effected_workspace_ids' in _dict:
-            args['effected_workspace_ids'] = _dict.get('effected_workspace_ids')
-        if 'resource_group' in _dict:
-            args['resource_group'] = _dict.get('resource_group')
-        if 'shared_dataset_data' in _dict:
-            args['shared_dataset_data'] = [SharedDatasetData.from_dict(x) for x in _dict.get('shared_dataset_data')]
-        if 'shared_dataset_id' in _dict:
-            args['shared_dataset_id'] = _dict.get('shared_dataset_id')
-        if 'shared_dataset_name' in _dict:
-            args['shared_dataset_name'] = _dict.get('shared_dataset_name')
-        if 'shared_dataset_type' in _dict:
-            args['shared_dataset_type'] = _dict.get('shared_dataset_type')
-        if 'state' in _dict:
-            args['state'] = _dict.get('state')
-        if 'tags' in _dict:
-            args['tags'] = _dict.get('tags')
-        if 'updated_at' in _dict:
-            args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        if 'updated_by' in _dict:
-            args['updated_by'] = _dict.get('updated_by')
-        if 'version' in _dict:
-            args['version'] = _dict.get('version')
+        if 'region' in _dict:
+            args['region'] = _dict.get('region')
+        if 'metro' in _dict:
+            args['metro'] = _dict.get('metro')
+        if 'geography_code' in _dict:
+            args['geography_code'] = _dict.get('geography_code')
+        if 'geography' in _dict:
+            args['geography'] = _dict.get('geography')
+        if 'country' in _dict:
+            args['country'] = _dict.get('country')
+        if 'kind' in _dict:
+            args['kind'] = _dict.get('kind')
+        if 'paired_region' in _dict:
+            args['paired_region'] = _dict.get('paired_region')
+        if 'restricted' in _dict:
+            args['restricted'] = _dict.get('restricted')
         return cls(**args)
 
     @classmethod
     def _from_dict(cls, _dict):
-        """Initialize a SharedDatasetResponse object from a json dictionary."""
+        """Initialize a SchematicsLocationsLite object from a json dictionary."""
         return cls.from_dict(_dict)
 
     def to_dict(self) -> Dict:
         """Return a json dictionary representing this model."""
         _dict = {}
-        if hasattr(self, 'account') and self.account is not None:
-            _dict['account'] = self.account
-        if hasattr(self, 'created_at') and self.created_at is not None:
-            _dict['created_at'] = datetime_to_string(self.created_at)
-        if hasattr(self, 'created_by') and self.created_by is not None:
-            _dict['created_by'] = self.created_by
-        if hasattr(self, 'description') and self.description is not None:
-            _dict['description'] = self.description
-        if hasattr(self, 'effected_workspace_ids') and self.effected_workspace_ids is not None:
-            _dict['effected_workspace_ids'] = self.effected_workspace_ids
-        if hasattr(self, 'resource_group') and self.resource_group is not None:
-            _dict['resource_group'] = self.resource_group
-        if hasattr(self, 'shared_dataset_data') and self.shared_dataset_data is not None:
-            _dict['shared_dataset_data'] = [x.to_dict() for x in self.shared_dataset_data]
-        if hasattr(self, 'shared_dataset_id') and self.shared_dataset_id is not None:
-            _dict['shared_dataset_id'] = self.shared_dataset_id
-        if hasattr(self, 'shared_dataset_name') and self.shared_dataset_name is not None:
-            _dict['shared_dataset_name'] = self.shared_dataset_name
-        if hasattr(self, 'shared_dataset_type') and self.shared_dataset_type is not None:
-            _dict['shared_dataset_type'] = self.shared_dataset_type
-        if hasattr(self, 'state') and self.state is not None:
-            _dict['state'] = self.state
-        if hasattr(self, 'tags') and self.tags is not None:
-            _dict['tags'] = self.tags
-        if hasattr(self, 'updated_at') and self.updated_at is not None:
-            _dict['updated_at'] = datetime_to_string(self.updated_at)
-        if hasattr(self, 'updated_by') and self.updated_by is not None:
-            _dict['updated_by'] = self.updated_by
-        if hasattr(self, 'version') and self.version is not None:
-            _dict['version'] = self.version
+        if hasattr(self, 'region') and self.region is not None:
+            _dict['region'] = self.region
+        if hasattr(self, 'metro') and self.metro is not None:
+            _dict['metro'] = self.metro
+        if hasattr(self, 'geography_code') and self.geography_code is not None:
+            _dict['geography_code'] = self.geography_code
+        if hasattr(self, 'geography') and self.geography is not None:
+            _dict['geography'] = self.geography
+        if hasattr(self, 'country') and self.country is not None:
+            _dict['country'] = self.country
+        if hasattr(self, 'kind') and self.kind is not None:
+            _dict['kind'] = self.kind
+        if hasattr(self, 'paired_region') and self.paired_region is not None:
+            _dict['paired_region'] = self.paired_region
+        if hasattr(self, 'restricted') and self.restricted is not None:
+            _dict['restricted'] = self.restricted
         return _dict
 
     def _to_dict(self):
@@ -9433,97 +11486,44 @@ class SharedDatasetResponse():
         return self.to_dict()
 
     def __str__(self) -> str:
-        """Return a `str` version of this SharedDatasetResponse object."""
+        """Return a `str` version of this SchematicsLocationsLite object."""
         return json.dumps(self.to_dict(), indent=2)
 
-    def __eq__(self, other: 'SharedDatasetResponse') -> bool:
+    def __eq__(self, other: 'SchematicsLocationsLite') -> bool:
         """Return `true` when self and other are equal, false otherwise."""
         if not isinstance(other, self.__class__):
             return False
         return self.__dict__ == other.__dict__
 
-    def __ne__(self, other: 'SharedDatasetResponse') -> bool:
-        """Return `true` when self and other are not equal, false otherwise."""
-        return not self == other
-
-class SharedDatasetResponseList():
-    """
-    SharedDatasetResponseList -.
-
-    :attr int count: (optional) Shared dataset count.
-    :attr List[SharedDatasetResponse] shared_datasets: (optional) List of datasets.
-    """
-
-    def __init__(self,
-                 *,
-                 count: int = None,
-                 shared_datasets: List['SharedDatasetResponse'] = None) -> None:
-        """
-        Initialize a SharedDatasetResponseList object.
-
-        :param int count: (optional) Shared dataset count.
-        :param List[SharedDatasetResponse] shared_datasets: (optional) List of
-               datasets.
-        """
-        self.count = count
-        self.shared_datasets = shared_datasets
-
-    @classmethod
-    def from_dict(cls, _dict: Dict) -> 'SharedDatasetResponseList':
-        """Initialize a SharedDatasetResponseList object from a json dictionary."""
-        args = {}
-        if 'count' in _dict:
-            args['count'] = _dict.get('count')
-        if 'shared_datasets' in _dict:
-            args['shared_datasets'] = [SharedDatasetResponse.from_dict(x) for x in _dict.get('shared_datasets')]
-        return cls(**args)
-
-    @classmethod
-    def _from_dict(cls, _dict):
-        """Initialize a SharedDatasetResponseList object from a json dictionary."""
-        return cls.from_dict(_dict)
-
-    def to_dict(self) -> Dict:
-        """Return a json dictionary representing this model."""
-        _dict = {}
-        if hasattr(self, 'count') and self.count is not None:
-            _dict['count'] = self.count
-        if hasattr(self, 'shared_datasets') and self.shared_datasets is not None:
-            _dict['shared_datasets'] = [x.to_dict() for x in self.shared_datasets]
-        return _dict
-
-    def _to_dict(self):
-        """Return a json dictionary representing this model."""
-        return self.to_dict()
-
-    def __str__(self) -> str:
-        """Return a `str` version of this SharedDatasetResponseList object."""
-        return json.dumps(self.to_dict(), indent=2)
-
-    def __eq__(self, other: 'SharedDatasetResponseList') -> bool:
-        """Return `true` when self and other are equal, false otherwise."""
-        if not isinstance(other, self.__class__):
-            return False
-        return self.__dict__ == other.__dict__
-
-    def __ne__(self, other: 'SharedDatasetResponseList') -> bool:
+    def __ne__(self, other: 'SchematicsLocationsLite') -> bool:
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
 class SharedTargetData():
     """
-    SharedTargetData -.
+    Information about the Target used by the templates originating from the  IBM Cloud
+    catalog offerings. This information is not relevant for workspace created using your
+    own Terraform template.
 
     :attr str cluster_created_on: (optional) Cluster created on.
-    :attr str cluster_id: (optional) Cluster id.
-    :attr str cluster_name: (optional) Cluster name.
-    :attr str cluster_type: (optional) Cluster type.
-    :attr List[object] entitlement_keys: (optional) Entitlement keys.
-    :attr str namespace: (optional) Target namespace.
-    :attr str region: (optional) Target region.
-    :attr str resource_group_id: (optional) Target resource group id.
-    :attr int worker_count: (optional) Cluster worker count.
-    :attr str worker_machine_type: (optional) Cluster worker type.
+    :attr str cluster_id: (optional) The ID of the cluster where you want to
+          provision the resources of all IBM Cloud catalog templates that are included in
+          the catalog offering.
+    :attr str cluster_name: (optional) The cluster name.
+    :attr str cluster_type: (optional) The cluster type.
+    :attr List[object] entitlement_keys: (optional) The entitlement key that you
+          want to use to install IBM Cloud entitled software.
+    :attr str namespace: (optional) The Kubernetes namespace or OpenShift project
+          where the resources of all IBM Cloud catalog templates that are included in the
+          catalog offering are deployed into.
+    :attr str region: (optional) The IBM Cloud region that you want to use for the
+          resources of all IBM Cloud catalog templates that are included in the catalog
+          offering.
+    :attr str resource_group_id: (optional) The ID of the resource group that you
+          want to use for the resources of all IBM Cloud catalog templates that are
+          included in the catalog offering.
+    :attr int worker_count: (optional) The cluster worker count.
+    :attr str worker_machine_type: (optional) The cluster worker type.
     """
 
     def __init__(self,
@@ -9542,15 +11542,24 @@ class SharedTargetData():
         Initialize a SharedTargetData object.
 
         :param str cluster_created_on: (optional) Cluster created on.
-        :param str cluster_id: (optional) Cluster id.
-        :param str cluster_name: (optional) Cluster name.
-        :param str cluster_type: (optional) Cluster type.
-        :param List[object] entitlement_keys: (optional) Entitlement keys.
-        :param str namespace: (optional) Target namespace.
-        :param str region: (optional) Target region.
-        :param str resource_group_id: (optional) Target resource group id.
-        :param int worker_count: (optional) Cluster worker count.
-        :param str worker_machine_type: (optional) Cluster worker type.
+        :param str cluster_id: (optional) The ID of the cluster where you want to
+               provision the resources of all IBM Cloud catalog templates that are
+               included in the catalog offering.
+        :param str cluster_name: (optional) The cluster name.
+        :param str cluster_type: (optional) The cluster type.
+        :param List[object] entitlement_keys: (optional) The entitlement key that
+               you want to use to install IBM Cloud entitled software.
+        :param str namespace: (optional) The Kubernetes namespace or OpenShift
+               project where the resources of all IBM Cloud catalog templates that are
+               included in the catalog offering are deployed into.
+        :param str region: (optional) The IBM Cloud region that you want to use for
+               the resources of all IBM Cloud catalog templates that are included in the
+               catalog offering.
+        :param str resource_group_id: (optional) The ID of the resource group that
+               you want to use for the resources of all IBM Cloud catalog templates that
+               are included in the catalog offering.
+        :param int worker_count: (optional) The cluster worker count.
+        :param str worker_machine_type: (optional) The cluster worker type.
         """
         self.cluster_created_on = cluster_created_on
         self.cluster_id = cluster_id
@@ -9639,14 +11648,25 @@ class SharedTargetData():
 
 class SharedTargetDataResponse():
     """
-    SharedTargetDataResponse -.
+    Information about the Target used by the templates originating from IBM Cloud catalog
+    offerings. This information is not relevant when you create a workspace from your own
+    Terraform template.
 
-    :attr str cluster_id: (optional) Target cluster id.
+    :attr str cluster_id: (optional) The ID of the cluster where you want to
+          provision the resources of all IBM Cloud catalog templates that are included in
+          the catalog offering.
     :attr str cluster_name: (optional) Target cluster name.
-    :attr List[object] entitlement_keys: (optional) Entitlement keys.
-    :attr str namespace: (optional) Target namespace.
-    :attr str region: (optional) Target region.
-    :attr str resource_group_id: (optional) Target resource group id.
+    :attr List[object] entitlement_keys: (optional) The entitlement key that you
+          want to use to install IBM Cloud entitled software.
+    :attr str namespace: (optional) The Kubernetes namespace or OpenShift project
+          where the resources of all IBM Cloud catalog templates that are included in the
+          catalog offering are deployed into.
+    :attr str region: (optional) The IBM Cloud region that you want to use for the
+          resources of all IBM Cloud catalog templates that are included in the catalog
+          offering.
+    :attr str resource_group_id: (optional) The ID of the resource group that you
+          want to use for the resources of all IBM Cloud catalog templates that are
+          included in the catalog offering.
     """
 
     def __init__(self,
@@ -9660,12 +11680,21 @@ class SharedTargetDataResponse():
         """
         Initialize a SharedTargetDataResponse object.
 
-        :param str cluster_id: (optional) Target cluster id.
+        :param str cluster_id: (optional) The ID of the cluster where you want to
+               provision the resources of all IBM Cloud catalog templates that are
+               included in the catalog offering.
         :param str cluster_name: (optional) Target cluster name.
-        :param List[object] entitlement_keys: (optional) Entitlement keys.
-        :param str namespace: (optional) Target namespace.
-        :param str region: (optional) Target region.
-        :param str resource_group_id: (optional) Target resource group id.
+        :param List[object] entitlement_keys: (optional) The entitlement key that
+               you want to use to install IBM Cloud entitled software.
+        :param str namespace: (optional) The Kubernetes namespace or OpenShift
+               project where the resources of all IBM Cloud catalog templates that are
+               included in the catalog offering are deployed into.
+        :param str region: (optional) The IBM Cloud region that you want to use for
+               the resources of all IBM Cloud catalog templates that are included in the
+               catalog offering.
+        :param str resource_group_id: (optional) The ID of the resource group that
+               you want to use for the resources of all IBM Cloud catalog templates that
+               are included in the catalog offering.
         """
         self.cluster_id = cluster_id
         self.cluster_name = cluster_name
@@ -9734,12 +11763,19 @@ class SharedTargetDataResponse():
 
 class StateStoreResponse():
     """
-    StateStoreResponse -.
+    Information about workspace runtime data.
 
-    :attr str engine_name: (optional) Engine name.
-    :attr str engine_version: (optional) Engine version.
-    :attr str id: (optional) State store id.
-    :attr str state_store_url: (optional) State store url.
+    :attr str engine_name: (optional) The provisioning engine that was used to apply
+          the Terraform template or IBM Cloud catalog software template.
+    :attr str engine_version: (optional) The version of the provisioning engine that
+          was used.
+    :attr str id: (optional) The ID that was assigned to your Terraform template or
+          IBM Cloud catalog software template.
+    :attr str state_store_url: (optional) The URL where the Terraform statefile
+          (`terraform.tfstate`) is stored. You can use the statefile to find an overview
+          of IBM Cloud resources that were created by Schematics. Schematics uses the
+          statefile as an inventory list to determine future create, update, or deletion
+          jobs.
     """
 
     def __init__(self,
@@ -9751,10 +11787,17 @@ class StateStoreResponse():
         """
         Initialize a StateStoreResponse object.
 
-        :param str engine_name: (optional) Engine name.
-        :param str engine_version: (optional) Engine version.
-        :param str id: (optional) State store id.
-        :param str state_store_url: (optional) State store url.
+        :param str engine_name: (optional) The provisioning engine that was used to
+               apply the Terraform template or IBM Cloud catalog software template.
+        :param str engine_version: (optional) The version of the provisioning
+               engine that was used.
+        :param str id: (optional) The ID that was assigned to your Terraform
+               template or IBM Cloud catalog software template.
+        :param str state_store_url: (optional) The URL where the Terraform
+               statefile (`terraform.tfstate`) is stored. You can use the statefile to
+               find an overview of IBM Cloud resources that were created by Schematics.
+               Schematics uses the statefile as an inventory list to determine future
+               create, update, or deletion jobs.
         """
         self.engine_name = engine_name
         self.engine_version = engine_version
@@ -9813,9 +11856,10 @@ class StateStoreResponse():
 
 class StateStoreResponseList():
     """
-    StateStoreResponseList -.
+    Information about the Terraform statefile URL.
 
-    :attr List[StateStoreResponse] runtime_data: (optional) List of state stores.
+    :attr List[StateStoreResponse] runtime_data: (optional) Information about
+          workspace runtime data.
     """
 
     def __init__(self,
@@ -9824,8 +11868,8 @@ class StateStoreResponseList():
         """
         Initialize a StateStoreResponseList object.
 
-        :param List[StateStoreResponse] runtime_data: (optional) List of state
-               stores.
+        :param List[StateStoreResponse] runtime_data: (optional) Information about
+               workspace runtime data.
         """
         self.runtime_data = runtime_data
 
@@ -9871,12 +11915,11 @@ class SystemLock():
     """
     System lock status.
 
-    :attr bool sys_locked: (optional) Is the Workspace locked by a Schematic action
-          ?.
-    :attr str sys_locked_by: (optional) Name of the User who performed the action,
-          that lead to the locking of the Workspace.
-    :attr datetime sys_locked_at: (optional) When the User performed the action that
-          lead to locking of the Workspace ?.
+    :attr bool sys_locked: (optional) Is the automation locked by a Schematic job ?.
+    :attr str sys_locked_by: (optional) Name of the User who performed the job, that
+          lead to the locking of the automation.
+    :attr datetime sys_locked_at: (optional) When the User performed the job that
+          lead to locking of the automation ?.
     """
 
     def __init__(self,
@@ -9887,12 +11930,12 @@ class SystemLock():
         """
         Initialize a SystemLock object.
 
-        :param bool sys_locked: (optional) Is the Workspace locked by a Schematic
-               action ?.
+        :param bool sys_locked: (optional) Is the automation locked by a Schematic
+               job ?.
         :param str sys_locked_by: (optional) Name of the User who performed the
-               action, that lead to the locking of the Workspace.
-        :param datetime sys_locked_at: (optional) When the User performed the
-               action that lead to locking of the Workspace ?.
+               job, that lead to the locking of the automation.
+        :param datetime sys_locked_at: (optional) When the User performed the job
+               that lead to locking of the automation ?.
         """
         self.sys_locked = sys_locked
         self.sys_locked_by = sys_locked_by
@@ -9944,11 +11987,79 @@ class SystemLock():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
+class TemplateMetaDataResponse():
+    """
+    Template metadata response.
+
+    :attr str type: (optional) Template type (terraform, ansible, helm, cloudpak,
+          bash script).
+    :attr List[VariableData] variables: List of variables and its metadata.
+    """
+
+    def __init__(self,
+                 variables: List['VariableData'],
+                 *,
+                 type: str = None) -> None:
+        """
+        Initialize a TemplateMetaDataResponse object.
+
+        :param List[VariableData] variables: List of variables and its metadata.
+        :param str type: (optional) Template type (terraform, ansible, helm,
+               cloudpak, bash script).
+        """
+        self.type = type
+        self.variables = variables
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'TemplateMetaDataResponse':
+        """Initialize a TemplateMetaDataResponse object from a json dictionary."""
+        args = {}
+        if 'type' in _dict:
+            args['type'] = _dict.get('type')
+        if 'variables' in _dict:
+            args['variables'] = [VariableData.from_dict(x) for x in _dict.get('variables')]
+        else:
+            raise ValueError('Required property \'variables\' not present in TemplateMetaDataResponse JSON')
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a TemplateMetaDataResponse object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'type') and self.type is not None:
+            _dict['type'] = self.type
+        if hasattr(self, 'variables') and self.variables is not None:
+            _dict['variables'] = [x.to_dict() for x in self.variables]
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this TemplateMetaDataResponse object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'TemplateMetaDataResponse') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'TemplateMetaDataResponse') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
 class TemplateReadme():
     """
-    TemplateReadme -.
+    The `README.md` file for the template used by the workspace.
 
-    :attr str readme: (optional) Readme string.
+    :attr str readme: (optional) The `README.md` file for the template used by the
+          workspace.
     """
 
     def __init__(self,
@@ -9957,7 +12068,8 @@ class TemplateReadme():
         """
         Initialize a TemplateReadme object.
 
-        :param str readme: (optional) Readme string.
+        :param str readme: (optional) The `README.md` file for the template used by
+               the workspace.
         """
         self.readme = readme
 
@@ -10001,13 +12113,13 @@ class TemplateReadme():
 
 class TemplateRepoRequest():
     """
-    TemplateRepoRequest -.
+    Input variables for the Template repoository, while creating a workspace.
 
-    :attr str branch: (optional) Repo branch.
-    :attr str release: (optional) Repo release.
-    :attr str repo_sha_value: (optional) Repo SHA value.
-    :attr str repo_url: (optional) Repo URL.
-    :attr str url: (optional) Source URL.
+    :attr str branch: (optional) The repository branch.
+    :attr str release: (optional) The repository release.
+    :attr str repo_sha_value: (optional) The repository SHA value.
+    :attr str repo_url: (optional) The repository URL.
+    :attr str url: (optional) The source URL.
     """
 
     def __init__(self,
@@ -10020,11 +12132,11 @@ class TemplateRepoRequest():
         """
         Initialize a TemplateRepoRequest object.
 
-        :param str branch: (optional) Repo branch.
-        :param str release: (optional) Repo release.
-        :param str repo_sha_value: (optional) Repo SHA value.
-        :param str repo_url: (optional) Repo URL.
-        :param str url: (optional) Source URL.
+        :param str branch: (optional) The repository branch.
+        :param str release: (optional) The repository release.
+        :param str repo_sha_value: (optional) The repository SHA value.
+        :param str repo_url: (optional) The repository URL.
+        :param str url: (optional) The source URL.
         """
         self.branch = branch
         self.release = release
@@ -10088,15 +12200,15 @@ class TemplateRepoRequest():
 
 class TemplateRepoResponse():
     """
-    TemplateRepoResponse -.
+    Information about the Template repository used by the workspace.
 
-    :attr str branch: (optional) Repo branch.
-    :attr str full_url: (optional) Full repo URL.
-    :attr bool has_uploadedgitrepotar: (optional) Has uploaded git repo tar.
-    :attr str release: (optional) Repo release.
-    :attr str repo_sha_value: (optional) Repo SHA value.
-    :attr str repo_url: (optional) Repo URL.
-    :attr str url: (optional) Source URL.
+    :attr str branch: (optional) The repository branch.
+    :attr str full_url: (optional) Full repository URL.
+    :attr bool has_uploadedgitrepotar: (optional) Has uploaded Git repository tar.
+    :attr str release: (optional) The repository release.
+    :attr str repo_sha_value: (optional) The repository SHA value.
+    :attr str repo_url: (optional) The repository URL.
+    :attr str url: (optional) The source URL.
     """
 
     def __init__(self,
@@ -10111,13 +12223,14 @@ class TemplateRepoResponse():
         """
         Initialize a TemplateRepoResponse object.
 
-        :param str branch: (optional) Repo branch.
-        :param str full_url: (optional) Full repo URL.
-        :param bool has_uploadedgitrepotar: (optional) Has uploaded git repo tar.
-        :param str release: (optional) Repo release.
-        :param str repo_sha_value: (optional) Repo SHA value.
-        :param str repo_url: (optional) Repo URL.
-        :param str url: (optional) Source URL.
+        :param str branch: (optional) The repository branch.
+        :param str full_url: (optional) Full repository URL.
+        :param bool has_uploadedgitrepotar: (optional) Has uploaded Git repository
+               tar.
+        :param str release: (optional) The repository release.
+        :param str repo_sha_value: (optional) The repository SHA value.
+        :param str repo_url: (optional) The repository URL.
+        :param str url: (optional) The source URL.
         """
         self.branch = branch
         self.full_url = full_url
@@ -10194,8 +12307,8 @@ class TemplateRepoTarUploadResponse():
     TemplateRepoTarUploadResponse -.
 
     :attr str file_value: (optional) Tar file value.
-    :attr bool has_received_file: (optional) Has received tar file.
-    :attr str id: (optional) Template id.
+    :attr bool has_received_file: (optional) Has received tar file?.
+    :attr str id: (optional) Template ID.
     """
 
     def __init__(self,
@@ -10207,8 +12320,8 @@ class TemplateRepoTarUploadResponse():
         Initialize a TemplateRepoTarUploadResponse object.
 
         :param str file_value: (optional) Tar file value.
-        :param bool has_received_file: (optional) Has received tar file.
-        :param str id: (optional) Template id.
+        :param bool has_received_file: (optional) Has received tar file?.
+        :param str id: (optional) Template ID.
         """
         self.file_value = file_value
         self.has_received_file = has_received_file
@@ -10262,13 +12375,13 @@ class TemplateRepoTarUploadResponse():
 
 class TemplateRepoUpdateRequest():
     """
-    TemplateRepoUpdateRequest -.
+    Input to update the template repository data.
 
-    :attr str branch: (optional) Repo branch.
-    :attr str release: (optional) Repo release.
-    :attr str repo_sha_value: (optional) Repo SHA value.
-    :attr str repo_url: (optional) Repo URL.
-    :attr str url: (optional) Source URL.
+    :attr str branch: (optional) The repository branch.
+    :attr str release: (optional) The repository release.
+    :attr str repo_sha_value: (optional) The repository SHA value.
+    :attr str repo_url: (optional) The repository URL.
+    :attr str url: (optional) The source URL.
     """
 
     def __init__(self,
@@ -10281,11 +12394,11 @@ class TemplateRepoUpdateRequest():
         """
         Initialize a TemplateRepoUpdateRequest object.
 
-        :param str branch: (optional) Repo branch.
-        :param str release: (optional) Repo release.
-        :param str repo_sha_value: (optional) Repo SHA value.
-        :param str repo_url: (optional) Repo URL.
-        :param str url: (optional) Source URL.
+        :param str branch: (optional) The repository branch.
+        :param str release: (optional) The repository release.
+        :param str repo_sha_value: (optional) The repository SHA value.
+        :param str repo_url: (optional) The repository URL.
+        :param str url: (optional) The source URL.
         """
         self.branch = branch
         self.release = release
@@ -10349,15 +12462,25 @@ class TemplateRepoUpdateRequest():
 
 class TemplateResources():
     """
-    TemplateResources -.
+    Information about the resources provisioned by the Terraform template.
 
-    :attr str folder: (optional) Template folder name.
-    :attr str id: (optional) Template id.
+    :attr str folder: (optional) The subfolder in GitHub or GitLab where your
+          Terraform templates are stored.  If your template is stored in the root
+          directory, `.` is returned.
+    :attr str id: (optional) The ID that was assigned to your Terraform template or
+          IBM Cloud catalog software template.
     :attr List[object] null_resources: (optional) List of null resources.
-    :attr List[object] related_resources: (optional) List of related resources.
-    :attr List[object] resources: (optional) List of resources.
+    :attr List[object] related_resources: (optional) Information about the IBM Cloud
+          resources that are associated with your workspace.
+    :attr List[object] resources: (optional) Information about the IBM Cloud
+          resources that are associated with your workspace. **Note** The
+          `resource_tainted` flag marks `true` when an instance is times out after few
+          hours, if your resource provisioning takes longer duration. When you rerun the
+          apply plan, based on the `resource_taint` flag result the provisioning continues
+          from the state where the provisioning has stopped.
     :attr int resources_count: (optional) Number of resources.
-    :attr str template_type: (optional) Type of templaes.
+    :attr str template_type: (optional) The Terraform version that was used to apply
+          your template.
     """
 
     def __init__(self,
@@ -10372,14 +12495,23 @@ class TemplateResources():
         """
         Initialize a TemplateResources object.
 
-        :param str folder: (optional) Template folder name.
-        :param str id: (optional) Template id.
+        :param str folder: (optional) The subfolder in GitHub or GitLab where your
+               Terraform templates are stored.  If your template is stored in the root
+               directory, `.` is returned.
+        :param str id: (optional) The ID that was assigned to your Terraform
+               template or IBM Cloud catalog software template.
         :param List[object] null_resources: (optional) List of null resources.
-        :param List[object] related_resources: (optional) List of related
-               resources.
-        :param List[object] resources: (optional) List of resources.
+        :param List[object] related_resources: (optional) Information about the IBM
+               Cloud resources that are associated with your workspace.
+        :param List[object] resources: (optional) Information about the IBM Cloud
+               resources that are associated with your workspace. **Note** The
+               `resource_tainted` flag marks `true` when an instance is times out after
+               few hours, if your resource provisioning takes longer duration. When you
+               rerun the apply plan, based on the `resource_taint` flag result the
+               provisioning continues from the state where the provisioning has stopped.
         :param int resources_count: (optional) Number of resources.
-        :param str template_type: (optional) Type of templaes.
+        :param str template_type: (optional) The Terraform version that was used to
+               apply your template.
         """
         self.folder = folder
         self.id = id
@@ -10453,16 +12585,25 @@ class TemplateResources():
 
 class TemplateRunTimeDataResponse():
     """
-    TemplateRunTimeDataResponse -.
+    Information about the provisioning engine, state file, and runtime logs.
 
-    :attr str engine_cmd: (optional) Engine command.
-    :attr str engine_name: (optional) Engine name.
-    :attr str engine_version: (optional) Engine version.
-    :attr str id: (optional) Template id.
-    :attr str log_store_url: (optional) Log store url.
+    :attr str engine_cmd: (optional) The command that was used to apply the
+          Terraform template or IBM Cloud catalog software template.
+    :attr str engine_name: (optional) The provisioning engine that was used to apply
+          the Terraform template or IBM Cloud catalog software template.
+    :attr str engine_version: (optional) The version of the provisioning engine that
+          was used.
+    :attr str id: (optional) The ID that was assigned to your Terraform template or
+          IBM Cloud catalog software template.
+    :attr str log_store_url: (optional) The URL to access the logs that were created
+          during the creation, update, or deletion of your IBM Cloud resources.
     :attr List[object] output_values: (optional) List of Output values.
     :attr List[List[object]] resources: (optional) List of resources.
-    :attr str state_store_url: (optional) State store URL.
+    :attr str state_store_url: (optional) The URL where the Terraform statefile
+          (`terraform.tfstate`) is stored. You can use the statefile to find an overview
+          of IBM Cloud resources that were created by Schematics. Schematics uses the
+          statefile as an inventory list to determine future create, update, or deletion
+          jobs.
     """
 
     def __init__(self,
@@ -10478,14 +12619,24 @@ class TemplateRunTimeDataResponse():
         """
         Initialize a TemplateRunTimeDataResponse object.
 
-        :param str engine_cmd: (optional) Engine command.
-        :param str engine_name: (optional) Engine name.
-        :param str engine_version: (optional) Engine version.
-        :param str id: (optional) Template id.
-        :param str log_store_url: (optional) Log store url.
+        :param str engine_cmd: (optional) The command that was used to apply the
+               Terraform template or IBM Cloud catalog software template.
+        :param str engine_name: (optional) The provisioning engine that was used to
+               apply the Terraform template or IBM Cloud catalog software template.
+        :param str engine_version: (optional) The version of the provisioning
+               engine that was used.
+        :param str id: (optional) The ID that was assigned to your Terraform
+               template or IBM Cloud catalog software template.
+        :param str log_store_url: (optional) The URL to access the logs that were
+               created during the creation, update, or deletion of your IBM Cloud
+               resources.
         :param List[object] output_values: (optional) List of Output values.
         :param List[List[object]] resources: (optional) List of resources.
-        :param str state_store_url: (optional) State store URL.
+        :param str state_store_url: (optional) The URL where the Terraform
+               statefile (`terraform.tfstate`) is stored. You can use the statefile to
+               find an overview of IBM Cloud resources that were created by Schematics.
+               Schematics uses the statefile as an inventory list to determine future
+               create, update, or deletion jobs.
         """
         self.engine_cmd = engine_cmd
         self.engine_name = engine_name
@@ -10564,14 +12715,40 @@ class TemplateRunTimeDataResponse():
 
 class TemplateSourceDataRequest():
     """
-    TemplateSourceDataRequest -.
+    Input parameters to define input variables for your Terraform template.
 
-    :attr List[object] env_values: (optional) EnvVariableRequest ..
-    :attr str folder: (optional) Folder name.
-    :attr str init_state_file: (optional) Init state file.
-    :attr str type: (optional) Template type.
+    :attr List[object] env_values: (optional) A list of environment variables that
+          you want to apply during the execution of a bash script or Terraform job. This
+          field must be provided as a list of key-value pairs, for example,
+          **TF_LOG=debug**. Each entry will be a map with one entry where `key is the
+          environment variable name and value is value`. You can define environment
+          variables for IBM Cloud catalog offerings that are provisioned by using a bash
+          script. See [example to use special environment
+          variable](https://cloud.ibm.com/docs/schematics?topic=schematics-set-parallelism#parallelism-example)
+           that are supported by Schematics.
+    :attr str folder: (optional) The subfolder in your GitHub or GitLab repository
+          where your Terraform template is stored.
+    :attr bool compact: (optional) True, to use the files from the specified folder
+          & subfolder in your GitHub or GitLab repository and ignore the other folders in
+          the repository.
+    :attr str init_state_file: (optional) The content of an existing Terraform
+          statefile that you want to import in to your workspace. To get the content of a
+          Terraform statefile for a specific Terraform template in an existing workspace,
+          run `ibmcloud terraform state pull --id <workspace_id> --template
+          <template_id>`.
+    :attr str type: (optional) The Terraform version that you want to use to run
+          your Terraform code. Enter `terraform_v0.12` to use Terraform version 0.12, and
+          `terraform_v0.11` to use Terraform version 0.11. The Terraform config files are
+          run with Terraform version 0.11. This is a required variable. Make sure that
+          your Terraform config files are compatible with the Terraform version that you
+          select.
     :attr str uninstall_script_name: (optional) Uninstall script name.
-    :attr str values: (optional) Value.
+    :attr str values: (optional) A list of variable values that you want to apply
+          during the Helm chart installation. The list must be provided in JSON format,
+          such as `"autoscaling: enabled: true minReplicas: 2"`. The values that you
+          define here override the default Helm chart values. This field is supported only
+          for IBM Cloud catalog offerings that are provisioned by using the Terraform Helm
+          provider.
     :attr List[object] values_metadata: (optional) List of values metadata.
     :attr List[WorkspaceVariableRequest] variablestore: (optional) VariablesRequest
           -.
@@ -10581,6 +12758,7 @@ class TemplateSourceDataRequest():
                  *,
                  env_values: List[object] = None,
                  folder: str = None,
+                 compact: bool = None,
                  init_state_file: str = None,
                  type: str = None,
                  uninstall_script_name: str = None,
@@ -10590,18 +12768,45 @@ class TemplateSourceDataRequest():
         """
         Initialize a TemplateSourceDataRequest object.
 
-        :param List[object] env_values: (optional) EnvVariableRequest ..
-        :param str folder: (optional) Folder name.
-        :param str init_state_file: (optional) Init state file.
-        :param str type: (optional) Template type.
+        :param List[object] env_values: (optional) A list of environment variables
+               that you want to apply during the execution of a bash script or Terraform
+               job. This field must be provided as a list of key-value pairs, for example,
+               **TF_LOG=debug**. Each entry will be a map with one entry where `key is the
+               environment variable name and value is value`. You can define environment
+               variables for IBM Cloud catalog offerings that are provisioned by using a
+               bash script. See [example to use special environment
+               variable](https://cloud.ibm.com/docs/schematics?topic=schematics-set-parallelism#parallelism-example)
+                that are supported by Schematics.
+        :param str folder: (optional) The subfolder in your GitHub or GitLab
+               repository where your Terraform template is stored.
+        :param bool compact: (optional) True, to use the files from the specified
+               folder & subfolder in your GitHub or GitLab repository and ignore the other
+               folders in the repository.
+        :param str init_state_file: (optional) The content of an existing Terraform
+               statefile that you want to import in to your workspace. To get the content
+               of a Terraform statefile for a specific Terraform template in an existing
+               workspace, run `ibmcloud terraform state pull --id <workspace_id>
+               --template <template_id>`.
+        :param str type: (optional) The Terraform version that you want to use to
+               run your Terraform code. Enter `terraform_v0.12` to use Terraform version
+               0.12, and `terraform_v0.11` to use Terraform version 0.11. The Terraform
+               config files are run with Terraform version 0.11. This is a required
+               variable. Make sure that your Terraform config files are compatible with
+               the Terraform version that you select.
         :param str uninstall_script_name: (optional) Uninstall script name.
-        :param str values: (optional) Value.
+        :param str values: (optional) A list of variable values that you want to
+               apply during the Helm chart installation. The list must be provided in JSON
+               format, such as `"autoscaling: enabled: true minReplicas: 2"`. The values
+               that you define here override the default Helm chart values. This field is
+               supported only for IBM Cloud catalog offerings that are provisioned by
+               using the Terraform Helm provider.
         :param List[object] values_metadata: (optional) List of values metadata.
         :param List[WorkspaceVariableRequest] variablestore: (optional)
                VariablesRequest -.
         """
         self.env_values = env_values
         self.folder = folder
+        self.compact = compact
         self.init_state_file = init_state_file
         self.type = type
         self.uninstall_script_name = uninstall_script_name
@@ -10617,6 +12822,8 @@ class TemplateSourceDataRequest():
             args['env_values'] = _dict.get('env_values')
         if 'folder' in _dict:
             args['folder'] = _dict.get('folder')
+        if 'compact' in _dict:
+            args['compact'] = _dict.get('compact')
         if 'init_state_file' in _dict:
             args['init_state_file'] = _dict.get('init_state_file')
         if 'type' in _dict:
@@ -10643,6 +12850,8 @@ class TemplateSourceDataRequest():
             _dict['env_values'] = self.env_values
         if hasattr(self, 'folder') and self.folder is not None:
             _dict['folder'] = self.folder
+        if hasattr(self, 'compact') and self.compact is not None:
+            _dict['compact'] = self.compact
         if hasattr(self, 'init_state_file') and self.init_state_file is not None:
             _dict['init_state_file'] = self.init_state_file
         if hasattr(self, 'type') and self.type is not None:
@@ -10677,26 +12886,41 @@ class TemplateSourceDataRequest():
 
 class TemplateSourceDataResponse():
     """
-    TemplateSourceDataResponse -.
+    Information about the input variables that are used in the template.
 
     :attr List[EnvVariableResponse] env_values: (optional) List of environment
           values.
-    :attr str folder: (optional) Folder name.
+    :attr str folder: (optional) The subfolder in your GitHub or GitLab repository
+          where your Terraform template is stored. If your template is stored in the root
+          directory, `.` is returned.
+    :attr bool compact: (optional) True, to use the files from the specified folder
+          & subfolder in your GitHub or GitLab repository and ignore the other folders in
+          the repository.
     :attr bool has_githubtoken: (optional) Has github token.
-    :attr str id: (optional) Template id.
-    :attr str type: (optional) Template tyoe.
+    :attr str id: (optional) The ID that was assigned to your Terraform template or
+          IBM Cloud catalog software template.
+    :attr str type: (optional) The Terraform version that was used to run your
+          Terraform code.
     :attr str uninstall_script_name: (optional) Uninstall script name.
-    :attr str values: (optional) Values.
-    :attr List[object] values_metadata: (optional) List of values metadata.
-    :attr str values_url: (optional) Values URL.
-    :attr List[WorkspaceVariableResponse] variablestore: (optional)
-          VariablesResponse -.
+    :attr str values: (optional) A list of variable values that you want to apply
+          during the Helm chart installation. The list must be provided in JSON format,
+          such as `"autoscaling: enabled: true minReplicas: 2"`. The values that you
+          define here override the default Helm chart values. This field is supported only
+          for IBM Cloud catalog offerings that are provisioned by using the Terraform Helm
+          provider.
+    :attr List[object] values_metadata: (optional) A list of input variables that
+          are associated with the workspace.
+    :attr str values_url: (optional) The API endpoint to access the input variables
+          that you defined for your template.
+    :attr List[WorkspaceVariableResponse] variablestore: (optional) Information
+          about the input variables that your template uses.
     """
 
     def __init__(self,
                  *,
                  env_values: List['EnvVariableResponse'] = None,
                  folder: str = None,
+                 compact: bool = None,
                  has_githubtoken: bool = None,
                  id: str = None,
                  type: str = None,
@@ -10710,19 +12934,34 @@ class TemplateSourceDataResponse():
 
         :param List[EnvVariableResponse] env_values: (optional) List of environment
                values.
-        :param str folder: (optional) Folder name.
+        :param str folder: (optional) The subfolder in your GitHub or GitLab
+               repository where your Terraform template is stored. If your template is
+               stored in the root directory, `.` is returned.
+        :param bool compact: (optional) True, to use the files from the specified
+               folder & subfolder in your GitHub or GitLab repository and ignore the other
+               folders in the repository.
         :param bool has_githubtoken: (optional) Has github token.
-        :param str id: (optional) Template id.
-        :param str type: (optional) Template tyoe.
+        :param str id: (optional) The ID that was assigned to your Terraform
+               template or IBM Cloud catalog software template.
+        :param str type: (optional) The Terraform version that was used to run your
+               Terraform code.
         :param str uninstall_script_name: (optional) Uninstall script name.
-        :param str values: (optional) Values.
-        :param List[object] values_metadata: (optional) List of values metadata.
-        :param str values_url: (optional) Values URL.
+        :param str values: (optional) A list of variable values that you want to
+               apply during the Helm chart installation. The list must be provided in JSON
+               format, such as `"autoscaling: enabled: true minReplicas: 2"`. The values
+               that you define here override the default Helm chart values. This field is
+               supported only for IBM Cloud catalog offerings that are provisioned by
+               using the Terraform Helm provider.
+        :param List[object] values_metadata: (optional) A list of input variables
+               that are associated with the workspace.
+        :param str values_url: (optional) The API endpoint to access the input
+               variables that you defined for your template.
         :param List[WorkspaceVariableResponse] variablestore: (optional)
-               VariablesResponse -.
+               Information about the input variables that your template uses.
         """
         self.env_values = env_values
         self.folder = folder
+        self.compact = compact
         self.has_githubtoken = has_githubtoken
         self.id = id
         self.type = type
@@ -10740,6 +12979,8 @@ class TemplateSourceDataResponse():
             args['env_values'] = [EnvVariableResponse.from_dict(x) for x in _dict.get('env_values')]
         if 'folder' in _dict:
             args['folder'] = _dict.get('folder')
+        if 'compact' in _dict:
+            args['compact'] = _dict.get('compact')
         if 'has_githubtoken' in _dict:
             args['has_githubtoken'] = _dict.get('has_githubtoken')
         if 'id' in _dict:
@@ -10770,6 +13011,8 @@ class TemplateSourceDataResponse():
             _dict['env_values'] = [x.to_dict() for x in self.env_values]
         if hasattr(self, 'folder') and self.folder is not None:
             _dict['folder'] = self.folder
+        if hasattr(self, 'compact') and self.compact is not None:
+            _dict['compact'] = self.compact
         if hasattr(self, 'has_githubtoken') and self.has_githubtoken is not None:
             _dict['has_githubtoken'] = self.has_githubtoken
         if hasattr(self, 'id') and self.id is not None:
@@ -10806,96 +13049,10 @@ class TemplateSourceDataResponse():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class TemplateStateStore():
-    """
-    TemplateStateStore -.
-
-    :attr float version: (optional)
-    :attr str terraform_version: (optional)
-    :attr float serial: (optional)
-    :attr str lineage: (optional)
-    :attr List[object] modules: (optional)
-    """
-
-    def __init__(self,
-                 *,
-                 version: float = None,
-                 terraform_version: str = None,
-                 serial: float = None,
-                 lineage: str = None,
-                 modules: List[object] = None) -> None:
-        """
-        Initialize a TemplateStateStore object.
-
-        :param float version: (optional)
-        :param str terraform_version: (optional)
-        :param float serial: (optional)
-        :param str lineage: (optional)
-        :param List[object] modules: (optional)
-        """
-        self.version = version
-        self.terraform_version = terraform_version
-        self.serial = serial
-        self.lineage = lineage
-        self.modules = modules
-
-    @classmethod
-    def from_dict(cls, _dict: Dict) -> 'TemplateStateStore':
-        """Initialize a TemplateStateStore object from a json dictionary."""
-        args = {}
-        if 'version' in _dict:
-            args['version'] = _dict.get('version')
-        if 'terraform_version' in _dict:
-            args['terraform_version'] = _dict.get('terraform_version')
-        if 'serial' in _dict:
-            args['serial'] = _dict.get('serial')
-        if 'lineage' in _dict:
-            args['lineage'] = _dict.get('lineage')
-        if 'modules' in _dict:
-            args['modules'] = _dict.get('modules')
-        return cls(**args)
-
-    @classmethod
-    def _from_dict(cls, _dict):
-        """Initialize a TemplateStateStore object from a json dictionary."""
-        return cls.from_dict(_dict)
-
-    def to_dict(self) -> Dict:
-        """Return a json dictionary representing this model."""
-        _dict = {}
-        if hasattr(self, 'version') and self.version is not None:
-            _dict['version'] = self.version
-        if hasattr(self, 'terraform_version') and self.terraform_version is not None:
-            _dict['terraform_version'] = self.terraform_version
-        if hasattr(self, 'serial') and self.serial is not None:
-            _dict['serial'] = self.serial
-        if hasattr(self, 'lineage') and self.lineage is not None:
-            _dict['lineage'] = self.lineage
-        if hasattr(self, 'modules') and self.modules is not None:
-            _dict['modules'] = self.modules
-        return _dict
-
-    def _to_dict(self):
-        """Return a json dictionary representing this model."""
-        return self.to_dict()
-
-    def __str__(self) -> str:
-        """Return a `str` version of this TemplateStateStore object."""
-        return json.dumps(self.to_dict(), indent=2)
-
-    def __eq__(self, other: 'TemplateStateStore') -> bool:
-        """Return `true` when self and other are equal, false otherwise."""
-        if not isinstance(other, self.__class__):
-            return False
-        return self.__dict__ == other.__dict__
-
-    def __ne__(self, other: 'TemplateStateStore') -> bool:
-        """Return `true` when self and other are not equal, false otherwise."""
-        return not self == other
-
 class TemplateValues():
     """
-    TemplateValues -.
+    Information about the input variables that are declared in the template that your
+    workspace points to.
 
     :attr List[object] values_metadata: (optional)
     """
@@ -10950,16 +13107,23 @@ class TemplateValues():
 
 class TerraformCommand():
     """
-    TerraformCommand -.
+    Inputs for running a Terraform command on the workspace.
 
-    :attr str command: (optional) Command to execute.
-    :attr str command_params: (optional) Command Parameters.
-    :attr str command_name: (optional) Command name.
-    :attr str command_desc: (optional) Command description.
+    :attr str command: (optional) You must provide the command to execute. Supported
+          commands are `show`,`taint`, `untaint`, `state`, `import`, `output`.
+    :attr str command_params: (optional) The required address parameters for the
+          command name. You can send the option flag and address parameter in the payload.
+          **Syntax ** "command_params": "<option>=<flag>", "<address>". **Example **
+          "command_params": "-allow-missing=true", "-lock=true",
+          "data.template_file.test".
+    :attr str command_name: (optional) The optional name for the command block.
+    :attr str command_desc: (optional) The optional text to describe the command
+          block.
     :attr str command_on_error: (optional) Instruction to continue or break in case
           of error.
     :attr str command_depends_on: (optional) Dependency on previous commands.
-    :attr str command_status: (optional) Command status.
+    :attr str command_status: (optional) Displays the command executed status,
+          either `success` or `failure`.
     """
 
     def __init__(self,
@@ -10974,14 +13138,23 @@ class TerraformCommand():
         """
         Initialize a TerraformCommand object.
 
-        :param str command: (optional) Command to execute.
-        :param str command_params: (optional) Command Parameters.
-        :param str command_name: (optional) Command name.
-        :param str command_desc: (optional) Command description.
+        :param str command: (optional) You must provide the command to execute.
+               Supported commands are `show`,`taint`, `untaint`, `state`, `import`,
+               `output`.
+        :param str command_params: (optional) The required address parameters for
+               the command name. You can send the option flag and address parameter in the
+               payload. **Syntax ** "command_params": "<option>=<flag>", "<address>".
+               **Example ** "command_params": "-allow-missing=true", "-lock=true",
+               "data.template_file.test".
+        :param str command_name: (optional) The optional name for the command
+               block.
+        :param str command_desc: (optional) The optional text to describe the
+               command block.
         :param str command_on_error: (optional) Instruction to continue or break in
                case of error.
         :param str command_depends_on: (optional) Dependency on previous commands.
-        :param str command_status: (optional) Command status.
+        :param str command_status: (optional) Displays the command executed status,
+               either `success` or `failure`.
         """
         self.command = command
         self.command_params = command_params
@@ -11003,10 +13176,10 @@ class TerraformCommand():
             args['command_name'] = _dict.get('command_name')
         if 'command_desc' in _dict:
             args['command_desc'] = _dict.get('command_desc')
-        if 'command_onError' in _dict:
-            args['command_on_error'] = _dict.get('command_onError')
-        if 'command_dependsOn' in _dict:
-            args['command_depends_on'] = _dict.get('command_dependsOn')
+        if 'command_on_error' in _dict:
+            args['command_on_error'] = _dict.get('command_on_error')
+        if 'command_depends_on' in _dict:
+            args['command_depends_on'] = _dict.get('command_depends_on')
         if 'command_status' in _dict:
             args['command_status'] = _dict.get('command_status')
         return cls(**args)
@@ -11028,9 +13201,9 @@ class TerraformCommand():
         if hasattr(self, 'command_desc') and self.command_desc is not None:
             _dict['command_desc'] = self.command_desc
         if hasattr(self, 'command_on_error') and self.command_on_error is not None:
-            _dict['command_onError'] = self.command_on_error
+            _dict['command_on_error'] = self.command_on_error
         if hasattr(self, 'command_depends_on') and self.command_depends_on is not None:
-            _dict['command_dependsOn'] = self.command_depends_on
+            _dict['command_depends_on'] = self.command_depends_on
         if hasattr(self, 'command_status') and self.command_status is not None:
             _dict['command_status'] = self.command_status
         return _dict
@@ -11157,10 +13330,18 @@ class UserValues():
     """
     UserValues -.
 
-    :attr List[object] env_values: (optional) EnvVariableRequest ..
+    :attr List[object] env_values: (optional) A list of environment variables that
+          you want to apply during the execution of a bash script or Terraform job. This
+          field must be provided as a list of key-value pairs, for example,
+          **TF_LOG=debug**. Each entry will be a map with one entry where `key is the
+          environment variable name and value is value`. You can define environment
+          variables for IBM Cloud catalog offerings that are provisioned by using a bash
+          script. See [example to use special environment
+          variable](https://cloud.ibm.com/docs/schematics?topic=schematics-set-parallelism#parallelism-example)
+           that are supported by Schematics.
     :attr str values: (optional) User values.
-    :attr List[WorkspaceVariableResponse] variablestore: (optional)
-          VariablesResponse -.
+    :attr List[WorkspaceVariableResponse] variablestore: (optional) Information
+          about the input variables that your template uses.
     """
 
     def __init__(self,
@@ -11171,10 +13352,18 @@ class UserValues():
         """
         Initialize a UserValues object.
 
-        :param List[object] env_values: (optional) EnvVariableRequest ..
+        :param List[object] env_values: (optional) A list of environment variables
+               that you want to apply during the execution of a bash script or Terraform
+               job. This field must be provided as a list of key-value pairs, for example,
+               **TF_LOG=debug**. Each entry will be a map with one entry where `key is the
+               environment variable name and value is value`. You can define environment
+               variables for IBM Cloud catalog offerings that are provisioned by using a
+               bash script. See [example to use special environment
+               variable](https://cloud.ibm.com/docs/schematics?topic=schematics-set-parallelism#parallelism-example)
+                that are supported by Schematics.
         :param str values: (optional) User values.
         :param List[WorkspaceVariableResponse] variablestore: (optional)
-               VariablesResponse -.
+               Information about the input variables that your template uses.
         """
         self.env_values = env_values
         self.values = values
@@ -11518,17 +13707,23 @@ class VariableMetadata():
 
 class VersionResponse():
     """
-    VersionResponse -.
+    Successful response when you retrieve detailed information about the IBM Cloud
+    Schematics API.
 
-    :attr str builddate: (optional) Build data.
-    :attr str buildno: (optional) Build number.
-    :attr str commitsha: (optional) Commit SHA.
-    :attr str helm_provider_version: (optional) Version number of 'Helm provider for
-          Terraform'.
-    :attr str helm_version: (optional) Helm Version.
+    :attr str builddate: (optional) The date when the API version was built.
+    :attr str buildno: (optional) The build number that the API is based on.
+    :attr str commitsha: (optional) The SHA value for the Git commit that represents
+          the latest version of the API.
+    :attr str helm_provider_version: (optional) The Terraform Helm provider version
+          that is used when you install Helm charts with Schematics.
+    :attr str helm_version: (optional) The Helm version that is used when you
+          install Helm charts with Schematics.
     :attr object supported_template_types: (optional) Supported template types.
-    :attr str terraform_provider_version: (optional) Terraform provider versions.
-    :attr str terraform_version: (optional) Terraform versions.
+    :attr str terraform_provider_version: (optional) The version of the IBM Cloud
+          Terraform provider plug-in that is used when you apply Terraform templates with
+          Schematics.
+    :attr str terraform_version: (optional) The Terraform version that is used when
+          you apply Terraform templates with Schematics.
     """
 
     def __init__(self,
@@ -11544,17 +13739,21 @@ class VersionResponse():
         """
         Initialize a VersionResponse object.
 
-        :param str builddate: (optional) Build data.
-        :param str buildno: (optional) Build number.
-        :param str commitsha: (optional) Commit SHA.
-        :param str helm_provider_version: (optional) Version number of 'Helm
-               provider for Terraform'.
-        :param str helm_version: (optional) Helm Version.
+        :param str builddate: (optional) The date when the API version was built.
+        :param str buildno: (optional) The build number that the API is based on.
+        :param str commitsha: (optional) The SHA value for the Git commit that
+               represents the latest version of the API.
+        :param str helm_provider_version: (optional) The Terraform Helm provider
+               version that is used when you install Helm charts with Schematics.
+        :param str helm_version: (optional) The Helm version that is used when you
+               install Helm charts with Schematics.
         :param object supported_template_types: (optional) Supported template
                types.
-        :param str terraform_provider_version: (optional) Terraform provider
-               versions.
-        :param str terraform_version: (optional) Terraform versions.
+        :param str terraform_provider_version: (optional) The version of the IBM
+               Cloud Terraform provider plug-in that is used when you apply Terraform
+               templates with Schematics.
+        :param str terraform_version: (optional) The Terraform version that is used
+               when you apply Terraform templates with Schematics.
         """
         self.builddate = builddate
         self.buildno = buildno
@@ -11633,11 +13832,11 @@ class VersionResponse():
 
 class WorkspaceActivities():
     """
-    WorkspaceActivities -.
+    List of workspace jobs.
 
-    :attr List[WorkspaceActivity] actions: (optional) List of workspace activities.
-    :attr str workspace_id: (optional) Workspace id.
-    :attr str workspace_name: (optional) Workspace name.
+    :attr List[WorkspaceActivity] actions: (optional) List of workspace jobs.
+    :attr str workspace_id: (optional) The ID of the workspace.
+    :attr str workspace_name: (optional) The name of the workspace.
     """
 
     def __init__(self,
@@ -11648,10 +13847,9 @@ class WorkspaceActivities():
         """
         Initialize a WorkspaceActivities object.
 
-        :param List[WorkspaceActivity] actions: (optional) List of workspace
-               activities.
-        :param str workspace_id: (optional) Workspace id.
-        :param str workspace_name: (optional) Workspace name.
+        :param List[WorkspaceActivity] actions: (optional) List of workspace jobs.
+        :param str workspace_id: (optional) The ID of the workspace.
+        :param str workspace_name: (optional) The name of the workspace.
         """
         self.actions = actions
         self.workspace_id = workspace_id
@@ -11705,14 +13903,36 @@ class WorkspaceActivities():
 
 class WorkspaceActivity():
     """
-    WorkspaceActivity -.
+    Information about the workspace jobs.
 
-    :attr str action_id: (optional) Activity id.
-    :attr List[str] message: (optional) StatusMessages -.
-    :attr str name: (optional) WorkspaceActivityAction activity action type.
-    :attr datetime performed_at: (optional) Activity performed at.
-    :attr str performed_by: (optional) Activity performed by.
-    :attr str status: (optional) WorkspaceActivityStatus activity status type.
+    :attr str action_id: (optional) The ID of the activity or job.  You can use the
+          ID to retrieve the logs for that job by using the `GET
+          /v1/workspaces/{id}/actions/{action_id}/logs` API.
+    :attr List[str] message: (optional) Information about the success or failure of
+          your job,  including a success or error code and the timestamp when the job
+          succeeded or failed.
+    :attr str name: (optional) The type of actovoty or job that ran against your
+          workspace.
+           * **APPLY**: The apply job was created when you used the `PUT
+          /v1/workspaces/{id}/apply` API to apply a Terraform template in IBM Cloud.
+           * **DESTROY**: The destroy job was created when you used the `DELETE
+          /v1/workspaces/{id}/destroy` API to remove all resources that are associated
+          with your workspace.
+           * **PLAN**: The plan job was created when you used the `POST
+          /v1/workspaces/{id}/plan` API to create a Terraform execution plan.
+    :attr datetime performed_at: (optional) The timestamp when the job was
+          initiated.
+    :attr str performed_by: (optional) The user ID who initiated the job.
+    :attr str status: (optional) The status of your activity or job. To retrieve the
+          URL to your job logs, use the GET /v1/workspaces/{id}/actions/{action_id}/logs
+          API.
+          * **COMPLETED**: The job completed successfully.
+          * **CREATED**: The job was created, but the provisioning, modification, or
+          removal of IBM Cloud resources has not started yet.
+          * **FAILED**: An error occurred during the plan, apply, or destroy job. Use the
+          job ID to retrieve the URL to the log files for your job.
+          * **IN PROGRESS**: The job is in progress. You can use the log_url to access the
+          logs.
     :attr List[WorkspaceActivityTemplate] templates: (optional) List of template
           activities.
     """
@@ -11729,12 +13949,34 @@ class WorkspaceActivity():
         """
         Initialize a WorkspaceActivity object.
 
-        :param str action_id: (optional) Activity id.
-        :param List[str] message: (optional) StatusMessages -.
-        :param str name: (optional) WorkspaceActivityAction activity action type.
-        :param datetime performed_at: (optional) Activity performed at.
-        :param str performed_by: (optional) Activity performed by.
-        :param str status: (optional) WorkspaceActivityStatus activity status type.
+        :param str action_id: (optional) The ID of the activity or job.  You can
+               use the ID to retrieve the logs for that job by using the `GET
+               /v1/workspaces/{id}/actions/{action_id}/logs` API.
+        :param List[str] message: (optional) Information about the success or
+               failure of your job,  including a success or error code and the timestamp
+               when the job succeeded or failed.
+        :param str name: (optional) The type of actovoty or job that ran against
+               your workspace.
+                * **APPLY**: The apply job was created when you used the `PUT
+               /v1/workspaces/{id}/apply` API to apply a Terraform template in IBM Cloud.
+                * **DESTROY**: The destroy job was created when you used the `DELETE
+               /v1/workspaces/{id}/destroy` API to remove all resources that are
+               associated with your workspace.
+                * **PLAN**: The plan job was created when you used the `POST
+               /v1/workspaces/{id}/plan` API to create a Terraform execution plan.
+        :param datetime performed_at: (optional) The timestamp when the job was
+               initiated.
+        :param str performed_by: (optional) The user ID who initiated the job.
+        :param str status: (optional) The status of your activity or job. To
+               retrieve the URL to your job logs, use the GET
+               /v1/workspaces/{id}/actions/{action_id}/logs API.
+               * **COMPLETED**: The job completed successfully.
+               * **CREATED**: The job was created, but the provisioning, modification, or
+               removal of IBM Cloud resources has not started yet.
+               * **FAILED**: An error occurred during the plan, apply, or destroy job. Use
+               the job ID to retrieve the URL to the log files for your job.
+               * **IN PROGRESS**: The job is in progress. You can use the log_url to
+               access the logs.
         :param List[WorkspaceActivityTemplate] templates: (optional) List of
                template activities.
         """
@@ -11810,9 +14052,13 @@ class WorkspaceActivity():
 
 class WorkspaceActivityApplyResult():
     """
-    WorkspaceActivityApplyResult -.
+    Response after successfully initiating a request to `apply` the Terraform template in
+    IBM Cloud.
 
-    :attr str activityid: (optional) Activity id.
+    :attr str activityid: (optional) The ID of the activity or job that was created
+          when you initiated a request to `apply` a Terraform template.  You can use the
+          ID to retrieve log file by using the `GET
+          /v1/workspaces/{id}/actions/{action_id}/logs` API.
     """
 
     def __init__(self,
@@ -11821,7 +14067,10 @@ class WorkspaceActivityApplyResult():
         """
         Initialize a WorkspaceActivityApplyResult object.
 
-        :param str activityid: (optional) Activity id.
+        :param str activityid: (optional) The ID of the activity or job that was
+               created when you initiated a request to `apply` a Terraform template.  You
+               can use the ID to retrieve log file by using the `GET
+               /v1/workspaces/{id}/actions/{action_id}/logs` API.
         """
         self.activityid = activityid
 
@@ -11865,9 +14114,13 @@ class WorkspaceActivityApplyResult():
 
 class WorkspaceActivityCommandResult():
     """
-    WorkspaceActivityCommandResult -.
+    Response after successfully initiating a request to run a workspace command on the
+    stack of resources provisioned using Terraform.
 
-    :attr str activityid: (optional) Activity id.
+    :attr str activityid: (optional) The ID of the job that was created when you
+          initiated a request to `apply` a Terraform template.  You can use the ID to
+          retrieve log file by using the `GET
+          /v1/workspaces/{id}/actions/{action_id}/logs` API.
     """
 
     def __init__(self,
@@ -11876,7 +14129,10 @@ class WorkspaceActivityCommandResult():
         """
         Initialize a WorkspaceActivityCommandResult object.
 
-        :param str activityid: (optional) Activity id.
+        :param str activityid: (optional) The ID of the job that was created when
+               you initiated a request to `apply` a Terraform template.  You can use the
+               ID to retrieve log file by using the `GET
+               /v1/workspaces/{id}/actions/{action_id}/logs` API.
         """
         self.activityid = activityid
 
@@ -11920,9 +14176,13 @@ class WorkspaceActivityCommandResult():
 
 class WorkspaceActivityDestroyResult():
     """
-    WorkspaceActivityDestroyResult -.
+    Response after successfully initiating a request to `destroy` the stack of resources
+    provisioned using Terraform.
 
-    :attr str activityid: (optional) Activity id.
+    :attr str activityid: (optional) The ID of the activity or job that was created
+          when you initiated a request to `destroy` a Terraform template.  You can use the
+          ID to retrieve log file by using the `GET
+          /v1/workspaces/{id}/actions/{action_id}/logs` API.
     """
 
     def __init__(self,
@@ -11931,7 +14191,10 @@ class WorkspaceActivityDestroyResult():
         """
         Initialize a WorkspaceActivityDestroyResult object.
 
-        :param str activityid: (optional) Activity id.
+        :param str activityid: (optional) The ID of the activity or job that was
+               created when you initiated a request to `destroy` a Terraform template.
+               You can use the ID to retrieve log file by using the `GET
+               /v1/workspaces/{id}/actions/{action_id}/logs` API.
         """
         self.activityid = activityid
 
@@ -11975,12 +14238,21 @@ class WorkspaceActivityDestroyResult():
 
 class WorkspaceActivityLogs():
     """
-    WorkspaceActivityLogs -.
+    Workspace job logs for all the templates in the workspace.
 
-    :attr str action_id: (optional) Activity id.
-    :attr str name: (optional) WorkspaceActivityAction activity action type.
-    :attr List[WorkspaceActivityTemplateLogs] templates: (optional) List of activity
-          logs.
+    :attr str action_id: (optional) The ID of the activity or job that ran against
+          your workspace.
+    :attr str name: (optional) The type of actovoty or job that ran against your
+          workspace.
+           * **APPLY**: The apply job was created when you used the `PUT
+          /v1/workspaces/{id}/apply` API to apply a Terraform template in IBM Cloud.
+           * **DESTROY**: The destroy job was created when you used the `DELETE
+          /v1/workspaces/{id}/destroy` API to remove all resources that are associated
+          with your workspace.
+           * **PLAN**: The plan job was created when you used the `POST
+          /v1/workspaces/{id}/plan` API to create a Terraform execution plan.
+    :attr List[WorkspaceActivityTemplateLogs] templates: (optional) List of
+          templates in the workspace.
     """
 
     def __init__(self,
@@ -11991,10 +14263,19 @@ class WorkspaceActivityLogs():
         """
         Initialize a WorkspaceActivityLogs object.
 
-        :param str action_id: (optional) Activity id.
-        :param str name: (optional) WorkspaceActivityAction activity action type.
+        :param str action_id: (optional) The ID of the activity or job that ran
+               against your workspace.
+        :param str name: (optional) The type of actovoty or job that ran against
+               your workspace.
+                * **APPLY**: The apply job was created when you used the `PUT
+               /v1/workspaces/{id}/apply` API to apply a Terraform template in IBM Cloud.
+                * **DESTROY**: The destroy job was created when you used the `DELETE
+               /v1/workspaces/{id}/destroy` API to remove all resources that are
+               associated with your workspace.
+                * **PLAN**: The plan job was created when you used the `POST
+               /v1/workspaces/{id}/plan` API to create a Terraform execution plan.
         :param List[WorkspaceActivityTemplateLogs] templates: (optional) List of
-               activity logs.
+               templates in the workspace.
         """
         self.action_id = action_id
         self.name = name
@@ -12048,10 +14329,11 @@ class WorkspaceActivityLogs():
 
 class WorkspaceActivityOptionsTemplate():
     """
-    Workspace Activity Options Template.
+    Workspace job options template.
 
-    :attr List[str] target: (optional) Workspace Activity targets.
-    :attr List[str] tf_vars: (optional) Workspace Activity tfvars.
+    :attr List[str] target: (optional) A list of Terraform resources to target.
+    :attr List[str] tf_vars: (optional) Terraform variables for the workspace job
+          options.
     """
 
     def __init__(self,
@@ -12061,8 +14343,10 @@ class WorkspaceActivityOptionsTemplate():
         """
         Initialize a WorkspaceActivityOptionsTemplate object.
 
-        :param List[str] target: (optional) Workspace Activity targets.
-        :param List[str] tf_vars: (optional) Workspace Activity tfvars.
+        :param List[str] target: (optional) A list of Terraform resources to
+               target.
+        :param List[str] tf_vars: (optional) Terraform variables for the workspace
+               job options.
         """
         self.target = target
         self.tf_vars = tf_vars
@@ -12111,9 +14395,13 @@ class WorkspaceActivityOptionsTemplate():
 
 class WorkspaceActivityPlanResult():
     """
-    WorkspaceActivityPlanResult -.
+    Response after successfully initiating a request to `plan` the Terraform template in
+    IBM Cloud.
 
-    :attr str activityid: (optional) Activity id.
+    :attr str activityid: (optional) The ID of the activity or job that was created
+          when you initiated a request to `plan` a Terraform template.  You can use the ID
+          to retrieve log file by using the `GET
+          /v1/workspaces/{id}/actions/{action_id}/logs` API.
     """
 
     def __init__(self,
@@ -12122,7 +14410,10 @@ class WorkspaceActivityPlanResult():
         """
         Initialize a WorkspaceActivityPlanResult object.
 
-        :param str activityid: (optional) Activity id.
+        :param str activityid: (optional) The ID of the activity or job that was
+               created when you initiated a request to `plan` a Terraform template.  You
+               can use the ID to retrieve log file by using the `GET
+               /v1/workspaces/{id}/actions/{action_id}/logs` API.
         """
         self.activityid = activityid
 
@@ -12166,9 +14457,13 @@ class WorkspaceActivityPlanResult():
 
 class WorkspaceActivityRefreshResult():
     """
-    WorkspaceActivityRefreshResult -.
+    Response after successfully initiating a request to `refresh` the Terraform template
+    in IBM Cloud.
 
-    :attr str activityid: (optional) Activity id.
+    :attr str activityid: (optional) The ID of the activity or job that was created
+          for your workspace `refresh` activity or job.  You can use the ID to retrieve
+          the log file by using the `GET /v1/workspaces/{id}/actions/{action_id}/logs`
+          API.
     """
 
     def __init__(self,
@@ -12177,7 +14472,10 @@ class WorkspaceActivityRefreshResult():
         """
         Initialize a WorkspaceActivityRefreshResult object.
 
-        :param str activityid: (optional) Activity id.
+        :param str activityid: (optional) The ID of the activity or job that was
+               created for your workspace `refresh` activity or job.  You can use the ID
+               to retrieve the log file by using the `GET
+               /v1/workspaces/{id}/actions/{action_id}/logs` API.
         """
         self.activityid = activityid
 
@@ -12221,16 +14519,27 @@ class WorkspaceActivityRefreshResult():
 
 class WorkspaceActivityTemplate():
     """
-    WorkspaceActivityTemplate -.
+    Information about the template in the workspace.
 
-    :attr datetime end_time: (optional) End time for the activity.
-    :attr LogSummary log_summary: (optional) LogSummary ...
+    :attr datetime end_time: (optional) End time for the job.
+    :attr LogSummary log_summary: (optional) Summary information extracted from the
+          job logs.
     :attr str log_url: (optional) Log URL.
     :attr str message: (optional) Message.
-    :attr datetime start_time: (optional) Activity start time.
-    :attr str status: (optional) WorkspaceActivityStatus activity status type.
-    :attr str template_id: (optional) Template id.
-    :attr str template_type: (optional) Template type.
+    :attr datetime start_time: (optional) Job start time.
+    :attr str status: (optional) The status of your activity or job. To retrieve the
+          URL to your job logs, use the GET /v1/workspaces/{id}/actions/{action_id}/logs
+          API.
+          * **COMPLETED**: The job completed successfully.
+          * **CREATED**: The job was created, but the provisioning, modification, or
+          removal of IBM Cloud resources has not started yet.
+          * **FAILED**: An error occurred during the plan, apply, or destroy job. Use the
+          job ID to retrieve the URL to the log files for your job.
+          * **IN PROGRESS**: The job is in progress. You can use the log_url to access the
+          logs.
+    :attr str template_id: (optional) The ID that was assigned to your Terraform
+          template or IBM Cloud catalog software template.
+    :attr str template_type: (optional) The type of template.
     """
 
     def __init__(self,
@@ -12246,14 +14555,25 @@ class WorkspaceActivityTemplate():
         """
         Initialize a WorkspaceActivityTemplate object.
 
-        :param datetime end_time: (optional) End time for the activity.
-        :param LogSummary log_summary: (optional) LogSummary ...
+        :param datetime end_time: (optional) End time for the job.
+        :param LogSummary log_summary: (optional) Summary information extracted
+               from the job logs.
         :param str log_url: (optional) Log URL.
         :param str message: (optional) Message.
-        :param datetime start_time: (optional) Activity start time.
-        :param str status: (optional) WorkspaceActivityStatus activity status type.
-        :param str template_id: (optional) Template id.
-        :param str template_type: (optional) Template type.
+        :param datetime start_time: (optional) Job start time.
+        :param str status: (optional) The status of your activity or job. To
+               retrieve the URL to your job logs, use the GET
+               /v1/workspaces/{id}/actions/{action_id}/logs API.
+               * **COMPLETED**: The job completed successfully.
+               * **CREATED**: The job was created, but the provisioning, modification, or
+               removal of IBM Cloud resources has not started yet.
+               * **FAILED**: An error occurred during the plan, apply, or destroy job. Use
+               the job ID to retrieve the URL to the log files for your job.
+               * **IN PROGRESS**: The job is in progress. You can use the log_url to
+               access the logs.
+        :param str template_id: (optional) The ID that was assigned to your
+               Terraform template or IBM Cloud catalog software template.
+        :param str template_type: (optional) The type of template.
         """
         self.end_time = end_time
         self.log_summary = log_summary
@@ -12332,11 +14652,14 @@ class WorkspaceActivityTemplate():
 
 class WorkspaceActivityTemplateLogs():
     """
-    WorkspaceActivityTemplateLogs -.
+    Information about the log URL for a job that ran for a template against your
+    workspace.
 
-    :attr str log_url: (optional) Log URL.
-    :attr str template_id: (optional) Template id.
-    :attr str template_type: (optional) Template type.
+    :attr str log_url: (optional) The URL to access the logs that were created
+          during the plan, apply, or destroy job.
+    :attr str template_id: (optional) The ID that was assigned to your Terraform
+          template or IBM Cloud catalog software template.
+    :attr str template_type: (optional) The type of template.
     """
 
     def __init__(self,
@@ -12347,9 +14670,11 @@ class WorkspaceActivityTemplateLogs():
         """
         Initialize a WorkspaceActivityTemplateLogs object.
 
-        :param str log_url: (optional) Log URL.
-        :param str template_id: (optional) Template id.
-        :param str template_type: (optional) Template type.
+        :param str log_url: (optional) The URL to access the logs that were created
+               during the plan, apply, or destroy job.
+        :param str template_id: (optional) The ID that was assigned to your
+               Terraform template or IBM Cloud catalog software template.
+        :param str template_type: (optional) The type of template.
         """
         self.log_url = log_url
         self.template_id = template_id
@@ -12403,7 +14728,7 @@ class WorkspaceActivityTemplateLogs():
 
 class WorkspaceBulkDeleteResponse():
     """
-    WorkspaceBulkDeleteResponse -.
+    Response after successfully initiating the bulk job to delete multiple workspaces.
 
     :attr str job: (optional) Workspace deletion job name.
     :attr str job_id: (optional) Workspace deletion job id.
@@ -12466,18 +14791,20 @@ class WorkspaceBulkDeleteResponse():
 
 class WorkspaceJobResponse():
     """
-    WorkspaceJobResponse -.
+    Response from the workspace bulk job status.
 
-    :attr JobStatusType job_status: (optional) JobStatusType -.
+    :attr WorkspaceJobStatusType job_status: (optional) Status of the workspace bulk
+          job.
     """
 
     def __init__(self,
                  *,
-                 job_status: 'JobStatusType' = None) -> None:
+                 job_status: 'WorkspaceJobStatusType' = None) -> None:
         """
         Initialize a WorkspaceJobResponse object.
 
-        :param JobStatusType job_status: (optional) JobStatusType -.
+        :param WorkspaceJobStatusType job_status: (optional) Status of the
+               workspace bulk job.
         """
         self.job_status = job_status
 
@@ -12486,7 +14813,7 @@ class WorkspaceJobResponse():
         """Initialize a WorkspaceJobResponse object from a json dictionary."""
         args = {}
         if 'job_status' in _dict:
-            args['job_status'] = JobStatusType.from_dict(_dict.get('job_status'))
+            args['job_status'] = WorkspaceJobStatusType.from_dict(_dict.get('job_status'))
         return cls(**args)
 
     @classmethod
@@ -12519,39 +14846,159 @@ class WorkspaceJobResponse():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
+class WorkspaceJobStatusType():
+    """
+    Status of the workspace bulk job.
+
+    :attr List[str] failed: (optional) List of failed workspace jobs.
+    :attr List[str] in_progress: (optional) List of in_progress workspace jobs.
+    :attr List[str] success: (optional) List of successful workspace jobs.
+    :attr datetime last_updated_on: (optional) Workspace job status updated at.
+    """
+
+    def __init__(self,
+                 *,
+                 failed: List[str] = None,
+                 in_progress: List[str] = None,
+                 success: List[str] = None,
+                 last_updated_on: datetime = None) -> None:
+        """
+        Initialize a WorkspaceJobStatusType object.
+
+        :param List[str] failed: (optional) List of failed workspace jobs.
+        :param List[str] in_progress: (optional) List of in_progress workspace
+               jobs.
+        :param List[str] success: (optional) List of successful workspace jobs.
+        :param datetime last_updated_on: (optional) Workspace job status updated
+               at.
+        """
+        self.failed = failed
+        self.in_progress = in_progress
+        self.success = success
+        self.last_updated_on = last_updated_on
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'WorkspaceJobStatusType':
+        """Initialize a WorkspaceJobStatusType object from a json dictionary."""
+        args = {}
+        if 'failed' in _dict:
+            args['failed'] = _dict.get('failed')
+        if 'in_progress' in _dict:
+            args['in_progress'] = _dict.get('in_progress')
+        if 'success' in _dict:
+            args['success'] = _dict.get('success')
+        if 'last_updated_on' in _dict:
+            args['last_updated_on'] = string_to_datetime(_dict.get('last_updated_on'))
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a WorkspaceJobStatusType object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'failed') and self.failed is not None:
+            _dict['failed'] = self.failed
+        if hasattr(self, 'in_progress') and self.in_progress is not None:
+            _dict['in_progress'] = self.in_progress
+        if hasattr(self, 'success') and self.success is not None:
+            _dict['success'] = self.success
+        if hasattr(self, 'last_updated_on') and self.last_updated_on is not None:
+            _dict['last_updated_on'] = datetime_to_string(self.last_updated_on)
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this WorkspaceJobStatusType object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'WorkspaceJobStatusType') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'WorkspaceJobStatusType') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
 class WorkspaceResponse():
     """
-    WorkspaceResponse - request returned by create.
+    Workspace details.
 
     :attr List[str] applied_shareddata_ids: (optional) List of applied shared
-          dataset id.
-    :attr CatalogRef catalog_ref: (optional) CatalogRef -.
-    :attr datetime created_at: (optional) Workspace created at.
-    :attr str created_by: (optional) Workspace created by.
-    :attr str crn: (optional) Workspace CRN.
-    :attr str description: (optional) Workspace description.
-    :attr str id: (optional) Workspace id.
-    :attr datetime last_health_check_at: (optional) Last health checked at.
-    :attr str location: (optional) Workspace location.
-    :attr str name: (optional) Workspace name.
-    :attr str resource_group: (optional) Workspace resource group.
-    :attr List[TemplateRunTimeDataResponse] runtime_data: (optional) Workspace
-          runtime data.
-    :attr SharedTargetDataResponse shared_data: (optional) SharedTargetDataResponse
-          -.
-    :attr str status: (optional) Workspace status type.
-    :attr List[str] tags: (optional) Workspace tags.
-    :attr List[TemplateSourceDataResponse] template_data: (optional) Workspace
-          template data.
-    :attr str template_ref: (optional) Workspace template ref.
-    :attr TemplateRepoResponse template_repo: (optional) TemplateRepoResponse -.
-    :attr List[str] type: (optional) List of Workspace type.
-    :attr datetime updated_at: (optional) Workspace updated at.
-    :attr str updated_by: (optional) Workspace updated by.
-    :attr WorkspaceStatusResponse workspace_status: (optional)
-          WorkspaceStatusResponse -.
-    :attr WorkspaceStatusMessage workspace_status_msg: (optional)
-          WorkspaceStatusMessage -.
+          dataset ID.
+    :attr CatalogRef catalog_ref: (optional) Information about the software template
+          that you chose from the IBM Cloud catalog. This information is returned for IBM
+          Cloud catalog offerings only.
+    :attr datetime created_at: (optional) The timestamp when the workspace was
+          created.
+    :attr str created_by: (optional) The user ID that created the workspace.
+    :attr str crn: (optional) The workspace CRN.
+    :attr str description: (optional) The description of the workspace.
+    :attr str id: (optional) The unique identifier of the workspace.
+    :attr datetime last_health_check_at: (optional) The timestamp when the last
+          health check was performed by Schematics.
+    :attr str location: (optional) The IBM Cloud location where your workspace was
+          provisioned.
+    :attr str name: (optional) The name of the workspace.
+    :attr str resource_group: (optional) The resource group the workspace was
+          provisioned in.
+    :attr List[TemplateRunTimeDataResponse] runtime_data: (optional) Information
+          about the provisioning engine, state file, and runtime logs.
+    :attr SharedTargetDataResponse shared_data: (optional) Information about the
+          Target used by the templates originating from IBM Cloud catalog offerings. This
+          information is not relevant when you create a workspace from your own Terraform
+          template.
+    :attr str status: (optional) The status of the workspace.
+            **Active**: After you successfully ran your infrastructure code by applying
+          your Terraform execution plan, the state of your workspace changes to `Active`.
+            **Connecting**: Schematics tries to connect to the template in your source
+          repo. If successfully connected, the template is downloaded and metadata, such
+          as input parameters, is extracted. After the template is downloaded, the state
+          of the workspace changes to `Scanning`.
+            **Draft**: The workspace is created without a reference to a GitHub or GitLab
+          repository.
+            **Failed**: If errors occur during the execution of your infrastructure code
+          in IBM Cloud Schematics, your workspace status is set to `Failed`.
+            **Inactive**: The Terraform template was scanned successfully and the
+          workspace creation is complete. You can now start running Schematics plan and
+          apply jobs to provision the IBM Cloud resources that you specified in your
+          template. If you have an `Active` workspace and decide to remove all your
+          resources, your workspace is set to `Inactive` after all your resources are
+          removed.
+            **In progress**: When you instruct IBM Cloud Schematics to run your
+          infrastructure code by applying your Terraform execution plan, the status of our
+          workspace changes to `In progress`.
+            **Scanning**: The download of the Terraform template is complete and
+          vulnerability scanning started. If the scan is successful, the workspace state
+          changes to `Inactive`. If errors in your template are found, the state changes
+          to `Template Error`.
+            **Stopped**: The Schematics plan, apply, or destroy job was cancelled
+          manually.
+            **Template Error**: The Schematics template contains errors and cannot be
+          processed.
+    :attr List[str] tags: (optional) A list of tags that are associated with the
+          workspace.
+    :attr List[TemplateSourceDataResponse] template_data: (optional) Information
+          about the Terraform or IBM Cloud software template that you want to use.
+    :attr str template_ref: (optional) Workspace template reference.
+    :attr TemplateRepoResponse template_repo: (optional) Information about the
+          Template repository used by the workspace.
+    :attr List[str] type: (optional) The Terraform version that was used to run your
+          Terraform code.
+    :attr datetime updated_at: (optional) The timestamp when the workspace was last
+          updated.
+    :attr str updated_by: (optional) The user ID that updated the workspace.
+    :attr WorkspaceStatusResponse workspace_status: (optional) Response that
+          indicate the status of the workspace as either frozen or locked.
+    :attr WorkspaceStatusMessage workspace_status_msg: (optional) Information about
+          the last job that ran against the workspace. -.
     """
 
     def __init__(self,
@@ -12583,35 +15030,75 @@ class WorkspaceResponse():
         Initialize a WorkspaceResponse object.
 
         :param List[str] applied_shareddata_ids: (optional) List of applied shared
-               dataset id.
-        :param CatalogRef catalog_ref: (optional) CatalogRef -.
-        :param datetime created_at: (optional) Workspace created at.
-        :param str created_by: (optional) Workspace created by.
-        :param str crn: (optional) Workspace CRN.
-        :param str description: (optional) Workspace description.
-        :param str id: (optional) Workspace id.
-        :param datetime last_health_check_at: (optional) Last health checked at.
-        :param str location: (optional) Workspace location.
-        :param str name: (optional) Workspace name.
-        :param str resource_group: (optional) Workspace resource group.
-        :param List[TemplateRunTimeDataResponse] runtime_data: (optional) Workspace
-               runtime data.
-        :param SharedTargetDataResponse shared_data: (optional)
-               SharedTargetDataResponse -.
-        :param str status: (optional) Workspace status type.
-        :param List[str] tags: (optional) Workspace tags.
-        :param List[TemplateSourceDataResponse] template_data: (optional) Workspace
-               template data.
-        :param str template_ref: (optional) Workspace template ref.
-        :param TemplateRepoResponse template_repo: (optional) TemplateRepoResponse
-               -.
-        :param List[str] type: (optional) List of Workspace type.
-        :param datetime updated_at: (optional) Workspace updated at.
-        :param str updated_by: (optional) Workspace updated by.
-        :param WorkspaceStatusResponse workspace_status: (optional)
-               WorkspaceStatusResponse -.
-        :param WorkspaceStatusMessage workspace_status_msg: (optional)
-               WorkspaceStatusMessage -.
+               dataset ID.
+        :param CatalogRef catalog_ref: (optional) Information about the software
+               template that you chose from the IBM Cloud catalog. This information is
+               returned for IBM Cloud catalog offerings only.
+        :param datetime created_at: (optional) The timestamp when the workspace was
+               created.
+        :param str created_by: (optional) The user ID that created the workspace.
+        :param str crn: (optional) The workspace CRN.
+        :param str description: (optional) The description of the workspace.
+        :param str id: (optional) The unique identifier of the workspace.
+        :param datetime last_health_check_at: (optional) The timestamp when the
+               last health check was performed by Schematics.
+        :param str location: (optional) The IBM Cloud location where your workspace
+               was provisioned.
+        :param str name: (optional) The name of the workspace.
+        :param str resource_group: (optional) The resource group the workspace was
+               provisioned in.
+        :param List[TemplateRunTimeDataResponse] runtime_data: (optional)
+               Information about the provisioning engine, state file, and runtime logs.
+        :param SharedTargetDataResponse shared_data: (optional) Information about
+               the Target used by the templates originating from IBM Cloud catalog
+               offerings. This information is not relevant when you create a workspace
+               from your own Terraform template.
+        :param str status: (optional) The status of the workspace.
+                 **Active**: After you successfully ran your infrastructure code by
+               applying your Terraform execution plan, the state of your workspace changes
+               to `Active`.
+                 **Connecting**: Schematics tries to connect to the template in your
+               source repo. If successfully connected, the template is downloaded and
+               metadata, such as input parameters, is extracted. After the template is
+               downloaded, the state of the workspace changes to `Scanning`.
+                 **Draft**: The workspace is created without a reference to a GitHub or
+               GitLab repository.
+                 **Failed**: If errors occur during the execution of your infrastructure
+               code in IBM Cloud Schematics, your workspace status is set to `Failed`.
+                 **Inactive**: The Terraform template was scanned successfully and the
+               workspace creation is complete. You can now start running Schematics plan
+               and apply jobs to provision the IBM Cloud resources that you specified in
+               your template. If you have an `Active` workspace and decide to remove all
+               your resources, your workspace is set to `Inactive` after all your
+               resources are removed.
+                 **In progress**: When you instruct IBM Cloud Schematics to run your
+               infrastructure code by applying your Terraform execution plan, the status
+               of our workspace changes to `In progress`.
+                 **Scanning**: The download of the Terraform template is complete and
+               vulnerability scanning started. If the scan is successful, the workspace
+               state changes to `Inactive`. If errors in your template are found, the
+               state changes to `Template Error`.
+                 **Stopped**: The Schematics plan, apply, or destroy job was cancelled
+               manually.
+                 **Template Error**: The Schematics template contains errors and cannot be
+               processed.
+        :param List[str] tags: (optional) A list of tags that are associated with
+               the workspace.
+        :param List[TemplateSourceDataResponse] template_data: (optional)
+               Information about the Terraform or IBM Cloud software template that you
+               want to use.
+        :param str template_ref: (optional) Workspace template reference.
+        :param TemplateRepoResponse template_repo: (optional) Information about the
+               Template repository used by the workspace.
+        :param List[str] type: (optional) The Terraform version that was used to
+               run your Terraform code.
+        :param datetime updated_at: (optional) The timestamp when the workspace was
+               last updated.
+        :param str updated_by: (optional) The user ID that updated the workspace.
+        :param WorkspaceStatusResponse workspace_status: (optional) Response that
+               indicate the status of the workspace as either frozen or locked.
+        :param WorkspaceStatusMessage workspace_status_msg: (optional) Information
+               about the last job that ran against the workspace. -.
         """
         self.applied_shareddata_ids = applied_shareddata_ids
         self.catalog_ref = catalog_ref
@@ -12765,12 +15252,17 @@ class WorkspaceResponse():
 
 class WorkspaceResponseList():
     """
-    WorkspaceResponseList -.
+    List of workspaces.
 
-    :attr int count: (optional) Total number of workspaces.
-    :attr int limit: Limit for the list.
-    :attr int offset: Offset for the list.
-    :attr List[WorkspaceResponse] workspaces: (optional) List of Workspaces.
+    :attr int count: (optional) The number of workspaces in the IBM Cloud account
+          that you have access to and that matched your search criteria.
+    :attr int limit: The `limit` value that you set in your API request and that
+          represents the maximum number of workspaces that you wanted to list.
+    :attr int offset: The `offset` value that you set in your API request. The
+          offset value represents the position number of the workspace from which you
+          wanted to start listing your workspaces.
+    :attr List[WorkspaceResponse] workspaces: (optional) The list of workspaces that
+          was included in your API response.
     """
 
     def __init__(self,
@@ -12782,10 +15274,15 @@ class WorkspaceResponseList():
         """
         Initialize a WorkspaceResponseList object.
 
-        :param int limit: Limit for the list.
-        :param int offset: Offset for the list.
-        :param int count: (optional) Total number of workspaces.
-        :param List[WorkspaceResponse] workspaces: (optional) List of Workspaces.
+        :param int limit: The `limit` value that you set in your API request and
+               that represents the maximum number of workspaces that you wanted to list.
+        :param int offset: The `offset` value that you set in your API request. The
+               offset value represents the position number of the workspace from which you
+               wanted to start listing your workspaces.
+        :param int count: (optional) The number of workspaces in the IBM Cloud
+               account that you have access to and that matched your search criteria.
+        :param List[WorkspaceResponse] workspaces: (optional) The list of
+               workspaces that was included in your API response.
         """
         self.count = count
         self.limit = limit
@@ -12848,10 +15345,12 @@ class WorkspaceResponseList():
 
 class WorkspaceStatusMessage():
     """
-    WorkspaceStatusMessage -.
+    Information about the last job that ran against the workspace. -.
 
-    :attr str status_code: (optional) Status code.
-    :attr str status_msg: (optional) Status message.
+    :attr str status_code: (optional) The success or error code that was returned
+          for the last plan, apply, or destroy job that ran against your workspace.
+    :attr str status_msg: (optional) The success or error message that was returned
+          for the last plan, apply, or destroy job that ran against your workspace.
     """
 
     def __init__(self,
@@ -12861,8 +15360,12 @@ class WorkspaceStatusMessage():
         """
         Initialize a WorkspaceStatusMessage object.
 
-        :param str status_code: (optional) Status code.
-        :param str status_msg: (optional) Status message.
+        :param str status_code: (optional) The success or error code that was
+               returned for the last plan, apply, or destroy job that ran against your
+               workspace.
+        :param str status_msg: (optional) The success or error message that was
+               returned for the last plan, apply, or destroy job that ran against your
+               workspace.
         """
         self.status_code = status_code
         self.status_msg = status_msg
@@ -12913,12 +15416,17 @@ class WorkspaceStatusRequest():
     """
     WorkspaceStatusRequest -.
 
-    :attr bool frozen: (optional) Frozen status.
-    :attr datetime frozen_at: (optional) Frozen at.
-    :attr str frozen_by: (optional) Frozen by.
-    :attr bool locked: (optional) Locked status.
-    :attr str locked_by: (optional) Locked by.
-    :attr datetime locked_time: (optional) Locked at.
+    :attr bool frozen: (optional) If set to true, the workspace is frozen and
+          changes to the workspace are disabled.
+    :attr datetime frozen_at: (optional) The timestamp when the workspace was
+          frozen.
+    :attr str frozen_by: (optional) The user ID that froze the workspace.
+    :attr bool locked: (optional) If set to true, the workspace is locked and
+          disabled for changes.
+    :attr str locked_by: (optional) The user ID that initiated a resource-related
+          job, such as applying or destroying resources, that locked the workspace.
+    :attr datetime locked_time: (optional) The timestamp when the workspace was
+          locked.
     """
 
     def __init__(self,
@@ -12932,12 +15440,18 @@ class WorkspaceStatusRequest():
         """
         Initialize a WorkspaceStatusRequest object.
 
-        :param bool frozen: (optional) Frozen status.
-        :param datetime frozen_at: (optional) Frozen at.
-        :param str frozen_by: (optional) Frozen by.
-        :param bool locked: (optional) Locked status.
-        :param str locked_by: (optional) Locked by.
-        :param datetime locked_time: (optional) Locked at.
+        :param bool frozen: (optional) If set to true, the workspace is frozen and
+               changes to the workspace are disabled.
+        :param datetime frozen_at: (optional) The timestamp when the workspace was
+               frozen.
+        :param str frozen_by: (optional) The user ID that froze the workspace.
+        :param bool locked: (optional) If set to true, the workspace is locked and
+               disabled for changes.
+        :param str locked_by: (optional) The user ID that initiated a
+               resource-related job, such as applying or destroying resources, that locked
+               the workspace.
+        :param datetime locked_time: (optional) The timestamp when the workspace
+               was locked.
         """
         self.frozen = frozen
         self.frozen_at = frozen_at
@@ -13006,14 +15520,19 @@ class WorkspaceStatusRequest():
 
 class WorkspaceStatusResponse():
     """
-    WorkspaceStatusResponse -.
+    Response that indicate the status of the workspace as either frozen or locked.
 
-    :attr bool frozen: (optional) Frozen status.
-    :attr datetime frozen_at: (optional) Frozen at.
-    :attr str frozen_by: (optional) Frozen by.
-    :attr bool locked: (optional) Locked status.
-    :attr str locked_by: (optional) Locked by.
-    :attr datetime locked_time: (optional) Locked at.
+    :attr bool frozen: (optional) If set to true, the workspace is frozen and
+          changes to the workspace are disabled.
+    :attr datetime frozen_at: (optional) The timestamp when the workspace was
+          frozen.
+    :attr str frozen_by: (optional) The user ID that froze the workspace.
+    :attr bool locked: (optional) If set to true, the workspace is locked and
+          disabled for changes.
+    :attr str locked_by: (optional) The user ID that initiated a resource-related
+          job, such as applying or destroying resources, that locked the workspace.
+    :attr datetime locked_time: (optional) The timestamp when the workspace was
+          locked.
     """
 
     def __init__(self,
@@ -13027,12 +15546,18 @@ class WorkspaceStatusResponse():
         """
         Initialize a WorkspaceStatusResponse object.
 
-        :param bool frozen: (optional) Frozen status.
-        :param datetime frozen_at: (optional) Frozen at.
-        :param str frozen_by: (optional) Frozen by.
-        :param bool locked: (optional) Locked status.
-        :param str locked_by: (optional) Locked by.
-        :param datetime locked_time: (optional) Locked at.
+        :param bool frozen: (optional) If set to true, the workspace is frozen and
+               changes to the workspace are disabled.
+        :param datetime frozen_at: (optional) The timestamp when the workspace was
+               frozen.
+        :param str frozen_by: (optional) The user ID that froze the workspace.
+        :param bool locked: (optional) If set to true, the workspace is locked and
+               disabled for changes.
+        :param str locked_by: (optional) The user ID that initiated a
+               resource-related job, such as applying or destroying resources, that locked
+               the workspace.
+        :param datetime locked_time: (optional) The timestamp when the workspace
+               was locked.
         """
         self.frozen = frozen
         self.frozen_at = frozen_at
@@ -13101,9 +15626,10 @@ class WorkspaceStatusResponse():
 
 class WorkspaceStatusUpdateRequest():
     """
-    WorkspaceStatusUpdateRequest -.
+    Input to update the workspace status.
 
-    :attr bool frozen: (optional) Frozen status.
+    :attr bool frozen: (optional) If set to true, the workspace is frozen and
+          changes to the workspace are disabled.
     :attr datetime frozen_at: (optional) Frozen at.
     :attr str frozen_by: (optional) Frozen by.
     :attr bool locked: (optional) Locked status.
@@ -13122,7 +15648,8 @@ class WorkspaceStatusUpdateRequest():
         """
         Initialize a WorkspaceStatusUpdateRequest object.
 
-        :param bool frozen: (optional) Frozen status.
+        :param bool frozen: (optional) If set to true, the workspace is frozen and
+               changes to the workspace are disabled.
         :param datetime frozen_at: (optional) Frozen at.
         :param str frozen_by: (optional) Frozen by.
         :param bool locked: (optional) Locked status.
@@ -13196,13 +15723,16 @@ class WorkspaceStatusUpdateRequest():
 
 class WorkspaceTemplateValuesResponse():
     """
-    WorkspaceTemplateValuesResponse -.
+    Response with the template details in your workspace.
 
-    :attr List[TemplateRunTimeDataResponse] runtime_data: (optional) List of runtime
-          data.
-    :attr SharedTargetData shared_data: (optional) SharedTargetData -.
-    :attr List[TemplateSourceDataResponse] template_data: (optional) List of source
-          data.
+    :attr List[TemplateRunTimeDataResponse] runtime_data: (optional) Information
+          about the provisioning engine, state file, and runtime logs.
+    :attr SharedTargetData shared_data: (optional) Information about the Target used
+          by the templates originating from the  IBM Cloud catalog offerings. This
+          information is not relevant for workspace created using your own Terraform
+          template.
+    :attr List[TemplateSourceDataResponse] template_data: (optional) Information
+          about the input variables that are used in the template.
     """
 
     def __init__(self,
@@ -13213,11 +15743,14 @@ class WorkspaceTemplateValuesResponse():
         """
         Initialize a WorkspaceTemplateValuesResponse object.
 
-        :param List[TemplateRunTimeDataResponse] runtime_data: (optional) List of
-               runtime data.
-        :param SharedTargetData shared_data: (optional) SharedTargetData -.
-        :param List[TemplateSourceDataResponse] template_data: (optional) List of
-               source data.
+        :param List[TemplateRunTimeDataResponse] runtime_data: (optional)
+               Information about the provisioning engine, state file, and runtime logs.
+        :param SharedTargetData shared_data: (optional) Information about the
+               Target used by the templates originating from the  IBM Cloud catalog
+               offerings. This information is not relevant for workspace created using
+               your own Terraform template.
+        :param List[TemplateSourceDataResponse] template_data: (optional)
+               Information about the input variables that are used in the template.
         """
         self.runtime_data = runtime_data
         self.shared_data = shared_data
@@ -13271,15 +15804,29 @@ class WorkspaceTemplateValuesResponse():
 
 class WorkspaceVariableRequest():
     """
-    WorkspaceVariableRequest -.
+    Input variables for your workspace.
 
-    :attr str description: (optional) Variable description.
-    :attr str name: (optional) Variable name.
-    :attr bool secure: (optional) Variable is secure.
-    :attr str type: (optional) Variable type.
+    :attr str description: (optional) The description of your input variable.
+    :attr str name: (optional) The name of the variable.
+    :attr bool secure: (optional) If set to `true`, the value of your input variable
+          is protected and not returned in your API response.
+    :attr str type: (optional) `Terraform v0.11` supports `string`, `list`, `map`
+          data type. For more information, about the syntax, see [Configuring input
+          variables](https://www.terraform.io/docs/configuration-0-11/variables.html).
+          <br> `Terraform v0.12` additionally, supports `bool`, `number` and complex data
+          types such as `list(type)`, `map(type)`,
+          `object({attribute name=type,..})`, `set(type)`, `tuple([type])`. For more
+          information, about the syntax to use the complex data type, see [Configuring
+          variables](https://www.terraform.io/docs/configuration/variables.html#type-constraints).
     :attr bool use_default: (optional) Variable uses default value; and is not
           over-ridden.
-    :attr str value: (optional) Value of the Variable.
+    :attr str value: (optional) Enter the value as a string for the primitive types
+          such as `bool`, `number`, `string`, and `HCL` format for the complex variables,
+          as you provide in a `.tfvars` file. **You need to enter escaped string of `HCL`
+          format for the complex variable value**. For more information, about how to
+          declare variables in a terraform configuration file and provide value to
+          schematics, see [Providing values for the declared
+          variables](https://cloud.ibm.com/docs/schematics?topic=schematics-create-tf-config#declare-variable).
     """
 
     def __init__(self,
@@ -13293,13 +15840,30 @@ class WorkspaceVariableRequest():
         """
         Initialize a WorkspaceVariableRequest object.
 
-        :param str description: (optional) Variable description.
-        :param str name: (optional) Variable name.
-        :param bool secure: (optional) Variable is secure.
-        :param str type: (optional) Variable type.
+        :param str description: (optional) The description of your input variable.
+        :param str name: (optional) The name of the variable.
+        :param bool secure: (optional) If set to `true`, the value of your input
+               variable is protected and not returned in your API response.
+        :param str type: (optional) `Terraform v0.11` supports `string`, `list`,
+               `map` data type. For more information, about the syntax, see [Configuring
+               input
+               variables](https://www.terraform.io/docs/configuration-0-11/variables.html).
+               <br> `Terraform v0.12` additionally, supports `bool`, `number` and complex
+               data types such as `list(type)`, `map(type)`,
+               `object({attribute name=type,..})`, `set(type)`, `tuple([type])`. For more
+               information, about the syntax to use the complex data type, see
+               [Configuring
+               variables](https://www.terraform.io/docs/configuration/variables.html#type-constraints).
         :param bool use_default: (optional) Variable uses default value; and is not
                over-ridden.
-        :param str value: (optional) Value of the Variable.
+        :param str value: (optional) Enter the value as a string for the primitive
+               types such as `bool`, `number`, `string`, and `HCL` format for the complex
+               variables, as you provide in a `.tfvars` file. **You need to enter escaped
+               string of `HCL` format for the complex variable value**. For more
+               information, about how to declare variables in a terraform configuration
+               file and provide value to schematics, see [Providing values for the
+               declared
+               variables](https://cloud.ibm.com/docs/schematics?topic=schematics-create-tf-config#declare-variable).
         """
         self.description = description
         self.name = name
@@ -13368,13 +15932,27 @@ class WorkspaceVariableRequest():
 
 class WorkspaceVariableResponse():
     """
-    WorkspaceVariableResponse -.
+    The description of your input variable.
 
-    :attr str description: (optional) Variable descrption.
-    :attr str name: (optional) Variable name.
-    :attr bool secure: (optional) Variable is secure.
-    :attr str type: (optional) Variable type.
-    :attr str value: (optional) Value of the Variable.
+    :attr str description: (optional) The description of your input variable.
+    :attr str name: (optional) The name of the variable.
+    :attr bool secure: (optional) If set to `true`, the value of your input variable
+          is protected and not returned in your API response.
+    :attr str type: (optional) `Terraform v0.11` supports `string`, `list`, `map`
+          data type. For more information, about the syntax, see [Configuring input
+          variables](https://www.terraform.io/docs/configuration-0-11/variables.html).
+          <br> `Terraform v0.12` additionally, supports `bool`, `number` and complex data
+          types such as `list(type)`, `map(type)`,
+          `object({attribute name=type,..})`, `set(type)`, `tuple([type])`. For more
+          information, about the syntax to use the complex data type, see [Configuring
+          variables](https://www.terraform.io/docs/configuration/variables.html#type-constraints).
+    :attr str value: (optional) Enter the value as a string for the primitive types
+          such as `bool`, `number`, `string`, and `HCL` format for the complex variables,
+          as you provide in a `.tfvars` file. **You need to enter escaped string of `HCL`
+          format for the complex variable value**. For more information, about how to
+          declare variables in a terraform configuration file and provide value to
+          schematics, see [Providing values for the declared
+          variables](https://cloud.ibm.com/docs/schematics?topic=schematics-create-tf-config#declare-variable).
     """
 
     def __init__(self,
@@ -13387,11 +15965,28 @@ class WorkspaceVariableResponse():
         """
         Initialize a WorkspaceVariableResponse object.
 
-        :param str description: (optional) Variable descrption.
-        :param str name: (optional) Variable name.
-        :param bool secure: (optional) Variable is secure.
-        :param str type: (optional) Variable type.
-        :param str value: (optional) Value of the Variable.
+        :param str description: (optional) The description of your input variable.
+        :param str name: (optional) The name of the variable.
+        :param bool secure: (optional) If set to `true`, the value of your input
+               variable is protected and not returned in your API response.
+        :param str type: (optional) `Terraform v0.11` supports `string`, `list`,
+               `map` data type. For more information, about the syntax, see [Configuring
+               input
+               variables](https://www.terraform.io/docs/configuration-0-11/variables.html).
+               <br> `Terraform v0.12` additionally, supports `bool`, `number` and complex
+               data types such as `list(type)`, `map(type)`,
+               `object({attribute name=type,..})`, `set(type)`, `tuple([type])`. For more
+               information, about the syntax to use the complex data type, see
+               [Configuring
+               variables](https://www.terraform.io/docs/configuration/variables.html#type-constraints).
+        :param str value: (optional) Enter the value as a string for the primitive
+               types such as `bool`, `number`, `string`, and `HCL` format for the complex
+               variables, as you provide in a `.tfvars` file. **You need to enter escaped
+               string of `HCL` format for the complex variable value**. For more
+               information, about how to declare variables in a terraform configuration
+               file and provide value to schematics, see [Providing values for the
+               declared
+               variables](https://cloud.ibm.com/docs/schematics?topic=schematics-create-tf-config#declare-variable).
         """
         self.description = description
         self.name = name

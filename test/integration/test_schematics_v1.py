@@ -207,7 +207,7 @@ class TestSchematicsV1():
         filePath = os.path.join(fileDir, "tarfiles", fileName)
         fileReader = open(filePath, "rb")
 
-        response = self.schematics_service.upload_template_tar(
+        response = self.schematics_service.template_repo_upload(
             w_id=ws['id'],
             t_id=ws['template_data'][0]['id'],
             file_content_type="multipart/form-data",
@@ -466,7 +466,7 @@ class TestSchematicsV1():
         filePath = os.path.join(fileDir, "tarfiles", fileName)
         fileReader = open(filePath, "rb")
 
-        upload_template_tar_response = self.schematics_service.upload_template_tar(
+        upload_template_tar_response = self.schematics_service.template_repo_upload(
             w_id=ws['id'],
             t_id=ws['template_data'][0]['id'],
             file_content_type="multipart/form-data",
