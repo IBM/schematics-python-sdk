@@ -15,7 +15,7 @@
 # limitations under the License.
 
 # IBM OpenAPI SDK Code Generator Version: 3.27.0-c07e12f4-20210209-225127
- 
+
 """
 Use IBM Cloud Schematics service to provision a stack of IBM Cloud resources described
 using a templating language, such as - Terraform files, Helm charts, Ansible playbooks,
@@ -39,6 +39,7 @@ from .common import get_sdk_headers
 # Service
 ##############################################################################
 
+
 class Schematics20ApiV2(BaseService):
     """The Schematics 2.0 API V2 service."""
 
@@ -46,23 +47,23 @@ class Schematics20ApiV2(BaseService):
     DEFAULT_SERVICE_NAME = 'schematics_2_0_api'
 
     @classmethod
-    def new_instance(cls,
-                     service_name: str = DEFAULT_SERVICE_NAME,
-                    ) -> 'Schematics20ApiV2':
+    def new_instance(
+        cls,
+        service_name: str = DEFAULT_SERVICE_NAME,
+    ) -> 'Schematics20ApiV2':
         """
         Return a new client for the Schematics 2.0 API service using the specified
                parameters and external configuration.
         """
         authenticator = get_authenticator_from_environment(service_name)
-        service = cls(
-            authenticator
-            )
+        service = cls(authenticator)
         service.configure_service(service_name)
         return service
 
-    def __init__(self,
-                 authenticator: Authenticator = None,
-                ) -> None:
+    def __init__(
+        self,
+        authenticator: Authenticator = None,
+    ) -> None:
         """
         Construct a new client for the Schematics 2.0 API service.
 
@@ -70,19 +71,13 @@ class Schematics20ApiV2(BaseService):
                Get up to date information from https://github.com/IBM/python-sdk-core/blob/master/README.md
                about initializing the authenticator of your choice.
         """
-        BaseService.__init__(self,
-                             service_url=self.DEFAULT_SERVICE_URL,
-                             authenticator=authenticator)
-
+        BaseService.__init__(self, service_url=self.DEFAULT_SERVICE_URL, authenticator=authenticator)
 
     #########################
     # utils
     #########################
 
-
-    def get_schematics_info(self,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_schematics_info(self, **kwargs) -> DetailedResponse:
         """
         Get the information about schematics.
 
@@ -95,9 +90,9 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_schematics_info')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_schematics_info'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -105,17 +100,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/info'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def list_schematics_access_rules(self,
-        **kwargs
-    ) -> DetailedResponse:
+    def list_schematics_access_rules(self, **kwargs) -> DetailedResponse:
         """
         Get all access_rules for all schematics resources.
 
@@ -128,9 +118,9 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_schematics_access_rules')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_schematics_access_rules'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -138,20 +128,13 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/access'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def get_schematics_access_rules_for_resource(self,
-        resource_name: str,
-        *,
-        command_name: str = None,
-        command_parameter: str = None,
-        **kwargs
+    def get_schematics_access_rules_for_resource(
+        self, resource_name: str, *, command_name: str = None, command_parameter: str = None, **kwargs
     ) -> DetailedResponse:
         """
         Get the access_rules for the schematics resource.
@@ -171,15 +154,14 @@ class Schematics20ApiV2(BaseService):
         if resource_name is None:
             raise ValueError('resource_name must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_schematics_access_rules_for_resource')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME,
+            service_version='V2',
+            operation_id='get_schematics_access_rules_for_resource',
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'command_name': command_name,
-            'command_parameter': command_parameter
-        }
+        params = {'command_name': command_name, 'command_parameter': command_parameter}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -189,19 +171,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(resource_name)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/access/{resource_name}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def get_schematics_command_names(self,
-        resource_name: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_schematics_command_names(self, resource_name: str, **kwargs) -> DetailedResponse:
         """
         Get all the allowed commands for schematics resource.
 
@@ -216,9 +191,9 @@ class Schematics20ApiV2(BaseService):
         if resource_name is None:
             raise ValueError('resource_name must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_schematics_command_names')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_schematics_command_names'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -229,9 +204,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(resource_name)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/commands/{resource_name}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
@@ -240,14 +213,8 @@ class Schematics20ApiV2(BaseService):
     # workspaces
     #########################
 
-
-    def list_workspaces(self,
-        *,
-        offset: int = None,
-        limit: int = None,
-        sort: str = None,
-        profile: str = None,
-        **kwargs
+    def list_workspaces(
+        self, *, offset: int = None, limit: int = None, sort: str = None, profile: str = None, **kwargs
     ) -> DetailedResponse:
         """
         Get all Workspace definitions.
@@ -275,36 +242,24 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_workspaces')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_workspaces'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'sort': sort,
-            'profile': profile
-        }
+        params = {'offset': offset, 'limit': limit, 'sort': sort, 'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
         url = '/v2/workspaces'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def create_workspace(self,
-        workspace: 'Workspace',
-        **kwargs
-    ) -> DetailedResponse:
+    def create_workspace(self, workspace: 'Workspace', **kwargs) -> DetailedResponse:
         """
         Create a Workspace definition.
 
@@ -321,9 +276,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(workspace, Workspace):
             workspace = convert_model(workspace)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='create_workspace')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='create_workspace'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(workspace)
@@ -334,21 +289,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/workspaces'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_workspace(self,
-        w_id: str,
-        *,
-        profile: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_workspace(self, w_id: str, *, profile: str = None, **kwargs) -> DetailedResponse:
         """
         Get the Workspace definition.
 
@@ -365,14 +311,12 @@ class Schematics20ApiV2(BaseService):
         if w_id is None:
             raise ValueError('w_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_workspace')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_workspace'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'profile': profile
-        }
+        params = {'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -382,20 +326,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def replace_workspace(self,
-        w_id: str,
-        workspace: 'Workspace',
-        **kwargs
-    ) -> DetailedResponse:
+    def replace_workspace(self, w_id: str, workspace: 'Workspace', **kwargs) -> DetailedResponse:
         """
         Replace the Workspace definition.
 
@@ -416,9 +352,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(workspace, Workspace):
             workspace = convert_model(workspace)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='replace_workspace')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='replace_workspace'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(workspace)
@@ -432,22 +368,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PUT', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def delete_workspace(self,
-        w_id: str,
-        *,
-        force: bool = None,
-        propagate: bool = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def delete_workspace(self, w_id: str, *, force: bool = None, propagate: bool = None, **kwargs) -> DetailedResponse:
         """
         Delete the Workspace.
 
@@ -467,13 +393,10 @@ class Schematics20ApiV2(BaseService):
 
         if w_id is None:
             raise ValueError('w_id must be provided')
-        headers = {
-            'force': force,
-            'propagate': propagate
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_workspace')
+        headers = {'force': force, 'propagate': propagate}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_workspace'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -483,19 +406,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def update_workspace(self,
-        w_id: str,
-        workspace: 'Workspace',
-        **kwargs
-    ) -> DetailedResponse:
+    def update_workspace(self, w_id: str, workspace: 'Workspace', **kwargs) -> DetailedResponse:
         """
         Update the Workspace definition.
 
@@ -516,9 +432,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(workspace, Workspace):
             workspace = convert_model(workspace)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='update_workspace')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='update_workspace'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(workspace)
@@ -532,22 +448,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PATCH',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PATCH', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def list_workspace_inputs(self,
-        w_id: str,
-        *,
-        offset: int = None,
-        limit: int = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def list_workspace_inputs(self, w_id: str, *, offset: int = None, limit: int = None, **kwargs) -> DetailedResponse:
         """
         Get the Workspace input parameter definitions.
 
@@ -574,15 +480,12 @@ class Schematics20ApiV2(BaseService):
         if w_id is None:
             raise ValueError('w_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_workspace_inputs')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_workspace_inputs'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit
-        }
+        params = {'offset': offset, 'limit': limit}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -592,22 +495,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/inputs'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def list_workspace_outputs(self,
-        w_id: str,
-        *,
-        offset: int = None,
-        limit: int = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def list_workspace_outputs(self, w_id: str, *, offset: int = None, limit: int = None, **kwargs) -> DetailedResponse:
         """
         Get the Workspace output parameter definitions.
 
@@ -633,15 +526,12 @@ class Schematics20ApiV2(BaseService):
         if w_id is None:
             raise ValueError('w_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_workspace_outputs')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_workspace_outputs'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit
-        }
+        params = {'offset': offset, 'limit': limit}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -651,10 +541,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/outputs'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
@@ -663,12 +550,8 @@ class Schematics20ApiV2(BaseService):
     # workspace-template
     #########################
 
-
-    def create_workspace_templates(self,
-        template_list_request: 'TemplateListRequest',
-        *,
-        x_github_token: str = None,
-        **kwargs
+    def create_workspace_templates(
+        self, template_list_request: 'TemplateListRequest', *, x_github_token: str = None, **kwargs
     ) -> DetailedResponse:
         """
         Create a new Workspace with Template definitions.
@@ -688,12 +571,10 @@ class Schematics20ApiV2(BaseService):
             raise ValueError('template_list_request must be provided')
         if isinstance(template_list_request, TemplateListRequest):
             template_list_request = convert_model(template_list_request)
-        headers = {
-            'X-Github-token': x_github_token
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='create_workspace_templates')
+        headers = {'X-Github-token': x_github_token}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='create_workspace_templates'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(template_list_request)
@@ -704,23 +585,13 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/templates'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def list_templates_in_workspace(self,
-        w_id: str,
-        *,
-        offset: int = None,
-        limit: int = None,
-        sort: str = None,
-        profile: str = None,
-        **kwargs
+    def list_templates_in_workspace(
+        self, w_id: str, *, offset: int = None, limit: int = None, sort: str = None, profile: str = None, **kwargs
     ) -> DetailedResponse:
         """
         Get all Template definitions from the Workspace.
@@ -752,17 +623,12 @@ class Schematics20ApiV2(BaseService):
         if w_id is None:
             raise ValueError('w_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_templates_in_workspace')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_templates_in_workspace'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'sort': sort,
-            'profile': profile
-        }
+        params = {'offset': offset, 'limit': limit, 'sort': sort, 'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -772,21 +638,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/templates'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def add_templates_to_workspace(self,
-        w_id: str,
-        template: 'Template',
-        *,
-        x_github_token: str = None,
-        **kwargs
+    def add_templates_to_workspace(
+        self, w_id: str, template: 'Template', *, x_github_token: str = None, **kwargs
     ) -> DetailedResponse:
         """
         Add a new Template definition to the Workspace.
@@ -810,12 +668,10 @@ class Schematics20ApiV2(BaseService):
             raise ValueError('template must be provided')
         if isinstance(template, Template):
             template = convert_model(template)
-        headers = {
-            'X-Github-token': x_github_token
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='add_templates_to_workspace')
+        headers = {'X-Github-token': x_github_token}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='add_templates_to_workspace'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(template)
@@ -829,22 +685,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/templates'.format(**path_param_dict)
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_template_in_workspace(self,
-        w_id: str,
-        t_id: str,
-        *,
-        profile: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_template_in_workspace(self, w_id: str, t_id: str, *, profile: str = None, **kwargs) -> DetailedResponse:
         """
         Get the Template definition from the Workspace.
 
@@ -868,14 +714,12 @@ class Schematics20ApiV2(BaseService):
         if t_id is None:
             raise ValueError('t_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_template_in_workspace')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_template_in_workspace'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'profile': profile
-        }
+        params = {'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -885,22 +729,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, t_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/templates/{t_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def replace_template_in_workspace(self,
-        w_id: str,
-        t_id: str,
-        *,
-        template: 'Template' = None,
-        x_github_token: str = None,
-        **kwargs
+    def replace_template_in_workspace(
+        self, w_id: str, t_id: str, *, template: 'Template' = None, x_github_token: str = None, **kwargs
     ) -> DetailedResponse:
         """
         Replace the Template definition in the Workspace.
@@ -928,14 +763,12 @@ class Schematics20ApiV2(BaseService):
             raise ValueError('w_id must be provided')
         if t_id is None:
             raise ValueError('t_id must be provided')
-        if  template is not None and isinstance(template, Template):
+        if template is not None and isinstance(template, Template):
             template = convert_model(template)
-        headers = {
-            'X-Github-token': x_github_token
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='replace_template_in_workspace')
+        headers = {'X-Github-token': x_github_token}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='replace_template_in_workspace'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(template)
@@ -949,22 +782,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, t_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/templates/{t_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PUT', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def delete_template_from_workspace(self,
-        w_id: str,
-        t_id: str,
-        *,
-        force: bool = None,
-        propagate: bool = None,
-        **kwargs
+    def delete_template_from_workspace(
+        self, w_id: str, t_id: str, *, force: bool = None, propagate: bool = None, **kwargs
     ) -> DetailedResponse:
         """
         Remove the Template from the Workspace.
@@ -993,13 +817,10 @@ class Schematics20ApiV2(BaseService):
             raise ValueError('w_id must be provided')
         if t_id is None:
             raise ValueError('t_id must be provided')
-        headers = {
-            'force': force,
-            'propagate': propagate
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_template_from_workspace')
+        headers = {'force': force, 'propagate': propagate}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_template_from_workspace'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -1009,21 +830,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, t_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/templates/{t_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def update_template_in_workspace(self,
-        w_id: str,
-        t_id: str,
-        *,
-        template: 'Template' = None,
-        x_github_token: str = None,
-        **kwargs
+    def update_template_in_workspace(
+        self, w_id: str, t_id: str, *, template: 'Template' = None, x_github_token: str = None, **kwargs
     ) -> DetailedResponse:
         """
         Update the Template definition in the Workspace.
@@ -1051,14 +864,12 @@ class Schematics20ApiV2(BaseService):
             raise ValueError('w_id must be provided')
         if t_id is None:
             raise ValueError('t_id must be provided')
-        if  template is not None and isinstance(template, Template):
+        if template is not None and isinstance(template, Template):
             template = convert_model(template)
-        headers = {
-            'X-Github-token': x_github_token
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='update_template_in_workspace')
+        headers = {'X-Github-token': x_github_token}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='update_template_in_workspace'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(template)
@@ -1072,16 +883,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, t_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/templates/{t_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PATCH',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PATCH', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def upload_template_tar_in_workspace(self,
+    def upload_template_tar_in_workspace(
+        self,
         w_id: str,
         t_id: str,
         *,
@@ -1116,12 +924,12 @@ class Schematics20ApiV2(BaseService):
             raise ValueError('w_id must be provided')
         if t_id is None:
             raise ValueError('t_id must be provided')
-        headers = {
-            'X-Github-token': x_github_token
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='upload_template_tar_in_workspace')
+        headers = {'X-Github-token': x_github_token}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME,
+            service_version='V2',
+            operation_id='upload_template_tar_in_workspace',
+        )
         headers.update(sdk_headers)
 
         form_data = []
@@ -1136,22 +944,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, t_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/templates/{t_id}/content'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       files=form_data)
+        request = self.prepare_request(method='PUT', url=url, headers=headers, files=form_data)
 
         response = self.send(request)
         return response
 
-
-    def get_template_readme(self,
-        w_id: str,
-        t_id: str,
-        *,
-        accept: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_template_readme(self, w_id: str, t_id: str, *, accept: str = None, **kwargs) -> DetailedResponse:
         """
         Get the Templates Readme file.
 
@@ -1176,12 +974,10 @@ class Schematics20ApiV2(BaseService):
             raise ValueError('w_id must be provided')
         if t_id is None:
             raise ValueError('t_id must be provided')
-        headers = {
-            'Accept': accept
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_template_readme')
+        headers = {'Accept': accept}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_template_readme'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -1191,19 +987,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, t_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/templates/{t_id}/readme'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def get_template_source(self,
-        w_id: str,
-        t_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_template_source(self, w_id: str, t_id: str, **kwargs) -> DetailedResponse:
         """
         Get the Template source details.
 
@@ -1227,9 +1016,9 @@ class Schematics20ApiV2(BaseService):
         if t_id is None:
             raise ValueError('t_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_template_source')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_template_source'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -1240,19 +1029,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, t_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/templates/{t_id}/source'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def list_template_inputs(self,
-        w_id: str,
-        t_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def list_template_inputs(self, w_id: str, t_id: str, **kwargs) -> DetailedResponse:
         """
         Get the Template input parameter definitions.
 
@@ -1276,9 +1058,9 @@ class Schematics20ApiV2(BaseService):
         if t_id is None:
             raise ValueError('t_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_template_inputs')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_template_inputs'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -1289,19 +1071,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, t_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/templates/{t_id}/inputs'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def list_template_outputs(self,
-        w_id: str,
-        t_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def list_template_outputs(self, w_id: str, t_id: str, **kwargs) -> DetailedResponse:
         """
         Get the Template output parameter definitions.
 
@@ -1325,9 +1100,9 @@ class Schematics20ApiV2(BaseService):
         if t_id is None:
             raise ValueError('t_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_template_outputs')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_template_outputs'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -1338,9 +1113,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, t_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/templates/{t_id}/outputs'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
@@ -1349,15 +1122,8 @@ class Schematics20ApiV2(BaseService):
     # workspace-flows
     #########################
 
-
-    def list_flows_in_workspace(self,
-        w_id: str,
-        *,
-        offset: int = None,
-        limit: int = None,
-        sort: str = None,
-        profile: str = None,
-        **kwargs
+    def list_flows_in_workspace(
+        self, w_id: str, *, offset: int = None, limit: int = None, sort: str = None, profile: str = None, **kwargs
     ) -> DetailedResponse:
         """
         Get all Flow definitions from the Workspace.
@@ -1389,17 +1155,12 @@ class Schematics20ApiV2(BaseService):
         if w_id is None:
             raise ValueError('w_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_flows_in_workspace')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_flows_in_workspace'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'sort': sort,
-            'profile': profile
-        }
+        params = {'offset': offset, 'limit': limit, 'sort': sort, 'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -1409,20 +1170,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/flows'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def add_flow_to_workspace(self,
-        w_id: str,
-        template_flow: 'TemplateFlow',
-        **kwargs
-    ) -> DetailedResponse:
+    def add_flow_to_workspace(self, w_id: str, template_flow: 'TemplateFlow', **kwargs) -> DetailedResponse:
         """
         Add a new Flow definition to the Workspace.
 
@@ -1443,9 +1196,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(template_flow, TemplateFlow):
             template_flow = convert_model(template_flow)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='add_flow_to_workspace')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='add_flow_to_workspace'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(template_flow)
@@ -1459,22 +1212,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/flows'.format(**path_param_dict)
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_flow_in_workspace(self,
-        w_id: str,
-        flow_id: str,
-        *,
-        profile: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_flow_in_workspace(self, w_id: str, flow_id: str, *, profile: str = None, **kwargs) -> DetailedResponse:
         """
         Get Flow definition from the Workspace.
 
@@ -1495,14 +1238,12 @@ class Schematics20ApiV2(BaseService):
         if flow_id is None:
             raise ValueError('flow_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_flow_in_workspace')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_flow_in_workspace'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'profile': profile
-        }
+        params = {'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -1512,21 +1253,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, flow_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/flows/{flow_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def replace_flow_in_workspace(self,
-        w_id: str,
-        flow_id: str,
-        *,
-        template_flow: 'TemplateFlow' = None,
-        **kwargs
+    def replace_flow_in_workspace(
+        self, w_id: str, flow_id: str, *, template_flow: 'TemplateFlow' = None, **kwargs
     ) -> DetailedResponse:
         """
         Replace the Flow definition in the Workspace.
@@ -1548,12 +1281,12 @@ class Schematics20ApiV2(BaseService):
             raise ValueError('w_id must be provided')
         if flow_id is None:
             raise ValueError('flow_id must be provided')
-        if  template_flow is not None and isinstance(template_flow, TemplateFlow):
+        if template_flow is not None and isinstance(template_flow, TemplateFlow):
             template_flow = convert_model(template_flow)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='replace_flow_in_workspace')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='replace_flow_in_workspace'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(template_flow)
@@ -1567,22 +1300,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, flow_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/flows/{flow_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PUT', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def delete_flow_from_workspace(self,
-        w_id: str,
-        flow_id: str,
-        *,
-        propagate: bool = None,
-        force: bool = None,
-        **kwargs
+    def delete_flow_from_workspace(
+        self, w_id: str, flow_id: str, *, propagate: bool = None, force: bool = None, **kwargs
     ) -> DetailedResponse:
         """
         Remove the Flow from the Workspace.
@@ -1606,13 +1330,10 @@ class Schematics20ApiV2(BaseService):
             raise ValueError('w_id must be provided')
         if flow_id is None:
             raise ValueError('flow_id must be provided')
-        headers = {
-            'propagate': propagate,
-            'force': force
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_flow_from_workspace')
+        headers = {'propagate': propagate, 'force': force}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_flow_from_workspace'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -1622,20 +1343,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, flow_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/flows/{flow_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def update_flow_in_workspace(self,
-        w_id: str,
-        flow_id: str,
-        *,
-        template_flow: 'TemplateFlow' = None,
-        **kwargs
+    def update_flow_in_workspace(
+        self, w_id: str, flow_id: str, *, template_flow: 'TemplateFlow' = None, **kwargs
     ) -> DetailedResponse:
         """
         Update the Flow definition in the Workspace.
@@ -1657,12 +1371,12 @@ class Schematics20ApiV2(BaseService):
             raise ValueError('w_id must be provided')
         if flow_id is None:
             raise ValueError('flow_id must be provided')
-        if  template_flow is not None and isinstance(template_flow, TemplateFlow):
+        if template_flow is not None and isinstance(template_flow, TemplateFlow):
             template_flow = convert_model(template_flow)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='update_flow_in_workspace')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='update_flow_in_workspace'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(template_flow)
@@ -1676,10 +1390,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, flow_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/flows/{flow_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PATCH',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PATCH', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
@@ -1688,14 +1399,8 @@ class Schematics20ApiV2(BaseService):
     # actions
     #########################
 
-
-    def list_actions(self,
-        *,
-        offset: int = None,
-        limit: int = None,
-        sort: str = None,
-        profile: str = None,
-        **kwargs
+    def list_actions(
+        self, *, offset: int = None, limit: int = None, sort: str = None, profile: str = None, **kwargs
     ) -> DetailedResponse:
         """
         List actions.
@@ -1733,38 +1438,24 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_actions')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_actions'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'sort': sort,
-            'profile': profile
-        }
+        params = {'offset': offset, 'limit': limit, 'sort': sort, 'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
         url = '/v2/actions'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def create_action(self,
-        action: 'Action',
-        *,
-        x_github_token: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def create_action(self, action: 'Action', *, x_github_token: str = None, **kwargs) -> DetailedResponse:
         """
         Create an action.
 
@@ -1804,12 +1495,10 @@ class Schematics20ApiV2(BaseService):
             raise ValueError('action must be provided')
         if isinstance(action, Action):
             action = convert_model(action)
-        headers = {
-            'X-Github-token': x_github_token
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='create_action')
+        headers = {'X-Github-token': x_github_token}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='create_action'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(action)
@@ -1820,21 +1509,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/actions'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_action(self,
-        action_id: str,
-        *,
-        profile: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_action(self, action_id: str, *, profile: str = None, **kwargs) -> DetailedResponse:
         """
         Get action details.
 
@@ -1858,14 +1538,12 @@ class Schematics20ApiV2(BaseService):
         if action_id is None:
             raise ValueError('action_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_action')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_action'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'profile': profile
-        }
+        params = {'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -1875,21 +1553,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(action_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/actions/{action_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def delete_action(self,
-        action_id: str,
-        *,
-        force: bool = None,
-        propagate: bool = None,
-        **kwargs
+    def delete_action(
+        self, action_id: str, *, force: bool = None, propagate: bool = None, **kwargs
     ) -> DetailedResponse:
         """
         Delete an action.
@@ -1919,13 +1589,10 @@ class Schematics20ApiV2(BaseService):
 
         if action_id is None:
             raise ValueError('action_id must be provided')
-        headers = {
-            'force': force,
-            'propagate': propagate
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_action')
+        headers = {'force': force, 'propagate': propagate}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_action'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -1935,20 +1602,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(action_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/actions/{action_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def update_action(self,
-        action_id: str,
-        action: 'Action',
-        *,
-        x_github_token: str = None,
-        **kwargs
+    def update_action(
+        self, action_id: str, action: 'Action', *, x_github_token: str = None, **kwargs
     ) -> DetailedResponse:
         """
         Update an action.
@@ -1987,12 +1647,10 @@ class Schematics20ApiV2(BaseService):
             raise ValueError('action must be provided')
         if isinstance(action, Action):
             action = convert_model(action)
-        headers = {
-            'X-Github-token': x_github_token
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='update_action')
+        headers = {'X-Github-token': x_github_token}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='update_action'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(action)
@@ -2006,21 +1664,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(action_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/actions/{action_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PATCH',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PATCH', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def upload_template_tar_action(self,
-        action_id: str,
-        *,
-        file: BinaryIO = None,
-        file_content_type: str = None,
-        **kwargs
+    def upload_template_tar_action(
+        self, action_id: str, *, file: BinaryIO = None, file_content_type: str = None, **kwargs
     ) -> DetailedResponse:
         """
         Upload a TAR file to an action.
@@ -2046,9 +1696,9 @@ class Schematics20ApiV2(BaseService):
         if action_id is None:
             raise ValueError('action_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='upload_template_tar_action')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='upload_template_tar_action'
+        )
         headers.update(sdk_headers)
 
         form_data = []
@@ -2063,10 +1713,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(action_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/actions/{action_id}/template_repo_upload'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       files=form_data)
+        request = self.prepare_request(method='PUT', url=url, headers=headers, files=form_data)
 
         response = self.send(request)
         return response
@@ -2075,8 +1722,8 @@ class Schematics20ApiV2(BaseService):
     # jobs
     #########################
 
-
-    def list_jobs(self,
+    def list_jobs(
+        self,
         *,
         offset: int = None,
         limit: int = None,
@@ -2128,9 +1775,9 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_jobs')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_jobs'
+        )
         headers.update(sdk_headers)
 
         params = {
@@ -2141,7 +1788,7 @@ class Schematics20ApiV2(BaseService):
             'resource': resource,
             'resource_id': resource_id,
             'action_id': action_id,
-            'list': list
+            'list': list,
         }
 
         if 'headers' in kwargs:
@@ -2149,20 +1796,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/jobs'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def create_job(self,
-        refresh_token: str,
-        job: 'Job',
-        **kwargs
-    ) -> DetailedResponse:
+    def create_job(self, refresh_token: str, job: 'Job', **kwargs) -> DetailedResponse:
         """
         Create a job.
 
@@ -2201,12 +1840,10 @@ class Schematics20ApiV2(BaseService):
             raise ValueError('job must be provided')
         if isinstance(job, Job):
             job = convert_model(job)
-        headers = {
-            'refresh_token': refresh_token
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='create_job')
+        headers = {'refresh_token': refresh_token}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='create_job'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(job)
@@ -2217,21 +1854,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/jobs'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_job(self,
-        job_id: str,
-        *,
-        profile: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_job(self, job_id: str, *, profile: str = None, **kwargs) -> DetailedResponse:
         """
         Get a job.
 
@@ -2253,14 +1881,12 @@ class Schematics20ApiV2(BaseService):
         if job_id is None:
             raise ValueError('job_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_job')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_job'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'profile': profile
-        }
+        params = {'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -2270,21 +1896,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(job_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/jobs/{job_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def update_job(self,
-        job_id: str,
-        refresh_token: str,
-        job: 'Job',
-        **kwargs
-    ) -> DetailedResponse:
+    def update_job(self, job_id: str, refresh_token: str, job: 'Job', **kwargs) -> DetailedResponse:
         """
         Update a job.
 
@@ -2331,12 +1948,10 @@ class Schematics20ApiV2(BaseService):
             raise ValueError('job must be provided')
         if isinstance(job, Job):
             job = convert_model(job)
-        headers = {
-            'refresh_token': refresh_token
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='update_job')
+        headers = {'refresh_token': refresh_token}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='update_job'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(job)
@@ -2350,22 +1965,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(job_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/jobs/{job_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PUT', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def delete_job(self,
-        job_id: str,
-        refresh_token: str,
-        *,
-        force: bool = None,
-        propagate: bool = None,
-        **kwargs
+    def delete_job(
+        self, job_id: str, refresh_token: str, *, force: bool = None, propagate: bool = None, **kwargs
     ) -> DetailedResponse:
         """
         Stop the running Job, and delete the Job.
@@ -2414,14 +2020,10 @@ class Schematics20ApiV2(BaseService):
             raise ValueError('job_id must be provided')
         if refresh_token is None:
             raise ValueError('refresh_token must be provided')
-        headers = {
-            'refresh_token': refresh_token,
-            'force': force,
-            'propagate': propagate
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_job')
+        headers = {'refresh_token': refresh_token, 'force': force, 'propagate': propagate}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_job'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -2431,18 +2033,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(job_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/jobs/{job_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def list_job_logs(self,
-        job_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def list_job_logs(self, job_id: str, **kwargs) -> DetailedResponse:
         """
         Get job logs.
 
@@ -2461,9 +2057,9 @@ class Schematics20ApiV2(BaseService):
         if job_id is None:
             raise ValueError('job_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_job_logs')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_job_logs'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -2474,19 +2070,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(job_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/jobs/{job_id}/logs'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def get_job_files(self,
-        job_id: str,
-        file_type: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_job_files(self, job_id: str, file_type: str, **kwargs) -> DetailedResponse:
         """
         Get output files from the Job record.
 
@@ -2509,14 +2098,12 @@ class Schematics20ApiV2(BaseService):
         if file_type is None:
             raise ValueError('file_type must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_job_files')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_job_files'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'file_type': file_type
-        }
+        params = {'file_type': file_type}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -2526,10 +2113,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(job_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/jobs/{job_id}/files'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
@@ -2538,14 +2122,8 @@ class Schematics20ApiV2(BaseService):
     # controls
     #########################
 
-
-    def list_controls(self,
-        *,
-        offset: int = None,
-        limit: int = None,
-        sort: str = None,
-        profile: str = None,
-        **kwargs
+    def list_controls(
+        self, *, offset: int = None, limit: int = None, sort: str = None, profile: str = None, **kwargs
     ) -> DetailedResponse:
         """
         Get all Controls definition.
@@ -2573,36 +2151,24 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_controls')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_controls'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'sort': sort,
-            'profile': profile
-        }
+        params = {'offset': offset, 'limit': limit, 'sort': sort, 'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
         url = '/v2/controls'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def create_controls(self,
-        controls: 'Controls',
-        **kwargs
-    ) -> DetailedResponse:
+    def create_controls(self, controls: 'Controls', **kwargs) -> DetailedResponse:
         """
         Register a new Controls definition.
 
@@ -2619,9 +2185,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(controls, Controls):
             controls = convert_model(controls)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='create_controls')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='create_controls'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(controls)
@@ -2632,21 +2198,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/controls'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_controls(self,
-        controls_id: str,
-        *,
-        profile: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_controls(self, controls_id: str, *, profile: str = None, **kwargs) -> DetailedResponse:
         """
         Get the Controls definition.
 
@@ -2663,14 +2220,12 @@ class Schematics20ApiV2(BaseService):
         if controls_id is None:
             raise ValueError('controls_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_controls')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_controls'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'profile': profile
-        }
+        params = {'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -2680,21 +2235,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(controls_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/controls/{controls_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def delete_controls(self,
-        controls_id: str,
-        *,
-        force: bool = None,
-        propagate: bool = None,
-        **kwargs
+    def delete_controls(
+        self, controls_id: str, *, force: bool = None, propagate: bool = None, **kwargs
     ) -> DetailedResponse:
         """
         Delete the Controls definition.
@@ -2714,13 +2261,10 @@ class Schematics20ApiV2(BaseService):
 
         if controls_id is None:
             raise ValueError('controls_id must be provided')
-        headers = {
-            'force': force,
-            'propagate': propagate
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_controls')
+        headers = {'force': force, 'propagate': propagate}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_controls'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -2730,19 +2274,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(controls_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/controls/{controls_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def update_controls(self,
-        controls_id: str,
-        controls: 'Controls',
-        **kwargs
-    ) -> DetailedResponse:
+    def update_controls(self, controls_id: str, controls: 'Controls', **kwargs) -> DetailedResponse:
         """
         Update the Controls definition.
 
@@ -2763,9 +2300,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(controls, Controls):
             controls = convert_model(controls)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='update_controls')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='update_controls'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(controls)
@@ -2779,16 +2316,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(controls_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/controls/{controls_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PATCH',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PATCH', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def list_capsules(self,
+    def list_capsules(
+        self,
         controls_id: str,
         *,
         offset: int = None,
@@ -2827,17 +2361,12 @@ class Schematics20ApiV2(BaseService):
         if controls_id is None:
             raise ValueError('controls_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_capsules')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_capsules'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'sort': sort,
-            'profile': profile
-        }
+        params = {'offset': offset, 'limit': limit, 'sort': sort, 'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -2847,20 +2376,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(controls_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/controls/{controls_id}/capsules'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def create_capsule(self,
-        controls_id: str,
-        capsule: 'Capsule',
-        **kwargs
-    ) -> DetailedResponse:
+    def create_capsule(self, controls_id: str, capsule: 'Capsule', **kwargs) -> DetailedResponse:
         """
         Register a Policy Capsule to the Controls definition.
 
@@ -2881,9 +2402,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(capsule, Capsule):
             capsule = convert_model(capsule)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='create_capsule')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='create_capsule'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(capsule)
@@ -2897,22 +2418,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(controls_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/controls/{controls_id}/capsules'.format(**path_param_dict)
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_capsule(self,
-        controls_id: str,
-        capsule_id: str,
-        *,
-        profile: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_capsule(self, controls_id: str, capsule_id: str, *, profile: str = None, **kwargs) -> DetailedResponse:
         """
         Get Policy Capsule from the Controls definition.
 
@@ -2934,14 +2445,12 @@ class Schematics20ApiV2(BaseService):
         if capsule_id is None:
             raise ValueError('capsule_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_capsule')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_capsule'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'profile': profile
-        }
+        params = {'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -2951,20 +2460,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(controls_id, capsule_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/controls/{controls_id}/capsules/{capsule_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def delete_capsule(self,
-        controls_id: str,
-        capsule_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def delete_capsule(self, controls_id: str, capsule_id: str, **kwargs) -> DetailedResponse:
         """
         Unregister the Policy Capsule from the Controls.
 
@@ -2985,9 +2486,9 @@ class Schematics20ApiV2(BaseService):
         if capsule_id is None:
             raise ValueError('capsule_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_capsule')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_capsule'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -2997,20 +2498,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(controls_id, capsule_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/controls/{controls_id}/capsules/{capsule_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def update_capsule(self,
-        controls_id: str,
-        capsule_id: str,
-        capsule: 'Capsule',
-        **kwargs
-    ) -> DetailedResponse:
+    def update_capsule(self, controls_id: str, capsule_id: str, capsule: 'Capsule', **kwargs) -> DetailedResponse:
         """
         Update the Policy Capsule in the Controls definition.
 
@@ -3036,9 +2529,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(capsule, Capsule):
             capsule = convert_model(capsule)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='update_capsule')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='update_capsule'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(capsule)
@@ -3052,10 +2545,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(controls_id, capsule_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/controls/{controls_id}/capsules/{capsule_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PATCH',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PATCH', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
@@ -3064,14 +2554,8 @@ class Schematics20ApiV2(BaseService):
     # settings-datasets
     #########################
 
-
-    def list_datasets(self,
-        *,
-        offset: int = None,
-        limit: int = None,
-        sort: str = None,
-        profile: str = None,
-        **kwargs
+    def list_datasets(
+        self, *, offset: int = None, limit: int = None, sort: str = None, profile: str = None, **kwargs
     ) -> DetailedResponse:
         """
         Get all shared datasets.
@@ -3099,36 +2583,24 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_datasets')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_datasets'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'sort': sort,
-            'profile': profile
-        }
+        params = {'offset': offset, 'limit': limit, 'sort': sort, 'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
         url = '/v2/datasets'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def create_dataset(self,
-        dataset: 'Dataset',
-        **kwargs
-    ) -> DetailedResponse:
+    def create_dataset(self, dataset: 'Dataset', **kwargs) -> DetailedResponse:
         """
         Create a shared dataset.
 
@@ -3145,9 +2617,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(dataset, Dataset):
             dataset = convert_model(dataset)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='create_dataset')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='create_dataset'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(dataset)
@@ -3158,19 +2630,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/datasets'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_dataset(self,
-        dataset_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_dataset(self, dataset_id: str, **kwargs) -> DetailedResponse:
         """
         Get the shared dataset.
 
@@ -3186,9 +2651,9 @@ class Schematics20ApiV2(BaseService):
         if dataset_id is None:
             raise ValueError('dataset_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_dataset')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_dataset'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -3199,19 +2664,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(dataset_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/datasets/{dataset_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def replace_dataset(self,
-        dataset_id: str,
-        dataset: 'Dataset',
-        **kwargs
-    ) -> DetailedResponse:
+    def replace_dataset(self, dataset_id: str, dataset: 'Dataset', **kwargs) -> DetailedResponse:
         """
         Replace the shared dataset.
 
@@ -3232,9 +2690,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(dataset, Dataset):
             dataset = convert_model(dataset)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='replace_dataset')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='replace_dataset'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(dataset)
@@ -3248,21 +2706,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(dataset_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/datasets/{dataset_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PUT', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def delete_dataset(self,
-        dataset_id: str,
-        *,
-        force: bool = None,
-        propagate: bool = None,
-        **kwargs
+    def delete_dataset(
+        self, dataset_id: str, *, force: bool = None, propagate: bool = None, **kwargs
     ) -> DetailedResponse:
         """
         Delete the Shared dataset.
@@ -3282,13 +2732,10 @@ class Schematics20ApiV2(BaseService):
 
         if dataset_id is None:
             raise ValueError('dataset_id must be provided')
-        headers = {
-            'force': force,
-            'propagate': propagate
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_dataset')
+        headers = {'force': force, 'propagate': propagate}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_dataset'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -3298,19 +2745,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(dataset_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/datasets/{dataset_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def update_ataset(self,
-        dataset_id: str,
-        dataset: 'Dataset',
-        **kwargs
-    ) -> DetailedResponse:
+    def update_ataset(self, dataset_id: str, dataset: 'Dataset', **kwargs) -> DetailedResponse:
         """
         Update the shared dataset.
 
@@ -3331,9 +2771,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(dataset, Dataset):
             dataset = convert_model(dataset)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='update_ataset')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='update_ataset'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(dataset)
@@ -3347,19 +2787,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(dataset_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/datasets/{dataset_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PATCH',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PATCH', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def list_dataset_variables(self,
-        dataset_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def list_dataset_variables(self, dataset_id: str, **kwargs) -> DetailedResponse:
         """
         Get all the Shared dataset variable definitions.
 
@@ -3375,9 +2808,9 @@ class Schematics20ApiV2(BaseService):
         if dataset_id is None:
             raise ValueError('dataset_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_dataset_variables')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_dataset_variables'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -3388,19 +2821,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(dataset_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/datasets/{dataset_id}/variables'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def get_dataset_variable(self,
-        dataset_id: str,
-        var_name: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_dataset_variable(self, dataset_id: str, var_name: str, **kwargs) -> DetailedResponse:
         """
         Get the Shared dataset.
 
@@ -3419,9 +2845,9 @@ class Schematics20ApiV2(BaseService):
         if var_name is None:
             raise ValueError('var_name must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_dataset_variable')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_dataset_variable'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -3432,9 +2858,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(dataset_id, var_name)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/datasets/{dataset_id}/values/{var_name}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
@@ -3443,14 +2867,8 @@ class Schematics20ApiV2(BaseService):
     # inventory
     #########################
 
-
-    def list_inventories(self,
-        *,
-        offset: int = None,
-        limit: int = None,
-        sort: str = None,
-        profile: str = None,
-        **kwargs
+    def list_inventories(
+        self, *, offset: int = None, limit: int = None, sort: str = None, profile: str = None, **kwargs
     ) -> DetailedResponse:
         """
         List inventory definitions.
@@ -3487,35 +2905,25 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_inventories')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_inventories'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'sort': sort,
-            'profile': profile
-        }
+        params = {'offset': offset, 'limit': limit, 'sort': sort, 'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
         url = '/v2/inventories'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def create_inventory(self,
-        inventory_resource_definition: 'InventoryResourceDefinition',
-        **kwargs
+    def create_inventory(
+        self, inventory_resource_definition: 'InventoryResourceDefinition', **kwargs
     ) -> DetailedResponse:
         """
         Create an inventory definition.
@@ -3548,9 +2956,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(inventory_resource_definition, InventoryResourceDefinition):
             inventory_resource_definition = convert_model(inventory_resource_definition)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='create_inventory')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='create_inventory'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(inventory_resource_definition)
@@ -3561,21 +2969,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/inventories'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_inventory(self,
-        inventory_id: str,
-        *,
-        profile: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_inventory(self, inventory_id: str, *, profile: str = None, **kwargs) -> DetailedResponse:
         """
         Get an inventory definition.
 
@@ -3605,14 +3004,12 @@ class Schematics20ApiV2(BaseService):
         if inventory_id is None:
             raise ValueError('inventory_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_inventory')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_inventory'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'profile': profile
-        }
+        params = {'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -3622,19 +3019,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(inventory_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/inventories/{inventory_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def replace_inventory(self,
-        inventory_id: str,
-        inventory_resource_definition: 'InventoryResourceDefinition',
-        **kwargs
+    def replace_inventory(
+        self, inventory_id: str, inventory_resource_definition: 'InventoryResourceDefinition', **kwargs
     ) -> DetailedResponse:
         """
         Update an inventory definition.
@@ -3670,9 +3061,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(inventory_resource_definition, InventoryResourceDefinition):
             inventory_resource_definition = convert_model(inventory_resource_definition)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='replace_inventory')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='replace_inventory'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(inventory_resource_definition)
@@ -3686,21 +3077,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(inventory_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/inventories/{inventory_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PUT', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def delete_inventory(self,
-        inventory_id: str,
-        *,
-        force: bool = None,
-        propagate: bool = None,
-        **kwargs
+    def delete_inventory(
+        self, inventory_id: str, *, force: bool = None, propagate: bool = None, **kwargs
     ) -> DetailedResponse:
         """
         Delete an inventory definition.
@@ -3732,13 +3115,10 @@ class Schematics20ApiV2(BaseService):
 
         if inventory_id is None:
             raise ValueError('inventory_id must be provided')
-        headers = {
-            'force': force,
-            'propagate': propagate
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_inventory')
+        headers = {'force': force, 'propagate': propagate}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_inventory'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -3748,21 +3128,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(inventory_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/inventories/{inventory_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def list_resource_query(self,
-        *,
-        offset: int = None,
-        limit: int = None,
-        sort: str = None,
-        profile: str = None,
-        **kwargs
+    def list_resource_query(
+        self, *, offset: int = None, limit: int = None, sort: str = None, profile: str = None, **kwargs
     ) -> DetailedResponse:
         """
         List resource queries.
@@ -3800,36 +3172,24 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_resource_query')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_resource_query'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'sort': sort,
-            'profile': profile
-        }
+        params = {'offset': offset, 'limit': limit, 'sort': sort, 'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
         url = '/v2/resources_query'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def create_resource_query(self,
-        resource_query_definition: 'ResourceQueryDefinition',
-        **kwargs
-    ) -> DetailedResponse:
+    def create_resource_query(self, resource_query_definition: 'ResourceQueryDefinition', **kwargs) -> DetailedResponse:
         """
         Create resource query.
 
@@ -3861,9 +3221,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(resource_query_definition, ResourceQueryDefinition):
             resource_query_definition = convert_model(resource_query_definition)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='create_resource_query')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='create_resource_query'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(resource_query_definition)
@@ -3874,19 +3234,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/resources_query'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_resources_query(self,
-        query_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_resources_query(self, query_id: str, **kwargs) -> DetailedResponse:
         """
         Get resources query.
 
@@ -3910,9 +3263,9 @@ class Schematics20ApiV2(BaseService):
         if query_id is None:
             raise ValueError('query_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_resources_query')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_resources_query'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -3923,18 +3276,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(query_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/resources_query/{query_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def replace_resources_query(self,
-        query_id: str,
-        resource_query_definition: 'ResourceQueryDefinition',
-        **kwargs
+    def replace_resources_query(
+        self, query_id: str, resource_query_definition: 'ResourceQueryDefinition', **kwargs
     ) -> DetailedResponse:
         """
         Update resources query definition.
@@ -3968,9 +3316,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(resource_query_definition, ResourceQueryDefinition):
             resource_query_definition = convert_model(resource_query_definition)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='replace_resources_query')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='replace_resources_query'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(resource_query_definition)
@@ -3984,19 +3332,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(query_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/resources_query/{query_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PUT', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def execute_resource_query(self,
-        query_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def execute_resource_query(self, query_id: str, **kwargs) -> DetailedResponse:
         """
         Run the resource query.
 
@@ -4012,9 +3353,9 @@ class Schematics20ApiV2(BaseService):
         if query_id is None:
             raise ValueError('query_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='execute_resource_query')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='execute_resource_query'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -4025,20 +3366,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(query_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/resources_query/{query_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='POST', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def delete_resources_query(self,
-        query_id: str,
-        *,
-        force: bool = None,
-        propagate: bool = None,
-        **kwargs
+    def delete_resources_query(
+        self, query_id: str, *, force: bool = None, propagate: bool = None, **kwargs
     ) -> DetailedResponse:
         """
         Delete resources query.
@@ -4065,13 +3399,10 @@ class Schematics20ApiV2(BaseService):
 
         if query_id is None:
             raise ValueError('query_id must be provided')
-        headers = {
-            'force': force,
-            'propagate': propagate
-        }
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_resources_query')
+        headers = {'force': force, 'propagate': propagate}
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_resources_query'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -4081,9 +3412,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(query_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/resources_query/{query_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers)
 
         response = self.send(request)
         return response
@@ -4092,14 +3421,7 @@ class Schematics20ApiV2(BaseService):
     # agent
     #########################
 
-
-    def list_agent(self,
-        *,
-        offset: int = None,
-        limit: int = None,
-        profile: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def list_agent(self, *, offset: int = None, limit: int = None, profile: str = None, **kwargs) -> DetailedResponse:
         """
         Get all registered agents, in the Account.
 
@@ -4122,35 +3444,24 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_agent')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_agent'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'profile': profile
-        }
+        params = {'offset': offset, 'limit': limit, 'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
         url = '/v2/settings/agents'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def register_agent(self,
-        agent: 'Agent',
-        **kwargs
-    ) -> DetailedResponse:
+    def register_agent(self, agent: 'Agent', **kwargs) -> DetailedResponse:
         """
         Register the agent with schematics.
 
@@ -4167,9 +3478,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(agent, Agent):
             agent = convert_model(agent)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='register_agent')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='register_agent'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(agent)
@@ -4180,21 +3491,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/settings/agents'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_agent(self,
-        agent_id: str,
-        *,
-        profile: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_agent(self, agent_id: str, *, profile: str = None, **kwargs) -> DetailedResponse:
         """
         Get the registered agent details.
 
@@ -4210,14 +3512,12 @@ class Schematics20ApiV2(BaseService):
         if agent_id is None:
             raise ValueError('agent_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_agent')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_agent'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'profile': profile
-        }
+        params = {'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -4227,19 +3527,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(agent_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/settings/agents/{agent_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def delete_agent(self,
-        agent_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def delete_agent(self, agent_id: str, **kwargs) -> DetailedResponse:
         """
         Deregister the agent.
 
@@ -4254,9 +3547,9 @@ class Schematics20ApiV2(BaseService):
         if agent_id is None:
             raise ValueError('agent_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_agent')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_agent'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -4266,19 +3559,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(agent_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/settings/agents/{agent_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def update_agent_registration(self,
-        agent_id: str,
-        agent: 'Agent',
-        **kwargs
-    ) -> DetailedResponse:
+    def update_agent_registration(self, agent_id: str, agent: 'Agent', **kwargs) -> DetailedResponse:
         """
         Update the agent registration.
 
@@ -4298,9 +3584,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(agent, Agent):
             agent = convert_model(agent)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='update_agent_registration')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='update_agent_registration'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(agent)
@@ -4314,10 +3600,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(agent_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/settings/agents/{agent_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PATCH',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PATCH', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
@@ -4326,12 +3609,7 @@ class Schematics20ApiV2(BaseService):
     # reference-data
     #########################
 
-
-    def get_dataset_variable_value(self,
-        dataset_id: str,
-        var_name: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_dataset_variable_value(self, dataset_id: str, var_name: str, **kwargs) -> DetailedResponse:
         """
         Shared dataset value for {var_name}.
 
@@ -4350,9 +3628,9 @@ class Schematics20ApiV2(BaseService):
         if var_name is None:
             raise ValueError('var_name must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_dataset_variable_value')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_dataset_variable_value'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -4363,19 +3641,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(dataset_id, var_name)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/datasets/{dataset_id}/values/{var_name}/value'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def get_credential_variable_value(self,
-        creds_id: str,
-        var_name: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_credential_variable_value(self, creds_id: str, var_name: str, **kwargs) -> DetailedResponse:
         """
         Get the credential value for {var_name}.
 
@@ -4394,9 +3665,9 @@ class Schematics20ApiV2(BaseService):
         if var_name is None:
             raise ValueError('var_name must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_credential_variable_value')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_credential_variable_value'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -4407,19 +3678,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(creds_id, var_name)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/credentials/{creds_id}/variables/{var_name}/value'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def get_inventory_variable_value(self,
-        inventory_id: str,
-        var_name: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_inventory_variable_value(self, inventory_id: str, var_name: str, **kwargs) -> DetailedResponse:
         """
         Get the resource ids for {var_name}.
 
@@ -4439,9 +3703,9 @@ class Schematics20ApiV2(BaseService):
         if var_name is None:
             raise ValueError('var_name must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_inventory_variable_value')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_inventory_variable_value'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -4452,21 +3716,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(inventory_id, var_name)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/inventories/{inventory_id}/variables/{var_name}/value'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def get_workspace_input_value(self,
-        w_id: str,
-        var_name: str,
-        *,
-        limit: int = None,
-        offset: int = None,
-        **kwargs
+    def get_workspace_input_value(
+        self, w_id: str, var_name: str, *, limit: int = None, offset: int = None, **kwargs
     ) -> DetailedResponse:
         """
         Workspace Input value for {var_name}, used by the recent job execution.
@@ -4497,15 +3753,12 @@ class Schematics20ApiV2(BaseService):
         if var_name is None:
             raise ValueError('var_name must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_workspace_input_value')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_workspace_input_value'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'limit': limit,
-            'offset': offset
-        }
+        params = {'limit': limit, 'offset': offset}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -4515,22 +3768,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, var_name)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/inputs/{var_name}/value'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def get_workspace_output_value(self,
-        w_id: str,
-        var_name: str,
-        *,
-        offset: int = None,
-        limit: int = None,
-        **kwargs
+    def get_workspace_output_value(
+        self, w_id: str, var_name: str, *, offset: int = None, limit: int = None, **kwargs
     ) -> DetailedResponse:
         """
         Workspace Output value for {var_name}, produced by the recent job execution.
@@ -4561,15 +3805,12 @@ class Schematics20ApiV2(BaseService):
         if var_name is None:
             raise ValueError('var_name must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_workspace_output_value')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_workspace_output_value'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit
-        }
+        params = {'offset': offset, 'limit': limit}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -4579,22 +3820,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, var_name)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/outputs/{var_name}/value'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def get_workspace_settings_value(self,
-        w_id: str,
-        var_name: str,
-        *,
-        offset: int = None,
-        limit: int = None,
-        **kwargs
+    def get_workspace_settings_value(
+        self, w_id: str, var_name: str, *, offset: int = None, limit: int = None, **kwargs
     ) -> DetailedResponse:
         """
         Workspace environment setting value for {var_name}, used by the recent job execution.
@@ -4625,15 +3857,12 @@ class Schematics20ApiV2(BaseService):
         if var_name is None:
             raise ValueError('var_name must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_workspace_settings_value')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_workspace_settings_value'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit
-        }
+        params = {'offset': offset, 'limit': limit}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -4643,23 +3872,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, var_name)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/settings/{var_name}/value'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def get_workspace_template_input_value(self,
-        w_id: str,
-        t_id: str,
-        var_name: str,
-        *,
-        offset: int = None,
-        limit: int = None,
-        **kwargs
+    def get_workspace_template_input_value(
+        self, w_id: str, t_id: str, var_name: str, *, offset: int = None, limit: int = None, **kwargs
     ) -> DetailedResponse:
         """
         Workspace Input value for {var_name}, used by the recent job execution.
@@ -4697,15 +3916,14 @@ class Schematics20ApiV2(BaseService):
         if var_name is None:
             raise ValueError('var_name must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_workspace_template_input_value')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME,
+            service_version='V2',
+            operation_id='get_workspace_template_input_value',
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit
-        }
+        params = {'offset': offset, 'limit': limit}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -4715,23 +3933,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, t_id, var_name)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/templates/{t_id}/inputs/{var_name}/value'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def get_workspace_template_output_value(self,
-        w_id: str,
-        t_id: str,
-        var_name: str,
-        *,
-        offset: int = None,
-        limit: int = None,
-        **kwargs
+    def get_workspace_template_output_value(
+        self, w_id: str, t_id: str, var_name: str, *, offset: int = None, limit: int = None, **kwargs
     ) -> DetailedResponse:
         """
         Workspace Output value for {var_name}, produced by the recent job execution.
@@ -4769,15 +3977,14 @@ class Schematics20ApiV2(BaseService):
         if var_name is None:
             raise ValueError('var_name must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_workspace_template_output_value')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME,
+            service_version='V2',
+            operation_id='get_workspace_template_output_value',
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit
-        }
+        params = {'offset': offset, 'limit': limit}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -4787,23 +3994,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, t_id, var_name)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/templates/{t_id}/outputs/{var_name}/value'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def get_workspace_template_setting_value(self,
-        w_id: str,
-        t_id: str,
-        var_name: str,
-        *,
-        offset: int = None,
-        limit: int = None,
-        **kwargs
+    def get_workspace_template_setting_value(
+        self, w_id: str, t_id: str, var_name: str, *, offset: int = None, limit: int = None, **kwargs
     ) -> DetailedResponse:
         """
         Workspace environment setting value for {var_name}, used by the recent job execution.
@@ -4841,15 +4038,14 @@ class Schematics20ApiV2(BaseService):
         if var_name is None:
             raise ValueError('var_name must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_workspace_template_setting_value')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME,
+            service_version='V2',
+            operation_id='get_workspace_template_setting_value',
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit
-        }
+        params = {'offset': offset, 'limit': limit}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -4859,23 +4055,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(w_id, t_id, var_name)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/workspaces/{w_id}/templates/{t_id}/settings/{var_name}/value'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def get_job_workspace_input_value(self,
-        job_id: str,
-        w_id: str,
-        var_name: str,
-        *,
-        offset: int = None,
-        limit: int = None,
-        **kwargs
+    def get_job_workspace_input_value(
+        self, job_id: str, w_id: str, var_name: str, *, offset: int = None, limit: int = None, **kwargs
     ) -> DetailedResponse:
         """
         Workspace Input value for {var_name}, used by the job {job_id}.
@@ -4910,15 +4096,12 @@ class Schematics20ApiV2(BaseService):
         if var_name is None:
             raise ValueError('var_name must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_job_workspace_input_value')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_job_workspace_input_value'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit
-        }
+        params = {'offset': offset, 'limit': limit}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -4928,23 +4111,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(job_id, w_id, var_name)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/jobs/{job_id}/workspaces/{w_id}/inputs/{var_name}/value'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def get_job_workspace_output_value(self,
-        job_id: str,
-        w_id: str,
-        var_name: str,
-        *,
-        offset: int = None,
-        limit: int = None,
-        **kwargs
+    def get_job_workspace_output_value(
+        self, job_id: str, w_id: str, var_name: str, *, offset: int = None, limit: int = None, **kwargs
     ) -> DetailedResponse:
         """
         Workspace Output value for {var_name}, produced by the job {job_id}.
@@ -4979,15 +4152,12 @@ class Schematics20ApiV2(BaseService):
         if var_name is None:
             raise ValueError('var_name must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_job_workspace_output_value')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_job_workspace_output_value'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit
-        }
+        params = {'offset': offset, 'limit': limit}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -4997,23 +4167,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(job_id, w_id, var_name)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/jobs/{job_id}/workspaces/{w_id}/outputs/{var_name}/value'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def get_job_workspace_setting_value(self,
-        job_id: str,
-        w_id: str,
-        var_name: str,
-        *,
-        offset: int = None,
-        limit: int = None,
-        **kwargs
+    def get_job_workspace_setting_value(
+        self, job_id: str, w_id: str, var_name: str, *, offset: int = None, limit: int = None, **kwargs
     ) -> DetailedResponse:
         """
         Workspace environment setting value for {var_name}, used by the recent job execution.
@@ -5048,15 +4208,12 @@ class Schematics20ApiV2(BaseService):
         if var_name is None:
             raise ValueError('var_name must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_job_workspace_setting_value')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_job_workspace_setting_value'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit
-        }
+        params = {'offset': offset, 'limit': limit}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -5066,10 +4223,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(job_id, w_id, var_name)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/jobs/{job_id}/workspaces/{w_id}/settings/{var_name}/value'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
@@ -5078,11 +4232,7 @@ class Schematics20ApiV2(BaseService):
     # settings-kms
     #########################
 
-
-    def get_kms_settings(self,
-        location: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_kms_settings(self, location: str, **kwargs) -> DetailedResponse:
         """
         Get a KMS settings.
 
@@ -5105,33 +4255,24 @@ class Schematics20ApiV2(BaseService):
         if location is None:
             raise ValueError('location must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_kms_settings')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_kms_settings'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'location': location
-        }
+        params = {'location': location}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
         url = '/v2/settings/kms'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def update_kms_settings(self,
-        kms_settings: 'KMSSettings',
-        **kwargs
-    ) -> DetailedResponse:
+    def update_kms_settings(self, kms_settings: 'KMSSettings', **kwargs) -> DetailedResponse:
         """
         Update a KMS settings.
 
@@ -5157,9 +4298,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(kms_settings, KMSSettings):
             kms_settings = convert_model(kms_settings)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='update_kms_settings')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='update_kms_settings'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(kms_settings)
@@ -5170,16 +4311,13 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/settings/kms'
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PUT', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def list_kms(self,
+    def list_kms(
+        self,
         encryption_scheme: str,
         location: str,
         *,
@@ -5220,9 +4358,9 @@ class Schematics20ApiV2(BaseService):
         if location is None:
             raise ValueError('location must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_kms')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_kms'
+        )
         headers.update(sdk_headers)
 
         params = {
@@ -5230,7 +4368,7 @@ class Schematics20ApiV2(BaseService):
             'location': location,
             'resource_group': resource_group,
             'limit': limit,
-            'sort': sort
+            'sort': sort,
         }
 
         if 'headers' in kwargs:
@@ -5238,10 +4376,7 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/settings/kms_instances'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
@@ -5250,14 +4385,7 @@ class Schematics20ApiV2(BaseService):
     # settings-triggers
     #########################
 
-
-    def list_triggers(self,
-        *,
-        offset: int = None,
-        limit: int = None,
-        sort: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def list_triggers(self, *, offset: int = None, limit: int = None, sort: str = None, **kwargs) -> DetailedResponse:
         """
         Get all the Schematics triggers.
 
@@ -5283,35 +4411,24 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_triggers')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_triggers'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'sort': sort
-        }
+        params = {'offset': offset, 'limit': limit, 'sort': sort}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
         url = '/v2/settings/triggers'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def create_trigger(self,
-        trigger: 'Trigger',
-        **kwargs
-    ) -> DetailedResponse:
+    def create_trigger(self, trigger: 'Trigger', **kwargs) -> DetailedResponse:
         """
         Register a Schematics trigger.
 
@@ -5329,9 +4446,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(trigger, Trigger):
             trigger = convert_model(trigger)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='create_trigger')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='create_trigger'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(trigger)
@@ -5342,19 +4459,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/settings/triggers'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_trigger(self,
-        trigger_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_trigger(self, trigger_id: str, **kwargs) -> DetailedResponse:
         """
         Get the Schematics trigger.
 
@@ -5369,9 +4479,9 @@ class Schematics20ApiV2(BaseService):
         if trigger_id is None:
             raise ValueError('trigger_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_trigger')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_trigger'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -5382,19 +4492,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(trigger_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/settings/triggers/{trigger_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def replace_trigger(self,
-        trigger_id: str,
-        trigger: 'Trigger',
-        **kwargs
-    ) -> DetailedResponse:
+    def replace_trigger(self, trigger_id: str, trigger: 'Trigger', **kwargs) -> DetailedResponse:
         """
         Replace the Schematics trigger.
 
@@ -5414,9 +4517,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(trigger, Trigger):
             trigger = convert_model(trigger)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='replace_trigger')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='replace_trigger'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(trigger)
@@ -5430,19 +4533,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(trigger_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/settings/triggers/{trigger_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PUT', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def delete_trigger(self,
-        trigger_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def delete_trigger(self, trigger_id: str, **kwargs) -> DetailedResponse:
         """
         Unregister the Schematics trigger.
 
@@ -5457,9 +4553,9 @@ class Schematics20ApiV2(BaseService):
         if trigger_id is None:
             raise ValueError('trigger_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_trigger')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_trigger'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -5469,9 +4565,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(trigger_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/settings/triggers/{trigger_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers)
 
         response = self.send(request)
         return response
@@ -5480,14 +4574,7 @@ class Schematics20ApiV2(BaseService):
     # settings-hook
     #########################
 
-
-    def list_webhook(self,
-        *,
-        offset: int = None,
-        limit: int = None,
-        sort: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def list_webhook(self, *, offset: int = None, limit: int = None, sort: str = None, **kwargs) -> DetailedResponse:
         """
         Get all the Schematics web-hooks.
 
@@ -5513,35 +4600,24 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_webhook')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_webhook'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'sort': sort
-        }
+        params = {'offset': offset, 'limit': limit, 'sort': sort}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
         url = '/v2/settings/hooks'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def create_webhook(self,
-        web_hook: 'WebHook',
-        **kwargs
-    ) -> DetailedResponse:
+    def create_webhook(self, web_hook: 'WebHook', **kwargs) -> DetailedResponse:
         """
         Register a Schematics web-hook.
 
@@ -5560,9 +4636,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(web_hook, WebHook):
             web_hook = convert_model(web_hook)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='create_webhook')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='create_webhook'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(web_hook)
@@ -5573,19 +4649,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/settings/hooks'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_webhook(self,
-        hook_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_webhook(self, hook_id: str, **kwargs) -> DetailedResponse:
         """
         Get the Schematics web-hook.
 
@@ -5600,9 +4669,9 @@ class Schematics20ApiV2(BaseService):
         if hook_id is None:
             raise ValueError('hook_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_webhook')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_webhook'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -5613,19 +4682,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(hook_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/settings/hooks/{hook_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def replace_webhook(self,
-        hook_id: str,
-        web_hook: 'WebHook',
-        **kwargs
-    ) -> DetailedResponse:
+    def replace_webhook(self, hook_id: str, web_hook: 'WebHook', **kwargs) -> DetailedResponse:
         """
         Replace the Schematics web-hook.
 
@@ -5645,9 +4707,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(web_hook, WebHook):
             web_hook = convert_model(web_hook)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='replace_webhook')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='replace_webhook'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(web_hook)
@@ -5661,19 +4723,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(hook_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/settings/hooks/{hook_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PUT', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def delete_webhook(self,
-        hook_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def delete_webhook(self, hook_id: str, **kwargs) -> DetailedResponse:
         """
         Unregister the Schematics web-hook.
 
@@ -5688,9 +4743,9 @@ class Schematics20ApiV2(BaseService):
         if hook_id is None:
             raise ValueError('hook_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_webhook')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_webhook'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -5700,9 +4755,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(hook_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/settings/hooks/{hook_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers)
 
         response = self.send(request)
         return response
@@ -5711,10 +4764,7 @@ class Schematics20ApiV2(BaseService):
     # settings-private-cluster
     #########################
 
-
-    def get_private_cluster(self,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_private_cluster(self, **kwargs) -> DetailedResponse:
         """
         Get the details of private cluster registered with Schematics.
 
@@ -5726,9 +4776,9 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_private_cluster')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_private_cluster'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -5736,18 +4786,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/settings/private_clusters'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def create_private_cluster(self,
-        private_cluster: 'PrivateCluster',
-        **kwargs
-    ) -> DetailedResponse:
+    def create_private_cluster(self, private_cluster: 'PrivateCluster', **kwargs) -> DetailedResponse:
         """
         Register your private cluster with Schematics.
 
@@ -5766,9 +4810,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(private_cluster, PrivateCluster):
             private_cluster = convert_model(private_cluster)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='create_private_cluster')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='create_private_cluster'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(private_cluster)
@@ -5779,18 +4823,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/settings/private_clusters'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def delete_private_cluster(self,
-        **kwargs
-    ) -> DetailedResponse:
+    def delete_private_cluster(self, **kwargs) -> DetailedResponse:
         """
         Un-register your private cluster with Schematics.
 
@@ -5802,18 +4840,16 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_private_cluster')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_private_cluster'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
 
         url = '/v2/settings/private_clusters'
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers)
 
         response = self.send(request)
         return response
@@ -5822,14 +4858,8 @@ class Schematics20ApiV2(BaseService):
     # settings-external-adapter
     #########################
 
-
-    def list_adapter(self,
-        *,
-        offset: int = None,
-        limit: int = None,
-        sort: str = None,
-        profile: str = None,
-        **kwargs
+    def list_adapter(
+        self, *, offset: int = None, limit: int = None, sort: str = None, profile: str = None, **kwargs
     ) -> DetailedResponse:
         """
         Get all Schematics Adapter definitions.
@@ -5857,36 +4887,24 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_adapter')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_adapter'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'sort': sort,
-            'profile': profile
-        }
+        params = {'offset': offset, 'limit': limit, 'sort': sort, 'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
         url = '/v2/settings/adapters'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def create_adapter(self,
-        adapter: 'Adapter',
-        **kwargs
-    ) -> DetailedResponse:
+    def create_adapter(self, adapter: 'Adapter', **kwargs) -> DetailedResponse:
         """
         Register an Adapter definition with Schematics.
 
@@ -5904,9 +4922,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(adapter, Adapter):
             adapter = convert_model(adapter)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='create_adapter')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='create_adapter'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(adapter)
@@ -5917,19 +4935,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/settings/adapters'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_adapter(self,
-        adapter_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_adapter(self, adapter_id: str, **kwargs) -> DetailedResponse:
         """
         Get the Schematics Adapter definition.
 
@@ -5944,9 +4955,9 @@ class Schematics20ApiV2(BaseService):
         if adapter_id is None:
             raise ValueError('adapter_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_adapter')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_adapter'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -5957,19 +4968,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(adapter_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/settings/adapters/{adapter_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def replace_adapter(self,
-        adapter_id: str,
-        adapter: 'Adapter',
-        **kwargs
-    ) -> DetailedResponse:
+    def replace_adapter(self, adapter_id: str, adapter: 'Adapter', **kwargs) -> DetailedResponse:
         """
         Replace the Schematics Adapter definition.
 
@@ -5989,9 +4993,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(adapter, Adapter):
             adapter = convert_model(adapter)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='replace_adapter')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='replace_adapter'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(adapter)
@@ -6005,19 +5009,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(adapter_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/settings/adapters/{adapter_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='PUT', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def delete_adapter(self,
-        adapter_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def delete_adapter(self, adapter_id: str, **kwargs) -> DetailedResponse:
         """
         Unregister the Schematics Adapter definition.
 
@@ -6032,9 +5029,9 @@ class Schematics20ApiV2(BaseService):
         if adapter_id is None:
             raise ValueError('adapter_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_adapter')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_adapter'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -6044,9 +5041,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(adapter_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/settings/adapters/{adapter_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers)
 
         response = self.send(request)
         return response
@@ -6055,14 +5050,7 @@ class Schematics20ApiV2(BaseService):
     # settings-datasource
     #########################
 
-
-    def list_connection(self,
-        *,
-        offset: int = None,
-        limit: int = None,
-        sort: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def list_connection(self, *, offset: int = None, limit: int = None, sort: str = None, **kwargs) -> DetailedResponse:
         """
         Get connection definition.
 
@@ -6088,35 +5076,24 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_connection')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_connection'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'sort': sort
-        }
+        params = {'offset': offset, 'limit': limit, 'sort': sort}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
         url = '/v2/settings/connections'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def create_connection(self,
-        connection: 'Connection',
-        **kwargs
-    ) -> DetailedResponse:
+    def create_connection(self, connection: 'Connection', **kwargs) -> DetailedResponse:
         """
         Register an connection definition for an external datastore.
 
@@ -6133,9 +5110,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(connection, Connection):
             connection = convert_model(connection)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='create_connection')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='create_connection'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(connection)
@@ -6146,19 +5123,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/settings/connections'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_connection(self,
-        connection_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_connection(self, connection_id: str, **kwargs) -> DetailedResponse:
         """
         Get connection definition for external datastore.
 
@@ -6174,9 +5144,9 @@ class Schematics20ApiV2(BaseService):
         if connection_id is None:
             raise ValueError('connection_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_connection')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_connection'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -6187,18 +5157,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(connection_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/settings/connections/{connection_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def delete_connection(self,
-        connection_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def delete_connection(self, connection_id: str, **kwargs) -> DetailedResponse:
         """
         Unregister connection definition.
 
@@ -6214,9 +5178,9 @@ class Schematics20ApiV2(BaseService):
         if connection_id is None:
             raise ValueError('connection_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_connection')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_connection'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -6226,20 +5190,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(connection_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/settings/connections/{connection_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def list_datasources(self,
-        *,
-        offset: int = None,
-        limit: int = None,
-        sort: str = None,
-        **kwargs
+    def list_datasources(
+        self, *, offset: int = None, limit: int = None, sort: str = None, **kwargs
     ) -> DetailedResponse:
         """
         Get all datasources registered with Schematics.
@@ -6266,35 +5223,24 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_datasources')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_datasources'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'sort': sort
-        }
+        params = {'offset': offset, 'limit': limit, 'sort': sort}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
         url = '/v2/settings/datasources'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def create_datasource(self,
-        datasource: 'Datasource',
-        **kwargs
-    ) -> DetailedResponse:
+    def create_datasource(self, datasource: 'Datasource', **kwargs) -> DetailedResponse:
         """
         Register a datasource definition.
 
@@ -6311,9 +5257,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(datasource, Datasource):
             datasource = convert_model(datasource)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='create_datasource')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='create_datasource'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(datasource)
@@ -6324,21 +5270,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/settings/datasources'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_data(self,
-        datasource_id: str,
-        *,
-        preview: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_data(self, datasource_id: str, *, preview: str = None, **kwargs) -> DetailedResponse:
         """
         Get a data from the datasource.
 
@@ -6354,14 +5291,12 @@ class Schematics20ApiV2(BaseService):
         if datasource_id is None:
             raise ValueError('datasource_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_data')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_data'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'preview': preview
-        }
+        params = {'preview': preview}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -6371,10 +5306,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(datasource_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/settings/datasources/{datasource_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
@@ -6383,13 +5315,8 @@ class Schematics20ApiV2(BaseService):
     # fulfilment
     #########################
 
-
-    def list_cart(self,
-        *,
-        offset: int = None,
-        limit: int = None,
-        service_name: str = None,
-        **kwargs
+    def list_cart(
+        self, *, offset: int = None, limit: int = None, service_name: str = None, **kwargs
     ) -> DetailedResponse:
         """
         List fulfilment job order.
@@ -6420,35 +5347,24 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_cart')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_cart'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'service_name': service_name
-        }
+        params = {'offset': offset, 'limit': limit, 'service_name': service_name}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
         url = '/v2/cart'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def create_cart_order(self,
-        cart_order: 'CartOrder',
-        **kwargs
-    ) -> DetailedResponse:
+    def create_cart_order(self, cart_order: 'CartOrder', **kwargs) -> DetailedResponse:
         """
         Create a fulfilment job order.
 
@@ -6481,9 +5397,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(cart_order, CartOrder):
             cart_order = convert_model(cart_order)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='create_cart_order')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='create_cart_order'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(cart_order)
@@ -6494,21 +5410,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/cart'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_cart_order(self,
-        order_id: str,
-        *,
-        profile: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_cart_order(self, order_id: str, *, profile: str = None, **kwargs) -> DetailedResponse:
         """
         Get fulfilment job order details.
 
@@ -6530,14 +5437,12 @@ class Schematics20ApiV2(BaseService):
         if order_id is None:
             raise ValueError('order_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_cart_order')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_cart_order'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'profile': profile
-        }
+        params = {'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -6547,21 +5452,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(order_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/cart/{order_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def replace_cart_order(self,
-        order_id: str,
-        operation: str,
-        cart_order: 'CartOrder',
-        **kwargs
-    ) -> DetailedResponse:
+    def replace_cart_order(self, order_id: str, operation: str, cart_order: 'CartOrder', **kwargs) -> DetailedResponse:
         """
         Update fulfilment job order.
 
@@ -6592,14 +5488,12 @@ class Schematics20ApiV2(BaseService):
         if isinstance(cart_order, CartOrder):
             cart_order = convert_model(cart_order)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='replace_cart_order')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='replace_cart_order'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'operation': operation
-        }
+        params = {'operation': operation}
 
         data = json.dumps(cart_order)
         headers['content-type'] = 'application/json'
@@ -6612,21 +5506,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(order_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/cart/{order_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       params=params,
-                                       data=data)
+        request = self.prepare_request(method='PUT', url=url, headers=headers, params=params, data=data)
 
         response = self.send(request)
         return response
 
-
-    def run_fulfilment_operation(self,
-        order_id: str,
-        operation: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def run_fulfilment_operation(self, order_id: str, operation: str, **kwargs) -> DetailedResponse:
         """
         Run the fulfilment job operation for the cart.
 
@@ -6650,14 +5535,12 @@ class Schematics20ApiV2(BaseService):
         if operation is None:
             raise ValueError('operation must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='run_fulfilment_operation')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='run_fulfilment_operation'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'operation': operation
-        }
+        params = {'operation': operation}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -6666,21 +5549,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(order_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/cart/{order_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='POST', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def delete_cart_order(self,
-        order_id: str,
-        *,
-        destroy: bool = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def delete_cart_order(self, order_id: str, *, destroy: bool = None, **kwargs) -> DetailedResponse:
         """
         Delete a fulfilment job order.
 
@@ -6702,14 +5576,12 @@ class Schematics20ApiV2(BaseService):
         if order_id is None:
             raise ValueError('order_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_cart_order')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_cart_order'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'destroy': destroy
-        }
+        params = {'destroy': destroy}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -6718,20 +5590,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(order_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/cart/{order_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def update_cart_order(self,
-        order_id: str,
-        operation: str,
-        update_cart_order: 'UpdateCartOrder',
-        **kwargs
+    def update_cart_order(
+        self, order_id: str, operation: str, update_cart_order: 'UpdateCartOrder', **kwargs
     ) -> DetailedResponse:
         """
         Update fulfilment job order.
@@ -6763,14 +5628,12 @@ class Schematics20ApiV2(BaseService):
         if isinstance(update_cart_order, UpdateCartOrder):
             update_cart_order = convert_model(update_cart_order)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='update_cart_order')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='update_cart_order'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'operation': operation
-        }
+        params = {'operation': operation}
 
         data = json.dumps(update_cart_order)
         headers['content-type'] = 'application/json'
@@ -6783,20 +5646,12 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(order_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/cart/{order_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PATCH',
-                                       url=url,
-                                       headers=headers,
-                                       params=params,
-                                       data=data)
+        request = self.prepare_request(method='PATCH', url=url, headers=headers, params=params, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_cart_metadata(self,
-        order_id: str,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_cart_metadata(self, order_id: str, **kwargs) -> DetailedResponse:
         """
         Get metadata for the fulfilment job order.
 
@@ -6812,9 +5667,9 @@ class Schematics20ApiV2(BaseService):
         if order_id is None:
             raise ValueError('order_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_cart_metadata')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_cart_metadata'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -6825,20 +5680,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(order_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/cart/{order_id}/metadata'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
 
-
-    def list_cart_resources(self,
-        order_id: str,
-        *,
-        offset: int = None,
-        limit: int = None,
-        **kwargs
+    def list_cart_resources(
+        self, order_id: str, *, offset: int = None, limit: int = None, **kwargs
     ) -> DetailedResponse:
         """
         Get current list of cloud sources, fulfilled by the cart.
@@ -6865,15 +5713,12 @@ class Schematics20ApiV2(BaseService):
         if order_id is None:
             raise ValueError('order_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_cart_resources')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_cart_resources'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit
-        }
+        params = {'offset': offset, 'limit': limit}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -6883,21 +5728,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(order_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/cart/{order_id}/resources'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def list_cart_order_jobs(self,
-        order_id: str,
-        *,
-        offset: int = None,
-        limit: int = None,
-        **kwargs
+    def list_cart_order_jobs(
+        self, order_id: str, *, offset: int = None, limit: int = None, **kwargs
     ) -> DetailedResponse:
         """
         Get the list of fulfilment jobs performed on the cart.
@@ -6924,15 +5761,12 @@ class Schematics20ApiV2(BaseService):
         if order_id is None:
             raise ValueError('order_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_cart_order_jobs')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_cart_order_jobs'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit
-        }
+        params = {'offset': offset, 'limit': limit}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -6942,22 +5776,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(order_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/cart/{order_id}/jobs'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def get_cart_order_job(self,
-        order_id: str,
-        job_id: str,
-        *,
-        offset: int = None,
-        limit: int = None,
-        **kwargs
+    def get_cart_order_job(
+        self, order_id: str, job_id: str, *, offset: int = None, limit: int = None, **kwargs
     ) -> DetailedResponse:
         """
         Get fulfilment job details.
@@ -6988,15 +5813,12 @@ class Schematics20ApiV2(BaseService):
         if job_id is None:
             raise ValueError('job_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_cart_order_job')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_cart_order_job'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit
-        }
+        params = {'offset': offset, 'limit': limit}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -7006,22 +5828,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(order_id, job_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/cart/{order_id}/jobs/{job_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def get_cart_order_job_log(self,
-        order_id: str,
-        job_id: str,
-        *,
-        offset: int = None,
-        limit: int = None,
-        **kwargs
+    def get_cart_order_job_log(
+        self, order_id: str, job_id: str, *, offset: int = None, limit: int = None, **kwargs
     ) -> DetailedResponse:
         """
         Get the fulfilment job logs.
@@ -7052,15 +5865,12 @@ class Schematics20ApiV2(BaseService):
         if job_id is None:
             raise ValueError('job_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_cart_order_job_log')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_cart_order_job_log'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit
-        }
+        params = {'offset': offset, 'limit': limit}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -7070,22 +5880,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(order_id, job_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/cart/{order_id}/jobs/{job_id}/logs'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def get_cart_order_job_resources(self,
-        order_id: str,
-        job_id: str,
-        *,
-        offset: int = None,
-        limit: int = None,
-        **kwargs
+    def get_cart_order_job_resources(
+        self, order_id: str, job_id: str, *, offset: int = None, limit: int = None, **kwargs
     ) -> DetailedResponse:
         """
         Get the fulfilment job resources.
@@ -7116,15 +5917,12 @@ class Schematics20ApiV2(BaseService):
         if job_id is None:
             raise ValueError('job_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_cart_order_job_resources')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_cart_order_job_resources'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit
-        }
+        params = {'offset': offset, 'limit': limit}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -7134,10 +5932,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(order_id, job_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/cart/{order_id}/jobs/{job_id}/resources'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
@@ -7146,13 +5941,7 @@ class Schematics20ApiV2(BaseService):
     # blueprint
     #########################
 
-
-    def list_blueprint(self,
-        *,
-        offset: int = None,
-        limit: int = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def list_blueprint(self, *, offset: int = None, limit: int = None, **kwargs) -> DetailedResponse:
         """
         Get all the blueprint instances, in the Account.
 
@@ -7174,34 +5963,24 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_blueprint')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_blueprint'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit
-        }
+        params = {'offset': offset, 'limit': limit}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
         url = '/v2/blueprints'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def create_blueprint(self,
-        blueprint: 'Blueprint',
-        **kwargs
-    ) -> DetailedResponse:
+    def create_blueprint(self, blueprint: 'Blueprint', **kwargs) -> DetailedResponse:
         """
         Create a new blueprint.
 
@@ -7218,9 +5997,9 @@ class Schematics20ApiV2(BaseService):
         if isinstance(blueprint, Blueprint):
             blueprint = convert_model(blueprint)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='create_blueprint')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='create_blueprint'
+        )
         headers.update(sdk_headers)
 
         data = json.dumps(blueprint)
@@ -7231,21 +6010,12 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/blueprints'
-        request = self.prepare_request(method='POST',
-                                       url=url,
-                                       headers=headers,
-                                       data=data)
+        request = self.prepare_request(method='POST', url=url, headers=headers, data=data)
 
         response = self.send(request)
         return response
 
-
-    def get_blueprint(self,
-        blueprint_id: str,
-        *,
-        profile: str = None,
-        **kwargs
-    ) -> DetailedResponse:
+    def get_blueprint(self, blueprint_id: str, *, profile: str = None, **kwargs) -> DetailedResponse:
         """
         Get the blueprint details.
 
@@ -7262,14 +6032,12 @@ class Schematics20ApiV2(BaseService):
         if blueprint_id is None:
             raise ValueError('blueprint_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_blueprint')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_blueprint'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'profile': profile
-        }
+        params = {'profile': profile}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -7279,21 +6047,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(blueprint_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/blueprints/{blueprint_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def replace_blueprint(self,
-        blueprint_id: str,
-        blueprint: 'Blueprint',
-        *,
-        profile: str = None,
-        **kwargs
+    def replace_blueprint(
+        self, blueprint_id: str, blueprint: 'Blueprint', *, profile: str = None, **kwargs
     ) -> DetailedResponse:
         """
         Update the blueprint details.
@@ -7316,14 +6076,12 @@ class Schematics20ApiV2(BaseService):
         if isinstance(blueprint, Blueprint):
             blueprint = convert_model(blueprint)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='replace_blueprint')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='replace_blueprint'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'profile': profile
-        }
+        params = {'profile': profile}
 
         data = json.dumps(blueprint)
         headers['content-type'] = 'application/json'
@@ -7336,22 +6094,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(blueprint_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/blueprints/{blueprint_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       params=params,
-                                       data=data)
+        request = self.prepare_request(method='PUT', url=url, headers=headers, params=params, data=data)
 
         response = self.send(request)
         return response
 
-
-    def delete_blueprint(self,
-        blueprint_id: str,
-        *,
-        profile: str = None,
-        destroy: bool = None,
-        **kwargs
+    def delete_blueprint(
+        self, blueprint_id: str, *, profile: str = None, destroy: bool = None, **kwargs
     ) -> DetailedResponse:
         """
         Delete the blueprint.
@@ -7371,15 +6120,12 @@ class Schematics20ApiV2(BaseService):
         if blueprint_id is None:
             raise ValueError('blueprint_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='delete_blueprint')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='delete_blueprint'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'profile': profile,
-            'destroy': destroy
-        }
+        params = {'profile': profile, 'destroy': destroy}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
@@ -7388,21 +6134,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(blueprint_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/blueprints/{blueprint_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='DELETE',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='DELETE', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def update_blueprint(self,
-        blueprint_id: str,
-        blueprint: 'Blueprint',
-        *,
-        profile: str = None,
-        **kwargs
+    def update_blueprint(
+        self, blueprint_id: str, blueprint: 'Blueprint', *, profile: str = None, **kwargs
     ) -> DetailedResponse:
         """
         Update the blueprint details.
@@ -7425,14 +6163,12 @@ class Schematics20ApiV2(BaseService):
         if isinstance(blueprint, Blueprint):
             blueprint = convert_model(blueprint)
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='update_blueprint')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='update_blueprint'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'profile': profile
-        }
+        params = {'profile': profile}
 
         data = json.dumps(blueprint)
         headers['content-type'] = 'application/json'
@@ -7445,22 +6181,13 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(blueprint_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/blueprints/{blueprint_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='PATCH',
-                                       url=url,
-                                       headers=headers,
-                                       params=params,
-                                       data=data)
+        request = self.prepare_request(method='PATCH', url=url, headers=headers, params=params, data=data)
 
         response = self.send(request)
         return response
 
-
-    def upload_template_tar_blueprint(self,
-        blueprint_id: str,
-        *,
-        file: BinaryIO = None,
-        file_content_type: str = None,
-        **kwargs
+    def upload_template_tar_blueprint(
+        self, blueprint_id: str, *, file: BinaryIO = None, file_content_type: str = None, **kwargs
     ) -> DetailedResponse:
         """
         Upload a TAR file to an blueprint.
@@ -7480,9 +6207,9 @@ class Schematics20ApiV2(BaseService):
         if blueprint_id is None:
             raise ValueError('blueprint_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='upload_template_tar_blueprint')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='upload_template_tar_blueprint'
+        )
         headers.update(sdk_headers)
 
         form_data = []
@@ -7497,10 +6224,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(blueprint_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/blueprints/{blueprint_id}/template_repo_upload'.format(**path_param_dict)
-        request = self.prepare_request(method='PUT',
-                                       url=url,
-                                       headers=headers,
-                                       files=form_data)
+        request = self.prepare_request(method='PUT', url=url, headers=headers, files=form_data)
 
         response = self.send(request)
         return response
@@ -7509,14 +6233,8 @@ class Schematics20ApiV2(BaseService):
     # catalog
     #########################
 
-
-    def list_catalog_items(self,
-        *,
-        offset: int = None,
-        limit: int = None,
-        catalog_id: str = None,
-        catalog_name: str = None,
-        **kwargs
+    def list_catalog_items(
+        self, *, offset: int = None, limit: int = None, catalog_id: str = None, catalog_name: str = None, **kwargs
     ) -> DetailedResponse:
         """
         List all the items from the catalog.
@@ -7543,33 +6261,25 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_catalog_items')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_catalog_items'
+        )
         headers.update(sdk_headers)
 
-        params = {
-            'offset': offset,
-            'limit': limit,
-            'catalog_id': catalog_id,
-            'catalog_name': catalog_name
-        }
+        params = {'offset': offset, 'limit': limit, 'catalog_id': catalog_id, 'catalog_name': catalog_name}
 
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
         headers['Accept'] = 'application/json'
 
         url = '/v2/catalog'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
 
-
-    def get_catalog_item(self,
+    def get_catalog_item(
+        self,
         offering_id: str,
         *,
         catalog_id: str = None,
@@ -7613,9 +6323,9 @@ class Schematics20ApiV2(BaseService):
         if offering_id is None:
             raise ValueError('offering_id must be provided')
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='get_catalog_item')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='get_catalog_item'
+        )
         headers.update(sdk_headers)
 
         params = {
@@ -7624,7 +6334,7 @@ class Schematics20ApiV2(BaseService):
             'offering_name': offering_name,
             'offering_version': offering_version,
             'offset': offset,
-            'limit': limit
+            'limit': limit,
         }
 
         if 'headers' in kwargs:
@@ -7635,10 +6345,7 @@ class Schematics20ApiV2(BaseService):
         path_param_values = self.encode_path_vars(offering_id)
         path_param_dict = dict(zip(path_param_keys, path_param_values))
         url = '/v2/catalog/{offering_id}'.format(**path_param_dict)
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers,
-                                       params=params)
+        request = self.prepare_request(method='GET', url=url, headers=headers, params=params)
 
         response = self.send(request)
         return response
@@ -7647,10 +6354,7 @@ class Schematics20ApiV2(BaseService):
     # util
     #########################
 
-
-    def list_locations(self,
-        **kwargs
-    ) -> DetailedResponse:
+    def list_locations(self, **kwargs) -> DetailedResponse:
         """
         List supported locations.
 
@@ -7668,9 +6372,9 @@ class Schematics20ApiV2(BaseService):
         """
 
         headers = {}
-        sdk_headers = get_sdk_headers(service_name=self.DEFAULT_SERVICE_NAME,
-                                      service_version='V2',
-                                      operation_id='list_locations')
+        sdk_headers = get_sdk_headers(
+            service_name=self.DEFAULT_SERVICE_NAME, service_version='V2', operation_id='list_locations'
+        )
         headers.update(sdk_headers)
 
         if 'headers' in kwargs:
@@ -7678,9 +6382,7 @@ class Schematics20ApiV2(BaseService):
         headers['Accept'] = 'application/json'
 
         url = '/v2/locations'
-        request = self.prepare_request(method='GET',
-                                       url=url,
-                                       headers=headers)
+        request = self.prepare_request(method='GET', url=url, headers=headers)
 
         response = self.send(request)
         return response
@@ -7695,6 +6397,7 @@ class ListWorkspacesEnums:
         """
         Level of details returned by the get method.
         """
+
         IDS = 'ids'
         SUMMARY = 'summary'
 
@@ -7708,6 +6411,7 @@ class GetWorkspaceEnums:
         """
         Level of details returned by the get method.
         """
+
         SUMMARY = 'summary'
         DETAILED = 'detailed'
         IDS = 'ids'
@@ -7722,6 +6426,7 @@ class ListTemplatesInWorkspaceEnums:
         """
         Level of details returned by the get method.
         """
+
         IDS = 'ids'
         SUMMARY = 'summary'
 
@@ -7735,6 +6440,7 @@ class GetTemplateInWorkspaceEnums:
         """
         Level of details returned by the get method.
         """
+
         SUMMARY = 'summary'
         DETAILED = 'detailed'
         IDS = 'ids'
@@ -7751,6 +6457,7 @@ class GetTemplateReadmeEnums:
         specified by including a `charset` parameter. For example,
         'text/markdown;charset=utf-8'.
         """
+
         TEXT_MARKDOWN = 'text/markdown'
         TEXT_HTML = 'text/html'
 
@@ -7764,6 +6471,7 @@ class ListFlowsInWorkspaceEnums:
         """
         Level of details returned by the get method.
         """
+
         IDS = 'ids'
         SUMMARY = 'summary'
 
@@ -7777,6 +6485,7 @@ class GetFlowInWorkspaceEnums:
         """
         Level of details returned by the get method.
         """
+
         SUMMARY = 'summary'
         DETAILED = 'detailed'
         IDS = 'ids'
@@ -7791,6 +6500,7 @@ class ListActionsEnums:
         """
         Level of details returned by the get method.
         """
+
         IDS = 'ids'
         SUMMARY = 'summary'
 
@@ -7804,6 +6514,7 @@ class GetActionEnums:
         """
         Level of details returned by the get method.
         """
+
         SUMMARY = 'summary'
         DETAILED = 'detailed'
         IDS = 'ids'
@@ -7818,18 +6529,23 @@ class ListJobsEnums:
         """
         Level of details returned by the get method.
         """
+
         IDS = 'ids'
         SUMMARY = 'summary'
+
     class Resource(str, Enum):
         """
         Name of the resource (workspace, actions or controls).
         """
+
         WORKSPACE = 'workspace'
         ACTION = 'action'
+
     class List(str, Enum):
         """
         list jobs.
         """
+
         ALL = 'all'
 
 
@@ -7842,6 +6558,7 @@ class GetJobEnums:
         """
         Level of details returned by the get method.
         """
+
         SUMMARY = 'summary'
         DETAILED = 'detailed'
         IDS = 'ids'
@@ -7856,6 +6573,7 @@ class GetJobFilesEnums:
         """
         The type of file you want to download eg.state_file, plan_json.
         """
+
         STATE_FILE = 'state_file'
         PLAN_JSON = 'plan_json'
 
@@ -7869,6 +6587,7 @@ class ListControlsEnums:
         """
         Level of details returned by the get method.
         """
+
         IDS = 'ids'
         SUMMARY = 'summary'
 
@@ -7882,6 +6601,7 @@ class GetControlsEnums:
         """
         Level of details returned by the get method.
         """
+
         SUMMARY = 'summary'
         DETAILED = 'detailed'
         IDS = 'ids'
@@ -7896,6 +6616,7 @@ class ListCapsulesEnums:
         """
         Level of details returned by the get method.
         """
+
         IDS = 'ids'
         SUMMARY = 'summary'
 
@@ -7909,6 +6630,7 @@ class GetCapsuleEnums:
         """
         Level of details returned by the get method.
         """
+
         SUMMARY = 'summary'
         DETAILED = 'detailed'
         IDS = 'ids'
@@ -7923,6 +6645,7 @@ class ListDatasetsEnums:
         """
         Level of details returned by the get method.
         """
+
         IDS = 'ids'
         SUMMARY = 'summary'
 
@@ -7936,6 +6659,7 @@ class ListInventoriesEnums:
         """
         Level of details returned by the get method.
         """
+
         IDS = 'ids'
         SUMMARY = 'summary'
 
@@ -7949,6 +6673,7 @@ class GetInventoryEnums:
         """
         Level of details returned by the get method.
         """
+
         SUMMARY = 'summary'
         DETAILED = 'detailed'
         IDS = 'ids'
@@ -7963,6 +6688,7 @@ class ListResourceQueryEnums:
         """
         Level of details returned by the get method.
         """
+
         IDS = 'ids'
         SUMMARY = 'summary'
 
@@ -7976,6 +6702,7 @@ class ListAgentEnums:
         """
         Level of details returned by the get method.
         """
+
         SUMMARY = 'summary'
         DETAILED = 'detailed'
         IDS = 'ids'
@@ -7990,6 +6717,7 @@ class GetAgentEnums:
         """
         Level of details returned by the get method.
         """
+
         SUMMARY = 'summary'
         DETAILED = 'detailed'
         IDS = 'ids'
@@ -8004,6 +6732,7 @@ class ListAdapterEnums:
         """
         Level of details returned by the get method.
         """
+
         IDS = 'ids'
         SUMMARY = 'summary'
 
@@ -8017,6 +6746,7 @@ class GetDataEnums:
         """
         Preview the data from the datasource.
         """
+
         ALL = 'all'
         KEYS = 'keys'
 
@@ -8030,6 +6760,7 @@ class GetCartOrderEnums:
         """
         Level of details returned by the get method.
         """
+
         SUMMARY = 'summary'
         DETAILED = 'detailed'
         IDS = 'ids'
@@ -8044,6 +6775,7 @@ class GetBlueprintEnums:
         """
         Level of details returned by the get method.
         """
+
         IDS = 'ids'
         SUMMARY = 'summary'
 
@@ -8057,6 +6789,7 @@ class ReplaceBlueprintEnums:
         """
         Level of details returned by the get method.
         """
+
         IDS = 'ids'
         SUMMARY = 'summary'
 
@@ -8070,6 +6803,7 @@ class DeleteBlueprintEnums:
         """
         Level of details returned by the get method.
         """
+
         IDS = 'ids'
         SUMMARY = 'summary'
 
@@ -8083,6 +6817,7 @@ class UpdateBlueprintEnums:
         """
         Level of details returned by the get method.
         """
+
         IDS = 'ids'
         SUMMARY = 'summary'
 
@@ -8092,7 +6827,7 @@ class UpdateBlueprintEnums:
 ##############################################################################
 
 
-class Action():
+class Action:
     """
     Complete Action details with user inputs and system generated data.
 
@@ -8164,45 +6899,84 @@ class Action():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'location', 'resource_group', 'bastion_connection_type', 'inventory_connection_type', 'tags', 'user_state', 'source_readme_url', 'source', 'source_type', 'command_parameter', 'inventory', 'credentials', 'bastion', 'bastion_credential', 'targets_ini', 'inputs', 'outputs', 'settings', 'id', 'crn', 'account', 'source_created_at', 'source_created_by', 'source_updated_at', 'source_updated_by', 'created_at', 'created_by', 'updated_at', 'updated_by', 'state', 'playbook_names', 'sys_lock'])
+    _properties = frozenset(
+        [
+            'name',
+            'description',
+            'location',
+            'resource_group',
+            'bastion_connection_type',
+            'inventory_connection_type',
+            'tags',
+            'user_state',
+            'source_readme_url',
+            'source',
+            'source_type',
+            'command_parameter',
+            'inventory',
+            'credentials',
+            'bastion',
+            'bastion_credential',
+            'targets_ini',
+            'inputs',
+            'outputs',
+            'settings',
+            'id',
+            'crn',
+            'account',
+            'source_created_at',
+            'source_created_by',
+            'source_updated_at',
+            'source_updated_by',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+            'state',
+            'playbook_names',
+            'sys_lock',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 description: str = None,
-                 location: str = None,
-                 resource_group: str = None,
-                 bastion_connection_type: str = None,
-                 inventory_connection_type: str = None,
-                 tags: List[str] = None,
-                 user_state: 'UserState' = None,
-                 source_readme_url: str = None,
-                 source: 'ExternalSource' = None,
-                 source_type: str = None,
-                 command_parameter: str = None,
-                 inventory: str = None,
-                 credentials: List['CredentialVariableData'] = None,
-                 bastion: 'BastionResourceDefinition' = None,
-                 bastion_credential: 'CredentialVariableData' = None,
-                 targets_ini: str = None,
-                 inputs: List['VariableData'] = None,
-                 outputs: List['VariableData'] = None,
-                 settings: List['VariableData'] = None,
-                 id: str = None,
-                 crn: str = None,
-                 account: str = None,
-                 source_created_at: datetime = None,
-                 source_created_by: str = None,
-                 source_updated_at: datetime = None,
-                 source_updated_by: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 state: 'ActionState' = None,
-                 playbook_names: List[str] = None,
-                 sys_lock: 'SystemLock' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        description: str = None,
+        location: str = None,
+        resource_group: str = None,
+        bastion_connection_type: str = None,
+        inventory_connection_type: str = None,
+        tags: List[str] = None,
+        user_state: 'UserState' = None,
+        source_readme_url: str = None,
+        source: 'ExternalSource' = None,
+        source_type: str = None,
+        command_parameter: str = None,
+        inventory: str = None,
+        credentials: List['CredentialVariableData'] = None,
+        bastion: 'BastionResourceDefinition' = None,
+        bastion_credential: 'CredentialVariableData' = None,
+        targets_ini: str = None,
+        inputs: List['VariableData'] = None,
+        outputs: List['VariableData'] = None,
+        settings: List['VariableData'] = None,
+        id: str = None,
+        crn: str = None,
+        account: str = None,
+        source_created_at: datetime = None,
+        source_created_by: str = None,
+        source_updated_at: datetime = None,
+        source_updated_by: str = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        state: 'ActionState' = None,
+        playbook_names: List[str] = None,
+        sys_lock: 'SystemLock' = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a Action object.
 
@@ -8367,7 +7141,7 @@ class Action():
             args['playbook_names'] = _dict.get('playbook_names')
         if 'sys_lock' in _dict:
             args['sys_lock'] = SystemLock.from_dict(_dict.get('sys_lock'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -8476,11 +7250,11 @@ class Action():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
-
 
     class BastionConnectionTypeEnum(str, Enum):
         """
@@ -8488,8 +7262,8 @@ class Action():
         `inventory_connection_type=winrm`, then `bastion_connection_type` is not
         supported.
         """
-        SSH = 'ssh'
 
+        SSH = 'ssh'
 
     class InventoryConnectionTypeEnum(str, Enum):
         """
@@ -8497,14 +7271,15 @@ class Action():
         WinRM supports only Windows system with the public IPs and do not support Bastion
         host.
         """
+
         SSH = 'ssh'
         WINRM = 'winrm'
-
 
     class SourceTypeEnum(str, Enum):
         """
         Type of source for the Template.
         """
+
         LOCAL = 'local'
         GIT_HUB = 'git_hub'
         GIT_HUB_ENTERPRISE = 'git_hub_enterprise'
@@ -8514,7 +7289,7 @@ class Action():
         EXTERNAL_SCM = 'external_scm'
 
 
-class ActionList():
+class ActionList:
     """
     List of Action definition response.
 
@@ -8527,13 +7302,9 @@ class ActionList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'actions'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 actions: List['ActionLite'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, actions: List['ActionLite'] = None, **kwargs
+    ) -> None:
         """
         Initialize a ActionList object.
 
@@ -8566,7 +7337,7 @@ class ActionList():
             raise ValueError('Required property \'offset\' not present in ActionList JSON')
         if 'actions' in _dict:
             args['actions'] = [ActionLite.from_dict(x) for x in _dict.get('actions')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -8608,7 +7379,8 @@ class ActionList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class ActionLite():
+
+class ActionLite:
     """
     Action summary profile with user inputs and system generated data.
 
@@ -8636,27 +7408,48 @@ class ActionLite():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'id', 'crn', 'location', 'resource_group', 'namespace', 'tags', 'playbook_name', 'user_state', 'state', 'sys_lock', 'created_at', 'created_by', 'updated_at', 'updated_by'])
+    _properties = frozenset(
+        [
+            'name',
+            'description',
+            'id',
+            'crn',
+            'location',
+            'resource_group',
+            'namespace',
+            'tags',
+            'playbook_name',
+            'user_state',
+            'state',
+            'sys_lock',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 description: str = None,
-                 id: str = None,
-                 crn: str = None,
-                 location: str = None,
-                 resource_group: str = None,
-                 namespace: str = None,
-                 tags: List[str] = None,
-                 playbook_name: str = None,
-                 user_state: 'UserState' = None,
-                 state: 'ActionLiteState' = None,
-                 sys_lock: 'SystemLock' = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        description: str = None,
+        id: str = None,
+        crn: str = None,
+        location: str = None,
+        resource_group: str = None,
+        namespace: str = None,
+        tags: List[str] = None,
+        playbook_name: str = None,
+        user_state: 'UserState' = None,
+        state: 'ActionLiteState' = None,
+        sys_lock: 'SystemLock' = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a ActionLite object.
 
@@ -8727,7 +7520,7 @@ class ActionLite():
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         if 'updated_by' in _dict:
             args['updated_by'] = _dict.get('updated_by')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -8800,13 +7593,14 @@ class ActionLite():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class ActionLiteState():
+class ActionLiteState:
     """
     Computed state of the Action.
 
@@ -8818,11 +7612,7 @@ class ActionLiteState():
     # The set of defined properties for the class
     _properties = frozenset(['status_code', 'status_message'])
 
-    def __init__(self,
-                 *,
-                 status_code: str = None,
-                 status_message: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, status_code: str = None, status_message: str = None, **kwargs) -> None:
         """
         Initialize a ActionLiteState object.
 
@@ -8845,7 +7635,7 @@ class ActionLiteState():
             args['status_code'] = _dict.get('status_code')
         if 'status_message' in _dict:
             args['status_message'] = _dict.get('status_message')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -8887,13 +7677,14 @@ class ActionLiteState():
         """
         Status of automation (workspace or action).
         """
+
         NORMAL = 'normal'
         PENDING = 'pending'
         DISABLED = 'disabled'
         CRITICAL = 'critical'
 
 
-class ActionState():
+class ActionState:
     """
     Computed state of the Action.
 
@@ -8906,12 +7697,9 @@ class ActionState():
     # The set of defined properties for the class
     _properties = frozenset(['status_code', 'status_job_id', 'status_message'])
 
-    def __init__(self,
-                 *,
-                 status_code: str = None,
-                 status_job_id: str = None,
-                 status_message: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, *, status_code: str = None, status_job_id: str = None, status_message: str = None, **kwargs
+    ) -> None:
         """
         Initialize a ActionState object.
 
@@ -8938,7 +7726,7 @@ class ActionState():
             args['status_job_id'] = _dict.get('status_job_id')
         if 'status_message' in _dict:
             args['status_message'] = _dict.get('status_message')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -8982,13 +7770,14 @@ class ActionState():
         """
         Status of automation (workspace or action).
         """
+
         NORMAL = 'normal'
         PENDING = 'pending'
         DISABLED = 'disabled'
         CRITICAL = 'critical'
 
 
-class Adapter():
+class Adapter:
     """
     Complete Schematics Adapter details provided by user and system generated.
 
@@ -9025,29 +7814,52 @@ class Adapter():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['adapter_name', 'adapter_type', 'location', 'resource_group', 'tags', 'adapter_endpoint_url', 'service_id', 'apikey', 'user_state', 'ignore_inflight_operations', 'adapter_id', 'registered_by', 'registered_at', 'updated_at', 'updated_by', 'sys_lock', 'adapter_health', 'last_health_checked_at'])
+    _properties = frozenset(
+        [
+            'adapter_name',
+            'adapter_type',
+            'location',
+            'resource_group',
+            'tags',
+            'adapter_endpoint_url',
+            'service_id',
+            'apikey',
+            'user_state',
+            'ignore_inflight_operations',
+            'adapter_id',
+            'registered_by',
+            'registered_at',
+            'updated_at',
+            'updated_by',
+            'sys_lock',
+            'adapter_health',
+            'last_health_checked_at',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 adapter_name: str = None,
-                 adapter_type: str = None,
-                 location: str = None,
-                 resource_group: str = None,
-                 tags: List[str] = None,
-                 adapter_endpoint_url: str = None,
-                 service_id: str = None,
-                 apikey: str = None,
-                 user_state: 'UserState' = None,
-                 ignore_inflight_operations: bool = None,
-                 adapter_id: str = None,
-                 registered_by: str = None,
-                 registered_at: datetime = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 sys_lock: 'SystemLock' = None,
-                 adapter_health: str = None,
-                 last_health_checked_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        adapter_name: str = None,
+        adapter_type: str = None,
+        location: str = None,
+        resource_group: str = None,
+        tags: List[str] = None,
+        adapter_endpoint_url: str = None,
+        service_id: str = None,
+        apikey: str = None,
+        user_state: 'UserState' = None,
+        ignore_inflight_operations: bool = None,
+        adapter_id: str = None,
+        registered_by: str = None,
+        registered_at: datetime = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        sys_lock: 'SystemLock' = None,
+        adapter_health: str = None,
+        last_health_checked_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a Adapter object.
 
@@ -9146,7 +7958,7 @@ class Adapter():
             args['adapter_health'] = _dict.get('adapter_health')
         if 'last_health_checked_at' in _dict:
             args['last_health_checked_at'] = string_to_datetime(_dict.get('last_health_checked_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -9220,13 +8032,13 @@ class Adapter():
         """
         Type of external schematics adapters.
         """
+
         SCM_ADAPTER = 'scm_adapter'
         VAULT_ADAPTER = 'vault_adapter'
         CATALOG_ADAPTER = 'catalog_adapter'
         WORKSPACE_DATA_ADAPTER = 'workspace_data_adapter'
         PROVISIONER_ADAPTER = 'provisioner_adapter'
         POLICY_AGENT_ADAPTER = 'policy_agent_adapter'
-
 
     class LocationEnum(str, Enum):
         """
@@ -9235,21 +8047,22 @@ class Adapter():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
-
     class AdapterHealthEnum(str, Enum):
         """
         Health of the adapter.
         """
+
         ACTIVE = 'active'
         INACTIVE = 'inactive'
 
 
-class AdapterList():
+class AdapterList:
     """
     List of schematics adapter details.
 
@@ -9262,13 +8075,9 @@ class AdapterList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'adapters'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 adapters: List['Adapter'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, adapters: List['Adapter'] = None, **kwargs
+    ) -> None:
         """
         Initialize a AdapterList object.
 
@@ -9302,7 +8111,7 @@ class AdapterList():
             raise ValueError('Required property \'offset\' not present in AdapterList JSON')
         if 'adapters' in _dict:
             args['adapters'] = [Adapter.from_dict(x) for x in _dict.get('adapters')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -9344,7 +8153,8 @@ class AdapterList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class Agent():
+
+class Agent:
     """
     Agent registration details, with user inputs and system generated data.
 
@@ -9373,28 +8183,50 @@ class Agent():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'resource_group', 'tags', 'location', 'profile_id', 'agent_id', 'crn', 'account', 'id', 'registered_at', 'registered_by', 'updated_at', 'updated_by', 'user_state', 'agent_health', 'system_state'])
+    _properties = frozenset(
+        [
+            'name',
+            'description',
+            'resource_group',
+            'tags',
+            'location',
+            'profile_id',
+            'agent_id',
+            'crn',
+            'account',
+            'id',
+            'registered_at',
+            'registered_by',
+            'updated_at',
+            'updated_by',
+            'user_state',
+            'agent_health',
+            'system_state',
+        ]
+    )
 
-    def __init__(self,
-                 name: str,
-                 profile_id: str,
-                 agent_id: str,
-                 *,
-                 description: str = None,
-                 resource_group: str = None,
-                 tags: List[str] = None,
-                 location: str = None,
-                 crn: str = None,
-                 account: str = None,
-                 id: str = None,
-                 registered_at: datetime = None,
-                 registered_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 user_state: 'UserState' = None,
-                 agent_health: 'AgentHealth' = None,
-                 system_state: 'AgentSystemState' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        name: str,
+        profile_id: str,
+        agent_id: str,
+        *,
+        description: str = None,
+        resource_group: str = None,
+        tags: List[str] = None,
+        location: str = None,
+        crn: str = None,
+        account: str = None,
+        id: str = None,
+        registered_at: datetime = None,
+        registered_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        user_state: 'UserState' = None,
+        agent_health: 'AgentHealth' = None,
+        system_state: 'AgentSystemState' = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a Agent object.
 
@@ -9479,7 +8311,7 @@ class Agent():
             args['agent_health'] = AgentHealth.from_dict(_dict.get('agent_health'))
         if 'system_state' in _dict:
             args['system_state'] = AgentSystemState.from_dict(_dict.get('system_state'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -9547,7 +8379,8 @@ class Agent():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class AgentHealth():
+
+class AgentHealth:
     """
     Health check details of the agent.
 
@@ -9560,11 +8393,7 @@ class AgentHealth():
     # The set of defined properties for the class
     _properties = frozenset(['state', 'checked_at'])
 
-    def __init__(self,
-                 *,
-                 state: str = None,
-                 checked_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(self, *, state: str = None, checked_at: datetime = None, **kwargs) -> None:
         """
         Initialize a AgentHealth object.
 
@@ -9587,7 +8416,7 @@ class AgentHealth():
             args['state'] = _dict.get('state')
         if 'checked_at' in _dict:
             args['checked_at'] = string_to_datetime(_dict.get('checked_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -9631,11 +8460,12 @@ class AgentHealth():
           * `Connected` When Schematics is able to connect to the agent.
           * `Disconnected` When Schematics is able not connect to the agent.
         """
+
         CONNECTED = 'Connected'
         DISCONNECTED = 'Disconnected'
 
 
-class AgentList():
+class AgentList:
     """
     List of agent.
 
@@ -9648,13 +8478,9 @@ class AgentList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'agents'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 agents: List['Agent'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, agents: List['Agent'] = None, **kwargs
+    ) -> None:
         """
         Initialize a AgentList object.
 
@@ -9686,7 +8512,7 @@ class AgentList():
             raise ValueError('Required property \'offset\' not present in AgentList JSON')
         if 'agents' in _dict:
             args['agents'] = [Agent.from_dict(x) for x in _dict.get('agents')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -9728,7 +8554,8 @@ class AgentList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class AgentSystemState():
+
+class AgentSystemState:
     """
     Computed state of the agent.
 
@@ -9739,11 +8566,7 @@ class AgentSystemState():
     # The set of defined properties for the class
     _properties = frozenset(['state', 'message'])
 
-    def __init__(self,
-                 *,
-                 state: str = None,
-                 message: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, state: str = None, message: str = None, **kwargs) -> None:
         """
         Initialize a AgentSystemState object.
 
@@ -9764,7 +8587,7 @@ class AgentSystemState():
             args['state'] = _dict.get('state')
         if 'message' in _dict:
             args['message'] = _dict.get('message')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -9806,11 +8629,12 @@ class AgentSystemState():
         """
         Status of while registering the agent.
         """
+
         ERROR = 'error'
         ACTIVE = 'active'
 
 
-class BastionResourceDefinition():
+class BastionResourceDefinition:
     """
     Describes a bastion resource.
 
@@ -9821,11 +8645,7 @@ class BastionResourceDefinition():
     # The set of defined properties for the class
     _properties = frozenset(['name', 'host'])
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 host: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, name: str = None, host: str = None, **kwargs) -> None:
         """
         Initialize a BastionResourceDefinition object.
 
@@ -9846,7 +8666,7 @@ class BastionResourceDefinition():
             args['name'] = _dict.get('name')
         if 'host' in _dict:
             args['host'] = _dict.get('host')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -9884,7 +8704,8 @@ class BastionResourceDefinition():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class Blueprint():
+
+class Blueprint:
     """
     Blueprint details with user inputs and system generated data.
 
@@ -9925,34 +8746,62 @@ class Blueprint():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'schema_version', 'source', 'config', 'description', 'resource_group', 'tags', 'location', 'inputs', 'settings', 'outputs', 'components', 'flow', 'blueprint_id', 'crn', 'account', 'created_at', 'created_by', 'updated_at', 'updated_by', 'sys_lock', 'user_state', 'state'])
+    _properties = frozenset(
+        [
+            'name',
+            'schema_version',
+            'source',
+            'config',
+            'description',
+            'resource_group',
+            'tags',
+            'location',
+            'inputs',
+            'settings',
+            'outputs',
+            'components',
+            'flow',
+            'blueprint_id',
+            'crn',
+            'account',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+            'sys_lock',
+            'user_state',
+            'state',
+        ]
+    )
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 schema_version: str = None,
-                 source: 'ExternalSource' = None,
-                 config: List['BlueprintConfigItem'] = None,
-                 description: str = None,
-                 resource_group: str = None,
-                 tags: List[str] = None,
-                 location: str = None,
-                 inputs: List['VariableData'] = None,
-                 settings: List['VariableData'] = None,
-                 outputs: List['VariableData'] = None,
-                 components: List['BlueprintComponent'] = None,
-                 flow: 'BlueprintFlow' = None,
-                 blueprint_id: str = None,
-                 crn: str = None,
-                 account: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 sys_lock: 'SystemLock' = None,
-                 user_state: 'UserState' = None,
-                 state: 'BlueprintLiteState' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        name: str,
+        *,
+        schema_version: str = None,
+        source: 'ExternalSource' = None,
+        config: List['BlueprintConfigItem'] = None,
+        description: str = None,
+        resource_group: str = None,
+        tags: List[str] = None,
+        location: str = None,
+        inputs: List['VariableData'] = None,
+        settings: List['VariableData'] = None,
+        outputs: List['VariableData'] = None,
+        components: List['BlueprintComponent'] = None,
+        flow: 'BlueprintFlow' = None,
+        blueprint_id: str = None,
+        crn: str = None,
+        account: str = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        sys_lock: 'SystemLock' = None,
+        user_state: 'UserState' = None,
+        state: 'BlueprintLiteState' = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a Blueprint object.
 
@@ -10062,7 +8911,7 @@ class Blueprint():
             args['user_state'] = UserState.from_dict(_dict.get('user_state'))
         if 'state' in _dict:
             args['state'] = BlueprintLiteState.from_dict(_dict.get('state'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -10149,13 +8998,14 @@ class Blueprint():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class BlueprintComponent():
+class BlueprintComponent:
     """
     Component for the Blueprint.
 
@@ -10179,22 +9029,38 @@ class BlueprintComponent():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['component_id', 'component_type', 'name', 'layer', 'source', 'injectors', 'tags', 'inputs', 'settings', 'outputs', 'last_job'])
+    _properties = frozenset(
+        [
+            'component_id',
+            'component_type',
+            'name',
+            'layer',
+            'source',
+            'injectors',
+            'tags',
+            'inputs',
+            'settings',
+            'outputs',
+            'last_job',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 component_id: str = None,
-                 component_type: str = None,
-                 name: str = None,
-                 layer: str = None,
-                 source: 'ExternalSource' = None,
-                 injectors: List['InjectTerraformTemplateInner'] = None,
-                 tags: str = None,
-                 inputs: List['BlueprintVariableData'] = None,
-                 settings: List['BlueprintVariableData'] = None,
-                 outputs: List['BlueprintVariableData'] = None,
-                 last_job: 'BlueprintComponentLastJob' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        component_id: str = None,
+        component_type: str = None,
+        name: str = None,
+        layer: str = None,
+        source: 'ExternalSource' = None,
+        injectors: List['InjectTerraformTemplateInner'] = None,
+        tags: str = None,
+        inputs: List['BlueprintVariableData'] = None,
+        settings: List['BlueprintVariableData'] = None,
+        outputs: List['BlueprintVariableData'] = None,
+        last_job: 'BlueprintComponentLastJob' = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a BlueprintComponent object.
 
@@ -10248,7 +9114,7 @@ class BlueprintComponent():
             args['outputs'] = [BlueprintVariableData.from_dict(x) for x in _dict.get('outputs')]
         if 'last_job' in _dict:
             args['last_job'] = BlueprintComponentLastJob.from_dict(_dict.get('last_job'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -10308,13 +9174,14 @@ class BlueprintComponent():
         """
         Name of the Schematics automation resource.
         """
+
         WORKSPACE = 'workspace'
         ACTION = 'action'
         SYSTEM = 'system'
         ENVIRONMENT = 'environment'
 
 
-class BlueprintComponentLastJob():
+class BlueprintComponentLastJob:
     """
     Status of the last job executed by the component.
 
@@ -10328,16 +9195,20 @@ class BlueprintComponentLastJob():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['command_object', 'command_object_name', 'command_object_id', 'command_name', 'job_status'])
+    _properties = frozenset(
+        ['command_object', 'command_object_name', 'command_object_id', 'command_name', 'job_status']
+    )
 
-    def __init__(self,
-                 *,
-                 command_object: str = None,
-                 command_object_name: str = None,
-                 command_object_id: str = None,
-                 command_name: str = None,
-                 job_status: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        command_object: str = None,
+        command_object_name: str = None,
+        command_object_id: str = None,
+        command_name: str = None,
+        job_status: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a BlueprintComponentLastJob object.
 
@@ -10373,7 +9244,7 @@ class BlueprintComponentLastJob():
             args['command_name'] = _dict.get('command_name')
         if 'job_status' in _dict:
             args['job_status'] = _dict.get('job_status')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -10421,16 +9292,17 @@ class BlueprintComponentLastJob():
         """
         Name of the Schematics automation resource.
         """
+
         WORKSPACE = 'workspace'
         ACTION = 'action'
         SYSTEM = 'system'
         ENVIRONMENT = 'environment'
 
-
     class CommandNameEnum(str, Enum):
         """
         Schematics job command name.
         """
+
         WORKSPACE_PLAN = 'workspace_plan'
         WORKSPACE_APPLY = 'workspace_apply'
         WORKSPACE_DESTROY = 'workspace_destroy'
@@ -10460,11 +9332,11 @@ class BlueprintComponentLastJob():
         REPOSITORY_PROCESS = 'repository_process'
         TERRAFORM_COMMANDS = 'terraform_commands'
 
-
     class JobStatusEnum(str, Enum):
         """
         Status of Jobs.
         """
+
         JOB_PENDING = 'job_pending'
         JOB_IN_PROGRESS = 'job_in_progress'
         JOB_FINISHED = 'job_finished'
@@ -10472,7 +9344,7 @@ class BlueprintComponentLastJob():
         JOB_CANCELLED = 'job_cancelled'
 
 
-class BlueprintConfigItem():
+class BlueprintConfigItem:
     """
     Blueprint configuration item.
 
@@ -10488,13 +9360,15 @@ class BlueprintConfigItem():
     # The set of defined properties for the class
     _properties = frozenset(['name', 'description', 'source', 'inputs'])
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 description: str = None,
-                 source: 'ExternalSource' = None,
-                 inputs: List['BlueprintVariableData'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        description: str = None,
+        source: 'ExternalSource' = None,
+        inputs: List['BlueprintVariableData'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a BlueprintConfigItem object.
 
@@ -10526,7 +9400,7 @@ class BlueprintConfigItem():
             args['source'] = ExternalSource.from_dict(_dict.get('source'))
         if 'inputs' in _dict:
             args['inputs'] = [BlueprintVariableData.from_dict(x) for x in _dict.get('inputs')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -10568,7 +9442,8 @@ class BlueprintConfigItem():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class BlueprintFlow():
+
+class BlueprintFlow:
     """
     Flow definitions for all the Blueprint command.
 
@@ -10578,10 +9453,7 @@ class BlueprintFlow():
     # The set of defined properties for the class
     _properties = frozenset(['specs'])
 
-    def __init__(self,
-                 *,
-                 specs: List['BlueprintFlowSpecs'] = None,
-                 **kwargs) -> None:
+    def __init__(self, *, specs: List['BlueprintFlowSpecs'] = None, **kwargs) -> None:
         """
         Initialize a BlueprintFlow object.
 
@@ -10597,7 +9469,7 @@ class BlueprintFlow():
         args = {}
         if 'specs' in _dict:
             args['specs'] = [BlueprintFlowSpecs.from_dict(x) for x in _dict.get('specs')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -10633,7 +9505,8 @@ class BlueprintFlow():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class BlueprintFlowSequenceFlow():
+
+class BlueprintFlowSequenceFlow:
     """
     BlueprintFlowSequenceFlow.
 
@@ -10645,11 +9518,7 @@ class BlueprintFlowSequenceFlow():
     # The set of defined properties for the class
     _properties = frozenset(['sequence_number', 'item_name'])
 
-    def __init__(self,
-                 *,
-                 sequence_number: int = None,
-                 item_name: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, sequence_number: int = None, item_name: str = None, **kwargs) -> None:
         """
         Initialize a BlueprintFlowSequenceFlow object.
 
@@ -10672,7 +9541,7 @@ class BlueprintFlowSequenceFlow():
             args['sequence_number'] = _dict.get('sequence_number')
         if 'item_name' in _dict:
             args['item_name'] = _dict.get('item_name')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -10710,7 +9579,8 @@ class BlueprintFlowSequenceFlow():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class BlueprintFlowSpecs():
+
+class BlueprintFlowSpecs:
     """
     BlueprintFlowSpecs.
 
@@ -10724,13 +9594,15 @@ class BlueprintFlowSpecs():
     # The set of defined properties for the class
     _properties = frozenset(['command_name', 'flow_type', 'sequence_flow', 'conditional_flow'])
 
-    def __init__(self,
-                 *,
-                 command_name: str = None,
-                 flow_type: str = None,
-                 sequence_flow: List['BlueprintFlowSequenceFlow'] = None,
-                 conditional_flow: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        command_name: str = None,
+        flow_type: str = None,
+        sequence_flow: List['BlueprintFlowSequenceFlow'] = None,
+        conditional_flow: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a BlueprintFlowSpecs object.
 
@@ -10760,7 +9632,7 @@ class BlueprintFlowSpecs():
             args['sequence_flow'] = [BlueprintFlowSequenceFlow.from_dict(x) for x in _dict.get('sequence_flow')]
         if 'conditional_flow' in _dict:
             args['conditional_flow'] = _dict.get('conditional_flow')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -10806,6 +9678,7 @@ class BlueprintFlowSpecs():
         """
         Schematics job command name.
         """
+
         WORKSPACE_PLAN = 'workspace_plan'
         WORKSPACE_APPLY = 'workspace_apply'
         WORKSPACE_DESTROY = 'workspace_destroy'
@@ -10835,16 +9708,16 @@ class BlueprintFlowSpecs():
         REPOSITORY_PROCESS = 'repository_process'
         TERRAFORM_COMMANDS = 'terraform_commands'
 
-
     class FlowTypeEnum(str, Enum):
         """
         Type of Blueprint flow specification.
         """
+
         SEQUENCE_FLOW = 'sequence_flow'
         CONDITIONAL_FLOW = 'conditional_flow'
 
 
-class BlueprintList():
+class BlueprintList:
     """
     List of Blueprints.
 
@@ -10857,13 +9730,9 @@ class BlueprintList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'blueprints'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 blueprints: List['BlueprintLite'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, blueprints: List['BlueprintLite'] = None, **kwargs
+    ) -> None:
         """
         Initialize a BlueprintList object.
 
@@ -10894,7 +9763,7 @@ class BlueprintList():
             raise ValueError('Required property \'offset\' not present in BlueprintList JSON')
         if 'blueprints' in _dict:
             args['blueprints'] = [BlueprintLite.from_dict(x) for x in _dict.get('blueprints')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -10936,7 +9805,8 @@ class BlueprintList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class BlueprintLite():
+
+class BlueprintLite:
     """
     Blueprint summary profile.
 
@@ -10963,26 +9833,46 @@ class BlueprintLite():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'resource_group', 'tags', 'location', 'id', 'crn', 'account', 'created_at', 'created_by', 'updated_at', 'updated_by', 'sys_lock', 'user_state', 'state'])
+    _properties = frozenset(
+        [
+            'name',
+            'description',
+            'resource_group',
+            'tags',
+            'location',
+            'id',
+            'crn',
+            'account',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+            'sys_lock',
+            'user_state',
+            'state',
+        ]
+    )
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str = None,
-                 resource_group: str = None,
-                 tags: List[str] = None,
-                 location: str = None,
-                 id: str = None,
-                 crn: str = None,
-                 account: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 sys_lock: 'SystemLock' = None,
-                 user_state: 'UserState' = None,
-                 state: 'BlueprintLiteState' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str = None,
+        resource_group: str = None,
+        tags: List[str] = None,
+        location: str = None,
+        id: str = None,
+        crn: str = None,
+        account: str = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        sys_lock: 'SystemLock' = None,
+        user_state: 'UserState' = None,
+        state: 'BlueprintLiteState' = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a BlueprintLite object.
 
@@ -11052,7 +9942,7 @@ class BlueprintLite():
             args['user_state'] = UserState.from_dict(_dict.get('user_state'))
         if 'state' in _dict:
             args['state'] = BlueprintLiteState.from_dict(_dict.get('state'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -11123,13 +10013,14 @@ class BlueprintLite():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class BlueprintLiteState():
+class BlueprintLiteState:
     """
     Computed state of the Blueprint.
 
@@ -11148,11 +10039,7 @@ class BlueprintLiteState():
     # The set of defined properties for the class
     _properties = frozenset(['status_code', 'status_message'])
 
-    def __init__(self,
-                 *,
-                 status_code: str = None,
-                 status_message: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, status_code: str = None, status_message: str = None, **kwargs) -> None:
         """
         Initialize a BlueprintLiteState object.
 
@@ -11182,7 +10069,7 @@ class BlueprintLiteState():
             args['status_code'] = _dict.get('status_code')
         if 'status_message' in _dict:
             args['status_message'] = _dict.get('status_message')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -11231,13 +10118,14 @@ class BlueprintLiteState():
           * `Blueprint_Create_Failed` Failed to create Blueprint or underlying schematics
         objects.
         """
+
         BLUEPRINT_CREATE_INIT = 'Blueprint_Create_Init'
         BLUEPRINT_CREATE_INPROGRESS = 'Blueprint_Create_InProgress'
         BLUEPRINT_CREATE_SUCCESS = 'Blueprint_Create_Success'
         BLUEPRINT_CREATE_FAILED = 'Blueprint_Create_Failed'
 
 
-class BlueprintVariableData():
+class BlueprintVariableData:
     """
     User editable variable data & system generated reference to value.
 
@@ -11250,12 +10138,7 @@ class BlueprintVariableData():
     # The set of defined properties for the class
     _properties = frozenset(['name', 'value', 'link'])
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 value: str = None,
-                 link: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, name: str = None, value: str = None, link: str = None, **kwargs) -> None:
         """
         Initialize a BlueprintVariableData object.
 
@@ -11280,7 +10163,7 @@ class BlueprintVariableData():
             args['value'] = _dict.get('value')
         if 'link' in _dict:
             args['link'] = _dict.get('link')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -11320,7 +10203,8 @@ class BlueprintVariableData():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class Capsule():
+
+class Capsule:
     """
     Complete capsule definition record.
 
@@ -11354,35 +10238,64 @@ class Capsule():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'type', 'user_state', 'package', 'severity', 'inventory', 'trigger_record_id', 'job_triggers', 'scheduled_triggers', 'inputs', 'decisions', 'escalations', 'id', 'status', 'controls_id', 'controls_name', 'created_at', 'created_by', 'updated_at', 'updated_by', 'state', 'last_job_data', 'sys_lock'])
+    _properties = frozenset(
+        [
+            'name',
+            'description',
+            'type',
+            'user_state',
+            'package',
+            'severity',
+            'inventory',
+            'trigger_record_id',
+            'job_triggers',
+            'scheduled_triggers',
+            'inputs',
+            'decisions',
+            'escalations',
+            'id',
+            'status',
+            'controls_id',
+            'controls_name',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+            'state',
+            'last_job_data',
+            'sys_lock',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 description: str = None,
-                 type: str = None,
-                 user_state: 'UserState' = None,
-                 package: str = None,
-                 severity: int = None,
-                 inventory: str = None,
-                 trigger_record_id: str = None,
-                 job_triggers: List['TriggerJob'] = None,
-                 scheduled_triggers: List['TriggerScheduled'] = None,
-                 inputs: List['VariableData'] = None,
-                 decisions: List['ControlsDecision'] = None,
-                 escalations: List['ControlsEscalation'] = None,
-                 id: str = None,
-                 status: str = None,
-                 controls_id: str = None,
-                 controls_name: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 state: 'ControlsLiteState' = None,
-                 last_job_data: 'JobDataCapsule' = None,
-                 sys_lock: 'SystemLock' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        description: str = None,
+        type: str = None,
+        user_state: 'UserState' = None,
+        package: str = None,
+        severity: int = None,
+        inventory: str = None,
+        trigger_record_id: str = None,
+        job_triggers: List['TriggerJob'] = None,
+        scheduled_triggers: List['TriggerScheduled'] = None,
+        inputs: List['VariableData'] = None,
+        decisions: List['ControlsDecision'] = None,
+        escalations: List['ControlsEscalation'] = None,
+        id: str = None,
+        status: str = None,
+        controls_id: str = None,
+        controls_name: str = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        state: 'ControlsLiteState' = None,
+        last_job_data: 'JobDataCapsule' = None,
+        sys_lock: 'SystemLock' = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a Capsule object.
 
@@ -11497,7 +10410,7 @@ class Capsule():
             args['last_job_data'] = JobDataCapsule.from_dict(_dict.get('last_job_data'))
         if 'sys_lock' in _dict:
             args['sys_lock'] = SystemLock.from_dict(_dict.get('sys_lock'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -11579,7 +10492,8 @@ class Capsule():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class CapsuleList():
+
+class CapsuleList:
     """
     List of Capsule definitions response.
 
@@ -11592,13 +10506,9 @@ class CapsuleList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'capsules'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 capsules: List['CapsuleLite'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, capsules: List['CapsuleLite'] = None, **kwargs
+    ) -> None:
         """
         Initialize a CapsuleList object.
 
@@ -11631,7 +10541,7 @@ class CapsuleList():
             raise ValueError('Required property \'offset\' not present in CapsuleList JSON')
         if 'capsules' in _dict:
             args['capsules'] = [CapsuleLite.from_dict(x) for x in _dict.get('capsules')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -11673,7 +10583,8 @@ class CapsuleList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class CapsuleLite():
+
+class CapsuleLite:
     """
     Capsule summary profile with user inputs and system generated data.
 
@@ -11699,25 +10610,44 @@ class CapsuleLite():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'id', 'crn', 'location', 'resource_group', 'tags', 'user_state', 'state', 'sys_lock', 'created_at', 'created_by', 'updated_at', 'updated_by'])
+    _properties = frozenset(
+        [
+            'name',
+            'description',
+            'id',
+            'crn',
+            'location',
+            'resource_group',
+            'tags',
+            'user_state',
+            'state',
+            'sys_lock',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 description: str = None,
-                 id: str = None,
-                 crn: str = None,
-                 location: str = None,
-                 resource_group: str = None,
-                 tags: List[str] = None,
-                 user_state: 'UserState' = None,
-                 state: 'CapsuleLiteState' = None,
-                 sys_lock: 'SystemLock' = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        description: str = None,
+        id: str = None,
+        crn: str = None,
+        location: str = None,
+        resource_group: str = None,
+        tags: List[str] = None,
+        user_state: 'UserState' = None,
+        state: 'CapsuleLiteState' = None,
+        sys_lock: 'SystemLock' = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a CapsuleLite object.
 
@@ -11793,7 +10723,7 @@ class CapsuleLite():
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         if 'updated_by' in _dict:
             args['updated_by'] = _dict.get('updated_by')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -11862,13 +10792,14 @@ class CapsuleLite():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class CapsuleLiteState():
+class CapsuleLiteState:
     """
     Computed state of the Capsule.
 
@@ -11880,11 +10811,7 @@ class CapsuleLiteState():
     # The set of defined properties for the class
     _properties = frozenset(['status_code', 'status_message'])
 
-    def __init__(self,
-                 *,
-                 status_code: str = None,
-                 status_message: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, status_code: str = None, status_message: str = None, **kwargs) -> None:
         """
         Initialize a CapsuleLiteState object.
 
@@ -11907,7 +10834,7 @@ class CapsuleLiteState():
             args['status_code'] = _dict.get('status_code')
         if 'status_message' in _dict:
             args['status_message'] = _dict.get('status_message')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -11949,13 +10876,14 @@ class CapsuleLiteState():
         """
         Status of automation (workspace or action).
         """
+
         NORMAL = 'normal'
         PENDING = 'pending'
         DISABLED = 'disabled'
         CRITICAL = 'critical'
 
 
-class CapsuleResultEvidences():
+class CapsuleResultEvidences:
     """
     List of capsule evidences.
 
@@ -11965,10 +10893,7 @@ class CapsuleResultEvidences():
     # The set of defined properties for the class
     _properties = frozenset(['resources'])
 
-    def __init__(self,
-                 *,
-                 resources: List['CapsuleResultResources'] = None,
-                 **kwargs) -> None:
+    def __init__(self, *, resources: List['CapsuleResultResources'] = None, **kwargs) -> None:
         """
         Initialize a CapsuleResultEvidences object.
 
@@ -11986,7 +10911,7 @@ class CapsuleResultEvidences():
         args = {}
         if 'resources' in _dict:
             args['resources'] = [CapsuleResultResources.from_dict(x) for x in _dict.get('resources')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -12022,7 +10947,8 @@ class CapsuleResultEvidences():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class CapsuleResultResources():
+
+class CapsuleResultResources:
     """
     Resource details.
 
@@ -12033,11 +10959,7 @@ class CapsuleResultResources():
     # The set of defined properties for the class
     _properties = frozenset(['name', 'type'])
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 type: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, name: str = None, type: str = None, **kwargs) -> None:
         """
         Initialize a CapsuleResultResources object.
 
@@ -12058,7 +10980,7 @@ class CapsuleResultResources():
             args['name'] = _dict.get('name')
         if 'type' in _dict:
             args['type'] = _dict.get('type')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -12096,7 +11018,8 @@ class CapsuleResultResources():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class CartOrder():
+
+class CartOrder:
     """
     Complete Cart order details with user inputs and system generated data.
 
@@ -12127,28 +11050,50 @@ class CartOrder():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'tags', 'cart_items', 'service_name', 'resource_group', 'location', 'user_state', 'cart_order_id', 'crn', 'account', 'created_at', 'created_by', 'updated_at', 'updated_by', 'sys_lock', 'state'])
+    _properties = frozenset(
+        [
+            'name',
+            'description',
+            'tags',
+            'cart_items',
+            'service_name',
+            'resource_group',
+            'location',
+            'user_state',
+            'cart_order_id',
+            'crn',
+            'account',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+            'sys_lock',
+            'state',
+        ]
+    )
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str = None,
-                 tags: List[str] = None,
-                 cart_items: List['OrderItemConfiguration'] = None,
-                 service_name: str = None,
-                 resource_group: str = None,
-                 location: str = None,
-                 user_state: 'CartOrderUserState' = None,
-                 cart_order_id: str = None,
-                 crn: str = None,
-                 account: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 sys_lock: 'SystemLock' = None,
-                 state: 'CartOrderLiteState' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str = None,
+        tags: List[str] = None,
+        cart_items: List['OrderItemConfiguration'] = None,
+        service_name: str = None,
+        resource_group: str = None,
+        location: str = None,
+        user_state: 'CartOrderUserState' = None,
+        cart_order_id: str = None,
+        crn: str = None,
+        account: str = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        sys_lock: 'SystemLock' = None,
+        state: 'CartOrderLiteState' = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a CartOrder object.
 
@@ -12230,7 +11175,7 @@ class CartOrder():
             args['sys_lock'] = SystemLock.from_dict(_dict.get('sys_lock'))
         if 'state' in _dict:
             args['state'] = CartOrderLiteState.from_dict(_dict.get('state'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -12305,13 +11250,14 @@ class CartOrder():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class CartOrderList():
+class CartOrderList:
     """
     List of Cart orders.
 
@@ -12324,13 +11270,9 @@ class CartOrderList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'cart'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 cart: List['CartOrderLite'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, cart: List['CartOrderLite'] = None, **kwargs
+    ) -> None:
         """
         Initialize a CartOrderList object.
 
@@ -12362,7 +11304,7 @@ class CartOrderList():
             raise ValueError('Required property \'offset\' not present in CartOrderList JSON')
         if 'cart' in _dict:
             args['cart'] = [CartOrderLite.from_dict(x) for x in _dict.get('cart')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -12404,7 +11346,8 @@ class CartOrderList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class CartOrderLite():
+
+class CartOrderLite:
     """
     Cart order summary profile.
 
@@ -12434,27 +11377,48 @@ class CartOrderLite():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'service_name', 'resource_group', 'tags', 'location', 'id', 'crn', 'account', 'created_at', 'created_by', 'updated_at', 'updated_by', 'sys_lock', 'user_state', 'state'])
+    _properties = frozenset(
+        [
+            'name',
+            'description',
+            'service_name',
+            'resource_group',
+            'tags',
+            'location',
+            'id',
+            'crn',
+            'account',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+            'sys_lock',
+            'user_state',
+            'state',
+        ]
+    )
 
-    def __init__(self,
-                 name: str,
-                 *,
-                 description: str = None,
-                 service_name: str = None,
-                 resource_group: str = None,
-                 tags: List[str] = None,
-                 location: str = None,
-                 id: str = None,
-                 crn: str = None,
-                 account: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 sys_lock: 'SystemLock' = None,
-                 user_state: 'CartOrderUserState' = None,
-                 state: 'CartOrderLiteState' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        name: str,
+        *,
+        description: str = None,
+        service_name: str = None,
+        resource_group: str = None,
+        tags: List[str] = None,
+        location: str = None,
+        id: str = None,
+        crn: str = None,
+        account: str = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        sys_lock: 'SystemLock' = None,
+        user_state: 'CartOrderUserState' = None,
+        state: 'CartOrderLiteState' = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a CartOrderLite object.
 
@@ -12532,7 +11496,7 @@ class CartOrderLite():
             args['user_state'] = CartOrderUserState.from_dict(_dict.get('user_state'))
         if 'state' in _dict:
             args['state'] = CartOrderLiteState.from_dict(_dict.get('state'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -12605,13 +11569,14 @@ class CartOrderLite():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class CartOrderLiteState():
+class CartOrderLiteState:
     """
     Computed state of the CartOrder.
 
@@ -12623,11 +11588,7 @@ class CartOrderLiteState():
     # The set of defined properties for the class
     _properties = frozenset(['status_code', 'status_message'])
 
-    def __init__(self,
-                 *,
-                 status_code: str = None,
-                 status_message: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, status_code: str = None, status_message: str = None, **kwargs) -> None:
         """
         Initialize a CartOrderLiteState object.
 
@@ -12650,7 +11611,7 @@ class CartOrderLiteState():
             args['status_code'] = _dict.get('status_code')
         if 'status_message' in _dict:
             args['status_message'] = _dict.get('status_message')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -12692,13 +11653,14 @@ class CartOrderLiteState():
         """
         Status of automation (workspace or action).
         """
+
         NORMAL = 'normal'
         PENDING = 'pending'
         DISABLED = 'disabled'
         CRITICAL = 'critical'
 
 
-class CartOrderUserState():
+class CartOrderUserState:
     """
     User defined status of the Schematics object.
 
@@ -12722,12 +11684,7 @@ class CartOrderUserState():
     # The set of defined properties for the class
     _properties = frozenset(['state', 'set_by', 'set_at'])
 
-    def __init__(self,
-                 *,
-                 state: str = None,
-                 set_by: str = None,
-                 set_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(self, *, state: str = None, set_by: str = None, set_at: datetime = None, **kwargs) -> None:
         """
         Initialize a CartOrderUserState object.
 
@@ -12766,7 +11723,7 @@ class CartOrderUserState():
             args['set_by'] = _dict.get('set_by')
         if 'set_at' in _dict:
             args['set_at'] = string_to_datetime(_dict.get('set_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -12821,6 +11778,7 @@ class CartOrderUserState():
           * `Order_Fulfilment_Success` Fulfilment successful
           * `Order_Fulfilment_Failed` Fulfilment failed.
         """
+
         ORDER_CREATE_INIT = 'Order_Create_Init'
         ORDER_CREATE_INPROGRESS = 'Order_Create_InProgress'
         ORDER_CREATE_SUCCESS = 'Order_Create_Success'
@@ -12830,7 +11788,7 @@ class CartOrderUserState():
         ORDER_FULFILMENT_FAILED = 'Order_Fulfilment_Failed'
 
 
-class CatalogOfferingItem():
+class CatalogOfferingItem:
     """
     Catalog offering details.
 
@@ -12846,16 +11804,18 @@ class CatalogOfferingItem():
     # The set of defined properties for the class
     _properties = frozenset(['name', 'label', 'offering_id', 'short_description', 'crn', 'offering_url', 'versions'])
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 label: str = None,
-                 offering_id: str = None,
-                 short_description: str = None,
-                 crn: str = None,
-                 offering_url: str = None,
-                 versions: List['CatalogOfferingItemVersions'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        label: str = None,
+        offering_id: str = None,
+        short_description: str = None,
+        crn: str = None,
+        offering_url: str = None,
+        versions: List['CatalogOfferingItemVersions'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a CatalogOfferingItem object.
 
@@ -12897,7 +11857,7 @@ class CatalogOfferingItem():
             args['offering_url'] = _dict.get('offering_url')
         if 'versions' in _dict:
             args['versions'] = [CatalogOfferingItemVersions.from_dict(x) for x in _dict.get('versions')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -12945,7 +11905,8 @@ class CatalogOfferingItem():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class CatalogOfferingItemVersions():
+
+class CatalogOfferingItemVersions:
     """
     CatalogOfferingItemVersions.
 
@@ -12956,11 +11917,7 @@ class CatalogOfferingItemVersions():
     # The set of defined properties for the class
     _properties = frozenset(['version', 'versionid'])
 
-    def __init__(self,
-                 *,
-                 version: str = None,
-                 versionid: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, version: str = None, versionid: str = None, **kwargs) -> None:
         """
         Initialize a CatalogOfferingItemVersions object.
 
@@ -12981,7 +11938,7 @@ class CatalogOfferingItemVersions():
             args['version'] = _dict.get('version')
         if 'versionid' in _dict:
             args['versionid'] = _dict.get('versionid')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -13019,7 +11976,8 @@ class CatalogOfferingItemVersions():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class CloudResource():
+
+class CloudResource:
     """
     Cloud resource data.
 
@@ -13032,17 +11990,21 @@ class CloudResource():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['resource_id', 'cloud_resource_name', 'terraform_resource_name', 'crn', 'resource_state', 'tags'])
+    _properties = frozenset(
+        ['resource_id', 'cloud_resource_name', 'terraform_resource_name', 'crn', 'resource_state', 'tags']
+    )
 
-    def __init__(self,
-                 *,
-                 resource_id: str = None,
-                 cloud_resource_name: str = None,
-                 terraform_resource_name: str = None,
-                 crn: str = None,
-                 resource_state: str = None,
-                 tags: List[str] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        resource_id: str = None,
+        cloud_resource_name: str = None,
+        terraform_resource_name: str = None,
+        crn: str = None,
+        resource_state: str = None,
+        tags: List[str] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a CloudResource object.
 
@@ -13080,7 +12042,7 @@ class CloudResource():
             args['resource_state'] = _dict.get('resource_state')
         if 'tags' in _dict:
             args['tags'] = _dict.get('tags')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -13126,7 +12088,8 @@ class CloudResource():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class CloudResourceList():
+
+class CloudResourceList:
     """
     List of cloud resources.
 
@@ -13139,13 +12102,9 @@ class CloudResourceList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'outputs'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 outputs: List['CloudResource'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, outputs: List['CloudResource'] = None, **kwargs
+    ) -> None:
         """
         Initialize a CloudResourceList object.
 
@@ -13179,7 +12138,7 @@ class CloudResourceList():
             raise ValueError('Required property \'offset\' not present in CloudResourceList JSON')
         if 'outputs' in _dict:
             args['outputs'] = [CloudResource.from_dict(x) for x in _dict.get('outputs')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -13221,7 +12180,8 @@ class CloudResourceList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class CommandList():
+
+class CommandList:
     """
     List of Schematics commands.
 
@@ -13232,10 +12192,7 @@ class CommandList():
     # The set of defined properties for the class
     _properties = frozenset(['commands'])
 
-    def __init__(self,
-                 *,
-                 commands: List['CommandListCommands'] = None,
-                 **kwargs) -> None:
+    def __init__(self, *, commands: List['CommandListCommands'] = None, **kwargs) -> None:
         """
         Initialize a CommandList object.
 
@@ -13253,7 +12210,7 @@ class CommandList():
         args = {}
         if 'commands' in _dict:
             args['commands'] = [CommandListCommands.from_dict(x) for x in _dict.get('commands')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -13289,7 +12246,8 @@ class CommandList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class CommandListCommands():
+
+class CommandListCommands:
     """
     CommandListCommands.
 
@@ -13301,11 +12259,7 @@ class CommandListCommands():
     # The set of defined properties for the class
     _properties = frozenset(['command_name', 'command_parameter'])
 
-    def __init__(self,
-                 *,
-                 command_name: str = None,
-                 command_parameter: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, command_name: str = None, command_parameter: str = None, **kwargs) -> None:
         """
         Initialize a CommandListCommands object.
 
@@ -13327,7 +12281,7 @@ class CommandListCommands():
             args['command_name'] = _dict.get('command_name')
         if 'command_parameter' in _dict:
             args['command_parameter'] = _dict.get('command_parameter')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -13369,6 +12323,7 @@ class CommandListCommands():
         """
         Schematics job command name.
         """
+
         WORKSPACE_PLAN = 'workspace_plan'
         WORKSPACE_APPLY = 'workspace_apply'
         WORKSPACE_DESTROY = 'workspace_destroy'
@@ -13399,7 +12354,7 @@ class CommandListCommands():
         TERRAFORM_COMMANDS = 'terraform_commands'
 
 
-class CommandsInfo():
+class CommandsInfo:
     """
     Workspace commands run as part of the job.
 
@@ -13410,11 +12365,7 @@ class CommandsInfo():
     # The set of defined properties for the class
     _properties = frozenset(['name', 'outcome'])
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 outcome: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, name: str = None, outcome: str = None, **kwargs) -> None:
         """
         Initialize a CommandsInfo object.
 
@@ -13435,7 +12386,7 @@ class CommandsInfo():
             args['name'] = _dict.get('name')
         if 'outcome' in _dict:
             args['outcome'] = _dict.get('outcome')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -13473,7 +12424,8 @@ class CommandsInfo():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class Connection():
+
+class Connection:
     """
     External connection definition with unique id.
 
@@ -13500,25 +12452,44 @@ class Connection():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'resource_group', 'location', 'tags', 'crn', 'connection_type', 'connection_properties', 'id', 'account', 'created_at', 'created_by', 'updated_at', 'updated_by'])
+    _properties = frozenset(
+        [
+            'name',
+            'description',
+            'resource_group',
+            'location',
+            'tags',
+            'crn',
+            'connection_type',
+            'connection_properties',
+            'id',
+            'account',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 description: str = None,
-                 resource_group: str = None,
-                 location: str = None,
-                 tags: List[str] = None,
-                 crn: str = None,
-                 connection_type: str = None,
-                 connection_properties: List['VariableData'] = None,
-                 id: str = None,
-                 account: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        description: str = None,
+        resource_group: str = None,
+        location: str = None,
+        tags: List[str] = None,
+        crn: str = None,
+        connection_type: str = None,
+        connection_properties: List['VariableData'] = None,
+        id: str = None,
+        account: str = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a Connection object.
 
@@ -13584,7 +12555,7 @@ class Connection():
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         if 'updated_by' in _dict:
             args['updated_by'] = _dict.get('updated_by')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -13653,13 +12624,14 @@ class Connection():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class ConnectionList():
+class ConnectionList:
     """
     List of external connection definition.
 
@@ -13672,13 +12644,9 @@ class ConnectionList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'connections'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 connections: List['ConnectionLite'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, connections: List['ConnectionLite'] = None, **kwargs
+    ) -> None:
         """
         Initialize a ConnectionList object.
 
@@ -13712,7 +12680,7 @@ class ConnectionList():
             raise ValueError('Required property \'offset\' not present in ConnectionList JSON')
         if 'connections' in _dict:
             args['connections'] = [ConnectionLite.from_dict(x) for x in _dict.get('connections')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -13754,7 +12722,8 @@ class ConnectionList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class ConnectionLite():
+
+class ConnectionLite:
     """
     External connection definition required to connect external services.
 
@@ -13777,21 +12746,36 @@ class ConnectionLite():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'resource_group', 'location', 'tags', 'connection_type', 'id', 'created_at', 'created_by', 'updated_at', 'updated_by'])
+    _properties = frozenset(
+        [
+            'name',
+            'resource_group',
+            'location',
+            'tags',
+            'connection_type',
+            'id',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 resource_group: str = None,
-                 location: str = None,
-                 tags: List[str] = None,
-                 connection_type: str = None,
-                 id: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        resource_group: str = None,
+        location: str = None,
+        tags: List[str] = None,
+        connection_type: str = None,
+        id: str = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a ConnectionLite object.
 
@@ -13840,7 +12824,7 @@ class ConnectionLite():
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         if 'updated_by' in _dict:
             args['updated_by'] = _dict.get('updated_by')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -13901,13 +12885,14 @@ class ConnectionLite():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class Controls():
+class Controls:
     """
     Complete Controls definition with user input and system generated data.
 
@@ -13945,34 +12930,62 @@ class Controls():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'type', 'description', 'resource_group', 'location', 'tags', 'source_readme_url', 'source', 'source_type', 'inputs', 'user_state', 'id', 'crn', 'source_created_at', 'source_created_by', 'source_updated_at', 'source_updated_by', 'created_at', 'created_by', 'updated_at', 'updated_by', 'sys_lock', 'capsules'])
+    _properties = frozenset(
+        [
+            'name',
+            'type',
+            'description',
+            'resource_group',
+            'location',
+            'tags',
+            'source_readme_url',
+            'source',
+            'source_type',
+            'inputs',
+            'user_state',
+            'id',
+            'crn',
+            'source_created_at',
+            'source_created_by',
+            'source_updated_at',
+            'source_updated_by',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+            'sys_lock',
+            'capsules',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 type: str = None,
-                 description: str = None,
-                 resource_group: str = None,
-                 location: str = None,
-                 tags: List[str] = None,
-                 source_readme_url: str = None,
-                 source: 'ExternalSource' = None,
-                 source_type: str = None,
-                 inputs: List['VariableData'] = None,
-                 user_state: 'UserState' = None,
-                 id: str = None,
-                 crn: str = None,
-                 source_created_at: datetime = None,
-                 source_created_by: str = None,
-                 source_updated_at: datetime = None,
-                 source_updated_by: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 sys_lock: 'SystemLock' = None,
-                 capsules: List['Capsule'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        type: str = None,
+        description: str = None,
+        resource_group: str = None,
+        location: str = None,
+        tags: List[str] = None,
+        source_readme_url: str = None,
+        source: 'ExternalSource' = None,
+        source_type: str = None,
+        inputs: List['VariableData'] = None,
+        user_state: 'UserState' = None,
+        id: str = None,
+        crn: str = None,
+        source_created_at: datetime = None,
+        source_created_by: str = None,
+        source_updated_at: datetime = None,
+        source_updated_by: str = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        sys_lock: 'SystemLock' = None,
+        capsules: List['Capsule'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a Controls object.
 
@@ -14075,7 +13088,7 @@ class Controls():
             args['sys_lock'] = SystemLock.from_dict(_dict.get('sys_lock'))
         if 'capsules' in _dict:
             args['capsules'] = [Capsule.from_dict(x) for x in _dict.get('capsules')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -14159,11 +13172,11 @@ class Controls():
         """
         Controls type.
         """
+
         IT_CONTROLS = 'it_controls'
         SECURITY_CONTROLS = 'security_controls'
         FINANCIAL_CONTROLS = 'financial_controls'
         OTHER_CONTROLS = 'other_controls'
-
 
     class LocationEnum(str, Enum):
         """
@@ -14172,16 +13185,17 @@ class Controls():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
-
     class SourceTypeEnum(str, Enum):
         """
         Type of source for the Template.
         """
+
         LOCAL = 'local'
         GIT_HUB = 'git_hub'
         GIT_HUB_ENTERPRISE = 'git_hub_enterprise'
@@ -14191,7 +13205,7 @@ class Controls():
         EXTERNAL_SCM = 'external_scm'
 
 
-class ControlsDecision():
+class ControlsDecision:
     """
     Policy ControlsDecision definition.
 
@@ -14204,13 +13218,15 @@ class ControlsDecision():
     # The set of defined properties for the class
     _properties = frozenset(['rule', 'pass_value', 'pass_expr', 'evidence_found_in'])
 
-    def __init__(self,
-                 *,
-                 rule: str = None,
-                 pass_value: str = None,
-                 pass_expr: str = None,
-                 evidence_found_in: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        rule: str = None,
+        pass_value: str = None,
+        pass_expr: str = None,
+        evidence_found_in: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a ControlsDecision object.
 
@@ -14239,7 +13255,7 @@ class ControlsDecision():
             args['pass_expr'] = _dict.get('pass_expr')
         if 'evidence_found_in' in _dict:
             args['evidence_found_in'] = _dict.get('evidence_found_in')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -14285,11 +13301,12 @@ class ControlsDecision():
         """
         Pass value.
         """
+
         BEFORE = 'before'
         AFTER = 'after'
 
 
-class ControlsEscalation():
+class ControlsEscalation:
     """
     ControlsEscalation definition.
 
@@ -14299,10 +13316,7 @@ class ControlsEscalation():
     # The set of defined properties for the class
     _properties = frozenset(['action_id'])
 
-    def __init__(self,
-                 *,
-                 action_id: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, action_id: str = None, **kwargs) -> None:
         """
         Initialize a ControlsEscalation object.
 
@@ -14319,7 +13333,7 @@ class ControlsEscalation():
         args = {}
         if 'action_id' in _dict:
             args['action_id'] = _dict.get('action_id')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -14355,7 +13369,8 @@ class ControlsEscalation():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class ControlsList():
+
+class ControlsList:
     """
     List of Controls definition response.
 
@@ -14368,13 +13383,9 @@ class ControlsList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'controls'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 controls: List['ControlsLite'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, controls: List['ControlsLite'] = None, **kwargs
+    ) -> None:
         """
         Initialize a ControlsList object.
 
@@ -14407,7 +13418,7 @@ class ControlsList():
             raise ValueError('Required property \'offset\' not present in ControlsList JSON')
         if 'controls' in _dict:
             args['controls'] = [ControlsLite.from_dict(x) for x in _dict.get('controls')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -14449,7 +13460,8 @@ class ControlsList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class ControlsLite():
+
+class ControlsLite:
     """
     Controls summary profile with user inputs and system generated data.
 
@@ -14475,25 +13487,44 @@ class ControlsLite():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'id', 'crn', 'location', 'resource_group', 'tags', 'user_state', 'state', 'sys_lock', 'created_at', 'created_by', 'updated_at', 'updated_by'])
+    _properties = frozenset(
+        [
+            'name',
+            'description',
+            'id',
+            'crn',
+            'location',
+            'resource_group',
+            'tags',
+            'user_state',
+            'state',
+            'sys_lock',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 description: str = None,
-                 id: str = None,
-                 crn: str = None,
-                 location: str = None,
-                 resource_group: str = None,
-                 tags: List[str] = None,
-                 user_state: 'UserState' = None,
-                 state: 'ControlsLiteState' = None,
-                 sys_lock: 'SystemLock' = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        description: str = None,
+        id: str = None,
+        crn: str = None,
+        location: str = None,
+        resource_group: str = None,
+        tags: List[str] = None,
+        user_state: 'UserState' = None,
+        state: 'ControlsLiteState' = None,
+        sys_lock: 'SystemLock' = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a ControlsLite object.
 
@@ -14569,7 +13600,7 @@ class ControlsLite():
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         if 'updated_by' in _dict:
             args['updated_by'] = _dict.get('updated_by')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -14638,13 +13669,14 @@ class ControlsLite():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class ControlsLiteState():
+class ControlsLiteState:
     """
     Computed state of the Controls.
 
@@ -14656,11 +13688,7 @@ class ControlsLiteState():
     # The set of defined properties for the class
     _properties = frozenset(['status_code', 'status_message'])
 
-    def __init__(self,
-                 *,
-                 status_code: str = None,
-                 status_message: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, status_code: str = None, status_message: str = None, **kwargs) -> None:
         """
         Initialize a ControlsLiteState object.
 
@@ -14683,7 +13711,7 @@ class ControlsLiteState():
             args['status_code'] = _dict.get('status_code')
         if 'status_message' in _dict:
             args['status_message'] = _dict.get('status_message')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -14725,13 +13753,14 @@ class ControlsLiteState():
         """
         Status of automation (workspace or action).
         """
+
         NORMAL = 'normal'
         PENDING = 'pending'
         DISABLED = 'disabled'
         CRITICAL = 'critical'
 
 
-class CredentialVariableData():
+class CredentialVariableData:
     """
     User editable credential variable data and system generated reference to the value.
 
@@ -14751,14 +13780,16 @@ class CredentialVariableData():
     # The set of defined properties for the class
     _properties = frozenset(['name', 'value', 'use_default', 'metadata', 'link'])
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 value: str = None,
-                 use_default: bool = None,
-                 metadata: 'CredentialVariableMetadata' = None,
-                 link: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        value: str = None,
+        use_default: bool = None,
+        metadata: 'CredentialVariableMetadata' = None,
+        link: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a CredentialVariableData object.
 
@@ -14795,7 +13826,7 @@ class CredentialVariableData():
             args['metadata'] = CredentialVariableMetadata.from_dict(_dict.get('metadata'))
         if 'link' in _dict:
             args['link'] = _dict.get('link')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -14839,7 +13870,8 @@ class CredentialVariableData():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class CredentialVariableMetadata():
+
+class CredentialVariableMetadata:
     """
     An user editable metadata for the credential variables.
 
@@ -14862,23 +13894,40 @@ class CredentialVariableMetadata():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['type', 'aliases', 'description', 'cloud_data_type', 'default_value', 'link_status', 'immutable', 'hidden', 'required', 'position', 'group_by', 'source'])
+    _properties = frozenset(
+        [
+            'type',
+            'aliases',
+            'description',
+            'cloud_data_type',
+            'default_value',
+            'link_status',
+            'immutable',
+            'hidden',
+            'required',
+            'position',
+            'group_by',
+            'source',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 type: str = None,
-                 aliases: List[str] = None,
-                 description: str = None,
-                 cloud_data_type: str = None,
-                 default_value: str = None,
-                 link_status: str = None,
-                 immutable: bool = None,
-                 hidden: bool = None,
-                 required: bool = None,
-                 position: int = None,
-                 group_by: str = None,
-                 source: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        type: str = None,
+        aliases: List[str] = None,
+        description: str = None,
+        cloud_data_type: str = None,
+        default_value: str = None,
+        link_status: str = None,
+        immutable: bool = None,
+        hidden: bool = None,
+        required: bool = None,
+        position: int = None,
+        group_by: str = None,
+        source: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a CredentialVariableMetadata object.
 
@@ -14945,7 +13994,7 @@ class CredentialVariableMetadata():
             args['group_by'] = _dict.get('group_by')
         if 'source' in _dict:
             args['source'] = _dict.get('source')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -15007,19 +14056,20 @@ class CredentialVariableMetadata():
         """
         Type of the variable.
         """
+
         STRING = 'string'
         LINK = 'link'
-
 
     class LinkStatusEnum(str, Enum):
         """
         The status of the link.
         """
+
         NORMAL = 'normal'
         BROKEN = 'broken'
 
 
-class Dataset():
+class Dataset:
     """
     Complete details of the Dataset record.
 
@@ -15048,27 +14098,48 @@ class Dataset():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'type', 'description', 'resource_group', 'location', 'tags', 'data', 'datasource', 'user_state', 'dataset_id', 'account', 'created_at', 'created_by', 'updated_at', 'updated_by', 'affected_resource_ids'])
+    _properties = frozenset(
+        [
+            'name',
+            'type',
+            'description',
+            'resource_group',
+            'location',
+            'tags',
+            'data',
+            'datasource',
+            'user_state',
+            'dataset_id',
+            'account',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+            'affected_resource_ids',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 type: str = None,
-                 description: str = None,
-                 resource_group: str = None,
-                 location: str = None,
-                 tags: List[str] = None,
-                 data: List['VariableData'] = None,
-                 datasource: str = None,
-                 user_state: 'UserState' = None,
-                 dataset_id: str = None,
-                 account: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 affected_resource_ids: List[str] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        type: str = None,
+        description: str = None,
+        resource_group: str = None,
+        location: str = None,
+        tags: List[str] = None,
+        data: List['VariableData'] = None,
+        datasource: str = None,
+        user_state: 'UserState' = None,
+        dataset_id: str = None,
+        account: str = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        affected_resource_ids: List[str] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a Dataset object.
 
@@ -15143,7 +14214,7 @@ class Dataset():
             args['updated_by'] = _dict.get('updated_by')
         if 'affected_resource_ids' in _dict:
             args['affected_resource_ids'] = _dict.get('affected_resource_ids')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -15213,9 +14284,9 @@ class Dataset():
         """
         Dataset types.
         """
+
         CREDENTIAL = 'credential'
         CONFIGURATION = 'configuration'
-
 
     class LocationEnum(str, Enum):
         """
@@ -15224,13 +14295,14 @@ class Dataset():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class DatasetList():
+class DatasetList:
     """
     List of dataset definition response.
 
@@ -15243,13 +14315,9 @@ class DatasetList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'datasets'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 datasets: List['DatasetLite'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, datasets: List['DatasetLite'] = None, **kwargs
+    ) -> None:
         """
         Initialize a DatasetList object.
 
@@ -15282,7 +14350,7 @@ class DatasetList():
             raise ValueError('Required property \'offset\' not present in DatasetList JSON')
         if 'datasets' in _dict:
             args['datasets'] = [DatasetLite.from_dict(x) for x in _dict.get('datasets')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -15324,7 +14392,8 @@ class DatasetList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class DatasetLite():
+
+class DatasetLite:
     """
     Summary Profile of the Dataset.
 
@@ -15348,24 +14417,42 @@ class DatasetLite():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'dataset_id', 'type', 'description', 'resource_group', 'location', 'tags', 'source_type', 'user_state', 'created_at', 'created_by', 'updated_at', 'updated_by'])
+    _properties = frozenset(
+        [
+            'name',
+            'dataset_id',
+            'type',
+            'description',
+            'resource_group',
+            'location',
+            'tags',
+            'source_type',
+            'user_state',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 dataset_id: str = None,
-                 type: str = None,
-                 description: str = None,
-                 resource_group: str = None,
-                 location: str = None,
-                 tags: List[str] = None,
-                 source_type: str = None,
-                 user_state: 'UserState' = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        dataset_id: str = None,
+        type: str = None,
+        description: str = None,
+        resource_group: str = None,
+        location: str = None,
+        tags: List[str] = None,
+        source_type: str = None,
+        user_state: 'UserState' = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a DatasetLite object.
 
@@ -15425,7 +14512,7 @@ class DatasetLite():
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         if 'updated_by' in _dict:
             args['updated_by'] = _dict.get('updated_by')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -15489,9 +14576,9 @@ class DatasetLite():
         """
         Dataset types.
         """
+
         CREDENTIAL = 'credential'
         CONFIGURATION = 'configuration'
-
 
     class LocationEnum(str, Enum):
         """
@@ -15500,16 +14587,17 @@ class DatasetLite():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
-
     class SourceTypeEnum(str, Enum):
         """
         Type of source for the Template.
         """
+
         LOCAL = 'local'
         GIT_HUB = 'git_hub'
         GIT_HUB_ENTERPRISE = 'git_hub_enterprise'
@@ -15519,7 +14607,7 @@ class DatasetLite():
         EXTERNAL_SCM = 'external_scm'
 
 
-class Datasource():
+class Datasource:
     """
     External datasource definition.
 
@@ -15544,24 +14632,42 @@ class Datasource():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'resource_group', 'tags', 'connection', 'datasource_properties', 'location', 'id', 'account', 'created_at', 'created_by', 'updated_at', 'updated_by'])
+    _properties = frozenset(
+        [
+            'name',
+            'description',
+            'resource_group',
+            'tags',
+            'connection',
+            'datasource_properties',
+            'location',
+            'id',
+            'account',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 description: str = None,
-                 resource_group: str = None,
-                 tags: List[str] = None,
-                 connection: str = None,
-                 datasource_properties: List['VariableData'] = None,
-                 location: str = None,
-                 id: str = None,
-                 account: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        description: str = None,
+        resource_group: str = None,
+        tags: List[str] = None,
+        connection: str = None,
+        datasource_properties: List['VariableData'] = None,
+        location: str = None,
+        id: str = None,
+        account: str = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a Datasource object.
 
@@ -15625,7 +14731,7 @@ class Datasource():
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         if 'updated_by' in _dict:
             args['updated_by'] = _dict.get('updated_by')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -15692,13 +14798,14 @@ class Datasource():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class DatasourceList():
+class DatasourceList:
     """
     List of datasource definition.
 
@@ -15711,13 +14818,9 @@ class DatasourceList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'datasources'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 datasources: List['DatasourceLite'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, datasources: List['DatasourceLite'] = None, **kwargs
+    ) -> None:
         """
         Initialize a DatasourceList object.
 
@@ -15751,7 +14854,7 @@ class DatasourceList():
             raise ValueError('Required property \'offset\' not present in DatasourceList JSON')
         if 'datasources' in _dict:
             args['datasources'] = [DatasourceLite.from_dict(x) for x in _dict.get('datasources')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -15793,7 +14896,8 @@ class DatasourceList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class DatasourceLite():
+
+class DatasourceLite:
     """
     User editable datasource details.
 
@@ -15812,21 +14916,36 @@ class DatasourceLite():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'resource_group', 'tags', 'connection', 'id', 'created_at', 'created_by', 'updated_at', 'updated_by'])
+    _properties = frozenset(
+        [
+            'name',
+            'description',
+            'resource_group',
+            'tags',
+            'connection',
+            'id',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 description: str = None,
-                 resource_group: str = None,
-                 tags: List[str] = None,
-                 connection: str = None,
-                 id: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        description: str = None,
+        resource_group: str = None,
+        tags: List[str] = None,
+        connection: str = None,
+        id: str = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a DatasourceLite object.
 
@@ -15869,7 +14988,7 @@ class DatasourceLite():
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         if 'updated_by' in _dict:
             args['updated_by'] = _dict.get('updated_by')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -15923,7 +15042,8 @@ class DatasourceLite():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class ExternalSource():
+
+class ExternalSource:
     """
     Source of templates, playbooks, or controls.
 
@@ -15937,12 +15057,9 @@ class ExternalSource():
     # The set of defined properties for the class
     _properties = frozenset(['source_type', 'git', 'catalog'])
 
-    def __init__(self,
-                 source_type: str,
-                 *,
-                 git: 'ExternalSourceGit' = None,
-                 catalog: 'ExternalSourceCatalog' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, source_type: str, *, git: 'ExternalSourceGit' = None, catalog: 'ExternalSourceCatalog' = None, **kwargs
+    ) -> None:
         """
         Initialize a ExternalSource object.
 
@@ -15971,7 +15088,7 @@ class ExternalSource():
             args['git'] = ExternalSourceGit.from_dict(_dict.get('git'))
         if 'catalog' in _dict:
             args['catalog'] = ExternalSourceCatalog.from_dict(_dict.get('catalog'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -16015,6 +15132,7 @@ class ExternalSource():
         """
         Type of source for the Template.
         """
+
         LOCAL = 'local'
         GIT_HUB = 'git_hub'
         GIT_HUB_ENTERPRISE = 'git_hub_enterprise'
@@ -16024,7 +15142,7 @@ class ExternalSource():
         EXTERNAL_SCM = 'external_scm'
 
 
-class ExternalSourceCatalog():
+class ExternalSourceCatalog:
     """
     The connection details to the IBM Cloud Catalog source.
 
@@ -16044,18 +15162,30 @@ class ExternalSourceCatalog():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['catalog_name', 'offering_name', 'offering_version', 'offering_kind', 'offering_id', 'offering_version_id', 'offering_repo_url'])
+    _properties = frozenset(
+        [
+            'catalog_name',
+            'offering_name',
+            'offering_version',
+            'offering_kind',
+            'offering_id',
+            'offering_version_id',
+            'offering_repo_url',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 catalog_name: str = None,
-                 offering_name: str = None,
-                 offering_version: str = None,
-                 offering_kind: str = None,
-                 offering_id: str = None,
-                 offering_version_id: str = None,
-                 offering_repo_url: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        catalog_name: str = None,
+        offering_name: str = None,
+        offering_version: str = None,
+        offering_kind: str = None,
+        offering_id: str = None,
+        offering_version_id: str = None,
+        offering_repo_url: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a ExternalSourceCatalog object.
 
@@ -16102,7 +15232,7 @@ class ExternalSourceCatalog():
             args['offering_version_id'] = _dict.get('offering_version_id')
         if 'offering_repo_url' in _dict:
             args['offering_repo_url'] = _dict.get('offering_repo_url')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -16150,7 +15280,8 @@ class ExternalSourceCatalog():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class ExternalSourceGit():
+
+class ExternalSourceGit:
     """
     The connection details to the Git source repository.
 
@@ -16169,17 +15300,21 @@ class ExternalSourceGit():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['computed_git_repo_url', 'git_repo_url', 'git_token', 'git_repo_folder', 'git_release', 'git_branch'])
+    _properties = frozenset(
+        ['computed_git_repo_url', 'git_repo_url', 'git_token', 'git_repo_folder', 'git_release', 'git_branch']
+    )
 
-    def __init__(self,
-                 *,
-                 computed_git_repo_url: str = None,
-                 git_repo_url: str = None,
-                 git_token: str = None,
-                 git_repo_folder: str = None,
-                 git_release: str = None,
-                 git_branch: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        computed_git_repo_url: str = None,
+        git_repo_url: str = None,
+        git_token: str = None,
+        git_repo_folder: str = None,
+        git_release: str = None,
+        git_branch: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a ExternalSourceGit object.
 
@@ -16222,7 +15357,7 @@ class ExternalSourceGit():
             args['git_release'] = _dict.get('git_release')
         if 'git_branch' in _dict:
             args['git_branch'] = _dict.get('git_branch')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -16268,7 +15403,8 @@ class ExternalSourceGit():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class InjectTerraformTemplateInnerTftParametersItem():
+
+class InjectTerraformTemplateInnerTftParametersItem:
     """
     InjectTerraformTemplateInnerTftParametersItem.
 
@@ -16276,10 +15412,7 @@ class InjectTerraformTemplateInnerTftParametersItem():
     :attr str value: (optional) Value to replace.
     """
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 value: str = None) -> None:
+    def __init__(self, *, name: str = None, value: str = None) -> None:
         """
         Initialize a InjectTerraformTemplateInnerTftParametersItem object.
 
@@ -16331,7 +15464,8 @@ class InjectTerraformTemplateInnerTftParametersItem():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class InjectTerraformTemplateInner():
+
+class InjectTerraformTemplateInner:
     """
     InjectTerraformTemplateInner.
 
@@ -16348,17 +15482,21 @@ class InjectTerraformTemplateInner():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['tft_git_url', 'tft_git_token', 'tft_prefix', 'injection_type', 'tft_name', 'tft_parameters'])
+    _properties = frozenset(
+        ['tft_git_url', 'tft_git_token', 'tft_prefix', 'injection_type', 'tft_name', 'tft_parameters']
+    )
 
-    def __init__(self,
-                 *,
-                 tft_git_url: str = None,
-                 tft_git_token: str = None,
-                 tft_prefix: str = None,
-                 injection_type: str = None,
-                 tft_name: str = None,
-                 tft_parameters: List['InjectTerraformTemplateInnerTftParametersItem'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        tft_git_url: str = None,
+        tft_git_token: str = None,
+        tft_prefix: str = None,
+        injection_type: str = None,
+        tft_name: str = None,
+        tft_parameters: List['InjectTerraformTemplateInnerTftParametersItem'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a InjectTerraformTemplateInner object.
 
@@ -16400,8 +15538,10 @@ class InjectTerraformTemplateInner():
         if 'tft_name' in _dict:
             args['tft_name'] = _dict.get('tft_name')
         if 'tft_parameters' in _dict:
-            args['tft_parameters'] = [InjectTerraformTemplateInnerTftParametersItem.from_dict(x) for x in _dict.get('tft_parameters')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+            args['tft_parameters'] = [
+                InjectTerraformTemplateInnerTftParametersItem.from_dict(x) for x in _dict.get('tft_parameters')
+            ]
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -16447,7 +15587,8 @@ class InjectTerraformTemplateInner():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class InputVariableDataList():
+
+class InputVariableDataList:
     """
     List of Input variable data record response.
 
@@ -16460,13 +15601,9 @@ class InputVariableDataList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'inputs'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 inputs: List['VariableData'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, inputs: List['VariableData'] = None, **kwargs
+    ) -> None:
         """
         Initialize a InputVariableDataList object.
 
@@ -16500,7 +15637,7 @@ class InputVariableDataList():
             raise ValueError('Required property \'offset\' not present in InputVariableDataList JSON')
         if 'inputs' in _dict:
             args['inputs'] = [VariableData.from_dict(x) for x in _dict.get('inputs')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -16542,7 +15679,8 @@ class InputVariableDataList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class InventoryResourceDefinition():
+
+class InventoryResourceDefinition:
     """
     Inventory definition.
 
@@ -16566,17 +15704,21 @@ class InventoryResourceDefinition():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'location', 'resource_group', 'inventories_ini', 'resource_queries'])
+    _properties = frozenset(
+        ['name', 'description', 'location', 'resource_group', 'inventories_ini', 'resource_queries']
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 description: str = None,
-                 location: str = None,
-                 resource_group: str = None,
-                 inventories_ini: str = None,
-                 resource_queries: List[str] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        description: str = None,
+        location: str = None,
+        resource_group: str = None,
+        inventories_ini: str = None,
+        resource_queries: List[str] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a InventoryResourceDefinition object.
 
@@ -16624,7 +15766,7 @@ class InventoryResourceDefinition():
             args['inventories_ini'] = _dict.get('inventories_ini')
         if 'resource_queries' in _dict:
             args['resource_queries'] = _dict.get('resource_queries')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -16677,13 +15819,14 @@ class InventoryResourceDefinition():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class InventoryResourceRecord():
+class InventoryResourceRecord:
     """
     Complete inventory definition details.
 
@@ -16712,22 +15855,38 @@ class InventoryResourceRecord():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'id', 'description', 'location', 'resource_group', 'created_at', 'created_by', 'updated_at', 'updated_by', 'inventories_ini', 'resource_queries'])
+    _properties = frozenset(
+        [
+            'name',
+            'id',
+            'description',
+            'location',
+            'resource_group',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+            'inventories_ini',
+            'resource_queries',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 id: str = None,
-                 description: str = None,
-                 location: str = None,
-                 resource_group: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 inventories_ini: str = None,
-                 resource_queries: List[str] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        id: str = None,
+        description: str = None,
+        location: str = None,
+        resource_group: str = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        inventories_ini: str = None,
+        resource_queries: List[str] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a InventoryResourceRecord object.
 
@@ -16790,7 +15949,7 @@ class InventoryResourceRecord():
             args['inventories_ini'] = _dict.get('inventories_ini')
         if 'resource_queries' in _dict:
             args['resource_queries'] = _dict.get('resource_queries')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -16853,13 +16012,14 @@ class InventoryResourceRecord():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class InventoryResourceRecordList():
+class InventoryResourceRecordList:
     """
     List of Inventory definition records.
 
@@ -16873,13 +16033,15 @@ class InventoryResourceRecordList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'inventories'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 inventories: List['InventoryResourceRecord'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        limit: int,
+        offset: int,
+        *,
+        total_count: int = None,
+        inventories: List['InventoryResourceRecord'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a InventoryResourceRecordList object.
 
@@ -16913,7 +16075,7 @@ class InventoryResourceRecordList():
             raise ValueError('Required property \'offset\' not present in InventoryResourceRecordList JSON')
         if 'inventories' in _dict:
             args['inventories'] = [InventoryResourceRecord.from_dict(x) for x in _dict.get('inventories')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -16955,7 +16117,8 @@ class InventoryResourceRecordList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class ItemMetadata():
+
+class ItemMetadata:
     """
     Variables and operations metadata of the catalog item.  Variable metadata will be
     fetched from the template in the repo. Operations metadata will be fetched from
@@ -16975,21 +16138,36 @@ class ItemMetadata():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['item_id', 'offering_id', 'offering_kind_id', 'offering_version_id', 'name', 'description', 'operations', 'inputs', 'settings', 'outputs'])
+    _properties = frozenset(
+        [
+            'item_id',
+            'offering_id',
+            'offering_kind_id',
+            'offering_version_id',
+            'name',
+            'description',
+            'operations',
+            'inputs',
+            'settings',
+            'outputs',
+        ]
+    )
 
-    def __init__(self,
-                 offering_id: str,
-                 offering_version_id: str,
-                 *,
-                 item_id: str = None,
-                 offering_kind_id: str = None,
-                 name: str = None,
-                 description: str = None,
-                 operations: List[str] = None,
-                 inputs: List['VariableData'] = None,
-                 settings: List['VariableData'] = None,
-                 outputs: List['VariableData'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        offering_id: str,
+        offering_version_id: str,
+        *,
+        item_id: str = None,
+        offering_kind_id: str = None,
+        name: str = None,
+        description: str = None,
+        operations: List[str] = None,
+        inputs: List['VariableData'] = None,
+        settings: List['VariableData'] = None,
+        outputs: List['VariableData'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a ItemMetadata object.
 
@@ -17047,7 +16225,7 @@ class ItemMetadata():
             args['settings'] = [VariableData.from_dict(x) for x in _dict.get('settings')]
         if 'outputs' in _dict:
             args['outputs'] = [VariableData.from_dict(x) for x in _dict.get('outputs')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -17105,6 +16283,7 @@ class ItemMetadata():
         """
         Name of the fulfilment job operations.
         """
+
         CONFIGURE = 'configure'
         DESTROY = 'destroy'
         DRYRUN = 'dryrun'
@@ -17115,7 +16294,7 @@ class ItemMetadata():
         UPDATE = 'update'
 
 
-class ItemSKU():
+class ItemSKU:
     """
     Store Keeping Unit for the Item in the Cart order.
 
@@ -17129,13 +16308,15 @@ class ItemSKU():
     # The set of defined properties for the class
     _properties = frozenset(['sku_id', 'sku_type', 'sku_sys_lock', 'sku_user_state'])
 
-    def __init__(self,
-                 sku_id: str,
-                 sku_type: str,
-                 *,
-                 sku_sys_lock: 'SystemLock' = None,
-                 sku_user_state: 'SKUUserState' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        sku_id: str,
+        sku_type: str,
+        *,
+        sku_sys_lock: 'SystemLock' = None,
+        sku_user_state: 'SKUUserState' = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a ItemSKU object.
 
@@ -17169,7 +16350,7 @@ class ItemSKU():
             args['sku_sys_lock'] = SystemLock.from_dict(_dict.get('sku_sys_lock'))
         if 'sku_user_state' in _dict:
             args['sku_user_state'] = SKUUserState.from_dict(_dict.get('sku_user_state'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -17211,7 +16392,8 @@ class ItemSKU():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class Job():
+
+class Job:
     """
     Complete Job with user inputs and system generated data.
 
@@ -17258,38 +16440,70 @@ class Job():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['command_object', 'command_object_id', 'command_name', 'command_parameter', 'command_options', 'inputs', 'settings', 'tags', 'id', 'name', 'description', 'location', 'resource_group', 'submitted_at', 'submitted_by', 'start_at', 'end_at', 'duration', 'status', 'data', 'bastion', 'log_summary', 'log_store_url', 'state_store_url', 'results_url', 'updated_at', 'job_runner_id'])
+    _properties = frozenset(
+        [
+            'command_object',
+            'command_object_id',
+            'command_name',
+            'command_parameter',
+            'command_options',
+            'inputs',
+            'settings',
+            'tags',
+            'id',
+            'name',
+            'description',
+            'location',
+            'resource_group',
+            'submitted_at',
+            'submitted_by',
+            'start_at',
+            'end_at',
+            'duration',
+            'status',
+            'data',
+            'bastion',
+            'log_summary',
+            'log_store_url',
+            'state_store_url',
+            'results_url',
+            'updated_at',
+            'job_runner_id',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 command_object: str = None,
-                 command_object_id: str = None,
-                 command_name: str = None,
-                 command_parameter: str = None,
-                 command_options: List[str] = None,
-                 inputs: List['VariableData'] = None,
-                 settings: List['VariableData'] = None,
-                 tags: List[str] = None,
-                 id: str = None,
-                 name: str = None,
-                 description: str = None,
-                 location: str = None,
-                 resource_group: str = None,
-                 submitted_at: datetime = None,
-                 submitted_by: str = None,
-                 start_at: datetime = None,
-                 end_at: datetime = None,
-                 duration: str = None,
-                 status: 'JobStatus' = None,
-                 data: 'JobData' = None,
-                 bastion: 'BastionResourceDefinition' = None,
-                 log_summary: 'JobLogSummary' = None,
-                 log_store_url: str = None,
-                 state_store_url: str = None,
-                 results_url: str = None,
-                 updated_at: datetime = None,
-                 job_runner_id: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        command_object: str = None,
+        command_object_id: str = None,
+        command_name: str = None,
+        command_parameter: str = None,
+        command_options: List[str] = None,
+        inputs: List['VariableData'] = None,
+        settings: List['VariableData'] = None,
+        tags: List[str] = None,
+        id: str = None,
+        name: str = None,
+        description: str = None,
+        location: str = None,
+        resource_group: str = None,
+        submitted_at: datetime = None,
+        submitted_by: str = None,
+        start_at: datetime = None,
+        end_at: datetime = None,
+        duration: str = None,
+        status: 'JobStatus' = None,
+        data: 'JobData' = None,
+        bastion: 'BastionResourceDefinition' = None,
+        log_summary: 'JobLogSummary' = None,
+        log_store_url: str = None,
+        state_store_url: str = None,
+        results_url: str = None,
+        updated_at: datetime = None,
+        job_runner_id: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a Job object.
 
@@ -17406,7 +16620,7 @@ class Job():
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         if 'job_runner_id' in _dict:
             args['job_runner_id'] = _dict.get('job_runner_id')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -17498,16 +16712,17 @@ class Job():
         """
         Name of the Schematics automation resource.
         """
+
         WORKSPACE = 'workspace'
         ACTION = 'action'
         SYSTEM = 'system'
         ENVIRONMENT = 'environment'
 
-
     class CommandNameEnum(str, Enum):
         """
         Schematics job command name.
         """
+
         WORKSPACE_PLAN = 'workspace_plan'
         WORKSPACE_APPLY = 'workspace_apply'
         WORKSPACE_DESTROY = 'workspace_destroy'
@@ -17537,7 +16752,6 @@ class Job():
         REPOSITORY_PROCESS = 'repository_process'
         TERRAFORM_COMMANDS = 'terraform_commands'
 
-
     class LocationEnum(str, Enum):
         """
         List of locations supported by IBM Cloud Schematics service.  While creating your
@@ -17545,13 +16759,14 @@ class Job():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class JobData():
+class JobData:
     """
     Job data.
 
@@ -17565,14 +16780,16 @@ class JobData():
     # The set of defined properties for the class
     _properties = frozenset(['job_type', 'workspace_job_data', 'action_job_data', 'system_job_data', 'flow_job_data'])
 
-    def __init__(self,
-                 job_type: str,
-                 *,
-                 workspace_job_data: 'JobDataWorkspace' = None,
-                 action_job_data: 'JobDataAction' = None,
-                 system_job_data: 'JobDataSystem' = None,
-                 flow_job_data: 'JobDataFlow' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        job_type: str,
+        *,
+        workspace_job_data: 'JobDataWorkspace' = None,
+        action_job_data: 'JobDataAction' = None,
+        system_job_data: 'JobDataSystem' = None,
+        flow_job_data: 'JobDataFlow' = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobData object.
 
@@ -17607,7 +16824,7 @@ class JobData():
             args['system_job_data'] = JobDataSystem.from_dict(_dict.get('system_job_data'))
         if 'flow_job_data' in _dict:
             args['flow_job_data'] = JobDataFlow.from_dict(_dict.get('flow_job_data'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -17655,6 +16872,7 @@ class JobData():
         """
         Type of Job.
         """
+
         REPO_DOWNLOAD_JOB = 'repo_download_job'
         WORKSPACE_JOB = 'workspace_job'
         ACTION_JOB = 'action_job'
@@ -17662,7 +16880,7 @@ class JobData():
         FLOW_JOB = 'flow-job'
 
 
-class JobDataAction():
+class JobDataAction:
     """
     Action Job data.
 
@@ -17681,18 +16899,22 @@ class JobDataAction():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['action_name', 'inputs', 'outputs', 'settings', 'updated_at', 'inventory_record', 'materialized_inventory'])
+    _properties = frozenset(
+        ['action_name', 'inputs', 'outputs', 'settings', 'updated_at', 'inventory_record', 'materialized_inventory']
+    )
 
-    def __init__(self,
-                 *,
-                 action_name: str = None,
-                 inputs: List['VariableData'] = None,
-                 outputs: List['VariableData'] = None,
-                 settings: List['VariableData'] = None,
-                 updated_at: datetime = None,
-                 inventory_record: 'InventoryResourceRecord' = None,
-                 materialized_inventory: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        action_name: str = None,
+        inputs: List['VariableData'] = None,
+        outputs: List['VariableData'] = None,
+        settings: List['VariableData'] = None,
+        updated_at: datetime = None,
+        inventory_record: 'InventoryResourceRecord' = None,
+        materialized_inventory: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobDataAction object.
 
@@ -17738,7 +16960,7 @@ class JobDataAction():
             args['inventory_record'] = InventoryResourceRecord.from_dict(_dict.get('inventory_record'))
         if 'materialized_inventory' in _dict:
             args['materialized_inventory'] = _dict.get('materialized_inventory')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -17786,7 +17008,8 @@ class JobDataAction():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobDataCapsule():
+
+class JobDataCapsule:
     """
     Capsule Job data.
 
@@ -17801,14 +17024,16 @@ class JobDataCapsule():
     # The set of defined properties for the class
     _properties = frozenset(['capsule_id', 'calsule_name', 'inputs', 'results', 'updated_at'])
 
-    def __init__(self,
-                 *,
-                 capsule_id: str = None,
-                 calsule_name: str = None,
-                 inputs: List['VariableData'] = None,
-                 results: List['JobResultCapsule'] = None,
-                 updated_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        capsule_id: str = None,
+        calsule_name: str = None,
+        inputs: List['VariableData'] = None,
+        results: List['JobResultCapsule'] = None,
+        updated_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobDataCapsule object.
 
@@ -17843,7 +17068,7 @@ class JobDataCapsule():
             args['results'] = [JobResultCapsule.from_dict(x) for x in _dict.get('results')]
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -17887,7 +17112,8 @@ class JobDataCapsule():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobDataFlow():
+
+class JobDataFlow:
     """
     Flow Job data.
 
@@ -17901,13 +17127,15 @@ class JobDataFlow():
     # The set of defined properties for the class
     _properties = frozenset(['flow_id', 'flow_name', 'workitems', 'updated_at'])
 
-    def __init__(self,
-                 *,
-                 flow_id: str = None,
-                 flow_name: str = None,
-                 workitems: List['JobDataWorkItem'] = None,
-                 updated_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        flow_id: str = None,
+        flow_name: str = None,
+        workitems: List['JobDataWorkItem'] = None,
+        updated_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobDataFlow object.
 
@@ -17937,7 +17165,7 @@ class JobDataFlow():
             args['workitems'] = [JobDataWorkItem.from_dict(x) for x in _dict.get('workitems')]
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -17979,7 +17207,8 @@ class JobDataFlow():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobDataSystem():
+
+class JobDataSystem:
     """
     Controls Job data.
 
@@ -17992,12 +17221,9 @@ class JobDataSystem():
     # The set of defined properties for the class
     _properties = frozenset(['key_id', 'schematics_resource_id', 'updated_at'])
 
-    def __init__(self,
-                 *,
-                 key_id: str = None,
-                 schematics_resource_id: List[str] = None,
-                 updated_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, *, key_id: str = None, schematics_resource_id: List[str] = None, updated_at: datetime = None, **kwargs
+    ) -> None:
         """
         Initialize a JobDataSystem object.
 
@@ -18023,7 +17249,7 @@ class JobDataSystem():
             args['schematics_resource_id'] = _dict.get('schematics_resource_id')
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -18063,7 +17289,8 @@ class JobDataSystem():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobDataTemplate():
+
+class JobDataTemplate:
     """
     Template Job data.
 
@@ -18078,18 +17305,22 @@ class JobDataTemplate():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['template_id', 'template_name', 'flow_index', 'inputs', 'outputs', 'settings', 'updated_at'])
+    _properties = frozenset(
+        ['template_id', 'template_name', 'flow_index', 'inputs', 'outputs', 'settings', 'updated_at']
+    )
 
-    def __init__(self,
-                 *,
-                 template_id: str = None,
-                 template_name: str = None,
-                 flow_index: int = None,
-                 inputs: List['VariableData'] = None,
-                 outputs: List['VariableData'] = None,
-                 settings: List['VariableData'] = None,
-                 updated_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        template_id: str = None,
+        template_name: str = None,
+        flow_index: int = None,
+        inputs: List['VariableData'] = None,
+        outputs: List['VariableData'] = None,
+        settings: List['VariableData'] = None,
+        updated_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobDataTemplate object.
 
@@ -18133,7 +17364,7 @@ class JobDataTemplate():
             args['settings'] = [VariableData.from_dict(x) for x in _dict.get('settings')]
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -18181,7 +17412,8 @@ class JobDataTemplate():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobDataWorkItem():
+
+class JobDataWorkItem:
     """
     Environment work items.
 
@@ -18202,21 +17434,36 @@ class JobDataWorkItem():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['command_object_id', 'command_object_name', 'layers', 'source_type', 'source', 'inputs', 'outputs', 'settings', 'last_job', 'updated_at'])
+    _properties = frozenset(
+        [
+            'command_object_id',
+            'command_object_name',
+            'layers',
+            'source_type',
+            'source',
+            'inputs',
+            'outputs',
+            'settings',
+            'last_job',
+            'updated_at',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 command_object_id: str = None,
-                 command_object_name: str = None,
-                 layers: str = None,
-                 source_type: str = None,
-                 source: 'ExternalSource' = None,
-                 inputs: List['VariableData'] = None,
-                 outputs: List['VariableData'] = None,
-                 settings: List['VariableData'] = None,
-                 last_job: 'JobDataWorkItemLastJob' = None,
-                 updated_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        command_object_id: str = None,
+        command_object_name: str = None,
+        layers: str = None,
+        source_type: str = None,
+        source: 'ExternalSource' = None,
+        inputs: List['VariableData'] = None,
+        outputs: List['VariableData'] = None,
+        settings: List['VariableData'] = None,
+        last_job: 'JobDataWorkItemLastJob' = None,
+        updated_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobDataWorkItem object.
 
@@ -18274,7 +17521,7 @@ class JobDataWorkItem():
             args['last_job'] = JobDataWorkItemLastJob.from_dict(_dict.get('last_job'))
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -18332,6 +17579,7 @@ class JobDataWorkItem():
         """
         Type of source for the Template.
         """
+
         LOCAL = 'local'
         GIT_HUB = 'git_hub'
         GIT_HUB_ENTERPRISE = 'git_hub_enterprise'
@@ -18341,7 +17589,7 @@ class JobDataWorkItem():
         EXTERNAL_SCM = 'external_scm'
 
 
-class JobDataWorkItemLastJob():
+class JobDataWorkItemLastJob:
     """
     Status of the last job executed by the workitem.
 
@@ -18356,17 +17604,21 @@ class JobDataWorkItemLastJob():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['command_object', 'command_object_name', 'command_object_id', 'command_name', 'job_id', 'job_status'])
+    _properties = frozenset(
+        ['command_object', 'command_object_name', 'command_object_id', 'command_name', 'job_id', 'job_status']
+    )
 
-    def __init__(self,
-                 *,
-                 command_object: str = None,
-                 command_object_name: str = None,
-                 command_object_id: str = None,
-                 command_name: str = None,
-                 job_id: str = None,
-                 job_status: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        command_object: str = None,
+        command_object_name: str = None,
+        command_object_id: str = None,
+        command_name: str = None,
+        job_id: str = None,
+        job_status: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobDataWorkItemLastJob object.
 
@@ -18406,7 +17658,7 @@ class JobDataWorkItemLastJob():
             args['job_id'] = _dict.get('job_id')
         if 'job_status' in _dict:
             args['job_status'] = _dict.get('job_status')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -18456,16 +17708,17 @@ class JobDataWorkItemLastJob():
         """
         Name of the Schematics automation resource.
         """
+
         WORKSPACE = 'workspace'
         ACTION = 'action'
         SYSTEM = 'system'
         ENVIRONMENT = 'environment'
 
-
     class CommandNameEnum(str, Enum):
         """
         Schematics job command name.
         """
+
         WORKSPACE_PLAN = 'workspace_plan'
         WORKSPACE_APPLY = 'workspace_apply'
         WORKSPACE_DESTROY = 'workspace_destroy'
@@ -18495,11 +17748,11 @@ class JobDataWorkItemLastJob():
         REPOSITORY_PROCESS = 'repository_process'
         TERRAFORM_COMMANDS = 'terraform_commands'
 
-
     class JobStatusEnum(str, Enum):
         """
         Status of Jobs.
         """
+
         JOB_PENDING = 'job_pending'
         JOB_IN_PROGRESS = 'job_in_progress'
         JOB_FINISHED = 'job_finished'
@@ -18507,7 +17760,7 @@ class JobDataWorkItemLastJob():
         JOB_CANCELLED = 'job_cancelled'
 
 
-class JobDataWorkspace():
+class JobDataWorkspace:
     """
     Workspace Job data.
 
@@ -18526,19 +17779,23 @@ class JobDataWorkspace():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['workspace_name', 'flow_id', 'flow_name', 'inputs', 'outputs', 'settings', 'template_data', 'updated_at'])
+    _properties = frozenset(
+        ['workspace_name', 'flow_id', 'flow_name', 'inputs', 'outputs', 'settings', 'template_data', 'updated_at']
+    )
 
-    def __init__(self,
-                 *,
-                 workspace_name: str = None,
-                 flow_id: str = None,
-                 flow_name: str = None,
-                 inputs: List['VariableData'] = None,
-                 outputs: List['VariableData'] = None,
-                 settings: List['VariableData'] = None,
-                 template_data: List['JobDataTemplate'] = None,
-                 updated_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        workspace_name: str = None,
+        flow_id: str = None,
+        flow_name: str = None,
+        inputs: List['VariableData'] = None,
+        outputs: List['VariableData'] = None,
+        settings: List['VariableData'] = None,
+        template_data: List['JobDataTemplate'] = None,
+        updated_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobDataWorkspace object.
 
@@ -18587,7 +17844,7 @@ class JobDataWorkspace():
             args['template_data'] = [JobDataTemplate.from_dict(x) for x in _dict.get('template_data')]
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -18637,7 +17894,8 @@ class JobDataWorkspace():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobFileData():
+
+class JobFileData:
     """
     Output files from the Job record.
 
@@ -18654,15 +17912,17 @@ class JobFileData():
     # The set of defined properties for the class
     _properties = frozenset(['job_id', 'job_name', 'summary', 'file_type', 'file_content', 'updated_at'])
 
-    def __init__(self,
-                 *,
-                 job_id: str = None,
-                 job_name: str = None,
-                 summary: List['JobFileDataSummary'] = None,
-                 file_type: str = None,
-                 file_content: str = None,
-                 updated_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        job_id: str = None,
+        job_name: str = None,
+        summary: List['JobFileDataSummary'] = None,
+        file_type: str = None,
+        file_content: str = None,
+        updated_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobFileData object.
 
@@ -18703,7 +17963,7 @@ class JobFileData():
             args['file_content'] = _dict.get('file_content')
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -18753,11 +18013,12 @@ class JobFileData():
         """
         The type of output file generated by the Job.
         """
+
         STATE_FILE = 'state_file'
         PLAN_JSON = 'plan_json'
 
 
-class JobFileDataSummary():
+class JobFileDataSummary:
     """
     JobFileDataSummary.
 
@@ -18769,12 +18030,7 @@ class JobFileDataSummary():
     # The set of defined properties for the class
     _properties = frozenset(['name', 'type', 'value'])
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 type: str = None,
-                 value: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, name: str = None, type: str = None, value: str = None, **kwargs) -> None:
         """
         Initialize a JobFileDataSummary object.
 
@@ -18799,7 +18055,7 @@ class JobFileDataSummary():
             args['type'] = _dict.get('type')
         if 'value' in _dict:
             args['value'] = _dict.get('value')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -18843,11 +18099,12 @@ class JobFileDataSummary():
         """
         Summary feature type.
         """
+
         NUMBER = 'number'
         STRING = 'string'
 
 
-class JobList():
+class JobList:
     """
     List of Job details.
 
@@ -18860,13 +18117,9 @@ class JobList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'jobs'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 jobs: List['JobLite'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, jobs: List['JobLite'] = None, **kwargs
+    ) -> None:
         """
         Initialize a JobList object.
 
@@ -18899,7 +18152,7 @@ class JobList():
             raise ValueError('Required property \'offset\' not present in JobList JSON')
         if 'jobs' in _dict:
             args['jobs'] = [JobLite.from_dict(x) for x in _dict.get('jobs')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -18941,7 +18194,8 @@ class JobList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobLite():
+
+class JobLite:
     """
     Job summary profile with system generated data.
 
@@ -18973,29 +18227,52 @@ class JobLite():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['id', 'name', 'description', 'command_object', 'command_object_id', 'command_name', 'tags', 'location', 'resource_group', 'submitted_at', 'submitted_by', 'duration', 'start_at', 'end_at', 'status', 'log_summary', 'updated_at', 'job_runner_id'])
+    _properties = frozenset(
+        [
+            'id',
+            'name',
+            'description',
+            'command_object',
+            'command_object_id',
+            'command_name',
+            'tags',
+            'location',
+            'resource_group',
+            'submitted_at',
+            'submitted_by',
+            'duration',
+            'start_at',
+            'end_at',
+            'status',
+            'log_summary',
+            'updated_at',
+            'job_runner_id',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 id: str = None,
-                 name: str = None,
-                 description: str = None,
-                 command_object: str = None,
-                 command_object_id: str = None,
-                 command_name: str = None,
-                 tags: List[str] = None,
-                 location: str = None,
-                 resource_group: str = None,
-                 submitted_at: datetime = None,
-                 submitted_by: str = None,
-                 duration: str = None,
-                 start_at: datetime = None,
-                 end_at: datetime = None,
-                 status: 'JobStatus' = None,
-                 log_summary: 'JobLogSummary' = None,
-                 updated_at: datetime = None,
-                 job_runner_id: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        id: str = None,
+        name: str = None,
+        description: str = None,
+        command_object: str = None,
+        command_object_id: str = None,
+        command_name: str = None,
+        tags: List[str] = None,
+        location: str = None,
+        resource_group: str = None,
+        submitted_at: datetime = None,
+        submitted_by: str = None,
+        duration: str = None,
+        start_at: datetime = None,
+        end_at: datetime = None,
+        status: 'JobStatus' = None,
+        log_summary: 'JobLogSummary' = None,
+        updated_at: datetime = None,
+        job_runner_id: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobLite object.
 
@@ -19089,7 +18366,7 @@ class JobLite():
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         if 'job_runner_id' in _dict:
             args['job_runner_id'] = _dict.get('job_runner_id')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -19163,16 +18440,17 @@ class JobLite():
         """
         Name of the Schematics automation resource.
         """
+
         WORKSPACE = 'workspace'
         ACTION = 'action'
         SYSTEM = 'system'
         ENVIRONMENT = 'environment'
 
-
     class CommandNameEnum(str, Enum):
         """
         Schematics job command name.
         """
+
         WORKSPACE_PLAN = 'workspace_plan'
         WORKSPACE_APPLY = 'workspace_apply'
         WORKSPACE_DESTROY = 'workspace_destroy'
@@ -19202,7 +18480,6 @@ class JobLite():
         REPOSITORY_PROCESS = 'repository_process'
         TERRAFORM_COMMANDS = 'terraform_commands'
 
-
     class LocationEnum(str, Enum):
         """
         List of locations supported by IBM Cloud Schematics service.  While creating your
@@ -19210,13 +18487,14 @@ class JobLite():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class JobLog():
+class JobLog:
     """
     Job Log details.
 
@@ -19232,15 +18510,17 @@ class JobLog():
     # The set of defined properties for the class
     _properties = frozenset(['job_id', 'job_name', 'log_summary', 'format', 'details', 'updated_at'])
 
-    def __init__(self,
-                 *,
-                 job_id: str = None,
-                 job_name: str = None,
-                 log_summary: 'JobLogSummary' = None,
-                 format: str = None,
-                 details: bytes = None,
-                 updated_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        job_id: str = None,
+        job_name: str = None,
+        log_summary: 'JobLogSummary' = None,
+        format: str = None,
+        details: bytes = None,
+        updated_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobLog object.
 
@@ -19278,7 +18558,7 @@ class JobLog():
             args['details'] = base64.b64decode(_dict.get('details'))
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -19328,13 +18608,14 @@ class JobLog():
         """
         Format of the Log text.
         """
+
         JSON = 'json'
         HTML = 'html'
         MARKDOWN = 'markdown'
         RTF = 'rtf'
 
 
-class JobLogSummary():
+class JobLogSummary:
     """
     Job log summary record.
 
@@ -19355,22 +18636,38 @@ class JobLogSummary():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['job_id', 'job_type', 'log_start_at', 'log_analyzed_till', 'elapsed_time', 'log_errors', 'repo_download_job', 'workspace_job', 'flow_job', 'action_job', 'system_job'])
+    _properties = frozenset(
+        [
+            'job_id',
+            'job_type',
+            'log_start_at',
+            'log_analyzed_till',
+            'elapsed_time',
+            'log_errors',
+            'repo_download_job',
+            'workspace_job',
+            'flow_job',
+            'action_job',
+            'system_job',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 job_id: str = None,
-                 job_type: str = None,
-                 log_start_at: datetime = None,
-                 log_analyzed_till: datetime = None,
-                 elapsed_time: float = None,
-                 log_errors: List['JobLogSummaryLogErrors'] = None,
-                 repo_download_job: 'JobLogSummaryRepoDownloadJob' = None,
-                 workspace_job: 'JobLogSummaryWorkspaceJob' = None,
-                 flow_job: 'JobLogSummaryFlowJob' = None,
-                 action_job: 'JobLogSummaryActionJob' = None,
-                 system_job: 'JobLogSummarySystemJob' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        job_id: str = None,
+        job_type: str = None,
+        log_start_at: datetime = None,
+        log_analyzed_till: datetime = None,
+        elapsed_time: float = None,
+        log_errors: List['JobLogSummaryLogErrors'] = None,
+        repo_download_job: 'JobLogSummaryRepoDownloadJob' = None,
+        workspace_job: 'JobLogSummaryWorkspaceJob' = None,
+        flow_job: 'JobLogSummaryFlowJob' = None,
+        action_job: 'JobLogSummaryActionJob' = None,
+        system_job: 'JobLogSummarySystemJob' = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobLogSummary object.
 
@@ -19425,7 +18722,7 @@ class JobLogSummary():
             args['action_job'] = JobLogSummaryActionJob.from_dict(_dict.get('action_job'))
         if 'system_job' in _dict:
             args['system_job'] = JobLogSummarySystemJob.from_dict(_dict.get('system_job'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -19485,6 +18782,7 @@ class JobLogSummary():
         """
         Type of Job.
         """
+
         REPO_DOWNLOAD_JOB = 'repo_download_job'
         WORKSPACE_JOB = 'workspace_job'
         ACTION_JOB = 'action_job'
@@ -19492,7 +18790,7 @@ class JobLogSummary():
         FLOW_JOB = 'flow_job'
 
 
-class JobLogSummaryWorkitems():
+class JobLogSummaryWorkitems:
     """
     Job log summary of the flow workitem.
 
@@ -19505,17 +18803,21 @@ class JobLogSummaryWorkitems():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['workspace_id', 'job_id', 'resources_add', 'resources_modify', 'resources_destroy', 'log_url'])
+    _properties = frozenset(
+        ['workspace_id', 'job_id', 'resources_add', 'resources_modify', 'resources_destroy', 'log_url']
+    )
 
-    def __init__(self,
-                 *,
-                 workspace_id: str = None,
-                 job_id: str = None,
-                 resources_add: float = None,
-                 resources_modify: float = None,
-                 resources_destroy: float = None,
-                 log_url: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        workspace_id: str = None,
+        job_id: str = None,
+        resources_add: float = None,
+        resources_modify: float = None,
+        resources_destroy: float = None,
+        log_url: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobLogSummaryWorkitems object.
 
@@ -19549,7 +18851,7 @@ class JobLogSummaryWorkitems():
             args['resources_destroy'] = _dict.get('resources_destroy')
         if 'log_url' in _dict:
             args['log_url'] = _dict.get('log_url')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -19595,7 +18897,8 @@ class JobLogSummaryWorkitems():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobLogSummaryActionJob():
+
+class JobLogSummaryActionJob:
     """
     Flow Job log summary.
 
@@ -19608,13 +18911,15 @@ class JobLogSummaryActionJob():
     # The set of defined properties for the class
     _properties = frozenset(['target_count', 'task_count', 'play_count', 'recap'])
 
-    def __init__(self,
-                 *,
-                 target_count: float = None,
-                 task_count: float = None,
-                 play_count: float = None,
-                 recap: 'JobLogSummaryActionJobRecap' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        target_count: float = None,
+        task_count: float = None,
+        play_count: float = None,
+        recap: 'JobLogSummaryActionJobRecap' = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobLogSummaryActionJob object.
 
@@ -19640,7 +18945,7 @@ class JobLogSummaryActionJob():
             args['play_count'] = _dict.get('play_count')
         if 'recap' in _dict:
             args['recap'] = JobLogSummaryActionJobRecap.from_dict(_dict.get('recap'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -19682,7 +18987,8 @@ class JobLogSummaryActionJob():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobLogSummaryActionJobRecap():
+
+class JobLogSummaryActionJobRecap:
     """
     Recap records.
 
@@ -19697,15 +19003,17 @@ class JobLogSummaryActionJobRecap():
     # The set of defined properties for the class
     _properties = frozenset(['target', 'ok', 'changed', 'failed', 'skipped', 'unreachable'])
 
-    def __init__(self,
-                 *,
-                 target: List[str] = None,
-                 ok: float = None,
-                 changed: float = None,
-                 failed: float = None,
-                 skipped: float = None,
-                 unreachable: float = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        target: List[str] = None,
+        ok: float = None,
+        changed: float = None,
+        failed: float = None,
+        skipped: float = None,
+        unreachable: float = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobLogSummaryActionJobRecap object.
 
@@ -19742,7 +19050,7 @@ class JobLogSummaryActionJobRecap():
             args['skipped'] = _dict.get('skipped')
         if 'unreachable' in _dict:
             args['unreachable'] = _dict.get('unreachable')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -19788,7 +19096,8 @@ class JobLogSummaryActionJobRecap():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobLogSummaryFlowJob():
+
+class JobLogSummaryFlowJob:
     """
     Flow Job log summary.
 
@@ -19803,13 +19112,15 @@ class JobLogSummaryFlowJob():
     # The set of defined properties for the class
     _properties = frozenset(['workitems_completed', 'workitems_pending', 'workitems_failed', 'workitems'])
 
-    def __init__(self,
-                 *,
-                 workitems_completed: float = None,
-                 workitems_pending: float = None,
-                 workitems_failed: float = None,
-                 workitems: List['JobLogSummaryWorkitems'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        workitems_completed: float = None,
+        workitems_pending: float = None,
+        workitems_failed: float = None,
+        workitems: List['JobLogSummaryWorkitems'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobLogSummaryFlowJob object.
 
@@ -19835,7 +19146,7 @@ class JobLogSummaryFlowJob():
             args['workitems_failed'] = _dict.get('workitems_failed')
         if 'workitems' in _dict:
             args['workitems'] = [JobLogSummaryWorkitems.from_dict(x) for x in _dict.get('workitems')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -19877,7 +19188,8 @@ class JobLogSummaryFlowJob():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobLogSummaryLogErrors():
+
+class JobLogSummaryLogErrors:
     """
     JobLogSummaryLogErrors.
 
@@ -19889,12 +19201,7 @@ class JobLogSummaryLogErrors():
     # The set of defined properties for the class
     _properties = frozenset(['error_code', 'error_msg', 'error_count'])
 
-    def __init__(self,
-                 *,
-                 error_code: str = None,
-                 error_msg: str = None,
-                 error_count: float = None,
-                 **kwargs) -> None:
+    def __init__(self, *, error_code: str = None, error_msg: str = None, error_count: float = None, **kwargs) -> None:
         """
         Initialize a JobLogSummaryLogErrors object.
 
@@ -19919,7 +19226,7 @@ class JobLogSummaryLogErrors():
             args['error_msg'] = _dict.get('error_msg')
         if 'error_count' in _dict:
             args['error_count'] = _dict.get('error_count')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -19959,7 +19266,8 @@ class JobLogSummaryLogErrors():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobLogSummaryRepoDownloadJob():
+
+class JobLogSummaryRepoDownloadJob:
     """
     Repo download Job log summary.
 
@@ -19971,16 +19279,20 @@ class JobLogSummaryRepoDownloadJob():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['scanned_file_count', 'quarantined_file_count', 'detected_filetype', 'inputs_count', 'outputs_count'])
+    _properties = frozenset(
+        ['scanned_file_count', 'quarantined_file_count', 'detected_filetype', 'inputs_count', 'outputs_count']
+    )
 
-    def __init__(self,
-                 *,
-                 scanned_file_count: float = None,
-                 quarantined_file_count: float = None,
-                 detected_filetype: str = None,
-                 inputs_count: str = None,
-                 outputs_count: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        scanned_file_count: float = None,
+        quarantined_file_count: float = None,
+        detected_filetype: str = None,
+        inputs_count: str = None,
+        outputs_count: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobLogSummaryRepoDownloadJob object.
 
@@ -20008,7 +19320,7 @@ class JobLogSummaryRepoDownloadJob():
             args['inputs_count'] = _dict.get('inputs_count')
         if 'outputs_count' in _dict:
             args['outputs_count'] = _dict.get('outputs_count')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -20052,7 +19364,8 @@ class JobLogSummaryRepoDownloadJob():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobLogSummarySystemJob():
+
+class JobLogSummarySystemJob:
     """
     System Job log summary.
 
@@ -20064,12 +19377,7 @@ class JobLogSummarySystemJob():
     # The set of defined properties for the class
     _properties = frozenset(['target_count', 'success', 'failed'])
 
-    def __init__(self,
-                 *,
-                 target_count: float = None,
-                 success: float = None,
-                 failed: float = None,
-                 **kwargs) -> None:
+    def __init__(self, *, target_count: float = None, success: float = None, failed: float = None, **kwargs) -> None:
         """
         Initialize a JobLogSummarySystemJob object.
 
@@ -20093,7 +19401,7 @@ class JobLogSummarySystemJob():
             args['success'] = _dict.get('success')
         if 'failed' in _dict:
             args['failed'] = _dict.get('failed')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -20133,7 +19441,8 @@ class JobLogSummarySystemJob():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobLogSummaryWorkspaceJob():
+
+class JobLogSummaryWorkspaceJob:
     """
     Workspace Job log summary.
 
@@ -20145,12 +19454,9 @@ class JobLogSummaryWorkspaceJob():
     # The set of defined properties for the class
     _properties = frozenset(['resources_add', 'resources_modify', 'resources_destroy'])
 
-    def __init__(self,
-                 *,
-                 resources_add: float = None,
-                 resources_modify: float = None,
-                 resources_destroy: float = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, *, resources_add: float = None, resources_modify: float = None, resources_destroy: float = None, **kwargs
+    ) -> None:
         """
         Initialize a JobLogSummaryWorkspaceJob object.
 
@@ -20172,7 +19478,7 @@ class JobLogSummaryWorkspaceJob():
             args['resources_modify'] = _dict.get('resources_modify')
         if 'resources_destroy' in _dict:
             args['resources_destroy'] = _dict.get('resources_destroy')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -20212,7 +19518,8 @@ class JobLogSummaryWorkspaceJob():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobResultCapsule():
+
+class JobResultCapsule:
     """
     Capsule Job Results.
 
@@ -20229,20 +19536,24 @@ class JobResultCapsule():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['job_id', 'job_name', 'policy', 'severity', 'job_state', 'failures', 'passed', 'evidences', 'updated_at'])
+    _properties = frozenset(
+        ['job_id', 'job_name', 'policy', 'severity', 'job_state', 'failures', 'passed', 'evidences', 'updated_at']
+    )
 
-    def __init__(self,
-                 *,
-                 job_id: str = None,
-                 job_name: str = None,
-                 policy: str = None,
-                 severity: int = None,
-                 job_state: str = None,
-                 failures: List[str] = None,
-                 passed: List[str] = None,
-                 evidences: List['CapsuleResultEvidences'] = None,
-                 updated_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        job_id: str = None,
+        job_name: str = None,
+        policy: str = None,
+        severity: int = None,
+        job_state: str = None,
+        failures: List[str] = None,
+        passed: List[str] = None,
+        evidences: List['CapsuleResultEvidences'] = None,
+        updated_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobResultCapsule object.
 
@@ -20293,7 +19604,7 @@ class JobResultCapsule():
             args['evidences'] = [CapsuleResultEvidences.from_dict(x) for x in _dict.get('evidences')]
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -20349,12 +19660,13 @@ class JobResultCapsule():
         """
         Job state.
         """
+
         SUCCESS = 'success'
         FAILED = 'failed'
         TERMINATED = 'terminated'
 
 
-class JobStatus():
+class JobStatus:
     """
     Job Status.
 
@@ -20367,17 +19679,28 @@ class JobStatus():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['position_in_queue', 'total_in_queue', 'workspace_job_status', 'action_job_status', 'system_job_status', 'flow_job_status'])
+    _properties = frozenset(
+        [
+            'position_in_queue',
+            'total_in_queue',
+            'workspace_job_status',
+            'action_job_status',
+            'system_job_status',
+            'flow_job_status',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 position_in_queue: float = None,
-                 total_in_queue: float = None,
-                 workspace_job_status: 'JobStatusWorkspace' = None,
-                 action_job_status: 'JobStatusAction' = None,
-                 system_job_status: 'JobStatusSystem' = None,
-                 flow_job_status: 'JobStatusFlow' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        position_in_queue: float = None,
+        total_in_queue: float = None,
+        workspace_job_status: 'JobStatusWorkspace' = None,
+        action_job_status: 'JobStatusAction' = None,
+        system_job_status: 'JobStatusSystem' = None,
+        flow_job_status: 'JobStatusFlow' = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobStatus object.
 
@@ -20417,7 +19740,7 @@ class JobStatus():
             args['system_job_status'] = JobStatusSystem.from_dict(_dict.get('system_job_status'))
         if 'flow_job_status' in _dict:
             args['flow_job_status'] = JobStatusFlow.from_dict(_dict.get('flow_job_status'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -20463,7 +19786,8 @@ class JobStatus():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class JobStatusAction():
+
+class JobStatusAction:
     """
     Action Job Status.
 
@@ -20481,19 +19805,32 @@ class JobStatusAction():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['action_name', 'status_code', 'status_message', 'bastion_status_code', 'bastion_status_message', 'targets_status_code', 'targets_status_message', 'updated_at'])
+    _properties = frozenset(
+        [
+            'action_name',
+            'status_code',
+            'status_message',
+            'bastion_status_code',
+            'bastion_status_message',
+            'targets_status_code',
+            'targets_status_message',
+            'updated_at',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 action_name: str = None,
-                 status_code: str = None,
-                 status_message: str = None,
-                 bastion_status_code: str = None,
-                 bastion_status_message: str = None,
-                 targets_status_code: str = None,
-                 targets_status_message: str = None,
-                 updated_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        action_name: str = None,
+        status_code: str = None,
+        status_message: str = None,
+        bastion_status_code: str = None,
+        bastion_status_message: str = None,
+        targets_status_code: str = None,
+        targets_status_message: str = None,
+        updated_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobStatusAction object.
 
@@ -20541,7 +19878,7 @@ class JobStatusAction():
             args['targets_status_message'] = _dict.get('targets_status_message')
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -20595,34 +19932,35 @@ class JobStatusAction():
         """
         Status of Jobs.
         """
+
         JOB_PENDING = 'job_pending'
         JOB_IN_PROGRESS = 'job_in_progress'
         JOB_FINISHED = 'job_finished'
         JOB_FAILED = 'job_failed'
         JOB_CANCELLED = 'job_cancelled'
 
-
     class BastionStatusCodeEnum(str, Enum):
         """
         Status of Resources.
         """
+
         NONE = 'none'
         READY = 'ready'
         PROCESSING = 'processing'
         ERROR = 'error'
-
 
     class TargetsStatusCodeEnum(str, Enum):
         """
         Status of Resources.
         """
+
         NONE = 'none'
         READY = 'ready'
         PROCESSING = 'processing'
         ERROR = 'error'
 
 
-class JobStatusFlow():
+class JobStatusFlow:
     """
     Environment Flow JOB Status.
 
@@ -20639,15 +19977,17 @@ class JobStatusFlow():
     # The set of defined properties for the class
     _properties = frozenset(['flow_id', 'flow_name', 'status_code', 'status_message', 'workitems', 'updated_at'])
 
-    def __init__(self,
-                 *,
-                 flow_id: str = None,
-                 flow_name: str = None,
-                 status_code: str = None,
-                 status_message: str = None,
-                 workitems: List['JobStatusWorkitem'] = None,
-                 updated_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        flow_id: str = None,
+        flow_name: str = None,
+        status_code: str = None,
+        status_message: str = None,
+        workitems: List['JobStatusWorkitem'] = None,
+        updated_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobStatusFlow object.
 
@@ -20686,7 +20026,7 @@ class JobStatusFlow():
             args['workitems'] = [JobStatusWorkitem.from_dict(x) for x in _dict.get('workitems')]
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -20736,6 +20076,7 @@ class JobStatusFlow():
         """
         Status of Jobs.
         """
+
         JOB_PENDING = 'job_pending'
         JOB_IN_PROGRESS = 'job_in_progress'
         JOB_FINISHED = 'job_finished'
@@ -20743,7 +20084,7 @@ class JobStatusFlow():
         JOB_CANCELLED = 'job_cancelled'
 
 
-class JobStatusSchematicsResources():
+class JobStatusSchematicsResources:
     """
     schematics Resources Job Status.
 
@@ -20757,13 +20098,15 @@ class JobStatusSchematicsResources():
     # The set of defined properties for the class
     _properties = frozenset(['status_code', 'status_message', 'schematics_resource_id', 'updated_at'])
 
-    def __init__(self,
-                 *,
-                 status_code: str = None,
-                 status_message: str = None,
-                 schematics_resource_id: str = None,
-                 updated_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        status_code: str = None,
+        status_message: str = None,
+        schematics_resource_id: str = None,
+        updated_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobStatusSchematicsResources object.
 
@@ -20793,7 +20136,7 @@ class JobStatusSchematicsResources():
             args['schematics_resource_id'] = _dict.get('schematics_resource_id')
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -20839,6 +20182,7 @@ class JobStatusSchematicsResources():
         """
         Status of Jobs.
         """
+
         JOB_PENDING = 'job_pending'
         JOB_IN_PROGRESS = 'job_in_progress'
         JOB_FINISHED = 'job_finished'
@@ -20846,7 +20190,7 @@ class JobStatusSchematicsResources():
         JOB_CANCELLED = 'job_cancelled'
 
 
-class JobStatusSystem():
+class JobStatusSystem:
     """
     System Job Status.
 
@@ -20860,13 +20204,15 @@ class JobStatusSystem():
     # The set of defined properties for the class
     _properties = frozenset(['system_status_message', 'system_status_code', 'schematics_resource_status', 'updated_at'])
 
-    def __init__(self,
-                 *,
-                 system_status_message: str = None,
-                 system_status_code: str = None,
-                 schematics_resource_status: List['JobStatusSchematicsResources'] = None,
-                 updated_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        system_status_message: str = None,
+        system_status_code: str = None,
+        schematics_resource_status: List['JobStatusSchematicsResources'] = None,
+        updated_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobStatusSystem object.
 
@@ -20893,10 +20239,12 @@ class JobStatusSystem():
         if 'system_status_code' in _dict:
             args['system_status_code'] = _dict.get('system_status_code')
         if 'schematics_resource_status' in _dict:
-            args['schematics_resource_status'] = [JobStatusSchematicsResources.from_dict(x) for x in _dict.get('schematics_resource_status')]
+            args['schematics_resource_status'] = [
+                JobStatusSchematicsResources.from_dict(x) for x in _dict.get('schematics_resource_status')
+            ]
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -20942,6 +20290,7 @@ class JobStatusSystem():
         """
         Status of Jobs.
         """
+
         JOB_PENDING = 'job_pending'
         JOB_IN_PROGRESS = 'job_in_progress'
         JOB_FINISHED = 'job_finished'
@@ -20949,7 +20298,7 @@ class JobStatusSystem():
         JOB_CANCELLED = 'job_cancelled'
 
 
-class JobStatusTemplate():
+class JobStatusTemplate:
     """
     Template Job Status.
 
@@ -20963,17 +20312,21 @@ class JobStatusTemplate():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['template_id', 'template_name', 'flow_index', 'status_code', 'status_message', 'updated_at'])
+    _properties = frozenset(
+        ['template_id', 'template_name', 'flow_index', 'status_code', 'status_message', 'updated_at']
+    )
 
-    def __init__(self,
-                 *,
-                 template_id: str = None,
-                 template_name: str = None,
-                 flow_index: int = None,
-                 status_code: str = None,
-                 status_message: str = None,
-                 updated_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        template_id: str = None,
+        template_name: str = None,
+        flow_index: int = None,
+        status_code: str = None,
+        status_message: str = None,
+        updated_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobStatusTemplate object.
 
@@ -21011,7 +20364,7 @@ class JobStatusTemplate():
             args['status_message'] = _dict.get('status_message')
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -21061,6 +20414,7 @@ class JobStatusTemplate():
         """
         Status of Jobs.
         """
+
         JOB_PENDING = 'job_pending'
         JOB_IN_PROGRESS = 'job_in_progress'
         JOB_FINISHED = 'job_finished'
@@ -21068,7 +20422,7 @@ class JobStatusTemplate():
         JOB_CANCELLED = 'job_cancelled'
 
 
-class JobStatusWorkitem():
+class JobStatusWorkitem:
     """
     Individual workitem status info.
 
@@ -21083,15 +20437,17 @@ class JobStatusWorkitem():
     # The set of defined properties for the class
     _properties = frozenset(['workspace_id', 'workspace_name', 'job_id', 'status_code', 'status_message', 'updated_at'])
 
-    def __init__(self,
-                 *,
-                 workspace_id: str = None,
-                 workspace_name: str = None,
-                 job_id: str = None,
-                 status_code: str = None,
-                 status_message: str = None,
-                 updated_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        workspace_id: str = None,
+        workspace_name: str = None,
+        job_id: str = None,
+        status_code: str = None,
+        status_message: str = None,
+        updated_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobStatusWorkitem object.
 
@@ -21129,7 +20485,7 @@ class JobStatusWorkitem():
             args['status_message'] = _dict.get('status_message')
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -21179,6 +20535,7 @@ class JobStatusWorkitem():
         """
         Status of Jobs.
         """
+
         JOB_PENDING = 'job_pending'
         JOB_IN_PROGRESS = 'job_in_progress'
         JOB_FINISHED = 'job_finished'
@@ -21186,7 +20543,7 @@ class JobStatusWorkitem():
         JOB_CANCELLED = 'job_cancelled'
 
 
-class JobStatusWorkspace():
+class JobStatusWorkspace:
     """
     Workspace Job Status.
 
@@ -21203,18 +20560,22 @@ class JobStatusWorkspace():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['workspace_name', 'status_code', 'status_message', 'flow_status', 'template_status', 'updated_at', 'commands'])
+    _properties = frozenset(
+        ['workspace_name', 'status_code', 'status_message', 'flow_status', 'template_status', 'updated_at', 'commands']
+    )
 
-    def __init__(self,
-                 *,
-                 workspace_name: str = None,
-                 status_code: str = None,
-                 status_message: str = None,
-                 flow_status: 'JobStatusFlow' = None,
-                 template_status: List['JobStatusTemplate'] = None,
-                 updated_at: datetime = None,
-                 commands: List['CommandsInfo'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        workspace_name: str = None,
+        status_code: str = None,
+        status_message: str = None,
+        flow_status: 'JobStatusFlow' = None,
+        template_status: List['JobStatusTemplate'] = None,
+        updated_at: datetime = None,
+        commands: List['CommandsInfo'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobStatusWorkspace object.
 
@@ -21256,7 +20617,7 @@ class JobStatusWorkspace():
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         if 'commands' in _dict:
             args['commands'] = [CommandsInfo.from_dict(x) for x in _dict.get('commands')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -21308,6 +20669,7 @@ class JobStatusWorkspace():
         """
         Status of Jobs.
         """
+
         JOB_PENDING = 'job_pending'
         JOB_IN_PROGRESS = 'job_in_progress'
         JOB_FINISHED = 'job_finished'
@@ -21315,7 +20677,7 @@ class JobStatusWorkspace():
         JOB_CANCELLED = 'job_cancelled'
 
 
-class JobStatusWorkspaceTemplateFlow():
+class JobStatusWorkspaceTemplateFlow:
     """
     Flow Job Status.
 
@@ -21330,14 +20692,16 @@ class JobStatusWorkspaceTemplateFlow():
     # The set of defined properties for the class
     _properties = frozenset(['flow_id', 'flow_name', 'status_code', 'status_message', 'updated_at'])
 
-    def __init__(self,
-                 *,
-                 flow_id: str = None,
-                 flow_name: str = None,
-                 status_code: str = None,
-                 status_message: str = None,
-                 updated_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        flow_id: str = None,
+        flow_name: str = None,
+        status_code: str = None,
+        status_message: str = None,
+        updated_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a JobStatusWorkspaceTemplateFlow object.
 
@@ -21371,7 +20735,7 @@ class JobStatusWorkspaceTemplateFlow():
             args['status_message'] = _dict.get('status_message')
         if 'updated_at' in _dict:
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -21419,6 +20783,7 @@ class JobStatusWorkspaceTemplateFlow():
         """
         Status of Jobs.
         """
+
         JOB_PENDING = 'job_pending'
         JOB_IN_PROGRESS = 'job_in_progress'
         JOB_FINISHED = 'job_finished'
@@ -21426,7 +20791,7 @@ class JobStatusWorkspaceTemplateFlow():
         JOB_CANCELLED = 'job_cancelled'
 
 
-class KMSDiscovery():
+class KMSDiscovery:
     """
     Discover kms instances in the account based on location.
 
@@ -21439,13 +20804,9 @@ class KMSDiscovery():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'kms_instances'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 kms_instances: List['KMSInstances'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, kms_instances: List['KMSInstances'] = None, **kwargs
+    ) -> None:
         """
         Initialize a KMSDiscovery object.
 
@@ -21479,7 +20840,7 @@ class KMSDiscovery():
             raise ValueError('Required property \'offset\' not present in KMSDiscovery JSON')
         if 'kms_instances' in _dict:
             args['kms_instances'] = [KMSInstances.from_dict(x) for x in _dict.get('kms_instances')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -21521,7 +20882,8 @@ class KMSDiscovery():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class KMSInstances():
+
+class KMSInstances:
     """
     User defined kms instances.
 
@@ -21539,19 +20901,32 @@ class KMSInstances():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['location', 'encryption_scheme', 'resource_group', 'kms_crn', 'kms_name', 'kms_private_endpoint', 'kms_public_endpoint', 'keys'])
+    _properties = frozenset(
+        [
+            'location',
+            'encryption_scheme',
+            'resource_group',
+            'kms_crn',
+            'kms_name',
+            'kms_private_endpoint',
+            'kms_public_endpoint',
+            'keys',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 location: str = None,
-                 encryption_scheme: str = None,
-                 resource_group: str = None,
-                 kms_crn: str = None,
-                 kms_name: str = None,
-                 kms_private_endpoint: str = None,
-                 kms_public_endpoint: str = None,
-                 keys: List['KMSInstancesKeys'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        location: str = None,
+        encryption_scheme: str = None,
+        resource_group: str = None,
+        kms_crn: str = None,
+        kms_name: str = None,
+        kms_private_endpoint: str = None,
+        kms_public_endpoint: str = None,
+        keys: List['KMSInstancesKeys'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a KMSInstances object.
 
@@ -21601,7 +20976,7 @@ class KMSInstances():
             args['kms_public_endpoint'] = _dict.get('kms_public_endpoint')
         if 'keys' in _dict:
             args['keys'] = [KMSInstancesKeys.from_dict(x) for x in _dict.get('keys')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -21651,7 +21026,8 @@ class KMSInstances():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class KMSInstancesKeys():
+
+class KMSInstancesKeys:
     """
     KMSInstancesKeys.
 
@@ -21663,12 +21039,7 @@ class KMSInstancesKeys():
     # The set of defined properties for the class
     _properties = frozenset(['name', 'crn', 'error'])
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 crn: str = None,
-                 error: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, name: str = None, crn: str = None, error: str = None, **kwargs) -> None:
         """
         Initialize a KMSInstancesKeys object.
 
@@ -21693,7 +21064,7 @@ class KMSInstancesKeys():
             args['crn'] = _dict.get('crn')
         if 'error' in _dict:
             args['error'] = _dict.get('error')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -21733,7 +21104,8 @@ class KMSInstancesKeys():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class KMSSettings():
+
+class KMSSettings:
     """
     User defined kms settings information.
 
@@ -21752,14 +21124,16 @@ class KMSSettings():
     # The set of defined properties for the class
     _properties = frozenset(['location', 'encryption_scheme', 'resource_group', 'primary_crk', 'secondary_crk'])
 
-    def __init__(self,
-                 *,
-                 location: str = None,
-                 encryption_scheme: str = None,
-                 resource_group: str = None,
-                 primary_crk: 'KMSSettingsPrimaryCrk' = None,
-                 secondary_crk: 'KMSSettingsSecondaryCrk' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        location: str = None,
+        encryption_scheme: str = None,
+        resource_group: str = None,
+        primary_crk: 'KMSSettingsPrimaryCrk' = None,
+        secondary_crk: 'KMSSettingsSecondaryCrk' = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a KMSSettings object.
 
@@ -21797,7 +21171,7 @@ class KMSSettings():
             args['primary_crk'] = KMSSettingsPrimaryCrk.from_dict(_dict.get('primary_crk'))
         if 'secondary_crk' in _dict:
             args['secondary_crk'] = KMSSettingsSecondaryCrk.from_dict(_dict.get('secondary_crk'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -21841,7 +21215,8 @@ class KMSSettings():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class KMSSettingsPrimaryCrk():
+
+class KMSSettingsPrimaryCrk:
     """
     The primary kms instance details.
 
@@ -21854,12 +21229,9 @@ class KMSSettingsPrimaryCrk():
     # The set of defined properties for the class
     _properties = frozenset(['kms_name', 'kms_private_endpoint', 'key_crn'])
 
-    def __init__(self,
-                 *,
-                 kms_name: str = None,
-                 kms_private_endpoint: str = None,
-                 key_crn: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, *, kms_name: str = None, kms_private_endpoint: str = None, key_crn: str = None, **kwargs
+    ) -> None:
         """
         Initialize a KMSSettingsPrimaryCrk object.
 
@@ -21885,7 +21257,7 @@ class KMSSettingsPrimaryCrk():
             args['kms_private_endpoint'] = _dict.get('kms_private_endpoint')
         if 'key_crn' in _dict:
             args['key_crn'] = _dict.get('key_crn')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -21925,7 +21297,8 @@ class KMSSettingsPrimaryCrk():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class KMSSettingsSecondaryCrk():
+
+class KMSSettingsSecondaryCrk:
     """
     The secondary kms instance details.
 
@@ -21938,12 +21311,9 @@ class KMSSettingsSecondaryCrk():
     # The set of defined properties for the class
     _properties = frozenset(['kms_name', 'kms_private_endpoint', 'key_crn'])
 
-    def __init__(self,
-                 *,
-                 kms_name: str = None,
-                 kms_private_endpoint: str = None,
-                 key_crn: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, *, kms_name: str = None, kms_private_endpoint: str = None, key_crn: str = None, **kwargs
+    ) -> None:
         """
         Initialize a KMSSettingsSecondaryCrk object.
 
@@ -21969,7 +21339,7 @@ class KMSSettingsSecondaryCrk():
             args['kms_private_endpoint'] = _dict.get('kms_private_endpoint')
         if 'key_crn' in _dict:
             args['key_crn'] = _dict.get('key_crn')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -22009,7 +21379,8 @@ class KMSSettingsSecondaryCrk():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class OrderItemConfiguration():
+
+class OrderItemConfiguration:
     """
     Catalog item configuration in the Cart order.
 
@@ -22045,33 +21416,60 @@ class OrderItemConfiguration():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'inputs', 'settings', 'outputs', 'target', 'operation', 'service_data', 'catalog_id', 'offering_id', 'owning_account', 'owning_account_crn', 'offering_kind_id', 'offering_target_kind', 'offering_version_id', 'offering_kind', 'offering_fulfilment_kind', 'offering_version', 'offering_provisioner_url', 'offering_provisioner_ssh', 'offering_provisioner_working_directory', 'item_sku'])
+    _properties = frozenset(
+        [
+            'name',
+            'description',
+            'inputs',
+            'settings',
+            'outputs',
+            'target',
+            'operation',
+            'service_data',
+            'catalog_id',
+            'offering_id',
+            'owning_account',
+            'owning_account_crn',
+            'offering_kind_id',
+            'offering_target_kind',
+            'offering_version_id',
+            'offering_kind',
+            'offering_fulfilment_kind',
+            'offering_version',
+            'offering_provisioner_url',
+            'offering_provisioner_ssh',
+            'offering_provisioner_working_directory',
+            'item_sku',
+        ]
+    )
 
-    def __init__(self,
-                 catalog_id: str,
-                 offering_id: str,
-                 *,
-                 name: str = None,
-                 description: str = None,
-                 inputs: List['VariableData'] = None,
-                 settings: List['VariableData'] = None,
-                 outputs: List['VariableData'] = None,
-                 target: 'TargetRequest' = None,
-                 operation: str = None,
-                 service_data: List['ServiceVariableData'] = None,
-                 owning_account: str = None,
-                 owning_account_crn: str = None,
-                 offering_kind_id: str = None,
-                 offering_target_kind: str = None,
-                 offering_version_id: str = None,
-                 offering_kind: str = None,
-                 offering_fulfilment_kind: str = None,
-                 offering_version: str = None,
-                 offering_provisioner_url: str = None,
-                 offering_provisioner_ssh: str = None,
-                 offering_provisioner_working_directory: str = None,
-                 item_sku: 'ItemSKU' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        catalog_id: str,
+        offering_id: str,
+        *,
+        name: str = None,
+        description: str = None,
+        inputs: List['VariableData'] = None,
+        settings: List['VariableData'] = None,
+        outputs: List['VariableData'] = None,
+        target: 'TargetRequest' = None,
+        operation: str = None,
+        service_data: List['ServiceVariableData'] = None,
+        owning_account: str = None,
+        owning_account_crn: str = None,
+        offering_kind_id: str = None,
+        offering_target_kind: str = None,
+        offering_version_id: str = None,
+        offering_kind: str = None,
+        offering_fulfilment_kind: str = None,
+        offering_version: str = None,
+        offering_provisioner_url: str = None,
+        offering_provisioner_ssh: str = None,
+        offering_provisioner_working_directory: str = None,
+        item_sku: 'ItemSKU' = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a OrderItemConfiguration object.
 
@@ -22185,7 +21583,7 @@ class OrderItemConfiguration():
             args['offering_provisioner_working_directory'] = _dict.get('offering_provisioner_working_directory')
         if 'item_sku' in _dict:
             args['item_sku'] = ItemSKU.from_dict(_dict.get('item_sku'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -22236,7 +21634,10 @@ class OrderItemConfiguration():
             _dict['offering_provisioner_url'] = self.offering_provisioner_url
         if hasattr(self, 'offering_provisioner_ssh') and self.offering_provisioner_ssh is not None:
             _dict['offering_provisioner_ssh'] = self.offering_provisioner_ssh
-        if hasattr(self, 'offering_provisioner_working_directory') and self.offering_provisioner_working_directory is not None:
+        if (
+            hasattr(self, 'offering_provisioner_working_directory')
+            and self.offering_provisioner_working_directory is not None
+        ):
             _dict['offering_provisioner_working_directory'] = self.offering_provisioner_working_directory
         if hasattr(self, 'item_sku') and self.item_sku is not None:
             _dict['item_sku'] = self.item_sku.to_dict()
@@ -22267,6 +21668,7 @@ class OrderItemConfiguration():
         """
         Name of the fulfilment job operations.
         """
+
         CONFIGURE = 'configure'
         DESTROY = 'destroy'
         DRYRUN = 'dryrun'
@@ -22277,7 +21679,7 @@ class OrderItemConfiguration():
         UPDATE = 'update'
 
 
-class OutputVariableDataList():
+class OutputVariableDataList:
     """
     List of Output variable data record response.
 
@@ -22291,13 +21693,9 @@ class OutputVariableDataList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'outputs'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 outputs: List['VariableData'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, outputs: List['VariableData'] = None, **kwargs
+    ) -> None:
         """
         Initialize a OutputVariableDataList object.
 
@@ -22331,7 +21729,7 @@ class OutputVariableDataList():
             raise ValueError('Required property \'offset\' not present in OutputVariableDataList JSON')
         if 'outputs' in _dict:
             args['outputs'] = [VariableData.from_dict(x) for x in _dict.get('outputs')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -22373,7 +21771,8 @@ class OutputVariableDataList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class PreviewData():
+
+class PreviewData:
     """
     Preview of the data from the external datastore.
 
@@ -22391,16 +21790,18 @@ class PreviewData():
     # The set of defined properties for the class
     _properties = frozenset(['type', 'connection', 'data', 'version', 'message', 'viewed_at', 'viewed_by'])
 
-    def __init__(self,
-                 *,
-                 type: str = None,
-                 connection: str = None,
-                 data: List['VariableData'] = None,
-                 version: str = None,
-                 message: str = None,
-                 viewed_at: datetime = None,
-                 viewed_by: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        type: str = None,
+        connection: str = None,
+        data: List['VariableData'] = None,
+        version: str = None,
+        message: str = None,
+        viewed_at: datetime = None,
+        viewed_by: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a PreviewData object.
 
@@ -22439,7 +21840,7 @@ class PreviewData():
             args['viewed_at'] = string_to_datetime(_dict.get('viewed_at'))
         if 'viewed_by' in _dict:
             args['viewed_by'] = _dict.get('viewed_by')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -22491,11 +21892,12 @@ class PreviewData():
         """
         Type of the data; keys only or key-values.
         """
+
         ALL = 'all'
         KEYS = 'keys'
 
 
-class PrivateCluster():
+class PrivateCluster:
     """
     Complete Private cluster details provided by user and system generated.
 
@@ -22519,22 +21921,38 @@ class PrivateCluster():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['cluster_id', 'kube_config', 'tags', 'user_state', 'registered_by', 'registered_at', 'updated_at', 'updated_by', 'sys_lock', 'cluster_health', 'last_health_checked_at'])
+    _properties = frozenset(
+        [
+            'cluster_id',
+            'kube_config',
+            'tags',
+            'user_state',
+            'registered_by',
+            'registered_at',
+            'updated_at',
+            'updated_by',
+            'sys_lock',
+            'cluster_health',
+            'last_health_checked_at',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 cluster_id: str = None,
-                 kube_config: str = None,
-                 tags: List[str] = None,
-                 user_state: 'UserState' = None,
-                 registered_by: str = None,
-                 registered_at: datetime = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 sys_lock: 'SystemLock' = None,
-                 cluster_health: str = None,
-                 last_health_checked_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        cluster_id: str = None,
+        kube_config: str = None,
+        tags: List[str] = None,
+        user_state: 'UserState' = None,
+        registered_by: str = None,
+        registered_at: datetime = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        sys_lock: 'SystemLock' = None,
+        cluster_health: str = None,
+        last_health_checked_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a PrivateCluster object.
 
@@ -22597,7 +22015,7 @@ class PrivateCluster():
             args['cluster_health'] = _dict.get('cluster_health')
         if 'last_health_checked_at' in _dict:
             args['last_health_checked_at'] = string_to_datetime(_dict.get('last_health_checked_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -22657,11 +22075,12 @@ class PrivateCluster():
         """
         Health of the remote Cluster.
         """
+
         ACTIVE = 'active'
         INACTIVE = 'inactive'
 
 
-class PrivateClusterList():
+class PrivateClusterList:
     """
     Private Cluster details response.
 
@@ -22674,13 +22093,9 @@ class PrivateClusterList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'clusters'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 clusters: List['PrivateCluster'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, clusters: List['PrivateCluster'] = None, **kwargs
+    ) -> None:
         """
         Initialize a PrivateClusterList object.
 
@@ -22713,7 +22128,7 @@ class PrivateClusterList():
             raise ValueError('Required property \'offset\' not present in PrivateClusterList JSON')
         if 'clusters' in _dict:
             args['clusters'] = [PrivateCluster.from_dict(x) for x in _dict.get('clusters')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -22755,7 +22170,8 @@ class PrivateClusterList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class ResourceQuery():
+
+class ResourceQuery:
     """
     Describe resource query.
 
@@ -22767,12 +22183,14 @@ class ResourceQuery():
     # The set of defined properties for the class
     _properties = frozenset(['query_type', 'query_condition', 'query_select'])
 
-    def __init__(self,
-                 *,
-                 query_type: str = None,
-                 query_condition: List['ResourceQueryParam'] = None,
-                 query_select: List[str] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        query_type: str = None,
+        query_condition: List['ResourceQueryParam'] = None,
+        query_select: List[str] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a ResourceQuery object.
 
@@ -22798,7 +22216,7 @@ class ResourceQuery():
             args['query_condition'] = [ResourceQueryParam.from_dict(x) for x in _dict.get('query_condition')]
         if 'query_select' in _dict:
             args['query_select'] = _dict.get('query_select')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -22842,10 +22260,11 @@ class ResourceQuery():
         """
         Type of the query(workspaces).
         """
+
         WORKSPACES = 'workspaces'
 
 
-class ResourceQueryDefinition():
+class ResourceQueryDefinition:
     """
     Describe resource query definition.
 
@@ -22857,12 +22276,7 @@ class ResourceQueryDefinition():
     # The set of defined properties for the class
     _properties = frozenset(['type', 'name', 'queries'])
 
-    def __init__(self,
-                 *,
-                 type: str = None,
-                 name: str = None,
-                 queries: List['ResourceQuery'] = None,
-                 **kwargs) -> None:
+    def __init__(self, *, type: str = None, name: str = None, queries: List['ResourceQuery'] = None, **kwargs) -> None:
         """
         Initialize a ResourceQueryDefinition object.
 
@@ -22887,7 +22301,7 @@ class ResourceQueryDefinition():
             args['name'] = _dict.get('name')
         if 'queries' in _dict:
             args['queries'] = [ResourceQuery.from_dict(x) for x in _dict.get('queries')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -22931,10 +22345,11 @@ class ResourceQueryDefinition():
         """
         Resource type (cluster, vsi, icd, vpc).
         """
+
         VSI = 'vsi'
 
 
-class ResourceQueryParam():
+class ResourceQueryParam:
     """
     Describe resource query param.
 
@@ -22946,12 +22361,7 @@ class ResourceQueryParam():
     # The set of defined properties for the class
     _properties = frozenset(['name', 'value', 'description'])
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 value: str = None,
-                 description: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, name: str = None, value: str = None, description: str = None, **kwargs) -> None:
         """
         Initialize a ResourceQueryParam object.
 
@@ -22977,7 +22387,7 @@ class ResourceQueryParam():
             args['value'] = _dict.get('value')
         if 'description' in _dict:
             args['description'] = _dict.get('description')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -23017,7 +22427,8 @@ class ResourceQueryParam():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class ResourceQueryRecord():
+
+class ResourceQueryRecord:
     """
     Describe resource query record.
 
@@ -23036,17 +22447,19 @@ class ResourceQueryRecord():
     # The set of defined properties for the class
     _properties = frozenset(['type', 'name', 'id', 'created_at', 'created_by', 'updated_at', 'updated_by', 'queries'])
 
-    def __init__(self,
-                 *,
-                 type: str = None,
-                 name: str = None,
-                 id: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 queries: List['ResourceQuery'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        type: str = None,
+        name: str = None,
+        id: str = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        queries: List['ResourceQuery'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a ResourceQueryRecord object.
 
@@ -23086,7 +22499,7 @@ class ResourceQueryRecord():
             args['updated_by'] = _dict.get('updated_by')
         if 'queries' in _dict:
             args['queries'] = [ResourceQuery.from_dict(x) for x in _dict.get('queries')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -23140,10 +22553,11 @@ class ResourceQueryRecord():
         """
         Resource type (cluster, vsi, icd, vpc).
         """
+
         VSI = 'vsi'
 
 
-class ResourceQueryRecordList():
+class ResourceQueryRecordList:
     """
     List of Resource query records.
 
@@ -23157,13 +22571,15 @@ class ResourceQueryRecordList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'resource_queries'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 resource_queries: List['ResourceQueryRecord'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        limit: int,
+        offset: int,
+        *,
+        total_count: int = None,
+        resource_queries: List['ResourceQueryRecord'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a ResourceQueryRecordList object.
 
@@ -23198,7 +22614,7 @@ class ResourceQueryRecordList():
             raise ValueError('Required property \'offset\' not present in ResourceQueryRecordList JSON')
         if 'resource_queries' in _dict:
             args['resource_queries'] = [ResourceQueryRecord.from_dict(x) for x in _dict.get('resource_queries')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -23240,7 +22656,8 @@ class ResourceQueryRecordList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class ResourceQueryResponseRecord():
+
+class ResourceQueryResponseRecord:
     """
     Describe resource query.
 
@@ -23250,10 +22667,7 @@ class ResourceQueryResponseRecord():
     # The set of defined properties for the class
     _properties = frozenset(['response'])
 
-    def __init__(self,
-                 *,
-                 response: List['ResourceQueryResponseRecordResponse'] = None,
-                 **kwargs) -> None:
+    def __init__(self, *, response: List['ResourceQueryResponseRecordResponse'] = None, **kwargs) -> None:
         """
         Initialize a ResourceQueryResponseRecord object.
 
@@ -23270,7 +22684,7 @@ class ResourceQueryResponseRecord():
         args = {}
         if 'response' in _dict:
             args['response'] = [ResourceQueryResponseRecordResponse.from_dict(x) for x in _dict.get('response')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -23306,7 +22720,8 @@ class ResourceQueryResponseRecord():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class ResourceQueryResponseRecordQueryOutput():
+
+class ResourceQueryResponseRecordQueryOutput:
     """
     List of query output values.
 
@@ -23317,11 +22732,7 @@ class ResourceQueryResponseRecordQueryOutput():
     # The set of defined properties for the class
     _properties = frozenset(['name', 'value'])
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 value: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, name: str = None, value: str = None, **kwargs) -> None:
         """
         Initialize a ResourceQueryResponseRecordQueryOutput object.
 
@@ -23342,7 +22753,7 @@ class ResourceQueryResponseRecordQueryOutput():
             args['name'] = _dict.get('name')
         if 'value' in _dict:
             args['value'] = _dict.get('value')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -23380,7 +22791,8 @@ class ResourceQueryResponseRecordQueryOutput():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class ResourceQueryResponseRecordResponse():
+
+class ResourceQueryResponseRecordResponse:
     """
     ResourceQueryResponseRecordResponse.
 
@@ -23393,13 +22805,15 @@ class ResourceQueryResponseRecordResponse():
     # The set of defined properties for the class
     _properties = frozenset(['query_type', 'query_condition', 'query_select', 'query_output'])
 
-    def __init__(self,
-                 *,
-                 query_type: str = None,
-                 query_condition: List['ResourceQueryParam'] = None,
-                 query_select: List[str] = None,
-                 query_output: List['ResourceQueryResponseRecordQueryOutput'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        query_type: str = None,
+        query_condition: List['ResourceQueryParam'] = None,
+        query_select: List[str] = None,
+        query_output: List['ResourceQueryResponseRecordQueryOutput'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a ResourceQueryResponseRecordResponse object.
 
@@ -23429,8 +22843,10 @@ class ResourceQueryResponseRecordResponse():
         if 'query_select' in _dict:
             args['query_select'] = _dict.get('query_select')
         if 'query_output' in _dict:
-            args['query_output'] = [ResourceQueryResponseRecordQueryOutput.from_dict(x) for x in _dict.get('query_output')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+            args['query_output'] = [
+                ResourceQueryResponseRecordQueryOutput.from_dict(x) for x in _dict.get('query_output')
+            ]
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -23476,10 +22892,11 @@ class ResourceQueryResponseRecordResponse():
         """
         Type of the query(workspaces).
         """
+
         WORKSPACES = 'workspaces'
 
 
-class SKUUserState():
+class SKUUserState:
     """
     Status of the underlying schematics objects used to fullfil CartOrder.
 
@@ -23491,12 +22908,7 @@ class SKUUserState():
     # The set of defined properties for the class
     _properties = frozenset(['state', 'set_by', 'set_at'])
 
-    def __init__(self,
-                 *,
-                 state: str = None,
-                 set_by: str = None,
-                 set_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(self, *, state: str = None, set_by: str = None, set_at: datetime = None, **kwargs) -> None:
         """
         Initialize a SKUUserState object.
 
@@ -23523,7 +22935,7 @@ class SKUUserState():
             args['set_by'] = _dict.get('set_by')
         if 'set_at' in _dict:
             args['set_at'] = string_to_datetime(_dict.get('set_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -23563,7 +22975,8 @@ class SKUUserState():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class SchematicsAccessRule():
+
+class SchematicsAccessRule:
     """
     Schematics access rule details.
 
@@ -23579,14 +22992,16 @@ class SchematicsAccessRule():
     # The set of defined properties for the class
     _properties = frozenset(['effect', 'command_name', 'command_parameter', 'principal', 'origin'])
 
-    def __init__(self,
-                 *,
-                 effect: str = None,
-                 command_name: str = None,
-                 command_parameter: str = None,
-                 principal: str = None,
-                 origin: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        effect: str = None,
+        command_name: str = None,
+        command_parameter: str = None,
+        principal: str = None,
+        origin: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a SchematicsAccessRule object.
 
@@ -23621,7 +23036,7 @@ class SchematicsAccessRule():
             args['principal'] = _dict.get('principal')
         if 'origin' in _dict:
             args['origin'] = _dict.get('origin')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -23669,14 +23084,15 @@ class SchematicsAccessRule():
         """
         Outcome of the access rule evaluation.
         """
+
         ALLOW = 'allow'
         DENY = 'deny'
-
 
     class CommandNameEnum(str, Enum):
         """
         Schematics job command name.
         """
+
         WORKSPACE_PLAN = 'workspace_plan'
         WORKSPACE_APPLY = 'workspace_apply'
         WORKSPACE_DESTROY = 'workspace_destroy'
@@ -23706,11 +23122,11 @@ class SchematicsAccessRule():
         REPOSITORY_PROCESS = 'repository_process'
         TERRAFORM_COMMANDS = 'terraform_commands'
 
-
     class OriginEnum(str, Enum):
         """
         Origin of the schematics action event.
         """
+
         WORKSPACES = 'workspaces'
         ACTIONS = 'actions'
         DATASETS = 'datasets'
@@ -23718,7 +23134,7 @@ class SchematicsAccessRule():
         SETTINGS = 'settings'
 
 
-class SchematicsAccessRuleList():
+class SchematicsAccessRuleList:
     """
     List of Schematics access rule details.
 
@@ -23731,13 +23147,15 @@ class SchematicsAccessRuleList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'access_rules'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 access_rules: List['SchematicsAccessRule'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        limit: int,
+        offset: int,
+        *,
+        total_count: int = None,
+        access_rules: List['SchematicsAccessRule'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a SchematicsAccessRuleList object.
 
@@ -23771,7 +23189,7 @@ class SchematicsAccessRuleList():
             raise ValueError('Required property \'offset\' not present in SchematicsAccessRuleList JSON')
         if 'access_rules' in _dict:
             args['access_rules'] = [SchematicsAccessRule.from_dict(x) for x in _dict.get('access_rules')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -23813,7 +23231,8 @@ class SchematicsAccessRuleList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class SchematicsInfo():
+
+class SchematicsInfo:
     """
     Details about IBM Cloud Schematics service supported template types and versions, and
     the supported locations.
@@ -23829,16 +23248,20 @@ class SchematicsInfo():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['schematics_version', 'schematics_build', 'supported_locations', 'supported_templates', 'supported_runtimes'])
+    _properties = frozenset(
+        ['schematics_version', 'schematics_build', 'supported_locations', 'supported_templates', 'supported_runtimes']
+    )
 
-    def __init__(self,
-                 *,
-                 schematics_version: str = None,
-                 schematics_build: str = None,
-                 supported_locations: List[str] = None,
-                 supported_templates: dict = None,
-                 supported_runtimes: dict = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        schematics_version: str = None,
+        schematics_build: str = None,
+        supported_locations: List[str] = None,
+        supported_templates: dict = None,
+        supported_runtimes: dict = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a SchematicsInfo object.
 
@@ -23874,7 +23297,7 @@ class SchematicsInfo():
             args['supported_templates'] = _dict.get('supported_templates')
         if 'supported_runtimes' in _dict:
             args['supported_runtimes'] = _dict.get('supported_runtimes')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -23925,16 +23348,17 @@ class SchematicsInfo():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
-
     class SupportedTemplatesEnum(str, Enum):
         """
         Support template-types in IBM Cloud Schematics.
         """
+
         TERRAFORM_V0_11 = 'terraform_v0_11'
         TERRAFORM_V0_12 = 'terraform_v0_12'
         HELM_V2_15 = 'helm_v2_15'
@@ -23944,7 +23368,7 @@ class SchematicsInfo():
         IBM_CLOUD_PAK_V3_1 = 'ibm_cloud_pak_v3_1'
 
 
-class SchematicsLocationsList():
+class SchematicsLocationsList:
     """
     The list of locations details.
 
@@ -23954,10 +23378,7 @@ class SchematicsLocationsList():
     # The set of defined properties for the class
     _properties = frozenset(['locations'])
 
-    def __init__(self,
-                 *,
-                 locations: List['SchematicsLocationsLite'] = None,
-                 **kwargs) -> None:
+    def __init__(self, *, locations: List['SchematicsLocationsLite'] = None, **kwargs) -> None:
         """
         Initialize a SchematicsLocationsList object.
 
@@ -23975,7 +23396,7 @@ class SchematicsLocationsList():
         args = {}
         if 'locations' in _dict:
             args['locations'] = [SchematicsLocationsLite.from_dict(x) for x in _dict.get('locations')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -24011,7 +23432,8 @@ class SchematicsLocationsList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class SchematicsLocationsLite():
+
+class SchematicsLocationsLite:
     """
     An individual location details.
 
@@ -24037,22 +23459,38 @@ class SchematicsLocationsLite():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['region', 'metro', 'geography_code', 'geography', 'country', 'kind', 'paired_region', 'restricted', 'display_name', 'schematics_regional_public_endpoint', 'schematics_regional_private_endpoint'])
+    _properties = frozenset(
+        [
+            'region',
+            'metro',
+            'geography_code',
+            'geography',
+            'country',
+            'kind',
+            'paired_region',
+            'restricted',
+            'display_name',
+            'schematics_regional_public_endpoint',
+            'schematics_regional_private_endpoint',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 region: str = None,
-                 metro: str = None,
-                 geography_code: str = None,
-                 geography: str = None,
-                 country: str = None,
-                 kind: str = None,
-                 paired_region: List[str] = None,
-                 restricted: bool = None,
-                 display_name: str = None,
-                 schematics_regional_public_endpoint: str = None,
-                 schematics_regional_private_endpoint: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        region: str = None,
+        metro: str = None,
+        geography_code: str = None,
+        geography: str = None,
+        country: str = None,
+        kind: str = None,
+        paired_region: List[str] = None,
+        restricted: bool = None,
+        display_name: str = None,
+        schematics_regional_public_endpoint: str = None,
+        schematics_regional_private_endpoint: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a SchematicsLocationsLite object.
 
@@ -24117,7 +23555,7 @@ class SchematicsLocationsLite():
             args['schematics_regional_public_endpoint'] = _dict.get('schematics_regional_public_endpoint')
         if 'schematics_regional_private_endpoint' in _dict:
             args['schematics_regional_private_endpoint'] = _dict.get('schematics_regional_private_endpoint')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -24146,9 +23584,15 @@ class SchematicsLocationsLite():
             _dict['restricted'] = self.restricted
         if hasattr(self, 'display_name') and self.display_name is not None:
             _dict['display_name'] = self.display_name
-        if hasattr(self, 'schematics_regional_public_endpoint') and self.schematics_regional_public_endpoint is not None:
+        if (
+            hasattr(self, 'schematics_regional_public_endpoint')
+            and self.schematics_regional_public_endpoint is not None
+        ):
             _dict['schematics_regional_public_endpoint'] = self.schematics_regional_public_endpoint
-        if hasattr(self, 'schematics_regional_private_endpoint') and self.schematics_regional_private_endpoint is not None:
+        if (
+            hasattr(self, 'schematics_regional_private_endpoint')
+            and self.schematics_regional_private_endpoint is not None
+        ):
             _dict['schematics_regional_private_endpoint'] = self.schematics_regional_private_endpoint
         for _key in [k for k in vars(self).keys() if k not in SchematicsLocationsLite._properties]:
             if getattr(self, _key, None) is not None:
@@ -24173,7 +23617,8 @@ class SchematicsLocationsLite():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class SchematicsRuntimeInfo():
+
+class SchematicsRuntimeInfo:
     """
     Runtime components for each template-types in Schematics.
 
@@ -24184,11 +23629,7 @@ class SchematicsRuntimeInfo():
     # The set of defined properties for the class
     _properties = frozenset(['runtime_image', 'runtime_properties'])
 
-    def __init__(self,
-                 *,
-                 runtime_image: str = None,
-                 runtime_properties: dict = None,
-                 **kwargs) -> None:
+    def __init__(self, *, runtime_image: str = None, runtime_properties: dict = None, **kwargs) -> None:
         """
         Initialize a SchematicsRuntimeInfo object.
 
@@ -24209,7 +23650,7 @@ class SchematicsRuntimeInfo():
             args['runtime_image'] = _dict.get('runtime_image')
         if 'runtime_properties' in _dict:
             args['runtime_properties'] = _dict.get('runtime_properties')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -24247,7 +23688,8 @@ class SchematicsRuntimeInfo():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class ServiceMappingRule():
+
+class ServiceMappingRule:
     """
     Rule to map input param_name to output_param.
 
@@ -24261,12 +23703,9 @@ class ServiceMappingRule():
     # The set of defined properties for the class
     _properties = frozenset(['type', 'input_param_name', 'output_param_name'])
 
-    def __init__(self,
-                 *,
-                 type: str = None,
-                 input_param_name: str = None,
-                 output_param_name: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, *, type: str = None, input_param_name: str = None, output_param_name: str = None, **kwargs
+    ) -> None:
         """
         Initialize a ServiceMappingRule object.
 
@@ -24293,7 +23732,7 @@ class ServiceMappingRule():
             args['input_param_name'] = _dict.get('input_param_name')
         if 'output_param_name' in _dict:
             args['output_param_name'] = _dict.get('output_param_name')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -24333,7 +23772,8 @@ class ServiceMappingRule():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class ServiceVariableData():
+
+class ServiceVariableData:
     """
     User editable service variable data & system generated reference to value.
 
@@ -24347,13 +23787,15 @@ class ServiceVariableData():
     # The set of defined properties for the class
     _properties = frozenset(['name', 'value', 'metadata', 'mapping'])
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 value: str = None,
-                 metadata: 'VariableMetadata' = None,
-                 mapping: List['ServiceMappingRule'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        value: str = None,
+        metadata: 'VariableMetadata' = None,
+        mapping: List['ServiceMappingRule'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a ServiceVariableData object.
 
@@ -24384,7 +23826,7 @@ class ServiceVariableData():
             args['metadata'] = VariableMetadata.from_dict(_dict.get('metadata'))
         if 'mapping' in _dict:
             args['mapping'] = [ServiceMappingRule.from_dict(x) for x in _dict.get('mapping')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -24426,7 +23868,8 @@ class ServiceVariableData():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class SystemLock():
+
+class SystemLock:
     """
     System lock status.
 
@@ -24440,12 +23883,9 @@ class SystemLock():
     # The set of defined properties for the class
     _properties = frozenset(['sys_locked', 'sys_locked_by', 'sys_locked_at'])
 
-    def __init__(self,
-                 *,
-                 sys_locked: bool = None,
-                 sys_locked_by: str = None,
-                 sys_locked_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, *, sys_locked: bool = None, sys_locked_by: str = None, sys_locked_at: datetime = None, **kwargs
+    ) -> None:
         """
         Initialize a SystemLock object.
 
@@ -24473,7 +23913,7 @@ class SystemLock():
             args['sys_locked_by'] = _dict.get('sys_locked_by')
         if 'sys_locked_at' in _dict:
             args['sys_locked_at'] = string_to_datetime(_dict.get('sys_locked_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -24513,7 +23953,8 @@ class SystemLock():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class TargetRequest():
+
+class TargetRequest:
     """
     Target cluster details to perform POC operation.
 
@@ -24526,17 +23967,21 @@ class TargetRequest():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['cluster_id', 'cluster_name', 'entitlement_key', 'namespace', 'region', 'resource_group_id'])
+    _properties = frozenset(
+        ['cluster_id', 'cluster_name', 'entitlement_key', 'namespace', 'region', 'resource_group_id']
+    )
 
-    def __init__(self,
-                 *,
-                 cluster_id: str = None,
-                 cluster_name: str = None,
-                 entitlement_key: object = None,
-                 namespace: str = None,
-                 region: str = None,
-                 resource_group_id: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        cluster_id: str = None,
+        cluster_name: str = None,
+        entitlement_key: object = None,
+        namespace: str = None,
+        region: str = None,
+        resource_group_id: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a TargetRequest object.
 
@@ -24573,7 +24018,7 @@ class TargetRequest():
             args['region'] = _dict.get('region')
         if 'resource_group_id' in _dict:
             args['resource_group_id'] = _dict.get('resource_group_id')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -24619,7 +24064,8 @@ class TargetRequest():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class Template():
+
+class Template:
     """
     Complete Template definition with user inputs and system generated data.
 
@@ -24656,33 +24102,60 @@ class Template():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'type', 'user_state', 'source_type', 'source', 'source_readme_url', 'inputs', 'outputs', 'settings', 'inventory', 'id', 'source_created_at', 'source_created_by', 'source_updated_at', 'source_updated_by', 'created_at', 'created_by', 'updated_at', 'updated_by', 'status', 'sys_lock'])
+    _properties = frozenset(
+        [
+            'name',
+            'description',
+            'type',
+            'user_state',
+            'source_type',
+            'source',
+            'source_readme_url',
+            'inputs',
+            'outputs',
+            'settings',
+            'inventory',
+            'id',
+            'source_created_at',
+            'source_created_by',
+            'source_updated_at',
+            'source_updated_by',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+            'status',
+            'sys_lock',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 description: str = None,
-                 type: str = None,
-                 user_state: 'UserState' = None,
-                 source_type: str = None,
-                 source: 'ExternalSource' = None,
-                 source_readme_url: str = None,
-                 inputs: List['VariableData'] = None,
-                 outputs: List['VariableData'] = None,
-                 settings: List['VariableData'] = None,
-                 inventory: str = None,
-                 id: str = None,
-                 source_created_at: datetime = None,
-                 source_created_by: str = None,
-                 source_updated_at: datetime = None,
-                 source_updated_by: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 status: 'JobStatusTemplate' = None,
-                 sys_lock: 'SystemLock' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        description: str = None,
+        type: str = None,
+        user_state: 'UserState' = None,
+        source_type: str = None,
+        source: 'ExternalSource' = None,
+        source_readme_url: str = None,
+        inputs: List['VariableData'] = None,
+        outputs: List['VariableData'] = None,
+        settings: List['VariableData'] = None,
+        inventory: str = None,
+        id: str = None,
+        source_created_at: datetime = None,
+        source_created_by: str = None,
+        source_updated_at: datetime = None,
+        source_updated_by: str = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        status: 'JobStatusTemplate' = None,
+        sys_lock: 'SystemLock' = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a Template object.
 
@@ -24783,7 +24256,7 @@ class Template():
             args['status'] = JobStatusTemplate.from_dict(_dict.get('status'))
         if 'sys_lock' in _dict:
             args['sys_lock'] = SystemLock.from_dict(_dict.get('sys_lock'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -24865,6 +24338,7 @@ class Template():
         """
         Type of source for the Template.
         """
+
         LOCAL = 'local'
         GIT_HUB = 'git_hub'
         GIT_HUB_ENTERPRISE = 'git_hub_enterprise'
@@ -24874,7 +24348,7 @@ class Template():
         EXTERNAL_SCM = 'external_scm'
 
 
-class TemplateCommand():
+class TemplateCommand:
     """
     Name of the template-specific command.
 
@@ -24887,11 +24361,7 @@ class TemplateCommand():
     # The set of defined properties for the class
     _properties = frozenset(['command', 'command_options'])
 
-    def __init__(self,
-                 *,
-                 command: str = None,
-                 command_options: List[str] = None,
-                 **kwargs) -> None:
+    def __init__(self, *, command: str = None, command_options: List[str] = None, **kwargs) -> None:
         """
         Initialize a TemplateCommand object.
 
@@ -24914,7 +24384,7 @@ class TemplateCommand():
             args['command'] = _dict.get('command')
         if 'command_options' in _dict:
             args['command_options'] = _dict.get('command_options')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -24956,6 +24426,7 @@ class TemplateCommand():
         """
         Schematics job command name.
         """
+
         WORKSPACE_PLAN = 'workspace_plan'
         WORKSPACE_APPLY = 'workspace_apply'
         WORKSPACE_DESTROY = 'workspace_destroy'
@@ -24986,7 +24457,7 @@ class TemplateCommand():
         TERRAFORM_COMMANDS = 'terraform_commands'
 
 
-class TemplateFlow():
+class TemplateFlow:
     """
     Complete Flow details with user inputs and system generated data.
 
@@ -25011,25 +24482,44 @@ class TemplateFlow():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'version', 'type', 'user_state', 'definition', 'id', 'sys_lock', 'created_at', 'created_by', 'updated_at', 'updated_by', 'status', 'validation_summary', 'validation_logs'])
+    _properties = frozenset(
+        [
+            'name',
+            'version',
+            'type',
+            'user_state',
+            'definition',
+            'id',
+            'sys_lock',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+            'status',
+            'validation_summary',
+            'validation_logs',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 version: str = None,
-                 type: str = None,
-                 user_state: 'UserState' = None,
-                 definition: 'TemplateFlowDefinition' = None,
-                 id: str = None,
-                 sys_lock: 'SystemLock' = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 status: 'JobStatusWorkspaceTemplateFlow' = None,
-                 validation_summary: 'TemplateFlowValidationSummary' = None,
-                 validation_logs: List['TemplateFlowValidationLogs'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        version: str = None,
+        type: str = None,
+        user_state: 'UserState' = None,
+        definition: 'TemplateFlowDefinition' = None,
+        id: str = None,
+        sys_lock: 'SystemLock' = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        status: 'JobStatusWorkspaceTemplateFlow' = None,
+        validation_summary: 'TemplateFlowValidationSummary' = None,
+        validation_logs: List['TemplateFlowValidationLogs'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a TemplateFlow object.
 
@@ -25095,7 +24585,7 @@ class TemplateFlow():
             args['validation_summary'] = TemplateFlowValidationSummary.from_dict(_dict.get('validation_summary'))
         if 'validation_logs' in _dict:
             args['validation_logs'] = [TemplateFlowValidationLogs.from_dict(x) for x in _dict.get('validation_logs')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -25161,11 +24651,12 @@ class TemplateFlow():
         """
         Type of flow.
         """
+
         SIMPLE_FLOW = 'simple_flow'
         NODE_RED_FLOW = 'node_red_flow'
 
 
-class TemplateFlowDataValidationStatus():
+class TemplateFlowDataValidationStatus:
     """
     Flow data-flow validation status.
 
@@ -25178,12 +24669,7 @@ class TemplateFlowDataValidationStatus():
     # The set of defined properties for the class
     _properties = frozenset(['log_level', 'var_name', 'var_status'])
 
-    def __init__(self,
-                 *,
-                 log_level: str = None,
-                 var_name: str = None,
-                 var_status: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, log_level: str = None, var_name: str = None, var_status: str = None, **kwargs) -> None:
         """
         Initialize a TemplateFlowDataValidationStatus object.
 
@@ -25210,7 +24696,7 @@ class TemplateFlowDataValidationStatus():
             args['var_name'] = _dict.get('var_name')
         if 'var_status' in _dict:
             args['var_status'] = _dict.get('var_status')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -25254,12 +24740,13 @@ class TemplateFlowDataValidationStatus():
         """
         Validation status of the template variable.
         """
+
         INFO = 'info'
         WARNING = 'warning'
         ERROR = 'error'
 
 
-class TemplateFlowDefinition():
+class TemplateFlowDefinition:
     """
     Flow definition.
 
@@ -25274,13 +24761,15 @@ class TemplateFlowDefinition():
     # The set of defined properties for the class
     _properties = frozenset(['flow_type', 'id', 'simple_flow', 'custom_flow'])
 
-    def __init__(self,
-                 *,
-                 flow_type: str = None,
-                 id: str = None,
-                 simple_flow: List['TemplateFlowDefinitionSimpleFlow'] = None,
-                 custom_flow: bytes = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        flow_type: str = None,
+        id: str = None,
+        simple_flow: List['TemplateFlowDefinitionSimpleFlow'] = None,
+        custom_flow: bytes = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a TemplateFlowDefinition object.
 
@@ -25311,7 +24800,7 @@ class TemplateFlowDefinition():
             args['simple_flow'] = [TemplateFlowDefinitionSimpleFlow.from_dict(x) for x in _dict.get('simple_flow')]
         if 'custom_flow' in _dict:
             args['custom_flow'] = base64.b64decode(_dict.get('custom_flow'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -25357,11 +24846,12 @@ class TemplateFlowDefinition():
         """
         Type of flow definition.
         """
+
         SIMPLE = 'simple'
         CUSTOM = 'custom'
 
 
-class TemplateFlowDefinitionSimpleFlow():
+class TemplateFlowDefinitionSimpleFlow:
     """
     TemplateFlowDefinitionSimpleFlow.
 
@@ -25374,12 +24864,14 @@ class TemplateFlowDefinitionSimpleFlow():
     # The set of defined properties for the class
     _properties = frozenset(['index', 'control', 'template_operation'])
 
-    def __init__(self,
-                 *,
-                 index: int = None,
-                 control: str = None,
-                 template_operation: 'TemplateFlowDefinitionTemplateOperation' = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        index: int = None,
+        control: str = None,
+        template_operation: 'TemplateFlowDefinitionTemplateOperation' = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a TemplateFlowDefinitionSimpleFlow object.
 
@@ -25404,8 +24896,10 @@ class TemplateFlowDefinitionSimpleFlow():
         if 'control' in _dict:
             args['control'] = _dict.get('control')
         if 'template_operation' in _dict:
-            args['template_operation'] = TemplateFlowDefinitionTemplateOperation.from_dict(_dict.get('template_operation'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+            args['template_operation'] = TemplateFlowDefinitionTemplateOperation.from_dict(
+                _dict.get('template_operation')
+            )
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -25449,6 +24943,7 @@ class TemplateFlowDefinitionSimpleFlow():
         """
         Control action in the flow.
         """
+
         DO = 'do'
         REPEAT_UNTIL = 'repeat_until'
         WAIT_UNTIL = 'wait_until'
@@ -25456,7 +24951,7 @@ class TemplateFlowDefinitionSimpleFlow():
         SWITCH = 'switch'
 
 
-class TemplateFlowDefinitionTemplateOperation():
+class TemplateFlowDefinitionTemplateOperation:
     """
     Template operation in the flow.
 
@@ -25478,14 +24973,16 @@ class TemplateFlowDefinitionTemplateOperation():
     # The set of defined properties for the class
     _properties = frozenset(['pre_condition', 'template_id', 'override_command', 'post_condition', 'on_error'])
 
-    def __init__(self,
-                 *,
-                 pre_condition: str = None,
-                 template_id: str = None,
-                 override_command: 'TemplateCommand' = None,
-                 post_condition: str = None,
-                 on_error: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        pre_condition: str = None,
+        template_id: str = None,
+        override_command: 'TemplateCommand' = None,
+        post_condition: str = None,
+        on_error: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a TemplateFlowDefinitionTemplateOperation object.
 
@@ -25526,7 +25023,7 @@ class TemplateFlowDefinitionTemplateOperation():
             args['post_condition'] = _dict.get('post_condition')
         if 'on_error' in _dict:
             args['on_error'] = _dict.get('on_error')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -25570,7 +25067,8 @@ class TemplateFlowDefinitionTemplateOperation():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class TemplateFlowList():
+
+class TemplateFlowList:
     """
     List of Flow definitions response.
 
@@ -25583,13 +25081,9 @@ class TemplateFlowList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'flows'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 flows: List['TemplateFlowLite'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, flows: List['TemplateFlowLite'] = None, **kwargs
+    ) -> None:
         """
         Initialize a TemplateFlowList object.
 
@@ -25622,7 +25116,7 @@ class TemplateFlowList():
             raise ValueError('Required property \'offset\' not present in TemplateFlowList JSON')
         if 'flows' in _dict:
             args['flows'] = [TemplateFlowLite.from_dict(x) for x in _dict.get('flows')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -25664,7 +25158,8 @@ class TemplateFlowList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class TemplateFlowLite():
+
+class TemplateFlowLite:
     """
     Flow summary profile with system generated data.
 
@@ -25684,22 +25179,38 @@ class TemplateFlowLite():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['id', 'name', 'version', 'type', 'user_state', 'status', 'sys_lock', 'created_at', 'created_by', 'updated_at', 'updated_by'])
+    _properties = frozenset(
+        [
+            'id',
+            'name',
+            'version',
+            'type',
+            'user_state',
+            'status',
+            'sys_lock',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 id: str = None,
-                 name: str = None,
-                 version: str = None,
-                 type: str = None,
-                 user_state: 'UserState' = None,
-                 status: 'JobStatusWorkspaceTemplateFlow' = None,
-                 sys_lock: 'SystemLock' = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        id: str = None,
+        name: str = None,
+        version: str = None,
+        type: str = None,
+        user_state: 'UserState' = None,
+        status: 'JobStatusWorkspaceTemplateFlow' = None,
+        sys_lock: 'SystemLock' = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a TemplateFlowLite object.
 
@@ -25760,7 +25271,7 @@ class TemplateFlowLite():
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         if 'updated_by' in _dict:
             args['updated_by'] = _dict.get('updated_by')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -25820,11 +25331,12 @@ class TemplateFlowLite():
         """
         Type of flow.
         """
+
         SIMPLE_FLOW = 'simple_flow'
         NODE_RED_FLOW = 'node_red_flow'
 
 
-class TemplateFlowValidationLogs():
+class TemplateFlowValidationLogs:
     """
     TemplateFlowValidationLogs.
 
@@ -25838,12 +25350,14 @@ class TemplateFlowValidationLogs():
     # The set of defined properties for the class
     _properties = frozenset(['flow_index', 'inputs_status', 'outputs_status'])
 
-    def __init__(self,
-                 *,
-                 flow_index: int = None,
-                 inputs_status: List['TemplateFlowDataValidationStatus'] = None,
-                 outputs_status: List['TemplateFlowDataValidationStatus'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        flow_index: int = None,
+        inputs_status: List['TemplateFlowDataValidationStatus'] = None,
+        outputs_status: List['TemplateFlowDataValidationStatus'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a TemplateFlowValidationLogs object.
 
@@ -25869,8 +25383,10 @@ class TemplateFlowValidationLogs():
         if 'inputs_status' in _dict:
             args['inputs_status'] = [TemplateFlowDataValidationStatus.from_dict(x) for x in _dict.get('inputs_status')]
         if 'outputs_status' in _dict:
-            args['outputs_status'] = [TemplateFlowDataValidationStatus.from_dict(x) for x in _dict.get('outputs_status')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+            args['outputs_status'] = [
+                TemplateFlowDataValidationStatus.from_dict(x) for x in _dict.get('outputs_status')
+            ]
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -25910,7 +25426,8 @@ class TemplateFlowValidationLogs():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class TemplateFlowValidationSummary():
+
+class TemplateFlowValidationSummary:
     """
     Validation summary.
 
@@ -25921,11 +25438,7 @@ class TemplateFlowValidationSummary():
     # The set of defined properties for the class
     _properties = frozenset(['warning_count', 'error_count'])
 
-    def __init__(self,
-                 *,
-                 warning_count: float = None,
-                 error_count: float = None,
-                 **kwargs) -> None:
+    def __init__(self, *, warning_count: float = None, error_count: float = None, **kwargs) -> None:
         """
         Initialize a TemplateFlowValidationSummary object.
 
@@ -25946,7 +25459,7 @@ class TemplateFlowValidationSummary():
             args['warning_count'] = _dict.get('warning_count')
         if 'error_count' in _dict:
             args['error_count'] = _dict.get('error_count')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -25984,7 +25497,8 @@ class TemplateFlowValidationSummary():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class TemplateList():
+
+class TemplateList:
     """
     List of Templates in a Workspace.
 
@@ -25997,13 +25511,9 @@ class TemplateList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'templates'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 templates: List['TemplateLite'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, templates: List['TemplateLite'] = None, **kwargs
+    ) -> None:
         """
         Initialize a TemplateList object.
 
@@ -26034,7 +25544,7 @@ class TemplateList():
             raise ValueError('Required property \'offset\' not present in TemplateList JSON')
         if 'templates' in _dict:
             args['templates'] = [TemplateLite.from_dict(x) for x in _dict.get('templates')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -26076,7 +25586,8 @@ class TemplateList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class TemplateListRequest():
+
+class TemplateListRequest:
     """
     List of user-defined Template definitions.
 
@@ -26086,10 +25597,7 @@ class TemplateListRequest():
     # The set of defined properties for the class
     _properties = frozenset(['templates'])
 
-    def __init__(self,
-                 *,
-                 templates: List['Template'] = None,
-                 **kwargs) -> None:
+    def __init__(self, *, templates: List['Template'] = None, **kwargs) -> None:
         """
         Initialize a TemplateListRequest object.
 
@@ -26106,7 +25614,7 @@ class TemplateListRequest():
         args = {}
         if 'templates' in _dict:
             args['templates'] = [Template.from_dict(x) for x in _dict.get('templates')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -26142,7 +25650,8 @@ class TemplateListRequest():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class TemplateLite():
+
+class TemplateLite:
     """
     Template summary profile with user inputs and system generated data.
 
@@ -26164,23 +25673,40 @@ class TemplateLite():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['id', 'name', 'description', 'type', 'user_state', 'source_type', 'status', 'sys_lock', 'created_at', 'created_by', 'updated_at', 'updated_by'])
+    _properties = frozenset(
+        [
+            'id',
+            'name',
+            'description',
+            'type',
+            'user_state',
+            'source_type',
+            'status',
+            'sys_lock',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 id: str = None,
-                 name: str = None,
-                 description: str = None,
-                 type: str = None,
-                 user_state: 'UserState' = None,
-                 source_type: str = None,
-                 status: 'JobStatusTemplate' = None,
-                 sys_lock: 'SystemLock' = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        id: str = None,
+        name: str = None,
+        description: str = None,
+        type: str = None,
+        user_state: 'UserState' = None,
+        source_type: str = None,
+        status: 'JobStatusTemplate' = None,
+        sys_lock: 'SystemLock' = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a TemplateLite object.
 
@@ -26240,7 +25766,7 @@ class TemplateLite():
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         if 'updated_by' in _dict:
             args['updated_by'] = _dict.get('updated_by')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -26302,6 +25828,7 @@ class TemplateLite():
         """
         Type of source for the Template.
         """
+
         LOCAL = 'local'
         GIT_HUB = 'git_hub'
         GIT_HUB_ENTERPRISE = 'git_hub_enterprise'
@@ -26311,7 +25838,7 @@ class TemplateLite():
         EXTERNAL_SCM = 'external_scm'
 
 
-class TemplateRepoTarUploadResponse():
+class TemplateRepoTarUploadResponse:
     """
     TemplateRepoTarUploadResponse -.
 
@@ -26323,12 +25850,7 @@ class TemplateRepoTarUploadResponse():
     # The set of defined properties for the class
     _properties = frozenset(['file_value', 'has_received_file', 'id'])
 
-    def __init__(self,
-                 *,
-                 file_value: str = None,
-                 has_received_file: bool = None,
-                 id: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, file_value: str = None, has_received_file: bool = None, id: str = None, **kwargs) -> None:
         """
         Initialize a TemplateRepoTarUploadResponse object.
 
@@ -26353,7 +25875,7 @@ class TemplateRepoTarUploadResponse():
             args['has_received_file'] = _dict.get('has_received_file')
         if 'id' in _dict:
             args['id'] = _dict.get('id')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -26393,7 +25915,8 @@ class TemplateRepoTarUploadResponse():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class Trigger():
+
+class Trigger:
     """
     Complete Trigger details provided by user and system generated.
 
@@ -26428,29 +25951,52 @@ class Trigger():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'type', 'description', 'resource_group', 'service_id', 'apikey', 'location', 'tags', 'job_triggers', 'scheduled_triggers', 'user_state', 'trigger_id', 'registered_by', 'registered_at', 'updated_at', 'updated_by', 'sys_lock', 'last_health_checked_at'])
+    _properties = frozenset(
+        [
+            'name',
+            'type',
+            'description',
+            'resource_group',
+            'service_id',
+            'apikey',
+            'location',
+            'tags',
+            'job_triggers',
+            'scheduled_triggers',
+            'user_state',
+            'trigger_id',
+            'registered_by',
+            'registered_at',
+            'updated_at',
+            'updated_by',
+            'sys_lock',
+            'last_health_checked_at',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 type: str = None,
-                 description: str = None,
-                 resource_group: str = None,
-                 service_id: bytes = None,
-                 apikey: bytes = None,
-                 location: str = None,
-                 tags: List[str] = None,
-                 job_triggers: List['TriggerJob'] = None,
-                 scheduled_triggers: List['TriggerScheduled'] = None,
-                 user_state: 'UserState' = None,
-                 trigger_id: str = None,
-                 registered_by: str = None,
-                 registered_at: datetime = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 sys_lock: 'SystemLock' = None,
-                 last_health_checked_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        type: str = None,
+        description: str = None,
+        resource_group: str = None,
+        service_id: bytes = None,
+        apikey: bytes = None,
+        location: str = None,
+        tags: List[str] = None,
+        job_triggers: List['TriggerJob'] = None,
+        scheduled_triggers: List['TriggerScheduled'] = None,
+        user_state: 'UserState' = None,
+        trigger_id: str = None,
+        registered_by: str = None,
+        registered_at: datetime = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        sys_lock: 'SystemLock' = None,
+        last_health_checked_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a Trigger object.
 
@@ -26535,7 +26081,7 @@ class Trigger():
             args['sys_lock'] = SystemLock.from_dict(_dict.get('sys_lock'))
         if 'last_health_checked_at' in _dict:
             args['last_health_checked_at'] = string_to_datetime(_dict.get('last_health_checked_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -26609,9 +26155,9 @@ class Trigger():
         """
         Type of the trigger.
         """
+
         ACTION = 'action'
         SCHEDULED = 'scheduled'
-
 
     class LocationEnum(str, Enum):
         """
@@ -26620,13 +26166,14 @@ class Trigger():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class TriggerJob():
+class TriggerJob:
     """
     Job Trigger.
 
@@ -26638,11 +26185,7 @@ class TriggerJob():
     # The set of defined properties for the class
     _properties = frozenset(['event', 'job'])
 
-    def __init__(self,
-                 *,
-                 event: str = None,
-                 job: 'Job' = None,
-                 **kwargs) -> None:
+    def __init__(self, *, event: str = None, job: 'Job' = None, **kwargs) -> None:
         """
         Initialize a TriggerJob object.
 
@@ -26664,7 +26207,7 @@ class TriggerJob():
             args['event'] = _dict.get('event')
         if 'job' in _dict:
             args['job'] = Job.from_dict(_dict.get('job'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -26702,7 +26245,8 @@ class TriggerJob():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class TriggerList():
+
+class TriggerList:
     """
     List of trigger definitions response.
 
@@ -26715,13 +26259,9 @@ class TriggerList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'triggers'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 triggers: List['Trigger'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, triggers: List['Trigger'] = None, **kwargs
+    ) -> None:
         """
         Initialize a TriggerList object.
 
@@ -26754,7 +26294,7 @@ class TriggerList():
             raise ValueError('Required property \'offset\' not present in TriggerList JSON')
         if 'triggers' in _dict:
             args['triggers'] = [Trigger.from_dict(x) for x in _dict.get('triggers')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -26796,7 +26336,8 @@ class TriggerList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class TriggerScheduled():
+
+class TriggerScheduled:
     """
     Scheduled Trigger.
 
@@ -26808,12 +26349,7 @@ class TriggerScheduled():
     # The set of defined properties for the class
     _properties = frozenset(['frequency', 'time', 'day'])
 
-    def __init__(self,
-                 *,
-                 frequency: str = None,
-                 time: str = None,
-                 day: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, frequency: str = None, time: str = None, day: str = None, **kwargs) -> None:
         """
         Initialize a TriggerScheduled object.
 
@@ -26838,7 +26374,7 @@ class TriggerScheduled():
             args['time'] = _dict.get('time')
         if 'day' in _dict:
             args['day'] = _dict.get('day')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -26878,7 +26414,8 @@ class TriggerScheduled():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class UpdateCartOrder():
+
+class UpdateCartOrder:
     """
     Update Cart order details with user inputs data.
 
@@ -26891,13 +26428,15 @@ class UpdateCartOrder():
     # The set of defined properties for the class
     _properties = frozenset(['name', 'description', 'tags', 'cart_items'])
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 description: str = None,
-                 tags: List[str] = None,
-                 cart_items: List['UpdateOrderItemConfiguration'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        description: str = None,
+        tags: List[str] = None,
+        cart_items: List['UpdateOrderItemConfiguration'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a UpdateCartOrder object.
 
@@ -26926,7 +26465,7 @@ class UpdateCartOrder():
             args['tags'] = _dict.get('tags')
         if 'cart_items' in _dict:
             args['cart_items'] = [UpdateOrderItemConfiguration.from_dict(x) for x in _dict.get('cart_items')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -26968,7 +26507,8 @@ class UpdateCartOrder():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class UpdateOrderItemConfiguration():
+
+class UpdateOrderItemConfiguration:
     """
     Update Catalog item configuration in the Cart order.
 
@@ -26986,19 +26526,23 @@ class UpdateOrderItemConfiguration():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'inputs', 'settings', 'outputs', 'target', 'operation', 'service_data'])
+    _properties = frozenset(
+        ['name', 'description', 'inputs', 'settings', 'outputs', 'target', 'operation', 'service_data']
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 description: str = None,
-                 inputs: List['VariableData'] = None,
-                 settings: List['VariableData'] = None,
-                 outputs: List['VariableData'] = None,
-                 target: 'TargetRequest' = None,
-                 operation: str = None,
-                 service_data: List['ServiceVariableData'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        description: str = None,
+        inputs: List['VariableData'] = None,
+        settings: List['VariableData'] = None,
+        outputs: List['VariableData'] = None,
+        target: 'TargetRequest' = None,
+        operation: str = None,
+        service_data: List['ServiceVariableData'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a UpdateOrderItemConfiguration object.
 
@@ -27048,7 +26592,7 @@ class UpdateOrderItemConfiguration():
             args['operation'] = _dict.get('operation')
         if 'service_data' in _dict:
             args['service_data'] = [ServiceVariableData.from_dict(x) for x in _dict.get('service_data')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -27102,6 +26646,7 @@ class UpdateOrderItemConfiguration():
         """
         Name of the fulfilment job operations.
         """
+
         CONFIGURE = 'configure'
         DESTROY = 'destroy'
         DRYRUN = 'dryrun'
@@ -27112,7 +26657,7 @@ class UpdateOrderItemConfiguration():
         UPDATE = 'update'
 
 
-class UserState():
+class UserState:
     """
     User defined status of the Schematics object.
 
@@ -27129,12 +26674,7 @@ class UserState():
     # The set of defined properties for the class
     _properties = frozenset(['state', 'set_by', 'set_at'])
 
-    def __init__(self,
-                 *,
-                 state: str = None,
-                 set_by: str = None,
-                 set_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(self, *, state: str = None, set_by: str = None, set_at: datetime = None, **kwargs) -> None:
         """
         Initialize a UserState object.
 
@@ -27168,7 +26708,7 @@ class UserState():
             args['set_by'] = _dict.get('set_by')
         if 'set_at' in _dict:
             args['set_at'] = string_to_datetime(_dict.get('set_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -27217,13 +26757,14 @@ class UserState():
           * `locked` Object cannot be modified; can be used by Jobs during execution
           * `disable` Object can be modified. cannot be used by Jobs during execution.
         """
+
         DRAFT = 'draft'
         LIVE = 'live'
         LOCKED = 'locked'
         DISABLE = 'disable'
 
 
-class ValueListResponse():
+class ValueListResponse:
     """
     List of string values.
 
@@ -27233,10 +26774,7 @@ class ValueListResponse():
     # The set of defined properties for the class
     _properties = frozenset(['values'])
 
-    def __init__(self,
-                 *,
-                 values: List[str] = None,
-                 **kwargs) -> None:
+    def __init__(self, *, values: List[str] = None, **kwargs) -> None:
         """
         Initialize a ValueListResponse object.
 
@@ -27253,7 +26791,7 @@ class ValueListResponse():
         args = {}
         if 'values' in _dict:
             args['values'] = _dict.get('values')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -27289,7 +26827,8 @@ class ValueListResponse():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class ValueResponse():
+
+class ValueResponse:
     """
     String value.
 
@@ -27299,10 +26838,7 @@ class ValueResponse():
     # The set of defined properties for the class
     _properties = frozenset(['value'])
 
-    def __init__(self,
-                 *,
-                 value: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, value: str = None, **kwargs) -> None:
         """
         Initialize a ValueResponse object.
 
@@ -27319,7 +26855,7 @@ class ValueResponse():
         args = {}
         if 'value' in _dict:
             args['value'] = _dict.get('value')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -27355,7 +26891,8 @@ class ValueResponse():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class VariableData():
+
+class VariableData:
     """
     User editable variable data and system generated reference to the value.
 
@@ -27376,14 +26913,16 @@ class VariableData():
     # The set of defined properties for the class
     _properties = frozenset(['name', 'value', 'use_default', 'metadata', 'link'])
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 value: str = None,
-                 use_default: bool = None,
-                 metadata: 'VariableMetadata' = None,
-                 link: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        value: str = None,
+        use_default: bool = None,
+        metadata: 'VariableMetadata' = None,
+        link: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a VariableData object.
 
@@ -27421,7 +26960,7 @@ class VariableData():
             args['metadata'] = VariableMetadata.from_dict(_dict.get('metadata'))
         if 'link' in _dict:
             args['link'] = _dict.get('link')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -27465,7 +27004,8 @@ class VariableData():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class VariableDataList():
+
+class VariableDataList:
     """
     List of Variable data record response.
 
@@ -27478,13 +27018,9 @@ class VariableDataList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'variables'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 variables: List['VariableData'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, variables: List['VariableData'] = None, **kwargs
+    ) -> None:
         """
         Initialize a VariableDataList object.
 
@@ -27518,7 +27054,7 @@ class VariableDataList():
             raise ValueError('Required property \'offset\' not present in VariableDataList JSON')
         if 'variables' in _dict:
             args['variables'] = [VariableData.from_dict(x) for x in _dict.get('variables')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -27560,7 +27096,8 @@ class VariableDataList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class VariableMetadata():
+
+class VariableMetadata:
     """
     An user editable metadata for the variables.
 
@@ -27596,30 +27133,54 @@ class VariableMetadata():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['type', 'aliases', 'description', 'cloud_data_type', 'default_value', 'link_status', 'secure', 'immutable', 'hidden', 'required', 'options', 'min_value', 'max_value', 'min_length', 'max_length', 'matches', 'position', 'group_by', 'source'])
+    _properties = frozenset(
+        [
+            'type',
+            'aliases',
+            'description',
+            'cloud_data_type',
+            'default_value',
+            'link_status',
+            'secure',
+            'immutable',
+            'hidden',
+            'required',
+            'options',
+            'min_value',
+            'max_value',
+            'min_length',
+            'max_length',
+            'matches',
+            'position',
+            'group_by',
+            'source',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 type: str = None,
-                 aliases: List[str] = None,
-                 description: str = None,
-                 cloud_data_type: str = None,
-                 default_value: str = None,
-                 link_status: str = None,
-                 secure: bool = None,
-                 immutable: bool = None,
-                 hidden: bool = None,
-                 required: bool = None,
-                 options: List[str] = None,
-                 min_value: int = None,
-                 max_value: int = None,
-                 min_length: int = None,
-                 max_length: int = None,
-                 matches: str = None,
-                 position: int = None,
-                 group_by: str = None,
-                 source: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        type: str = None,
+        aliases: List[str] = None,
+        description: str = None,
+        cloud_data_type: str = None,
+        default_value: str = None,
+        link_status: str = None,
+        secure: bool = None,
+        immutable: bool = None,
+        hidden: bool = None,
+        required: bool = None,
+        options: List[str] = None,
+        min_value: int = None,
+        max_value: int = None,
+        min_length: int = None,
+        max_length: int = None,
+        matches: str = None,
+        position: int = None,
+        group_by: str = None,
+        source: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a VariableMetadata object.
 
@@ -27720,7 +27281,7 @@ class VariableMetadata():
             args['group_by'] = _dict.get('group_by')
         if 'source' in _dict:
             args['source'] = _dict.get('source')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -27796,6 +27357,7 @@ class VariableMetadata():
         """
         Type of the variable.
         """
+
         BOOLEAN = 'boolean'
         STRING = 'string'
         INTEGER = 'integer'
@@ -27806,16 +27368,16 @@ class VariableMetadata():
         COMPLEX = 'complex'
         LINK = 'link'
 
-
     class LinkStatusEnum(str, Enum):
         """
         The status of the link.
         """
+
         NORMAL = 'normal'
         BROKEN = 'broken'
 
 
-class WebHook():
+class WebHook:
     """
     Complete WebHook details provided by user and system generated.
 
@@ -27855,29 +27417,52 @@ class WebHook():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['command_name', 'hook_type', 'hook_site', 'location', 'resource_group', 'tags', 'hook_endpoint_url', 'service_id', 'apikey', 'user_state', 'ignore_inflight_operations', 'hook_id', 'registered_by', 'registered_at', 'updated_at', 'updated_by', 'sys_lock', 'last_health_checked_at'])
+    _properties = frozenset(
+        [
+            'command_name',
+            'hook_type',
+            'hook_site',
+            'location',
+            'resource_group',
+            'tags',
+            'hook_endpoint_url',
+            'service_id',
+            'apikey',
+            'user_state',
+            'ignore_inflight_operations',
+            'hook_id',
+            'registered_by',
+            'registered_at',
+            'updated_at',
+            'updated_by',
+            'sys_lock',
+            'last_health_checked_at',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 command_name: str = None,
-                 hook_type: str = None,
-                 hook_site: str = None,
-                 location: str = None,
-                 resource_group: str = None,
-                 tags: List[str] = None,
-                 hook_endpoint_url: str = None,
-                 service_id: str = None,
-                 apikey: str = None,
-                 user_state: 'UserState' = None,
-                 ignore_inflight_operations: bool = None,
-                 hook_id: str = None,
-                 registered_by: str = None,
-                 registered_at: datetime = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 sys_lock: 'SystemLock' = None,
-                 last_health_checked_at: datetime = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        command_name: str = None,
+        hook_type: str = None,
+        hook_site: str = None,
+        location: str = None,
+        resource_group: str = None,
+        tags: List[str] = None,
+        hook_endpoint_url: str = None,
+        service_id: str = None,
+        apikey: str = None,
+        user_state: 'UserState' = None,
+        ignore_inflight_operations: bool = None,
+        hook_id: str = None,
+        registered_by: str = None,
+        registered_at: datetime = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        sys_lock: 'SystemLock' = None,
+        last_health_checked_at: datetime = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a WebHook object.
 
@@ -27968,7 +27553,7 @@ class WebHook():
             args['sys_lock'] = SystemLock.from_dict(_dict.get('sys_lock'))
         if 'last_health_checked_at' in _dict:
             args['last_health_checked_at'] = string_to_datetime(_dict.get('last_health_checked_at'))
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -28042,6 +27627,7 @@ class WebHook():
         """
         Schematics job command name.
         """
+
         WORKSPACE_PLAN = 'workspace_plan'
         WORKSPACE_APPLY = 'workspace_apply'
         WORKSPACE_DESTROY = 'workspace_destroy'
@@ -28071,23 +27657,22 @@ class WebHook():
         REPOSITORY_PROCESS = 'repository_process'
         TERRAFORM_COMMANDS = 'terraform_commands'
 
-
     class HookTypeEnum(str, Enum):
         """
         Type of the Schematics web-hook.
         """
+
         HOOK = 'hook'
         CALLBACK = 'callback'
-
 
     class HookSiteEnum(str, Enum):
         """
         List of notification points.
         """
+
         BEFORE = 'before'
         ON_ERROR = 'on_error'
         ON_SUCCESS = 'on_success'
-
 
     class LocationEnum(str, Enum):
         """
@@ -28096,13 +27681,14 @@ class WebHook():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class WebHookList():
+class WebHookList:
     """
     List of Web-hook details response.
 
@@ -28115,13 +27701,9 @@ class WebHookList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'hooks'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 hooks: List['WebHook'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, hooks: List['WebHook'] = None, **kwargs
+    ) -> None:
         """
         Initialize a WebHookList object.
 
@@ -28154,7 +27736,7 @@ class WebHookList():
             raise ValueError('Required property \'offset\' not present in WebHookList JSON')
         if 'hooks' in _dict:
             args['hooks'] = [WebHook.from_dict(x) for x in _dict.get('hooks')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -28196,7 +27778,8 @@ class WebHookList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class Workspace():
+
+class Workspace:
     """
     Complete Workspace details with user inputs and system generated data.
 
@@ -28235,32 +27818,58 @@ class Workspace():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'resource_group', 'tags', 'destroy_resources_on_delete', 'location', 'user_state', 'command_parameter', 'inputs', 'outputs', 'settings', 'id', 'crn', 'account', 'created_at', 'created_by', 'updated_at', 'updated_by', 'state', 'sys_lock', 'templates'])
+    _properties = frozenset(
+        [
+            'name',
+            'description',
+            'resource_group',
+            'tags',
+            'destroy_resources_on_delete',
+            'location',
+            'user_state',
+            'command_parameter',
+            'inputs',
+            'outputs',
+            'settings',
+            'id',
+            'crn',
+            'account',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+            'state',
+            'sys_lock',
+            'templates',
+        ]
+    )
 
-    def __init__(self,
-                 name: str,
-                 resource_group: str,
-                 location: str,
-                 *,
-                 description: str = None,
-                 tags: List[str] = None,
-                 destroy_resources_on_delete: bool = None,
-                 user_state: 'UserState' = None,
-                 command_parameter: str = None,
-                 inputs: List['VariableData'] = None,
-                 outputs: List['VariableData'] = None,
-                 settings: List['VariableData'] = None,
-                 id: str = None,
-                 crn: str = None,
-                 account: str = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 state: 'WorkspaceLiteState' = None,
-                 sys_lock: 'SystemLock' = None,
-                 templates: List['Template'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        name: str,
+        resource_group: str,
+        location: str,
+        *,
+        description: str = None,
+        tags: List[str] = None,
+        destroy_resources_on_delete: bool = None,
+        user_state: 'UserState' = None,
+        command_parameter: str = None,
+        inputs: List['VariableData'] = None,
+        outputs: List['VariableData'] = None,
+        settings: List['VariableData'] = None,
+        id: str = None,
+        crn: str = None,
+        account: str = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        state: 'WorkspaceLiteState' = None,
+        sys_lock: 'SystemLock' = None,
+        templates: List['Template'] = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a Workspace object.
 
@@ -28366,7 +27975,7 @@ class Workspace():
             args['sys_lock'] = SystemLock.from_dict(_dict.get('sys_lock'))
         if 'templates' in _dict:
             args['templates'] = [Template.from_dict(x) for x in _dict.get('templates')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -28449,13 +28058,14 @@ class Workspace():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class WorkspaceList():
+class WorkspaceList:
     """
     List of Workspace definition response.
 
@@ -28468,13 +28078,9 @@ class WorkspaceList():
     # The set of defined properties for the class
     _properties = frozenset(['total_count', 'limit', 'offset', 'workspaces'])
 
-    def __init__(self,
-                 limit: int,
-                 offset: int,
-                 *,
-                 total_count: int = None,
-                 workspaces: List['WorkspaceLite'] = None,
-                 **kwargs) -> None:
+    def __init__(
+        self, limit: int, offset: int, *, total_count: int = None, workspaces: List['WorkspaceLite'] = None, **kwargs
+    ) -> None:
         """
         Initialize a WorkspaceList object.
 
@@ -28507,7 +28113,7 @@ class WorkspaceList():
             raise ValueError('Required property \'offset\' not present in WorkspaceList JSON')
         if 'workspaces' in _dict:
             args['workspaces'] = [WorkspaceLite.from_dict(x) for x in _dict.get('workspaces')]
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -28549,7 +28155,8 @@ class WorkspaceList():
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
-class WorkspaceLite():
+
+class WorkspaceLite:
     """
     Workspace summary profile with user inputs and system generated data.
 
@@ -28577,25 +28184,44 @@ class WorkspaceLite():
     """
 
     # The set of defined properties for the class
-    _properties = frozenset(['name', 'description', 'id', 'crn', 'location', 'resource_group', 'tags', 'user_state', 'state', 'sys_lock', 'created_at', 'created_by', 'updated_at', 'updated_by'])
+    _properties = frozenset(
+        [
+            'name',
+            'description',
+            'id',
+            'crn',
+            'location',
+            'resource_group',
+            'tags',
+            'user_state',
+            'state',
+            'sys_lock',
+            'created_at',
+            'created_by',
+            'updated_at',
+            'updated_by',
+        ]
+    )
 
-    def __init__(self,
-                 *,
-                 name: str = None,
-                 description: str = None,
-                 id: str = None,
-                 crn: str = None,
-                 location: str = None,
-                 resource_group: str = None,
-                 tags: List[str] = None,
-                 user_state: 'UserState' = None,
-                 state: 'WorkspaceLiteState' = None,
-                 sys_lock: 'SystemLock' = None,
-                 created_at: datetime = None,
-                 created_by: str = None,
-                 updated_at: datetime = None,
-                 updated_by: str = None,
-                 **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        name: str = None,
+        description: str = None,
+        id: str = None,
+        crn: str = None,
+        location: str = None,
+        resource_group: str = None,
+        tags: List[str] = None,
+        user_state: 'UserState' = None,
+        state: 'WorkspaceLiteState' = None,
+        sys_lock: 'SystemLock' = None,
+        created_at: datetime = None,
+        created_by: str = None,
+        updated_at: datetime = None,
+        updated_by: str = None,
+        **kwargs
+    ) -> None:
         """
         Initialize a WorkspaceLite object.
 
@@ -28673,7 +28299,7 @@ class WorkspaceLite():
             args['updated_at'] = string_to_datetime(_dict.get('updated_at'))
         if 'updated_by' in _dict:
             args['updated_by'] = _dict.get('updated_by')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -28742,13 +28368,14 @@ class WorkspaceLite():
         this does not limit the location of the IBM Cloud resources, provisioned using
         Schematics.
         """
+
         US_SOUTH = 'us-south'
         US_EAST = 'us-east'
         EU_GB = 'eu-gb'
         EU_DE = 'eu-de'
 
 
-class WorkspaceLiteState():
+class WorkspaceLiteState:
     """
     Computed state of the Workspace.
 
@@ -28760,11 +28387,7 @@ class WorkspaceLiteState():
     # The set of defined properties for the class
     _properties = frozenset(['status_code', 'status_message'])
 
-    def __init__(self,
-                 *,
-                 status_code: str = None,
-                 status_message: str = None,
-                 **kwargs) -> None:
+    def __init__(self, *, status_code: str = None, status_message: str = None, **kwargs) -> None:
         """
         Initialize a WorkspaceLiteState object.
 
@@ -28787,7 +28410,7 @@ class WorkspaceLiteState():
             args['status_code'] = _dict.get('status_code')
         if 'status_message' in _dict:
             args['status_message'] = _dict.get('status_message')
-        args.update({k:v for (k, v) in _dict.items() if k not in cls._properties})
+        args.update({k: v for (k, v) in _dict.items() if k not in cls._properties})
         return cls(**args)
 
     @classmethod
@@ -28829,8 +28452,8 @@ class WorkspaceLiteState():
         """
         Status of automation (workspace or action).
         """
+
         NORMAL = 'normal'
         PENDING = 'pending'
         DISABLED = 'disabled'
         CRITICAL = 'critical'
-

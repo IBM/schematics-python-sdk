@@ -27,7 +27,8 @@ from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 # Config file name
 config_file = 'schematics_v1.env'
 
-class TestSchematicsV1():
+
+class TestSchematicsV1:
     """
     Integration Test Class for SchematicsV1
     """
@@ -37,12 +38,10 @@ class TestSchematicsV1():
         if os.path.exists(config_file):
             os.environ['IBM_CREDENTIALS_FILE'] = config_file
 
-            cls.schematics_service = SchematicsV1.new_instance(
-                )
+            cls.schematics_service = SchematicsV1.new_instance()
             assert cls.schematics_service is not None
 
-            cls.config = read_external_sources(
-                SchematicsV1.DEFAULT_SERVICE_NAME)
+            cls.config = read_external_sources(SchematicsV1.DEFAULT_SERVICE_NAME)
             assert cls.config is not None
 
             auth = IAMAuthenticator(
@@ -50,7 +49,7 @@ class TestSchematicsV1():
                 url=cls.config.get('AUTH_URL'),
                 client_id=cls.config.get('CLIENT_ID'),
                 client_secret=cls.config.get('CLIENT_SECRET'),
-                disable_ssl_verification=False
+                disable_ssl_verification=False,
             )
 
             cls.refresh_token = auth.token_manager.request_token()['refresh_token']
@@ -65,40 +64,25 @@ class TestSchematicsV1():
 
         # Construct a dict representation of a TemplateSourceDataRequest model
         template_source_data_request_model = {
-        'env_values': [
-            { 
-                'KEY1': 'VALUE1'
-            }, 
-            {
-                'KEY2': 'VALUE2' 
-            }
-        ],
-        'folder': '.',
-        'type': 'terraform_v0.12.20',
-        'variablestore': [
-            { 
-                'name': 'variable_name1',
-                'value': 'variable_valuename1'
-            },
-            { 
-                'name': 'variable_name2',
-                'value': 'variable_valuename2'
-            }          
-            ]
+            'env_values': [{'KEY1': 'VALUE1'}, {'KEY2': 'VALUE2'}],
+            'folder': '.',
+            'type': 'terraform_v0.12.20',
+            'variablestore': [
+                {'name': 'variable_name1', 'value': 'variable_valuename1'},
+                {'name': 'variable_name2', 'value': 'variable_valuename2'},
+            ],
         }
 
         # Construct a dict representation of a TemplateRepoRequest model
-        template_repo_request_model = {
-        'url': 'https://github.ibm.com/gshamann/tf_cloudless_sleepy'
-        }
+        template_repo_request_model = {'url': 'https://github.ibm.com/gshamann/tf_cloudless_sleepy'}
 
         response = self.schematics_service.create_workspace(
-        description='description',
-        name='workspace_name',
-        tags=['testString'],
-        template_data=[template_source_data_request_model],
-        template_repo=template_repo_request_model,
-        type=['terraform_v0.12.20'],
+            description='description',
+            name='workspace_name',
+            tags=['testString'],
+            template_data=[template_source_data_request_model],
+            template_repo=template_repo_request_model,
+            type=['terraform_v0.12.20'],
         )
 
         workspace_response = response.get_result()
@@ -108,34 +92,21 @@ class TestSchematicsV1():
     def createWorkspaceWithEmptyRepoURL(self):
         # Construct a dict representation of a TemplateSourceDataRequest model
         template_source_data_request_model = {
-        'env_values': [
-            { 
-                'KEY1': 'VALUE1'
-            }, 
-            {
-                'KEY2': 'VALUE2' 
-            }
-        ],
-        'folder': '.',
-        'type': 'terraform_v0.11.14',
-        'variablestore': [
-            { 
-                'name': 'variable_name1',
-                'value': 'variable_valuename1'
-            },
-            { 
-                'name': 'variable_name2',
-                'value': 'variable_valuename2'
-            }          
-            ]
+            'env_values': [{'KEY1': 'VALUE1'}, {'KEY2': 'VALUE2'}],
+            'folder': '.',
+            'type': 'terraform_v0.11.14',
+            'variablestore': [
+                {'name': 'variable_name1', 'value': 'variable_valuename1'},
+                {'name': 'variable_name2', 'value': 'variable_valuename2'},
+            ],
         }
 
         response = self.schematics_service.create_workspace(
-        description='description',
-        name='workspace_name',
-        tags=['testString'],
-        template_data=[template_source_data_request_model],
-        type=['terraform_v0.11.14'],
+            description='description',
+            name='workspace_name',
+            tags=['testString'],
+            template_data=[template_source_data_request_model],
+            type=['terraform_v0.11.14'],
         )
 
         workspace_response = response.get_result()
@@ -143,11 +114,9 @@ class TestSchematicsV1():
         return workspace_response
 
     def getWorkspaceById(self, wid):
-        response = self.schematics_service.get_workspace(
-            w_id=wid
-        )
+        response = self.schematics_service.get_workspace(w_id=wid)
         workspace_response = response.get_result()
-        print(json.dumps(workspace_response, indent=2)) 
+        print(json.dumps(workspace_response, indent=2))
         return workspace_response
 
     def getWorkspaceActivityById(self, wid, activityid):
@@ -156,7 +125,7 @@ class TestSchematicsV1():
             activity_id=activityid,
         )
         workspace_response = response.get_result()
-        print(json.dumps(workspace_response, indent=2)) 
+        print(json.dumps(workspace_response, indent=2))
         return workspace_response
 
     def waitForWorkspaceStatus(self, wid, status):
@@ -183,17 +152,14 @@ class TestSchematicsV1():
 
             try:
 
-                response = self.schematics_service.delete_workspace(
-                    w_id=wid,
-                    refresh_token=self.refresh_token
-                )
+                response = self.schematics_service.delete_workspace(w_id=wid, refresh_token=self.refresh_token)
 
                 workspace_response = response.get_result()
-                print(json.dumps(workspace_response, indent=2)) 
+                print(json.dumps(workspace_response, indent=2))
 
                 success = True
 
-            except:
+            except:  # pylint: disable=bare-except
                 time.sleep(2)
 
         return workspace_response
@@ -208,14 +174,11 @@ class TestSchematicsV1():
         fileReader = open(filePath, "rb")
 
         response = self.schematics_service.template_repo_upload(
-            w_id=ws['id'],
-            t_id=ws['template_data'][0]['id'],
-            file_content_type="multipart/form-data",
-            file=fileReader
+            w_id=ws['id'], t_id=ws['template_data'][0]['id'], file_content_type="multipart/form-data", file=fileReader
         )
 
         workspace_response = response.get_result()
-        print(json.dumps(workspace_response, indent=2)) 
+        print(json.dumps(workspace_response, indent=2))
         return ws
 
     def planWorkspaceAction(self):
@@ -223,10 +186,7 @@ class TestSchematicsV1():
         ws = self.uploadTarFile()
         self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
 
-        response = self.schematics_service.plan_workspace_command(
-            w_id=ws['id'],
-                refresh_token = self.refresh_token
-        )
+        response = self.schematics_service.plan_workspace_command(w_id=ws['id'], refresh_token=self.refresh_token)
 
         activity = response.get_result()
 
@@ -239,10 +199,7 @@ class TestSchematicsV1():
         ws = self.uploadTarFile()
         self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
 
-        response = self.schematics_service.apply_workspace_command(
-            w_id=ws['id'],
-            refresh_token=self.refresh_token
-        )
+        response = self.schematics_service.apply_workspace_command(w_id=ws['id'], refresh_token=self.refresh_token)
 
         activity = response.get_result()
 
@@ -250,12 +207,9 @@ class TestSchematicsV1():
 
         return ws, activity['activityid']
 
-    def applyWorkspaceActionByIdWithoutWait(self,id):
+    def applyWorkspaceActionByIdWithoutWait(self, id):
 
-        response = self.schematics_service.apply_workspace_command(
-            w_id=id,
-            refresh_token=self.refresh_token
-        )
+        response = self.schematics_service.apply_workspace_command(w_id=id, refresh_token=self.refresh_token)
 
         activity = response.get_result()
 
@@ -266,10 +220,7 @@ class TestSchematicsV1():
         ws = self.uploadTarFile()
         self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
 
-        response = self.schematics_service.destroy_workspace_command(
-            w_id=ws['id'],
-            refresh_token=self.refresh_token
-        )
+        response = self.schematics_service.destroy_workspace_command(w_id=ws['id'], refresh_token=self.refresh_token)
 
         activity = response.get_result()
 
@@ -277,12 +228,9 @@ class TestSchematicsV1():
 
         return ws['id'], activity['activityid']
 
-    def destroyWorkspaceActionById(self,id):
+    def destroyWorkspaceActionById(self, id):
 
-        response = self.schematics_service.destroy_workspace_command(
-            w_id=id,
-            refresh_token=self.refresh_token
-        )
+        response = self.schematics_service.destroy_workspace_command(w_id=id, refresh_token=self.refresh_token)
 
         activity = response.get_result()
 
@@ -295,10 +243,7 @@ class TestSchematicsV1():
         ws = self.uploadTarFile()
         self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
 
-        response = self.schematics_service.refresh_workspace_command(
-            w_id=ws['id'],
-            refresh_token=self.refresh_token
-        )
+        response = self.schematics_service.refresh_workspace_command(w_id=ws['id'], refresh_token=self.refresh_token)
 
         activity = response.get_result()
 
@@ -306,19 +251,16 @@ class TestSchematicsV1():
 
         return ws['id'], activity['activityid']
 
-    def refreshWorkspaceActionById(self,id):
+    def refreshWorkspaceActionById(self, id):
 
-        response = self.schematics_service.refresh_workspace_command(
-            w_id=id,
-            refresh_token=self.refresh_token
-        )
+        response = self.schematics_service.refresh_workspace_command(w_id=id, refresh_token=self.refresh_token)
 
         activity = response.get_result()
 
         self.waitForWorkspaceActivityStatus(id, activity['activityid'], "COMPLETED")
 
         return id, activity['activityid']
-    
+
     @needscredentials
     def test_list_schematics_location(self):
 
@@ -360,32 +302,17 @@ class TestSchematicsV1():
 
         # Construct a dict representation of a TemplateSourceDataRequest model
         template_source_data_request_model = {
-        'env_values': [
-            {
-                'KEY1': 'VALUE1'
-            },
-            {
-                'KEY2': 'VALUE2'
-            }
-        ],
-        'folder': '.',
-        'type': 'terraform_v0.12.20',
-        'variablestore': [
-            {
-                'name': 'variable_name1',
-                'value': 'variable_valuename1'
-            },
-            {
-                'name': 'variable_name2',
-                'value': 'variable_valuename2'
-            }
-            ]
+            'env_values': [{'KEY1': 'VALUE1'}, {'KEY2': 'VALUE2'}],
+            'folder': '.',
+            'type': 'terraform_v0.12.20',
+            'variablestore': [
+                {'name': 'variable_name1', 'value': 'variable_valuename1'},
+                {'name': 'variable_name2', 'value': 'variable_valuename2'},
+            ],
         }
 
         # Construct a dict representation of a TemplateRepoRequest model
-        template_repo_request_model = {
-        'url': 'https://github.ibm.com/gshamann/tf_cloudless_sleepy'
-        }
+        template_repo_request_model = {'url': 'https://github.ibm.com/gshamann/tf_cloudless_sleepy'}
 
         create_workspace_response = self.schematics_service.create_workspace(
             description='description',
@@ -408,7 +335,7 @@ class TestSchematicsV1():
         ws = self.createWorkspace()
 
         get_workspace_response = self.schematics_service.get_workspace(
-           w_id=ws['id'],
+            w_id=ws['id'],
         )
 
         assert get_workspace_response.get_status_code() == 200
@@ -467,10 +394,7 @@ class TestSchematicsV1():
         fileReader = open(filePath, "rb")
 
         upload_template_tar_response = self.schematics_service.template_repo_upload(
-            w_id=ws['id'],
-            t_id=ws['template_data'][0]['id'],
-            file_content_type="multipart/form-data",
-            file=fileReader
+            w_id=ws['id'], t_id=ws['template_data'][0]['id'], file_content_type="multipart/form-data", file=fileReader
         )
 
         assert upload_template_tar_response.get_status_code() == 200
@@ -484,9 +408,7 @@ class TestSchematicsV1():
 
         (ws, activityid) = self.applyWorkspaceAction()
 
-        get_workspace_readme_response = self.schematics_service.get_workspace_readme(
-            w_id=ws['id']
-        )
+        get_workspace_readme_response = self.schematics_service.get_workspace_readme(w_id=ws['id'])
 
         assert get_workspace_readme_response.get_status_code() == 200
         template_readme = get_workspace_readme_response.get_result()
@@ -503,9 +425,7 @@ class TestSchematicsV1():
         self.refreshWorkspaceActionById(ws['id'])
         self.destroyWorkspaceActionById(ws['id'])
 
-        list_workspace_activities_response = self.schematics_service.list_workspace_activities(
-            w_id=ws['id']
-        )
+        list_workspace_activities_response = self.schematics_service.list_workspace_activities(w_id=ws['id'])
 
         assert list_workspace_activities_response.get_status_code() == 200
         workspace_activities = list_workspace_activities_response.get_result()
@@ -522,8 +442,7 @@ class TestSchematicsV1():
         activity = self.refreshWorkspaceActionById(ws['id'])
 
         get_workspace_activity_response = self.schematics_service.get_workspace_activity(
-            w_id=ws['id'],
-            activity_id=activity[1]
+            w_id=ws['id'], activity_id=activity[1]
         )
 
         assert get_workspace_activity_response.get_status_code() == 200
@@ -544,7 +463,7 @@ class TestSchematicsV1():
             'command_name': 'Test Command',
             'command_desc': 'Check command execution',
             'command_onError': 'continue',
-            'command_dependsOn': ''
+            'command_dependsOn': '',
         }
 
         run_workspace_commands_response = self.schematics_service.run_workspace_commands(
@@ -552,7 +471,7 @@ class TestSchematicsV1():
             refresh_token=self.refresh_token,
             commands=[terraform_command_model],
             operation_name='testString',
-            description='testString'
+            description='testString',
         )
 
         self.waitForWorkspaceActivityStatus(ws['id'], activityid, "COMPLETED")
@@ -567,11 +486,10 @@ class TestSchematicsV1():
     def test_apply_workspace_command(self):
 
         ws = self.uploadTarFile()
-        self.waitForWorkspaceStatus(ws['id'], "INACTIVE")       
+        self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
 
         apply_workspace_command_response = self.schematics_service.apply_workspace_command(
-            w_id=ws['id'],
-            refresh_token=self.refresh_token
+            w_id=ws['id'], refresh_token=self.refresh_token
         )
 
         assert apply_workspace_command_response.get_status_code() == 202
@@ -608,8 +526,7 @@ class TestSchematicsV1():
         self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
 
         plan_workspace_command_response = self.schematics_service.plan_workspace_command(
-	        w_id=ws['id'],
-            refresh_token = self.refresh_token
+            w_id=ws['id'], refresh_token=self.refresh_token
         )
 
         assert plan_workspace_command_response.get_status_code() == 202
@@ -627,8 +544,7 @@ class TestSchematicsV1():
         self.waitForWorkspaceStatus(ws['id'], "INACTIVE")
 
         refresh_workspace_command_response = self.schematics_service.refresh_workspace_command(
-            w_id=ws['id'],
-            refresh_token=self.refresh_token
+            w_id=ws['id'], refresh_token=self.refresh_token
         )
 
         assert refresh_workspace_command_response.get_status_code() == 202
@@ -645,8 +561,7 @@ class TestSchematicsV1():
         (ws, activityid) = self.applyWorkspaceAction()
 
         get_workspace_inputs_response = self.schematics_service.get_workspace_inputs(
-            w_id=ws['id'],
-            t_id=ws['template_data'][0]['id']
+            w_id=ws['id'], t_id=ws['template_data'][0]['id']
         )
 
         assert get_workspace_inputs_response.get_status_code() == 200
@@ -659,12 +574,7 @@ class TestSchematicsV1():
         (ws, activityid) = self.applyWorkspaceAction()
 
         replace_workspace_inputs_response = self.schematics_service.replace_workspace_inputs(
-            w_id=ws['id'],
-            t_id=ws['template_data'][0]['id'],
-            variablestore=[{
-                'name': 'updated_var',
-                'value': 'test'
-            }]
+            w_id=ws['id'], t_id=ws['template_data'][0]['id'], variablestore=[{'name': 'updated_var', 'value': 'test'}]
         )
 
         assert replace_workspace_inputs_response.get_status_code() == 200
@@ -676,9 +586,7 @@ class TestSchematicsV1():
 
         (ws, activityid) = self.applyWorkspaceAction()
 
-        get_all_workspace_inputs_response = self.schematics_service.get_all_workspace_inputs(
-            w_id=ws['id']
-        )
+        get_all_workspace_inputs_response = self.schematics_service.get_all_workspace_inputs(w_id=ws['id'])
 
         assert get_all_workspace_inputs_response.get_status_code() == 200
         workspace_template_values_response = get_all_workspace_inputs_response.get_result()
@@ -690,8 +598,7 @@ class TestSchematicsV1():
         (ws, activityid) = self.applyWorkspaceAction()
 
         get_workspace_input_metadata_response = self.schematics_service.get_workspace_input_metadata(
-            w_id=ws['id'],
-            t_id=ws['template_data'][0]['id']
+            w_id=ws['id'], t_id=ws['template_data'][0]['id']
         )
 
         assert get_workspace_input_metadata_response.get_status_code() == 200
@@ -703,9 +610,7 @@ class TestSchematicsV1():
 
         (ws, activityid) = self.applyWorkspaceAction()
 
-        get_workspace_outputs_response = self.schematics_service.get_workspace_outputs(
-            w_id=ws['id']
-        )
+        get_workspace_outputs_response = self.schematics_service.get_workspace_outputs(w_id=ws['id'])
 
         assert get_workspace_outputs_response.get_status_code() == 200
         list_output_values_item = get_workspace_outputs_response.get_result()
@@ -716,9 +621,7 @@ class TestSchematicsV1():
 
         (ws, activityid) = self.applyWorkspaceAction()
 
-        get_workspace_resources_response = self.schematics_service.get_workspace_resources(
-            w_id=ws['id']
-        )
+        get_workspace_resources_response = self.schematics_service.get_workspace_resources(w_id=ws['id'])
 
         assert get_workspace_resources_response.get_status_code() == 200
         list_template_resources = get_workspace_resources_response.get_result()
@@ -743,8 +646,7 @@ class TestSchematicsV1():
         (ws, activityid) = self.applyWorkspaceAction()
 
         get_workspace_template_state_response = self.schematics_service.get_workspace_template_state(
-            w_id=ws['id'],
-            t_id=ws['template_data'][0]['id']
+            w_id=ws['id'], t_id=ws['template_data'][0]['id']
         )
 
         assert get_workspace_template_state_response.get_status_code() == 200
@@ -757,8 +659,7 @@ class TestSchematicsV1():
         (ws, activityid) = self.applyWorkspaceAction()
 
         get_workspace_activity_logs_response = self.schematics_service.get_workspace_activity_logs(
-            w_id=ws['id'],
-            activity_id=activityid
+            w_id=ws['id'], activity_id=activityid
         )
 
         assert get_workspace_activity_logs_response.get_status_code() == 200
@@ -789,7 +690,7 @@ class TestSchematicsV1():
             log_tf_cmd=True,
             log_tf_prefix=True,
             log_tf_null_resource=True,
-            log_tf_ansible=True
+            log_tf_ansible=True,
         )
 
         assert get_template_logs_response.get_status_code() == 200
@@ -808,11 +709,9 @@ class TestSchematicsV1():
             log_tf_cmd=True,
             log_tf_prefix=True,
             log_tf_null_resource=True,
-            log_tf_ansible=True
+            log_tf_ansible=True,
         )
 
         assert get_template_activity_log_response.get_status_code() == 200
         result = get_template_activity_log_response.get_result()
         assert result is not None
-
-
