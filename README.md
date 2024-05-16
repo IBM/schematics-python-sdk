@@ -7,7 +7,7 @@ Python client library to interact with various [IBM Cloud Schematics APIs](https
 Disclaimer: this SDK is being released initially as a **pre-release** version.
 Changes might occur which impact applications that use this SDK.
 
-## Table of Contents
+## Table of Contents   
 
 <!--
   The TOC below is generated using the `markdown-toc` node package.
@@ -44,7 +44,7 @@ Changes might occur which impact applications that use this SDK.
 ## Overview
 
 The IBM Cloud Schematics Python SDK allows developers to programmatically interact with the following
-IBM Cloud services:
+IBM Cloud services :
 
 Service Name | Imported Class Name
 --- | ---
@@ -142,6 +142,5 @@ Find more open source projects on the [IBM Github Page](http://ibm.github.io/)
 See [CONTRIBUTING.md](https://github.com/IBM/schematics-python-sdk.git/blob/master/CONTRIBUTING.md).
 
 ## License
-
 This SDK is released under the Apache 2.0 license.
 The license's full text can be found in [LICENSE](https://github.com/IBM/schematics-python-sdk.git/blob/master/LICENSE).
