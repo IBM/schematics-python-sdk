@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/IBM/schematics-python-sdk/compare/v1.1.0...v1.2.0) (2024-06-10)
+
+
+### Bug Fixes
+
+* **codecov:** remove references to codecov ([764b1f4](https://github.com/IBM/schematics-python-sdk/commit/764b1f498ba5e1679a7f8e3bb440d8d0f3876b84))
+
+
+### Features
+
+* **build:** Adapted to new schematics swagger ([dbf5e62](https://github.com/IBM/schematics-python-sdk/commit/dbf5e62340d9d80766c41634dbae02525c12e4cc))
+
 # [1.1.0](https://github.com/IBM/schematics-python-sdk/compare/v1.0.1...v1.1.0) (2021-08-16)
 
 
