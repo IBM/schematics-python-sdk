@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/IBM/schematics-python-sdk/compare/v1.2.0...v1.3.0) (2024-07-06)
+
+
+### Features
+
+* **build:** Fixing Travis Build ([3e880bf](https://github.com/IBM/schematics-python-sdk/commit/3e880bfcd2a4e306cf64d693849cb220dd06de81))
+
 # [1.2.0](https://github.com/IBM/schematics-python-sdk/compare/v1.1.0...v1.2.0) (2024-06-10)
 
 
