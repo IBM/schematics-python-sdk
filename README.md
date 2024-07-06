@@ -63,13 +63,13 @@ Service Name | Imported Class Name
 To install, use `pip` or `easy_install`:
 
 ```bash
-pip install --upgrade "ibm-schematics>=1.2.0"
+pip install --upgrade "ibm-schematics>=1.3.0"
 ```
 
 or
 
 ```bash
-easy_install --upgrade "ibm-schematics>=1.2.0"
+easy_install --upgrade "ibm-schematics>=1.3.0"
 ```
 
 ## Authentication
