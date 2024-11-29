@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# IBM OpenAPI SDK Code Generator Version: 3.86.1-c3d7bcef-20240308-215042
+# IBM OpenAPI SDK Code Generator Version: 3.96.1-5136e54a-20241108-203028
 
 """
 IBM Cloud Schematics service is to provide the capability to manage resources  of cloud
@@ -422,6 +422,7 @@ class SchematicsV1(BaseService):
         type: Optional[List[str]] = None,
         workspace_status: Optional['WorkspaceStatusRequest'] = None,
         agent_id: Optional[str] = None,
+        settings: Optional[List['VariableData']] = None,
         x_github_token: Optional[str] = None,
         **kwargs,
     ) -> DetailedResponse:
@@ -504,6 +505,8 @@ class SchematicsV1(BaseService):
                WorkspaceStatusRequest -.
         :param str agent_id: (optional) agent id which is binded to with the
                workspace.
+        :param List[VariableData] settings: (optional) Input settings to be applied
+               to the workspace, for example, `job_timeout_override`.
         :param str x_github_token: (optional) The personal access token to
                authenticate with your private GitHub or GitLab repository and access your
                Terraform template.
@@ -524,6 +527,8 @@ class SchematicsV1(BaseService):
             template_repo = convert_model(template_repo)
         if workspace_status is not None:
             workspace_status = convert_model(workspace_status)
+        if settings is not None:
+            settings = [convert_model(x) for x in settings]
         headers = {
             'X-Github-token': x_github_token,
         }
@@ -550,6 +555,7 @@ class SchematicsV1(BaseService):
             'type': type,
             'workspace_status': workspace_status,
             'agent_id': agent_id,
+            'settings': settings,
         }
         data = {k: v for (k, v) in data.items() if v is not None}
         data = json.dumps(data)
@@ -638,6 +644,7 @@ class SchematicsV1(BaseService):
         workspace_status: Optional['WorkspaceStatusUpdateRequest'] = None,
         workspace_status_msg: Optional['WorkspaceStatusMessage'] = None,
         agent_id: Optional[str] = None,
+        settings: Optional[List['VariableData']] = None,
         x_github_token: Optional[str] = None,
         **kwargs,
     ) -> DetailedResponse:
@@ -681,6 +688,8 @@ class SchematicsV1(BaseService):
         :param WorkspaceStatusMessage workspace_status_msg: (optional) Information
                about the last job that ran against the workspace. -.
         :param str agent_id: (optional) agent id that process workspace jobs.
+        :param List[VariableData] settings: (optional) Input settings to be applied
+               to the workspace, for example, `job_timeout_override`.
         :param str x_github_token: (optional) The personal access token to
                authenticate with your private GitHub or GitLab repository and access your
                Terraform template.
@@ -705,6 +714,8 @@ class SchematicsV1(BaseService):
             workspace_status = convert_model(workspace_status)
         if workspace_status_msg is not None:
             workspace_status_msg = convert_model(workspace_status_msg)
+        if settings is not None:
+            settings = [convert_model(x) for x in settings]
         headers = {
             'X-Github-token': x_github_token,
         }
@@ -728,6 +739,7 @@ class SchematicsV1(BaseService):
             'workspace_status': workspace_status,
             'workspace_status_msg': workspace_status_msg,
             'agent_id': agent_id,
+            'settings': settings,
         }
         data = {k: v for (k, v) in data.items() if v is not None}
         data = json.dumps(data)
@@ -863,6 +875,7 @@ class SchematicsV1(BaseService):
         workspace_status: Optional['WorkspaceStatusUpdateRequest'] = None,
         workspace_status_msg: Optional['WorkspaceStatusMessage'] = None,
         agent_id: Optional[str] = None,
+        settings: Optional[List['VariableData']] = None,
         **kwargs,
     ) -> DetailedResponse:
         """
@@ -909,6 +922,8 @@ class SchematicsV1(BaseService):
         :param WorkspaceStatusMessage workspace_status_msg: (optional) Information
                about the last job that ran against the workspace. -.
         :param str agent_id: (optional) agent id that process workspace jobs.
+        :param List[VariableData] settings: (optional) Input settings to be applied
+               to the workspace, for example, `job_timeout_override`.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse with `dict` result representing a `WorkspaceResponse` object
@@ -930,6 +945,8 @@ class SchematicsV1(BaseService):
             workspace_status = convert_model(workspace_status)
         if workspace_status_msg is not None:
             workspace_status_msg = convert_model(workspace_status_msg)
+        if settings is not None:
+            settings = [convert_model(x) for x in settings]
         headers = {}
         sdk_headers = get_sdk_headers(
             service_name=self.DEFAULT_SERVICE_NAME,
@@ -951,6 +968,7 @@ class SchematicsV1(BaseService):
             'workspace_status': workspace_status,
             'workspace_status_msg': workspace_status_msg,
             'agent_id': agent_id,
+            'settings': settings,
         }
         data = {k: v for (k, v) in data.items() if v is not None}
         data = json.dumps(data)
@@ -5544,6 +5562,8 @@ class SchematicsV1(BaseService):
     def delete_agent_data(
         self,
         agent_id: str,
+        *,
+        force: Optional[bool] = None,
         **kwargs,
     ) -> DetailedResponse:
         """
@@ -5563,6 +5583,8 @@ class SchematicsV1(BaseService):
         permissions](https://cloud.ibm.com/docs/schematics?topic=schematics-access#access-roles).
 
         :param str agent_id: Agent ID to get the details of agent.
+        :param bool force: (optional) Equivalent to -force options in the command
+               line, default is false.
         :param dict headers: A `dict` containing the request headers
         :return: A `DetailedResponse` containing the result, headers and HTTP status code.
         :rtype: DetailedResponse
@@ -5578,6 +5600,10 @@ class SchematicsV1(BaseService):
         )
         headers.update(sdk_headers)
 
+        params = {
+            'force': force,
+        }
+
         if 'headers' in kwargs:
             headers.update(kwargs.get('headers'))
             del kwargs['headers']
@@ -5590,6 +5616,7 @@ class SchematicsV1(BaseService):
             method='DELETE',
             url=url,
             headers=headers,
+            params=params,
         )
 
         response = self.send(request, **kwargs)
@@ -7017,6 +7044,9 @@ class Action:
     :param List[str] playbook_names: (optional) Playbook names retrieved from the
           repository.
     :param SystemLock sys_lock: (optional) System lock status.
+    :param str git_token_ref: (optional) secrets manager reference to git token.
+    :param EncryptionInfo encryption: (optional) Encryption details about the
+          workspace such as scheme (byok/kyok) and key CRN.
     """
 
     def __init__(
@@ -7056,6 +7086,8 @@ class Action:
         state: Optional['ActionState'] = None,
         playbook_names: Optional[List[str]] = None,
         sys_lock: Optional['SystemLock'] = None,
+        git_token_ref: Optional[str] = None,
+        encryption: Optional['EncryptionInfo'] = None,
     ) -> None:
         """
         Initialize a Action object.
@@ -7144,6 +7176,8 @@ class Action:
         self.state = state
         self.playbook_names = playbook_names
         self.sys_lock = sys_lock
+        self.git_token_ref = git_token_ref
+        self.encryption = encryption
 
     @classmethod
     def from_dict(cls, _dict: Dict) -> 'Action':
@@ -7217,6 +7251,10 @@ class Action:
             args['playbook_names'] = playbook_names
         if (sys_lock := _dict.get('sys_lock')) is not None:
             args['sys_lock'] = SystemLock.from_dict(sys_lock)
+        if (git_token_ref := _dict.get('git_token_ref')) is not None:
+            args['git_token_ref'] = git_token_ref
+        if (encryption := _dict.get('encryption')) is not None:
+            args['encryption'] = EncryptionInfo.from_dict(encryption)
         return cls(**args)
 
     @classmethod
@@ -7337,6 +7375,13 @@ class Action:
                 _dict['sys_lock'] = getattr(self, 'sys_lock')
             else:
                 _dict['sys_lock'] = getattr(self, 'sys_lock').to_dict()
+        if hasattr(self, 'git_token_ref') and getattr(self, 'git_token_ref') is not None:
+            _dict['git_token_ref'] = getattr(self, 'git_token_ref')
+        if hasattr(self, 'encryption') and getattr(self, 'encryption') is not None:
+            if isinstance(getattr(self, 'encryption'), dict):
+                _dict['encryption'] = getattr(self, 'encryption')
+            else:
+                _dict['encryption'] = getattr(self, 'encryption').to_dict()
         return _dict
 
     def _to_dict(self):
@@ -7521,6 +7566,8 @@ class ActionLite:
     :param str updated_by: (optional) Email address of user who updated the action.
     :param AgentInfo agent: (optional) Agent name, Agent id and associated policy ID
           information.
+    :param EncryptionInfo encryption: (optional) Encryption details about the
+          workspace such as scheme (byok/kyok) and key CRN.
     """
 
     def __init__(
@@ -7543,6 +7590,7 @@ class ActionLite:
         updated_at: Optional[datetime] = None,
         updated_by: Optional[str] = None,
         agent: Optional['AgentInfo'] = None,
+        encryption: Optional['EncryptionInfo'] = None,
     ) -> None:
         """
         Initialize a ActionLite object.
@@ -7575,6 +7623,7 @@ class ActionLite:
         self.updated_at = updated_at
         self.updated_by = updated_by
         self.agent = agent
+        self.encryption = encryption
 
     @classmethod
     def from_dict(cls, _dict: Dict) -> 'ActionLite':
@@ -7614,6 +7663,8 @@ class ActionLite:
             args['updated_by'] = updated_by
         if (agent := _dict.get('agent')) is not None:
             args['agent'] = AgentInfo.from_dict(agent)
+        if (encryption := _dict.get('encryption')) is not None:
+            args['encryption'] = EncryptionInfo.from_dict(encryption)
         return cls(**args)
 
     @classmethod
@@ -7670,6 +7721,11 @@ class ActionLite:
                 _dict['agent'] = self.agent
             else:
                 _dict['agent'] = self.agent.to_dict()
+        if hasattr(self, 'encryption') and getattr(self, 'encryption') is not None:
+            if isinstance(getattr(self, 'encryption'), dict):
+                _dict['encryption'] = getattr(self, 'encryption')
+            else:
+                _dict['encryption'] = getattr(self, 'encryption').to_dict()
         return _dict
 
     def _to_dict(self):
@@ -8223,6 +8279,8 @@ class AgentData:
           check.
     :param AgentDataRecentDestroyJob recent_destroy_job: (optional) destroy resource
           provisoned by agent deploy method.
+    :param EncryptionInfo encryption: (optional) Encryption details about the
+          workspace such as scheme (byok/kyok) and key CRN.
     """
 
     def __init__(
@@ -8251,6 +8309,7 @@ class AgentData:
         recent_deploy_job: Optional['AgentDataRecentDeployJob'] = None,
         recent_health_job: Optional['AgentDataRecentHealthJob'] = None,
         recent_destroy_job: Optional['AgentDataRecentDestroyJob'] = None,
+        encryption: Optional['EncryptionInfo'] = None,
     ) -> None:
         """
         Initialize a AgentData object.
@@ -8301,6 +8360,7 @@ class AgentData:
         self.recent_deploy_job = recent_deploy_job
         self.recent_health_job = recent_health_job
         self.recent_destroy_job = recent_destroy_job
+        self.encryption = encryption
 
     @classmethod
     def from_dict(cls, _dict: Dict) -> 'AgentData':
@@ -8364,6 +8424,8 @@ class AgentData:
             args['recent_health_job'] = AgentDataRecentHealthJob.from_dict(recent_health_job)
         if (recent_destroy_job := _dict.get('recent_destroy_job')) is not None:
             args['recent_destroy_job'] = AgentDataRecentDestroyJob.from_dict(recent_destroy_job)
+        if (encryption := _dict.get('encryption')) is not None:
+            args['encryption'] = EncryptionInfo.from_dict(encryption)
         return cls(**args)
 
     @classmethod
@@ -8456,6 +8518,11 @@ class AgentData:
                 _dict['recent_destroy_job'] = getattr(self, 'recent_destroy_job')
             else:
                 _dict['recent_destroy_job'] = getattr(self, 'recent_destroy_job').to_dict()
+        if hasattr(self, 'encryption') and getattr(self, 'encryption') is not None:
+            if isinstance(getattr(self, 'encryption'), dict):
+                _dict['encryption'] = getattr(self, 'encryption')
+            else:
+                _dict['encryption'] = getattr(self, 'encryption').to_dict()
         return _dict
 
     def _to_dict(self):
@@ -11362,9 +11429,9 @@ class CredentialVariableData:
 
     :param str name: (optional) The name of the credential variable.
     :param str value: (optional) The credential value for the variable or reference
-          to the value. For example, `value = "<provide your ssh_key_value with \n>"`.
-          **Note** The SSH key should contain `\n` at the end of the key details in case
-          of command line or API calls.
+          to the value. **Note** The SSH key should contain three `\n` in the SSH key
+          value as shown in the example for CLI or API calls. When using Bastion from API
+          you need to add SSH key in both `credentials` and `bastion_credentials`.
     :param bool use_default: (optional) True, will ignore the data in the value
           attribute, instead the data in metadata.default_value will be used.
     :param CredentialVariableMetadata metadata: (optional) An user editable metadata
@@ -11387,9 +11454,10 @@ class CredentialVariableData:
 
         :param str name: (optional) The name of the credential variable.
         :param str value: (optional) The credential value for the variable or
-               reference to the value. For example, `value = "<provide your ssh_key_value
-               with \n>"`. **Note** The SSH key should contain `\n` at the end of the key
-               details in case of command line or API calls.
+               reference to the value. **Note** The SSH key should contain three `\n` in
+               the SSH key value as shown in the example for CLI or API calls. When using
+               Bastion from API you need to add SSH key in both `credentials` and
+               `bastion_credentials`.
         :param bool use_default: (optional) True, will ignore the data in the value
                attribute, instead the data in metadata.default_value will be used.
         :param CredentialVariableMetadata metadata: (optional) An user editable
@@ -11697,6 +11765,72 @@ class Dependencies:
         return self.__dict__ == other.__dict__
 
     def __ne__(self, other: 'Dependencies') -> bool:
+        """Return `true` when self and other are not equal, false otherwise."""
+        return not self == other
+
+
+class EncryptionInfo:
+    """
+    Encryption details about the workspace such as scheme (byok/kyok) and key CRN.
+
+    :param str crn: (optional) Key CRN.
+    :param str scheme: (optional) Encryption scheme.
+    """
+
+    def __init__(
+        self,
+        *,
+        crn: Optional[str] = None,
+        scheme: Optional[str] = None,
+    ) -> None:
+        """
+        Initialize a EncryptionInfo object.
+
+        :param str crn: (optional) Key CRN.
+        :param str scheme: (optional) Encryption scheme.
+        """
+        self.crn = crn
+        self.scheme = scheme
+
+    @classmethod
+    def from_dict(cls, _dict: Dict) -> 'EncryptionInfo':
+        """Initialize a EncryptionInfo object from a json dictionary."""
+        args = {}
+        if (crn := _dict.get('crn')) is not None:
+            args['crn'] = crn
+        if (scheme := _dict.get('scheme')) is not None:
+            args['scheme'] = scheme
+        return cls(**args)
+
+    @classmethod
+    def _from_dict(cls, _dict):
+        """Initialize a EncryptionInfo object from a json dictionary."""
+        return cls.from_dict(_dict)
+
+    def to_dict(self) -> Dict:
+        """Return a json dictionary representing this model."""
+        _dict = {}
+        if hasattr(self, 'crn') and self.crn is not None:
+            _dict['crn'] = self.crn
+        if hasattr(self, 'scheme') and self.scheme is not None:
+            _dict['scheme'] = self.scheme
+        return _dict
+
+    def _to_dict(self):
+        """Return a json dictionary representing this model."""
+        return self.to_dict()
+
+    def __str__(self) -> str:
+        """Return a `str` version of this EncryptionInfo object."""
+        return json.dumps(self.to_dict(), indent=2)
+
+    def __eq__(self, other: 'EncryptionInfo') -> bool:
+        """Return `true` when self and other are equal, false otherwise."""
+        if not isinstance(other, self.__class__):
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other: 'EncryptionInfo') -> bool:
         """Return `true` when self and other are not equal, false otherwise."""
         return not self == other
 
@@ -20279,6 +20413,8 @@ class TemplateRepoRequest:
     :param str repo_sha_value: (optional) The repository SHA value.
     :param str repo_url: (optional) The repository URL.
     :param str url: (optional) The source URL.
+    :param bool skip_submodules_checkout: (optional) Set this variable to checkout
+          git sub-modules.
     """
 
     def __init__(
@@ -20289,6 +20425,7 @@ class TemplateRepoRequest:
         repo_sha_value: Optional[str] = None,
         repo_url: Optional[str] = None,
         url: Optional[str] = None,
+        skip_submodules_checkout: Optional[bool] = None,
     ) -> None:
         """
         Initialize a TemplateRepoRequest object.
@@ -20298,12 +20435,15 @@ class TemplateRepoRequest:
         :param str repo_sha_value: (optional) The repository SHA value.
         :param str repo_url: (optional) The repository URL.
         :param str url: (optional) The source URL.
+        :param bool skip_submodules_checkout: (optional) Set this variable to
+               checkout git sub-modules.
         """
         self.branch = branch
         self.release = release
         self.repo_sha_value = repo_sha_value
         self.repo_url = repo_url
         self.url = url
+        self.skip_submodules_checkout = skip_submodules_checkout
 
     @classmethod
     def from_dict(cls, _dict: Dict) -> 'TemplateRepoRequest':
@@ -20319,6 +20459,8 @@ class TemplateRepoRequest:
             args['repo_url'] = repo_url
         if (url := _dict.get('url')) is not None:
             args['url'] = url
+        if (skip_submodules_checkout := _dict.get('skip_submodules_checkout')) is not None:
+            args['skip_submodules_checkout'] = skip_submodules_checkout
         return cls(**args)
 
     @classmethod
@@ -20339,6 +20481,8 @@ class TemplateRepoRequest:
             _dict['repo_url'] = self.repo_url
         if hasattr(self, 'url') and self.url is not None:
             _dict['url'] = self.url
+        if hasattr(self, 'skip_submodules_checkout') and self.skip_submodules_checkout is not None:
+            _dict['skip_submodules_checkout'] = self.skip_submodules_checkout
         return _dict
 
     def _to_dict(self):
@@ -20373,6 +20517,8 @@ class TemplateRepoResponse:
           using `.netrc` in `env_values`, see [Usage of private module
           template](https://cloud.ibm.com/docs/schematics?topic=schematics-download-modules-pvt-git).
     :param str url: (optional) The source URL.
+    :param bool skip_submodules_checkout: (optional) Set this variable to checkout
+          git sub-modules.
     """
 
     def __init__(
@@ -20385,6 +20531,7 @@ class TemplateRepoResponse:
         repo_sha_value: Optional[str] = None,
         repo_url: Optional[str] = None,
         url: Optional[str] = None,
+        skip_submodules_checkout: Optional[bool] = None,
     ) -> None:
         """
         Initialize a TemplateRepoResponse object.
@@ -20399,6 +20546,8 @@ class TemplateRepoResponse:
                about using `.netrc` in `env_values`, see [Usage of private module
                template](https://cloud.ibm.com/docs/schematics?topic=schematics-download-modules-pvt-git).
         :param str url: (optional) The source URL.
+        :param bool skip_submodules_checkout: (optional) Set this variable to
+               checkout git sub-modules.
         """
         self.branch = branch
         self.full_url = full_url
@@ -20407,6 +20556,7 @@ class TemplateRepoResponse:
         self.repo_sha_value = repo_sha_value
         self.repo_url = repo_url
         self.url = url
+        self.skip_submodules_checkout = skip_submodules_checkout
 
     @classmethod
     def from_dict(cls, _dict: Dict) -> 'TemplateRepoResponse':
@@ -20426,6 +20576,8 @@ class TemplateRepoResponse:
             args['repo_url'] = repo_url
         if (url := _dict.get('url')) is not None:
             args['url'] = url
+        if (skip_submodules_checkout := _dict.get('skip_submodules_checkout')) is not None:
+            args['skip_submodules_checkout'] = skip_submodules_checkout
         return cls(**args)
 
     @classmethod
@@ -20450,6 +20602,8 @@ class TemplateRepoResponse:
             _dict['repo_url'] = self.repo_url
         if hasattr(self, 'url') and self.url is not None:
             _dict['url'] = self.url
+        if hasattr(self, 'skip_submodules_checkout') and self.skip_submodules_checkout is not None:
+            _dict['skip_submodules_checkout'] = self.skip_submodules_checkout
         return _dict
 
     def _to_dict(self):
@@ -20554,6 +20708,8 @@ class TemplateRepoUpdateRequest:
     :param str repo_sha_value: (optional) The repository SHA value.
     :param str repo_url: (optional) The repository URL.
     :param str url: (optional) The source URL.
+    :param bool skip_submodules_checkout: (optional) Set this variable to checkout
+          git sub-modules.
     """
 
     def __init__(
@@ -20564,6 +20720,7 @@ class TemplateRepoUpdateRequest:
         repo_sha_value: Optional[str] = None,
         repo_url: Optional[str] = None,
         url: Optional[str] = None,
+        skip_submodules_checkout: Optional[bool] = None,
     ) -> None:
         """
         Initialize a TemplateRepoUpdateRequest object.
@@ -20573,12 +20730,15 @@ class TemplateRepoUpdateRequest:
         :param str repo_sha_value: (optional) The repository SHA value.
         :param str repo_url: (optional) The repository URL.
         :param str url: (optional) The source URL.
+        :param bool skip_submodules_checkout: (optional) Set this variable to
+               checkout git sub-modules.
         """
         self.branch = branch
         self.release = release
         self.repo_sha_value = repo_sha_value
         self.repo_url = repo_url
         self.url = url
+        self.skip_submodules_checkout = skip_submodules_checkout
 
     @classmethod
     def from_dict(cls, _dict: Dict) -> 'TemplateRepoUpdateRequest':
@@ -20594,6 +20754,8 @@ class TemplateRepoUpdateRequest:
             args['repo_url'] = repo_url
         if (url := _dict.get('url')) is not None:
             args['url'] = url
+        if (skip_submodules_checkout := _dict.get('skip_submodules_checkout')) is not None:
+            args['skip_submodules_checkout'] = skip_submodules_checkout
         return cls(**args)
 
     @classmethod
@@ -20614,6 +20776,8 @@ class TemplateRepoUpdateRequest:
             _dict['repo_url'] = self.repo_url
         if hasattr(self, 'url') and self.url is not None:
             _dict['url'] = self.url
+        if hasattr(self, 'skip_submodules_checkout') and self.skip_submodules_checkout is not None:
+            _dict['skip_submodules_checkout'] = self.skip_submodules_checkout
         return _dict
 
     def _to_dict(self):
@@ -21815,9 +21979,7 @@ class VariableData:
     :param str name: (optional) The name of the variable. For example, `name =
           "inventory username"`.
     :param str value: (optional) The value for the variable or reference to the
-          value. For example, `value = "<provide your ssh_key_value with \n>"`. **Note**
-          The SSH key should contain `\n` at the end of the key details in case of command
-          line or API calls.
+          value. For example, `value = "<provide your ssh_key_value with \n>"`.
     :param bool use_default: (optional) True, will ignore the data in the value
           attribute, instead the data in metadata.default_value will be used.
     :param VariableMetadata metadata: (optional) An user editable metadata for the
@@ -21842,8 +22004,6 @@ class VariableData:
                "inventory username"`.
         :param str value: (optional) The value for the variable or reference to the
                value. For example, `value = "<provide your ssh_key_value with \n>"`.
-               **Note** The SSH key should contain `\n` at the end of the key details in
-               case of command line or API calls.
         :param bool use_default: (optional) True, will ignore the data in the value
                attribute, instead the data in metadata.default_value will be used.
         :param VariableMetadata metadata: (optional) An user editable metadata for
@@ -23532,6 +23692,11 @@ class WorkspaceResponse:
           the last job that ran against the workspace. -.
     :param AgentInfo agent: (optional) Agent name, Agent id and associated policy ID
           information.
+    :param List[VariableData] settings: (optional) Input settings to be applied to
+          the workspace, for example, `job_timeout_override`.
+    :param str git_token_ref: (optional) secrets manager reference to git token.
+    :param EncryptionInfo encryption: (optional) Encryption details about the
+          workspace such as scheme (byok/kyok) and key CRN.
     """
 
     def __init__(
@@ -23567,6 +23732,9 @@ class WorkspaceResponse:
         workspace_status: Optional['WorkspaceStatusResponse'] = None,
         workspace_status_msg: Optional['WorkspaceStatusMessage'] = None,
         agent: Optional['AgentInfo'] = None,
+        settings: Optional[List['VariableData']] = None,
+        git_token_ref: Optional[str] = None,
+        encryption: Optional['EncryptionInfo'] = None,
     ) -> None:
         """
         Initialize a WorkspaceResponse object.
@@ -23638,6 +23806,8 @@ class WorkspaceResponse:
                about the last job that ran against the workspace. -.
         :param AgentInfo agent: (optional) Agent name, Agent id and associated
                policy ID information.
+        :param List[VariableData] settings: (optional) Input settings to be applied
+               to the workspace, for example, `job_timeout_override`.
         """
         self.applied_shareddata_ids = applied_shareddata_ids
         self.catalog_ref = catalog_ref
@@ -23669,6 +23839,9 @@ class WorkspaceResponse:
         self.workspace_status = workspace_status
         self.workspace_status_msg = workspace_status_msg
         self.agent = agent
+        self.settings = settings
+        self.git_token_ref = git_token_ref
+        self.encryption = encryption
 
     @classmethod
     def from_dict(cls, _dict: Dict) -> 'WorkspaceResponse':
@@ -23734,6 +23907,12 @@ class WorkspaceResponse:
             args['workspace_status_msg'] = WorkspaceStatusMessage.from_dict(workspace_status_msg)
         if (agent := _dict.get('agent')) is not None:
             args['agent'] = AgentInfo.from_dict(agent)
+        if (settings := _dict.get('settings')) is not None:
+            args['settings'] = [VariableData.from_dict(v) for v in settings]
+        if (git_token_ref := _dict.get('git_token_ref')) is not None:
+            args['git_token_ref'] = git_token_ref
+        if (encryption := _dict.get('encryption')) is not None:
+            args['encryption'] = EncryptionInfo.from_dict(encryption)
         return cls(**args)
 
     @classmethod
@@ -23840,6 +24019,21 @@ class WorkspaceResponse:
                 _dict['agent'] = self.agent
             else:
                 _dict['agent'] = self.agent.to_dict()
+        if hasattr(self, 'settings') and self.settings is not None:
+            settings_list = []
+            for v in self.settings:
+                if isinstance(v, dict):
+                    settings_list.append(v)
+                else:
+                    settings_list.append(v.to_dict())
+            _dict['settings'] = settings_list
+        if hasattr(self, 'git_token_ref') and getattr(self, 'git_token_ref') is not None:
+            _dict['git_token_ref'] = getattr(self, 'git_token_ref')
+        if hasattr(self, 'encryption') and getattr(self, 'encryption') is not None:
+            if isinstance(getattr(self, 'encryption'), dict):
+                _dict['encryption'] = getattr(self, 'encryption')
+            else:
+                _dict['encryption'] = getattr(self, 'encryption').to_dict()
         return _dict
 
     def _to_dict(self):
