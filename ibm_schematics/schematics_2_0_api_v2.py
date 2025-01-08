@@ -896,7 +896,7 @@ class Schematics20ApiV2(BaseService):
         file: BinaryIO = None,
         file_content_type: str = None,
         x_github_token: str = None,
-        **kwargs
+        **kwargs,
     ) -> DetailedResponse:
         """
         Upload the Template content as tar-file.
@@ -1733,7 +1733,7 @@ class Schematics20ApiV2(BaseService):
         resource_id: str = None,
         action_id: str = None,
         list: str = None,
-        **kwargs
+        **kwargs,
     ) -> DetailedResponse:
         """
         List jobs.
@@ -2329,7 +2329,7 @@ class Schematics20ApiV2(BaseService):
         limit: int = None,
         sort: str = None,
         profile: str = None,
-        **kwargs
+        **kwargs,
     ) -> DetailedResponse:
         """
         Get all Policy Capsules in the Controls definition.
@@ -4324,7 +4324,7 @@ class Schematics20ApiV2(BaseService):
         resource_group: str = None,
         limit: int = None,
         sort: str = None,
-        **kwargs
+        **kwargs,
     ) -> DetailedResponse:
         """
         List KMS instances.
@@ -6288,7 +6288,7 @@ class Schematics20ApiV2(BaseService):
         offering_version: str = None,
         offset: int = None,
         limit: int = None,
-        **kwargs
+        **kwargs,
     ) -> DetailedResponse:
         """
         Get the catalog item details.
@@ -6975,7 +6975,7 @@ class Action:
         state: 'ActionState' = None,
         playbook_names: List[str] = None,
         sys_lock: 'SystemLock' = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a Action object.
@@ -7448,7 +7448,7 @@ class ActionLite:
         created_by: str = None,
         updated_at: datetime = None,
         updated_by: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a ActionLite object.
@@ -7858,7 +7858,7 @@ class Adapter:
         sys_lock: 'SystemLock' = None,
         adapter_health: str = None,
         last_health_checked_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a Adapter object.
@@ -8225,7 +8225,7 @@ class Agent:
         user_state: 'UserState' = None,
         agent_health: 'AgentHealth' = None,
         system_state: 'AgentSystemState' = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a Agent object.
@@ -8800,7 +8800,7 @@ class Blueprint:
         sys_lock: 'SystemLock' = None,
         user_state: 'UserState' = None,
         state: 'BlueprintLiteState' = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a Blueprint object.
@@ -9059,7 +9059,7 @@ class BlueprintComponent:
         settings: List['BlueprintVariableData'] = None,
         outputs: List['BlueprintVariableData'] = None,
         last_job: 'BlueprintComponentLastJob' = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a BlueprintComponent object.
@@ -9207,7 +9207,7 @@ class BlueprintComponentLastJob:
         command_object_id: str = None,
         command_name: str = None,
         job_status: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a BlueprintComponentLastJob object.
@@ -9367,7 +9367,7 @@ class BlueprintConfigItem:
         description: str = None,
         source: 'ExternalSource' = None,
         inputs: List['BlueprintVariableData'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a BlueprintConfigItem object.
@@ -9601,7 +9601,7 @@ class BlueprintFlowSpecs:
         flow_type: str = None,
         sequence_flow: List['BlueprintFlowSequenceFlow'] = None,
         conditional_flow: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a BlueprintFlowSpecs object.
@@ -9871,7 +9871,7 @@ class BlueprintLite:
         sys_lock: 'SystemLock' = None,
         user_state: 'UserState' = None,
         state: 'BlueprintLiteState' = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a BlueprintLite object.
@@ -10294,7 +10294,7 @@ class Capsule:
         state: 'ControlsLiteState' = None,
         last_job_data: 'JobDataCapsule' = None,
         sys_lock: 'SystemLock' = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a Capsule object.
@@ -10646,7 +10646,7 @@ class CapsuleLite:
         created_by: str = None,
         updated_at: datetime = None,
         updated_by: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a CapsuleLite object.
@@ -11092,7 +11092,7 @@ class CartOrder:
         updated_by: str = None,
         sys_lock: 'SystemLock' = None,
         state: 'CartOrderLiteState' = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a CartOrder object.
@@ -11417,7 +11417,7 @@ class CartOrderLite:
         sys_lock: 'SystemLock' = None,
         user_state: 'CartOrderUserState' = None,
         state: 'CartOrderLiteState' = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a CartOrderLite object.
@@ -11814,7 +11814,7 @@ class CatalogOfferingItem:
         crn: str = None,
         offering_url: str = None,
         versions: List['CatalogOfferingItemVersions'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a CatalogOfferingItem object.
@@ -12003,7 +12003,7 @@ class CloudResource:
         crn: str = None,
         resource_state: str = None,
         tags: List[str] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a CloudResource object.
@@ -12488,7 +12488,7 @@ class Connection:
         created_by: str = None,
         updated_at: datetime = None,
         updated_by: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a Connection object.
@@ -12774,7 +12774,7 @@ class ConnectionLite:
         created_by: str = None,
         updated_at: datetime = None,
         updated_by: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a ConnectionLite object.
@@ -12984,7 +12984,7 @@ class Controls:
         updated_by: str = None,
         sys_lock: 'SystemLock' = None,
         capsules: List['Capsule'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a Controls object.
@@ -13225,7 +13225,7 @@ class ControlsDecision:
         pass_value: str = None,
         pass_expr: str = None,
         evidence_found_in: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a ControlsDecision object.
@@ -13523,7 +13523,7 @@ class ControlsLite:
         created_by: str = None,
         updated_at: datetime = None,
         updated_by: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a ControlsLite object.
@@ -13788,7 +13788,7 @@ class CredentialVariableData:
         use_default: bool = None,
         metadata: 'CredentialVariableMetadata' = None,
         link: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a CredentialVariableData object.
@@ -13926,7 +13926,7 @@ class CredentialVariableMetadata:
         position: int = None,
         group_by: str = None,
         source: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a CredentialVariableMetadata object.
@@ -14138,7 +14138,7 @@ class Dataset:
         updated_at: datetime = None,
         updated_by: str = None,
         affected_resource_ids: List[str] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a Dataset object.
@@ -14451,7 +14451,7 @@ class DatasetLite:
         created_by: str = None,
         updated_at: datetime = None,
         updated_by: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a DatasetLite object.
@@ -14666,7 +14666,7 @@ class Datasource:
         created_by: str = None,
         updated_at: datetime = None,
         updated_by: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a Datasource object.
@@ -14944,7 +14944,7 @@ class DatasourceLite:
         created_by: str = None,
         updated_at: datetime = None,
         updated_by: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a DatasourceLite object.
@@ -15184,7 +15184,7 @@ class ExternalSourceCatalog:
         offering_id: str = None,
         offering_version_id: str = None,
         offering_repo_url: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a ExternalSourceCatalog object.
@@ -15313,7 +15313,7 @@ class ExternalSourceGit:
         git_repo_folder: str = None,
         git_release: str = None,
         git_branch: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a ExternalSourceGit object.
@@ -15495,7 +15495,7 @@ class InjectTerraformTemplateInner:
         injection_type: str = None,
         tft_name: str = None,
         tft_parameters: List['InjectTerraformTemplateInnerTftParametersItem'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a InjectTerraformTemplateInner object.
@@ -15717,7 +15717,7 @@ class InventoryResourceDefinition:
         resource_group: str = None,
         inventories_ini: str = None,
         resource_queries: List[str] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a InventoryResourceDefinition object.
@@ -15885,7 +15885,7 @@ class InventoryResourceRecord:
         updated_by: str = None,
         inventories_ini: str = None,
         resource_queries: List[str] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a InventoryResourceRecord object.
@@ -16040,7 +16040,7 @@ class InventoryResourceRecordList:
         *,
         total_count: int = None,
         inventories: List['InventoryResourceRecord'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a InventoryResourceRecordList object.
@@ -16166,7 +16166,7 @@ class ItemMetadata:
         inputs: List['VariableData'] = None,
         settings: List['VariableData'] = None,
         outputs: List['VariableData'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a ItemMetadata object.
@@ -16315,7 +16315,7 @@ class ItemSKU:
         *,
         sku_sys_lock: 'SystemLock' = None,
         sku_user_state: 'SKUUserState' = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a ItemSKU object.
@@ -16502,7 +16502,7 @@ class Job:
         results_url: str = None,
         updated_at: datetime = None,
         job_runner_id: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a Job object.
@@ -16788,7 +16788,7 @@ class JobData:
         action_job_data: 'JobDataAction' = None,
         system_job_data: 'JobDataSystem' = None,
         flow_job_data: 'JobDataFlow' = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobData object.
@@ -16913,7 +16913,7 @@ class JobDataAction:
         updated_at: datetime = None,
         inventory_record: 'InventoryResourceRecord' = None,
         materialized_inventory: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobDataAction object.
@@ -17032,7 +17032,7 @@ class JobDataCapsule:
         inputs: List['VariableData'] = None,
         results: List['JobResultCapsule'] = None,
         updated_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobDataCapsule object.
@@ -17134,7 +17134,7 @@ class JobDataFlow:
         flow_name: str = None,
         workitems: List['JobDataWorkItem'] = None,
         updated_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobDataFlow object.
@@ -17319,7 +17319,7 @@ class JobDataTemplate:
         outputs: List['VariableData'] = None,
         settings: List['VariableData'] = None,
         updated_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobDataTemplate object.
@@ -17462,7 +17462,7 @@ class JobDataWorkItem:
         settings: List['VariableData'] = None,
         last_job: 'JobDataWorkItemLastJob' = None,
         updated_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobDataWorkItem object.
@@ -17617,7 +17617,7 @@ class JobDataWorkItemLastJob:
         command_name: str = None,
         job_id: str = None,
         job_status: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobDataWorkItemLastJob object.
@@ -17794,7 +17794,7 @@ class JobDataWorkspace:
         settings: List['VariableData'] = None,
         template_data: List['JobDataTemplate'] = None,
         updated_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobDataWorkspace object.
@@ -17921,7 +17921,7 @@ class JobFileData:
         file_type: str = None,
         file_content: str = None,
         updated_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobFileData object.
@@ -18271,7 +18271,7 @@ class JobLite:
         log_summary: 'JobLogSummary' = None,
         updated_at: datetime = None,
         job_runner_id: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobLite object.
@@ -18519,7 +18519,7 @@ class JobLog:
         format: str = None,
         details: bytes = None,
         updated_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobLog object.
@@ -18666,7 +18666,7 @@ class JobLogSummary:
         flow_job: 'JobLogSummaryFlowJob' = None,
         action_job: 'JobLogSummaryActionJob' = None,
         system_job: 'JobLogSummarySystemJob' = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobLogSummary object.
@@ -18816,7 +18816,7 @@ class JobLogSummaryWorkitems:
         resources_modify: float = None,
         resources_destroy: float = None,
         log_url: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobLogSummaryWorkitems object.
@@ -18918,7 +18918,7 @@ class JobLogSummaryActionJob:
         task_count: float = None,
         play_count: float = None,
         recap: 'JobLogSummaryActionJobRecap' = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobLogSummaryActionJob object.
@@ -19012,7 +19012,7 @@ class JobLogSummaryActionJobRecap:
         failed: float = None,
         skipped: float = None,
         unreachable: float = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobLogSummaryActionJobRecap object.
@@ -19119,7 +19119,7 @@ class JobLogSummaryFlowJob:
         workitems_pending: float = None,
         workitems_failed: float = None,
         workitems: List['JobLogSummaryWorkitems'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobLogSummaryFlowJob object.
@@ -19291,7 +19291,7 @@ class JobLogSummaryRepoDownloadJob:
         detected_filetype: str = None,
         inputs_count: str = None,
         outputs_count: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobLogSummaryRepoDownloadJob object.
@@ -19552,7 +19552,7 @@ class JobResultCapsule:
         passed: List[str] = None,
         evidences: List['CapsuleResultEvidences'] = None,
         updated_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobResultCapsule object.
@@ -19699,7 +19699,7 @@ class JobStatus:
         action_job_status: 'JobStatusAction' = None,
         system_job_status: 'JobStatusSystem' = None,
         flow_job_status: 'JobStatusFlow' = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobStatus object.
@@ -19829,7 +19829,7 @@ class JobStatusAction:
         targets_status_code: str = None,
         targets_status_message: str = None,
         updated_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobStatusAction object.
@@ -19986,7 +19986,7 @@ class JobStatusFlow:
         status_message: str = None,
         workitems: List['JobStatusWorkitem'] = None,
         updated_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobStatusFlow object.
@@ -20105,7 +20105,7 @@ class JobStatusSchematicsResources:
         status_message: str = None,
         schematics_resource_id: str = None,
         updated_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobStatusSchematicsResources object.
@@ -20211,7 +20211,7 @@ class JobStatusSystem:
         system_status_code: str = None,
         schematics_resource_status: List['JobStatusSchematicsResources'] = None,
         updated_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobStatusSystem object.
@@ -20325,7 +20325,7 @@ class JobStatusTemplate:
         status_code: str = None,
         status_message: str = None,
         updated_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobStatusTemplate object.
@@ -20446,7 +20446,7 @@ class JobStatusWorkitem:
         status_code: str = None,
         status_message: str = None,
         updated_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobStatusWorkitem object.
@@ -20574,7 +20574,7 @@ class JobStatusWorkspace:
         template_status: List['JobStatusTemplate'] = None,
         updated_at: datetime = None,
         commands: List['CommandsInfo'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobStatusWorkspace object.
@@ -20700,7 +20700,7 @@ class JobStatusWorkspaceTemplateFlow:
         status_code: str = None,
         status_message: str = None,
         updated_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a JobStatusWorkspaceTemplateFlow object.
@@ -20925,7 +20925,7 @@ class KMSInstances:
         kms_private_endpoint: str = None,
         kms_public_endpoint: str = None,
         keys: List['KMSInstancesKeys'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a KMSInstances object.
@@ -21132,7 +21132,7 @@ class KMSSettings:
         resource_group: str = None,
         primary_crk: 'KMSSettingsPrimaryCrk' = None,
         secondary_crk: 'KMSSettingsSecondaryCrk' = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a KMSSettings object.
@@ -21468,7 +21468,7 @@ class OrderItemConfiguration:
         offering_provisioner_ssh: str = None,
         offering_provisioner_working_directory: str = None,
         item_sku: 'ItemSKU' = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a OrderItemConfiguration object.
@@ -21800,7 +21800,7 @@ class PreviewData:
         message: str = None,
         viewed_at: datetime = None,
         viewed_by: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a PreviewData object.
@@ -21951,7 +21951,7 @@ class PrivateCluster:
         sys_lock: 'SystemLock' = None,
         cluster_health: str = None,
         last_health_checked_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a PrivateCluster object.
@@ -22189,7 +22189,7 @@ class ResourceQuery:
         query_type: str = None,
         query_condition: List['ResourceQueryParam'] = None,
         query_select: List[str] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a ResourceQuery object.
@@ -22458,7 +22458,7 @@ class ResourceQueryRecord:
         updated_at: datetime = None,
         updated_by: str = None,
         queries: List['ResourceQuery'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a ResourceQueryRecord object.
@@ -22578,7 +22578,7 @@ class ResourceQueryRecordList:
         *,
         total_count: int = None,
         resource_queries: List['ResourceQueryRecord'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a ResourceQueryRecordList object.
@@ -22812,7 +22812,7 @@ class ResourceQueryResponseRecordResponse:
         query_condition: List['ResourceQueryParam'] = None,
         query_select: List[str] = None,
         query_output: List['ResourceQueryResponseRecordQueryOutput'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a ResourceQueryResponseRecordResponse object.
@@ -23000,7 +23000,7 @@ class SchematicsAccessRule:
         command_parameter: str = None,
         principal: str = None,
         origin: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a SchematicsAccessRule object.
@@ -23154,7 +23154,7 @@ class SchematicsAccessRuleList:
         *,
         total_count: int = None,
         access_rules: List['SchematicsAccessRule'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a SchematicsAccessRuleList object.
@@ -23260,7 +23260,7 @@ class SchematicsInfo:
         supported_locations: List[str] = None,
         supported_templates: dict = None,
         supported_runtimes: dict = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a SchematicsInfo object.
@@ -23489,7 +23489,7 @@ class SchematicsLocationsLite:
         display_name: str = None,
         schematics_regional_public_endpoint: str = None,
         schematics_regional_private_endpoint: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a SchematicsLocationsLite object.
@@ -23794,7 +23794,7 @@ class ServiceVariableData:
         value: str = None,
         metadata: 'VariableMetadata' = None,
         mapping: List['ServiceMappingRule'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a ServiceVariableData object.
@@ -23980,7 +23980,7 @@ class TargetRequest:
         namespace: str = None,
         region: str = None,
         resource_group_id: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a TargetRequest object.
@@ -24154,7 +24154,7 @@ class Template:
         updated_by: str = None,
         status: 'JobStatusTemplate' = None,
         sys_lock: 'SystemLock' = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a Template object.
@@ -24518,7 +24518,7 @@ class TemplateFlow:
         status: 'JobStatusWorkspaceTemplateFlow' = None,
         validation_summary: 'TemplateFlowValidationSummary' = None,
         validation_logs: List['TemplateFlowValidationLogs'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a TemplateFlow object.
@@ -24768,7 +24768,7 @@ class TemplateFlowDefinition:
         id: str = None,
         simple_flow: List['TemplateFlowDefinitionSimpleFlow'] = None,
         custom_flow: bytes = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a TemplateFlowDefinition object.
@@ -24870,7 +24870,7 @@ class TemplateFlowDefinitionSimpleFlow:
         index: int = None,
         control: str = None,
         template_operation: 'TemplateFlowDefinitionTemplateOperation' = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a TemplateFlowDefinitionSimpleFlow object.
@@ -24981,7 +24981,7 @@ class TemplateFlowDefinitionTemplateOperation:
         override_command: 'TemplateCommand' = None,
         post_condition: str = None,
         on_error: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a TemplateFlowDefinitionTemplateOperation object.
@@ -25209,7 +25209,7 @@ class TemplateFlowLite:
         created_by: str = None,
         updated_at: datetime = None,
         updated_by: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a TemplateFlowLite object.
@@ -25356,7 +25356,7 @@ class TemplateFlowValidationLogs:
         flow_index: int = None,
         inputs_status: List['TemplateFlowDataValidationStatus'] = None,
         outputs_status: List['TemplateFlowDataValidationStatus'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a TemplateFlowValidationLogs object.
@@ -25705,7 +25705,7 @@ class TemplateLite:
         created_by: str = None,
         updated_at: datetime = None,
         updated_by: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a TemplateLite object.
@@ -25995,7 +25995,7 @@ class Trigger:
         updated_by: str = None,
         sys_lock: 'SystemLock' = None,
         last_health_checked_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a Trigger object.
@@ -26435,7 +26435,7 @@ class UpdateCartOrder:
         description: str = None,
         tags: List[str] = None,
         cart_items: List['UpdateOrderItemConfiguration'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a UpdateCartOrder object.
@@ -26541,7 +26541,7 @@ class UpdateOrderItemConfiguration:
         target: 'TargetRequest' = None,
         operation: str = None,
         service_data: List['ServiceVariableData'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a UpdateOrderItemConfiguration object.
@@ -26921,7 +26921,7 @@ class VariableData:
         use_default: bool = None,
         metadata: 'VariableMetadata' = None,
         link: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a VariableData object.
@@ -27179,7 +27179,7 @@ class VariableMetadata:
         position: int = None,
         group_by: str = None,
         source: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a VariableMetadata object.
@@ -27461,7 +27461,7 @@ class WebHook:
         updated_by: str = None,
         sys_lock: 'SystemLock' = None,
         last_health_checked_at: datetime = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a WebHook object.
@@ -27868,7 +27868,7 @@ class Workspace:
         state: 'WorkspaceLiteState' = None,
         sys_lock: 'SystemLock' = None,
         templates: List['Template'] = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a Workspace object.
@@ -28220,7 +28220,7 @@ class WorkspaceLite:
         created_by: str = None,
         updated_at: datetime = None,
         updated_by: str = None,
-        **kwargs
+        **kwargs,
     ) -> None:
         """
         Initialize a WorkspaceLite object.
