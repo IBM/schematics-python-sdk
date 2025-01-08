@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/IBM/schematics-python-sdk/compare/v1.3.0...v1.4.0) (2025-01-08)
+
+
+### Features
+
+* **build:** re-generated the node sdk with latest schematics swagger ([#9](https://github.com/IBM/schematics-python-sdk/issues/9)) ([469c32f](https://github.com/IBM/schematics-python-sdk/commit/469c32fd149fb0a723f3c06c642fe0da4c724992))
+
 # [1.3.0](https://github.com/IBM/schematics-python-sdk/compare/v1.2.0...v1.3.0) (2024-07-06)
 
 
