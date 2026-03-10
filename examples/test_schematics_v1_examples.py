@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# (C) Copyright IBM Corp. 2024.
+# (C) Copyright IBM Corp. 2026.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -74,26 +74,6 @@ class TestSchematicsV1Examples:
     needscredentials = pytest.mark.skipif(
         not os.path.exists(config_file), reason="External configuration not available, skipping..."
     )
-
-    @needscredentials
-    def test_list_schematics_location_example(self):
-        """
-        list_schematics_location request example
-        """
-        try:
-            print('\nlist_schematics_location() result:')
-
-            # begin-list_schematics_location
-
-            response = schematics_service.list_schematics_location()
-            list_schematics_locations = response.get_result()
-
-            print(json.dumps(list_schematics_locations, indent=2))
-
-            # end-list_schematics_location
-
-        except ApiException as e:
-            pytest.fail(str(e))
 
     @needscredentials
     def test_list_locations_example(self):
@@ -1238,99 +1218,6 @@ class TestSchematicsV1Examples:
             pytest.fail(str(e))
 
     @needscredentials
-    def test_list_agent_example(self):
-        """
-        list_agent request example
-        """
-        try:
-            print('\nlist_agent() result:')
-
-            # begin-list_agent
-
-            response = schematics_service.list_agent()
-            agent_list = response.get_result()
-
-            print(json.dumps(agent_list, indent=2))
-
-            # end-list_agent
-
-        except ApiException as e:
-            pytest.fail(str(e))
-
-    @needscredentials
-    def test_register_agent_example(self):
-        """
-        register_agent request example
-        """
-        try:
-            print('\nregister_agent() result:')
-
-            # begin-register_agent
-
-            response = schematics_service.register_agent(
-                name='MyDevAgent',
-                agent_location='us-south',
-                location='us-south',
-                profile_id='testString',
-            )
-            agent = response.get_result()
-
-            print(json.dumps(agent, indent=2))
-
-            # end-register_agent
-
-        except ApiException as e:
-            pytest.fail(str(e))
-
-    @needscredentials
-    def test_get_agent_example(self):
-        """
-        get_agent request example
-        """
-        try:
-            print('\nget_agent() result:')
-
-            # begin-get_agent
-
-            response = schematics_service.get_agent(
-                agent_id='testString',
-            )
-            agent = response.get_result()
-
-            print(json.dumps(agent, indent=2))
-
-            # end-get_agent
-
-        except ApiException as e:
-            pytest.fail(str(e))
-
-    @needscredentials
-    def test_update_agent_registration_example(self):
-        """
-        update_agent_registration request example
-        """
-        try:
-            print('\nupdate_agent_registration() result:')
-
-            # begin-update_agent_registration
-
-            response = schematics_service.update_agent_registration(
-                agent_id='testString',
-                name='MyDevAgent',
-                agent_location='us-south',
-                location='us-south',
-                profile_id='testString',
-            )
-            agent = response.get_result()
-
-            print(json.dumps(agent, indent=2))
-
-            # end-update_agent_registration
-
-        except ApiException as e:
-            pytest.fail(str(e))
-
-    @needscredentials
     def test_list_agent_data_example(self):
         """
         list_agent_data request example
@@ -1678,7 +1565,9 @@ class TestSchematicsV1Examples:
 
             # begin-create_policy
 
-            response = schematics_service.create_policy()
+            response = schematics_service.create_policy(
+                kind='agent_assignment_policy',
+            )
             policy = response.get_result()
 
             print(json.dumps(policy, indent=2))
@@ -1722,6 +1611,7 @@ class TestSchematicsV1Examples:
 
             response = schematics_service.update_policy(
                 policy_id='testString',
+                kind='agent_assignment_policy',
             )
             policy = response.get_result()
 
@@ -1847,24 +1737,6 @@ class TestSchematicsV1Examples:
 
             # end-delete_resources_query
             print('\ndelete_resources_query() response status code: ', response.get_status_code())
-
-        except ApiException as e:
-            pytest.fail(str(e))
-
-    @needscredentials
-    def test_delete_agent_example(self):
-        """
-        delete_agent request example
-        """
-        try:
-            # begin-delete_agent
-
-            response = schematics_service.delete_agent(
-                agent_id='testString',
-            )
-
-            # end-delete_agent
-            print('\ndelete_agent() response status code: ', response.get_status_code())
 
         except ApiException as e:
             pytest.fail(str(e))
