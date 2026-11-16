@@ -145,3 +145,4 @@ See [CONTRIBUTING.md](https://github.com/IBM/schematics-python-sdk.git/blob/mast
 
 This SDK is released under the Apache 2.0 license.
 The license's full text can be found in [LICENSE](https://github.com/IBM/schematics-python-sdk.git/blob/master/LICENSE).
+
