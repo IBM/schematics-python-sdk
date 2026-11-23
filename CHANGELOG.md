@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/IBM/schematics-python-sdk/compare/v1.4.0...v1.4.1) (2026-11-23)
+
+
+### Bug Fixes
+
+* **api:** vulnerabilities fix ([#21](https://github.com/IBM/schematics-python-sdk/issues/21)) ([a499532](https://github.com/IBM/schematics-python-sdk/commit/a49953267190fb8a172fb26a7b6e8b9faaa5589a))
+
 # [1.4.0](https://github.com/IBM/schematics-python-sdk/compare/v1.3.0...v1.4.0) (2025-01-08)
 
 
